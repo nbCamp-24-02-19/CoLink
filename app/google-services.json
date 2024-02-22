@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "656455146700",
+    "project_id": "colink-a7c3a",
+    "storage_bucket": "colink-a7c3a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:656455146700:android:93bad13eb4918860aef669",
+        "android_client_info": {
+          "package_name": "com.example.colink"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6QiF3o_TMgFgI6SJ2D4_RdSjZmIYYaRs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
