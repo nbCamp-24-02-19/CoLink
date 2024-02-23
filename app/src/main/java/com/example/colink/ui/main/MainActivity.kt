@@ -10,6 +10,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.colink.R
 import com.example.colink.databinding.ActivityMainBinding
+import com.example.colink.util.dialog.setDialog
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

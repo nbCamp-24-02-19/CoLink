@@ -6,10 +6,17 @@ import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
 import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.colink.R
 import com.example.colink.databinding.UtilCustomBasicDialogBinding
+import com.example.colink.databinding.UtilCustomLevelDialogBinding
 import com.example.colink.databinding.UtilCustomListDialogBinding
+import com.example.colink.util.dialog.adapter.DialogAdapter
+import com.example.colink.util.dialog.adapter.LevelDialogAdapter
+import com.example.colink.util.dialog.enum.LevelEnum
 import com.example.colink.util.dpToPx
 
 fun Context.setDialog(
@@ -20,13 +27,12 @@ fun Context.setDialog(
     cancelAction: (AlertDialog) -> Unit
 ): AlertDialog {
     val binding = UtilCustomBasicDialogBinding.inflate(LayoutInflater.from(this))
-    val dialog = AlertDialog.Builder(this)
+    val dialog = AlertDialog.Builder(this, R.style.RoundedDialogTheme)
         .setView(binding.root)
         .create()
 
     dialog.setOnShowListener {
         setupDialog(
-            context = this,
             dialog = dialog,
             binding = binding,
             title = title,
@@ -41,7 +47,6 @@ fun Context.setDialog(
 }
 
 private fun setupDialog(
-    context: Context,
     dialog: AlertDialog,
     binding: UtilCustomBasicDialogBinding,
     title: String,
@@ -75,25 +80,66 @@ private fun setupDialog(
     if (image != null) {
         ivDiaImg.isVisible = true
         ivDiaImg.setImageResource(image)
-        tvDiaMessage.textSize = 16.dpToPx(context).toFloat()
-        tvDiaMessage.textSize = 12.dpToPx(context).toFloat()
+        tvDiaTitle.textSize = 16F
+        tvDiaMessage.textSize = 12F
     } else {
         ivDiaImg.isVisible = false
     }
 }
 
-fun List<Any>.setDialog(
+fun List<String>.setDialog(
     context: Context,
     title: String,
-    list: List<String>,
-    confirmAction: (AlertDialog) -> Unit,
+    action: (String) -> Unit,
 ): AlertDialog {
     val binding = UtilCustomListDialogBinding.inflate(LayoutInflater.from(context))
-    val dialog = AlertDialog.Builder(context)
+    val dialog = AlertDialog.Builder(context, R.style.RoundedDialogTheme)
         .setView(binding.root)
         .create()
 
-//    val adapter = DialogAdapter()
+    val adapter = DialogAdapter(
+        onClick = action
+    )
 
+    adapter.submitList(this)
+    binding.rcDiaList.adapter = adapter
+    binding.rcDiaList.layoutManager = LinearLayoutManager(context)
+    binding.tvDiaTitle.text = title
+
+    return dialog
+}
+
+fun Context.setLevelDialog(
+    nowLevel: Int = 1,
+    action: (Int) -> Unit
+):AlertDialog {
+    val binding = UtilCustomLevelDialogBinding.inflate(LayoutInflater.from(this))
+    val dialog = AlertDialog.Builder(this)
+        .setView(binding.root)
+        .show()  // 다이얼로그 표시
+
+    dialog.window?.setLayout(
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        ViewGroup.LayoutParams.MATCH_PARENT
+    )
+
+    val adapter = LevelDialogAdapter(
+        selected = nowLevel,
+        onClick = action,
+    )
+
+    adapter.submitList(
+        listOf(
+            LevelEnum.LEVEL1,
+            LevelEnum.LEVEL2,
+            LevelEnum.LEVEL3,
+            LevelEnum.LEVEL4,
+            LevelEnum.LEVEL5,
+            LevelEnum.LEVEL6,
+            LevelEnum.LEVEL7,
+        )
+    )
+    binding.rcLevelDia.adapter = adapter
+    binding.rcLevelDia.layoutManager = LinearLayoutManager(this)
     return dialog
 }

@@ -3,6 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:minWidth="312dp"
+    android:minHeight="200dp"
     android:padding="12dp"
     android:background="@drawable/bg_round_corner_12dp">
     <TextView
@@ -12,7 +14,7 @@
         android:textStyle="bold"
         android:textSize="16sp"
         android:layout_margin="12dp"
-        android:text="모집할 그룹을 선택해주세요"
+        android:text="디자이너"
         android:textColor="@color/black"
         android:fontFamily="@font/inter_bold"
         app:layout_constraintTop_toTopOf="parent"
