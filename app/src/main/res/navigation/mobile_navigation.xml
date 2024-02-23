@@ -13,13 +13,25 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.example.colink.ui.search.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:name="com.example.colink.ui.search.SearchFragment"
+        android:label="@string/title_post"
+        tools:layout="@layout/fragment_search" />
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.example.colink.ui.member.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:name="com.example.colink.ui.member.MemberFragment"
+        android:label="@string/title_member"
+        tools:layout="@layout/fragment_member" />
+
+    <fragment
+        android:id="@+id/navigation_chat"
+        android:name="com.example.colink.ui.chat.ChatFragment"
+        android:label="@string/title_chat"
+        tools:layout="@layout/fragment_chat" />
+
+    <fragment
+        android:id="@+id/navigation_my_page"
+        android:name="com.example.colink.ui.mypage.MyPageFragment"
+        android:label="@string/title_member"
+        tools:layout="@layout/fragment_my_page" />
 </navigation>
