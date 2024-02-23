@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.colink"
+    namespace = "com.seven.colink"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.colink"
+        applicationId = "com.seven.colink"
         minSdk = 21
         targetSdk = 34
         versionCode = 1
