@@ -7,7 +7,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import com.seven.colink.data.firebase.repository.AuthRepositoryImpl
 import com.seven.colink.databinding.FragmentMemberBinding
+import kotlinx.coroutines.launch
 
 class MemberFragment : Fragment() {
 
@@ -33,6 +36,16 @@ class MemberFragment : Fragment() {
             textView.text = it
         }
         return root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        initView()
+    }
+
+    private fun initView() {
+
     }
 
     override fun onDestroyView() {

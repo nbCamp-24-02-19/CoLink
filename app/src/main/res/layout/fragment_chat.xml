@@ -1,13 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".ui.chat.ChatFragment">
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/signup"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Hello" />
+        android:layout_height="48dp"
+        android:text="회원가입 테스트"/>
 
-</FrameLayout>
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/login"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="로그인 테스트"/>
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/logout"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="로그아웃 테스트"/>
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/makegle"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="글쓰기 테스트"/>
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/seegle"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="글보기 테스트"/>
+
+    <TextView
+        android:id="@+id/test_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="테스트"/>
+
+
+</LinearLayout>
