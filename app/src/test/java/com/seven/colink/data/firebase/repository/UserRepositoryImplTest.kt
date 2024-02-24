@@ -54,7 +54,7 @@ class UserRepositoryImplTest {
 
         // When
         runBlocking {
-            userRepository.userRegistration(user)
+            userRepository.registerUser(user)
         }
 
         // Then

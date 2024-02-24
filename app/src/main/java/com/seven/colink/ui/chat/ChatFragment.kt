@@ -10,9 +10,13 @@ import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.seven.colink.data.firebase.repository.AuthRepositoryImpl
+import com.seven.colink.data.firebase.repository.PostRepositoryImpl
 import com.seven.colink.data.firebase.repository.UserRepositoryImpl
 import com.seven.colink.databinding.FragmentChatBinding
+import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.entity.UserEntity
+import com.seven.colink.ui.search.post.model.RecruitInfo
+import com.seven.colink.util.status.GroupType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -52,8 +56,8 @@ class ChatFragment : Fragment() {
         signup.setOnClickListener {
             lifecycleScope.launch {
                 val a = AuthRepositoryImpl(FirebaseAuth.getInstance()).register("zxcasd@wdsad.com", "tlarbtkd")
-                UserRepositoryImpl(FirebaseAuth.getInstance(), FirebaseFirestore.getInstance()).userRegistration(UserEntity(
-                    uid = a?: "",
+                UserRepositoryImpl(FirebaseAuth.getInstance(), FirebaseFirestore.getInstance()).registerUser(UserEntity(
+                    uid = FirebaseAuth.getInstance().currentUser?.uid ?: "",
                     email = "zxcasd@wdsad.com",
                     password = "tlarbtkd",
                     id = "ID123",
@@ -88,6 +92,38 @@ class ChatFragment : Fragment() {
         logout.setOnClickListener {
             lifecycleScope.launch {
                 AuthRepositoryImpl(FirebaseAuth.getInstance()).signOut()
+            }
+        }
+
+        makegle.setOnClickListener {
+            val newPost = PostEntity(
+                key = "unique_post_key",
+                authId = "user123",
+                title = "My First Post",
+                imageUrl = "https://example.com/image.jpg",
+                groupType = GroupType.PROJECT,
+                description = "This is a sample post description.",
+                tags = listOf("sample", "firstPost"),
+                precautions = "Be kind to everyone.",
+                recruitInfo = "Looking for a designer",
+                recruit = RecruitInfo("Designer", 2, 1, 0),
+                datetime = "2023-10-02T12:00:00",
+                views = 0,
+                startDate = "2023-10-02",
+                endDate = "2023-12-31"
+            )
+
+            lifecycleScope.launch {
+                val a = PostRepositoryImpl(FirebaseFirestore.getInstance()).registerPost(newPost)
+                Toast.makeText(context, a.message , Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        seegle.setOnClickListener {
+            val key = "unique_post_key"
+            lifecycleScope.launch {
+                val post = PostRepositoryImpl(FirebaseFirestore.getInstance()).getPost(key)
+                testInfo.text = post.toString()
             }
         }
     }
