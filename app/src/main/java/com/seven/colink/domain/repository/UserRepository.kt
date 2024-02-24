@@ -5,5 +5,5 @@ import com.seven.colink.util.status.DataResultStatus
 
 interface UserRepository {
     suspend fun registerUser(user: UserEntity): DataResultStatus
-    suspend fun getUserDetails(id: String): UserEntity?
+    suspend fun getUserDetails(id: String): Result<UserEntity?>
 }

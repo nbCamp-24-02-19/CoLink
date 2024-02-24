@@ -5,5 +5,5 @@ import com.seven.colink.util.status.DataResultStatus
 
 interface PostRepository {
     suspend fun registerPost(post: PostEntity): DataResultStatus?
-    suspend fun getPost(key: String): PostEntity?
+    suspend fun getPost(key: String): Result<PostEntity?>
 }

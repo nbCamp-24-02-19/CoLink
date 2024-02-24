@@ -1,6 +1,5 @@
 package com.seven.colink.data.firebase.repository
 
-import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.seven.colink.data.firebase.type.DataBaseType
 import com.seven.colink.domain.entity.PostEntity
@@ -26,12 +25,11 @@ class PostRepositoryImpl @Inject constructor(
             }
     }
 
-    override suspend fun getPost(key: String): PostEntity? = try {
+    override suspend fun getPost(key: String) = runCatching {
         firebaseFirestore.collection(DataBaseType.POST.title).document(key)
             .get().await()
             .toObject(PostEntity::class.java)
-    } catch (e: Exception) {
-        Log.e("Firestore", "Error getting document: $key", e)
-        null
+    }.onFailure {
+        DataResultStatus.FAIL.apply { message = it.message?: "Unknown error" }
     }
 }

@@ -15,12 +15,12 @@ import kotlin.coroutines.suspendCoroutine
 
 class UserRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
-    private val firebaseFirestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore
 ) : UserRepository {
     override suspend fun registerUser(user: UserEntity) = suspendCoroutine { continuation ->
 
         firebaseAuth.currentUser?.uid?.let {
-            firebaseFirestore.collection(DataBaseType.USER.title).document(it).set(user.toFirestore())
+            firestore.collection(DataBaseType.USER.title).document(it).set(user.toFirestore())
                 .addOnSuccessListener {
                     continuation.resume(DataResultStatus.SUCCESS)
                 }
@@ -30,18 +30,10 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getUserDetails(id: String): UserEntity? {
-        var userEntity: UserEntity? = null
-
-        try {
-            val documentSnapshot = firebaseFirestore.collection(DataBaseType.USER.title).document(id).get().await()
-            if (documentSnapshot.exists()) {
-                userEntity = documentSnapshot.toObject(UserEntity::class.java)
-            }
-        } catch (e: Exception) {
-            Log.e("UserRepository", "Error getting user: ${e.message}")
-        }
-
-        return userEntity
+    override suspend fun getUserDetails(id: String) = runCatching {
+        firestore.collection(DataBaseType.USER.title).document(id).get().await()
+            .toObject(UserEntity::class.java)
+    }.onFailure {
+        DataResultStatus.FAIL.apply { message = it.message?: "Unknown error" }
     }
 }
