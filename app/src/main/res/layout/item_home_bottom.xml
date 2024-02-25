@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginVertical="12dp"
+        android:padding="10dp"
+        app:cardCornerRadius="30dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/lay_bottom1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/tv_home_bottom_kind"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="15dp"
+                    android:text="Project"
+                    android:textSize="12sp"
+                    android:textColor="@color/forth_color"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_home_bottom_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="20dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="영화 커뮤니티서비스 프로젝..."
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@id/iv_home_bottom_thumubnail"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_home_bottom_kind" />
+
+                <TextView
+                    android:id="@+id/tv_home_bottom_des"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginEnd="20dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="안드로이드 개발자들 모셔봅니다, 저..."
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toStartOf="@id/iv_home_bottom_thumubnail"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_home_bottom_title" />
+
+                <TextView
+                    android:id="@+id/tv_home_bottom_lv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="1dp"
+                    android:text="안드로이드 | Lv4이상"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_home_bottom_des" />
+
+                <ImageView
+                    android:id="@+id/iv_home_bottom_thumubnail"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_marginEnd="20dp"
+                    android:src="@drawable/img_dialog_study"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_home_bottom_lv"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tv_home_bottom_kind" />
+
+                <View
+                    android:id="@+id/view_home_bottom_blind"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:background="#A6000000"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_home_bottom_thumubnail"
+                    app:layout_constraintEnd_toEndOf="@id/iv_home_bottom_thumubnail"
+                    app:layout_constraintStart_toStartOf="@id/iv_home_bottom_thumubnail"
+                    app:layout_constraintTop_toTopOf="@id/iv_home_bottom_thumubnail" />
+
+                <TextView
+                    android:id="@+id/tv_home_bottom_blind"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="모집 완료"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_home_bottom_thumubnail"
+                    app:layout_constraintEnd_toEndOf="@id/iv_home_bottom_thumubnail"
+                    app:layout_constraintStart_toStartOf="@id/iv_home_bottom_thumubnail"
+                    app:layout_constraintTop_toTopOf="@id/iv_home_bottom_thumubnail" />
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="#F5F5F5"
+                    app:layout_constraintTop_toBottomOf="@id/tv_home_bottom_lv" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/lay_bottom2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/lay_bottom1">
+
+                <TextView
+                    android:id="@+id/tv_home_bottom_kind2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="15dp"
+                    android:text="Project"
+                    android:textSize="12sp"
+                    android:textColor="@color/forth_color"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_home_bottom_title2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="20dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="영화 커뮤니티서비스 프로젝..."
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@id/iv_home_bottom_thumubnail2"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_home_bottom_kind2" />
+
+                <TextView
+                    android:id="@+id/tv_home_bottom_des2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginEnd="20dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="안드로이드 개발자들 모셔봅니다, 저..."
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toStartOf="@id/iv_home_bottom_thumubnail2"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_home_bottom_title2" />
+
+                <TextView
+                    android:id="@+id/tv_home_bottom_lv2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="1dp"
+                    android:text="안드로이드 | Lv4이상"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_home_bottom_des2" />
+
+                <ImageView
+                    android:id="@+id/iv_home_bottom_thumubnail2"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_marginEnd="20dp"
+                    android:src="@drawable/img_dialog_study"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_home_bottom_lv2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tv_home_bottom_kind2" />
+
+                <View
+                    android:id="@+id/view_home_bottom_blind2"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:background="#A6000000"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_home_bottom_thumubnail2"
+                    app:layout_constraintEnd_toEndOf="@id/iv_home_bottom_thumubnail2"
+                    app:layout_constraintStart_toStartOf="@id/iv_home_bottom_thumubnail2"
+                    app:layout_constraintTop_toTopOf="@id/iv_home_bottom_thumubnail2" />
+
+                <TextView
+                    android:id="@+id/tv_home_bottom_blind2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="모집 완료"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_home_bottom_thumubnail2"
+                    app:layout_constraintEnd_toEndOf="@id/iv_home_bottom_thumubnail2"
+                    app:layout_constraintStart_toStartOf="@id/iv_home_bottom_thumubnail2"
+                    app:layout_constraintTop_toTopOf="@id/iv_home_bottom_thumubnail2" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="#F5F5F5"
+                    app:layout_constraintTop_toBottomOf="@id/tv_home_bottom_lv2" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/lay_bottom3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/lay_bottom2">
+
+                <TextView
+                    android:id="@+id/tv_home_bottom_kind3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="15dp"
+                    android:text="Project"
+                    android:textSize="12sp"
+                    android:textColor="@color/forth_color"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_home_bottom_title3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="20dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="영화 커뮤니티서비스 프로젝..."
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@id/iv_home_bottom_thumubnail3"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_home_bottom_kind3" />
+
+                <TextView
+                    android:id="@+id/tv_home_bottom_des3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginEnd="20dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="안드로이드 개발자들 모셔봅니다, 저..."
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toStartOf="@id/iv_home_bottom_thumubnail3"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_home_bottom_title3" />
+
+                <TextView
+                    android:id="@+id/tv_home_bottom_lv3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="1dp"
+                    android:text="안드로이드 | Lv4이상"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_home_bottom_des3" />
+
+                <ImageView
+                    android:id="@+id/iv_home_bottom_thumubnail3"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_marginEnd="20dp"
+                    android:src="@drawable/img_dialog_study"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_home_bottom_lv3"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tv_home_bottom_kind3" />
+
+                <View
+                    android:id="@+id/view_home_bottom_blind3"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:background="#A6000000"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_home_bottom_thumubnail3"
+                    app:layout_constraintEnd_toEndOf="@id/iv_home_bottom_thumubnail3"
+                    app:layout_constraintStart_toStartOf="@id/iv_home_bottom_thumubnail3"
+                    app:layout_constraintTop_toTopOf="@id/iv_home_bottom_thumubnail3" />
+
+                <TextView
+                    android:id="@+id/tv_home_bottom_blind3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="모집 완료"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_home_bottom_thumubnail3"
+                    app:layout_constraintEnd_toEndOf="@id/iv_home_bottom_thumubnail3"
+                    app:layout_constraintStart_toStartOf="@id/iv_home_bottom_thumubnail3"
+                    app:layout_constraintTop_toTopOf="@id/iv_home_bottom_thumubnail3" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="#F5F5F5"
+                    app:layout_constraintTop_toBottomOf="@id/tv_home_bottom_lv3" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/lay_bottom4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/lay_bottom3">
+
+                <TextView
+                    android:id="@+id/tv_home_bottom_kind4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="15dp"
+                    android:text="Project"
+                    android:textSize="12sp"
+                    android:textColor="@color/forth_color"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_home_bottom_title4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="20dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="영화 커뮤니티서비스 프로젝..."
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@id/iv_home_bottom_thumubnail4"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_home_bottom_kind4" />
+
+                <TextView
+                    android:id="@+id/tv_home_bottom_des4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginEnd="20dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="안드로이드 개발자들 모셔봅니다, 저..."
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toStartOf="@id/iv_home_bottom_thumubnail4"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_home_bottom_title4" />
+
+                <TextView
+                    android:id="@+id/tv_home_bottom_lv4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="1dp"
+                    android:text="안드로이드 | Lv4이상"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_home_bottom_des4" />
+
+                <ImageView
+                    android:id="@+id/iv_home_bottom_thumubnail4"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_marginEnd="20dp"
+                    android:src="@drawable/img_dialog_study"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_home_bottom_lv4"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tv_home_bottom_kind4" />
+
+                <View
+                    android:id="@+id/view_home_bottom_blind4"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:background="#A6000000"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_home_bottom_thumubnail4"
+                    app:layout_constraintEnd_toEndOf="@id/iv_home_bottom_thumubnail4"
+                    app:layout_constraintStart_toStartOf="@id/iv_home_bottom_thumubnail4"
+                    app:layout_constraintTop_toTopOf="@id/iv_home_bottom_thumubnail4" />
+
+                <TextView
+                    android:id="@+id/tv_home_bottom_blind4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="모집 완료"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_home_bottom_thumubnail4"
+                    app:layout_constraintEnd_toEndOf="@id/iv_home_bottom_thumubnail4"
+                    app:layout_constraintStart_toStartOf="@id/iv_home_bottom_thumubnail4"
+                    app:layout_constraintTop_toTopOf="@id/iv_home_bottom_thumubnail4" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="#F5F5F5"
+                    app:layout_constraintTop_toBottomOf="@id/tv_home_bottom_lv4" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/lay_bottom5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/lay_bottom4">
+
+                <TextView
+                    android:id="@+id/tv_home_bottom_kind5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="15dp"
+                    android:text="Project"
+                    android:textSize="12sp"
+                    android:textColor="@color/forth_color"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_home_bottom_title5"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="20dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="영화 커뮤니티서비스 프로젝..."
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@id/iv_home_bottom_thumubnail5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_home_bottom_kind5" />
+
+                <TextView
+                    android:id="@+id/tv_home_bottom_des5"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginEnd="20dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="안드로이드 개발자들 모셔봅니다, 저..."
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toStartOf="@id/iv_home_bottom_thumubnail5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_home_bottom_title5" />
+
+                <TextView
+                    android:id="@+id/tv_home_bottom_lv5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="1dp"
+                    android:text="안드로이드 | Lv4이상"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_home_bottom_des5" />
+
+                <ImageView
+                    android:id="@+id/iv_home_bottom_thumubnail5"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_marginEnd="20dp"
+                    android:src="@drawable/img_dialog_study"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_home_bottom_lv5"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tv_home_bottom_kind5" />
+
+                <View
+                    android:id="@+id/view_home_bottom_blind5"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:background="#A6000000"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_home_bottom_thumubnail5"
+                    app:layout_constraintEnd_toEndOf="@id/iv_home_bottom_thumubnail5"
+                    app:layout_constraintStart_toStartOf="@id/iv_home_bottom_thumubnail5"
+                    app:layout_constraintTop_toTopOf="@id/iv_home_bottom_thumubnail5" />
+
+                <TextView
+                    android:id="@+id/tv_home_bottom_blind5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="모집 완료"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_home_bottom_thumubnail5"
+                    app:layout_constraintEnd_toEndOf="@id/iv_home_bottom_thumubnail5"
+                    app:layout_constraintStart_toStartOf="@id/iv_home_bottom_thumubnail5"
+                    app:layout_constraintTop_toTopOf="@id/iv_home_bottom_thumubnail5" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
