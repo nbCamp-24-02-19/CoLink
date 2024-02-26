@@ -12,9 +12,16 @@ enum class DataBaseType(
     POST(
         title = "posts"
     ),
-    CHAT(
-        title = "chats"
+    COMMENT(
+        title = "comments"
     ),
+    CHATROOM(
+        title = "chatRooms"
+    ),
+    MESSAGE(
+        title = "messages"
+    )
+    ,
     PRODUCT(
         title = "products"
     )

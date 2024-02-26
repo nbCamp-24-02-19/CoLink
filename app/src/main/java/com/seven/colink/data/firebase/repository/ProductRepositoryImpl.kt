@@ -48,4 +48,16 @@ class ProductRepositoryImpl @Inject constructor(
     }.onFailure {
         DataResultStatus.FAIL.apply { message = it.message?: "Unknown error" }
     }
+
+    override suspend fun deleteProduct(key: String) = suspendCoroutine { continuation ->
+        firestore.collection(DataBaseType.PRODUCT.title).document(key).delete()
+            .addOnSuccessListener {
+                continuation.resume(DataResultStatus.SUCCESS)
+            }
+            .addOnFailureListener { e ->
+                continuation.resume(DataResultStatus.FAIL.apply {
+                    message = e.message ?: "Unknown error"
+                })
+            }
+    }
 }

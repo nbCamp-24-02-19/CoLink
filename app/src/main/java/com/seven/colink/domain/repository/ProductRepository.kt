@@ -10,4 +10,5 @@ interface ProductRepository {
     suspend fun getProductDetail(key: String): Result<GroupEntity?>
     suspend fun getProductsByAuthId(authId: String): Result<List<ProductEntity>>
     suspend fun getProductsByContainUserId(userId: String): Result<List<ProductEntity>>
+    suspend fun deleteProduct(key: String): DataResultStatus
 }

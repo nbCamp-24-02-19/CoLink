@@ -30,6 +30,38 @@ class PostRepositoryImpl @Inject constructor(
             .get().await()
             .toObject(PostEntity::class.java)
     }.onFailure {
-        DataResultStatus.FAIL.apply { message = it.message?: "Unknown error" }
+        DataResultStatus.FAIL.apply { message = it.message ?: "Unknown error" }
+    }
+
+    override suspend fun getPostByAuthId(authId: String) = runCatching {
+        firebaseFirestore.collection(DataBaseType.POST.title).whereEqualTo("authId", authId).get()
+            .await()
+            .documents.mapNotNull {
+                it.toObject(PostEntity::class.java)
+            }
+    }.onFailure {
+        DataResultStatus.FAIL.message.apply { it.message }
+    }
+
+    override suspend fun getPostByContainUserId(userId: String) = runCatching {
+        firebaseFirestore.collection(DataBaseType.POST.title).whereArrayContains("userId", userId)
+            .get().await()
+            .documents.mapNotNull {
+                it.toObject(PostEntity::class.java)
+            }
+    }.onFailure {
+        DataResultStatus.FAIL.message.apply { it.message }
+    }
+
+    override suspend fun deletePost(key: String) = suspendCoroutine { continuation ->
+        firebaseFirestore.collection(DataBaseType.POST.title).document(key).delete()
+            .addOnSuccessListener {
+                continuation.resume(DataResultStatus.SUCCESS)
+            }
+            .addOnFailureListener { e ->
+                continuation.resume(DataResultStatus.FAIL.apply {
+                    message = e.message ?: "Unknown error"
+                })
+            }
     }
 }

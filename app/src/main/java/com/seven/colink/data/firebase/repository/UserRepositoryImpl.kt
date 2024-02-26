@@ -1,9 +1,7 @@
 package com.seven.colink.data.firebase.repository
 
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.seven.colink.data.firebase.mapper.toFirestore
 import com.seven.colink.data.firebase.type.DataBaseType
 import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.domain.repository.UserRepository
@@ -18,9 +16,8 @@ class UserRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore
 ) : UserRepository {
     override suspend fun registerUser(user: UserEntity) = suspendCoroutine { continuation ->
-
         firebaseAuth.currentUser?.uid?.let {
-            firestore.collection(DataBaseType.USER.title).document(it).set(user.toFirestore())
+            firestore.collection(DataBaseType.USER.title).document(it).set(user)
                 .addOnSuccessListener {
                     continuation.resume(DataResultStatus.SUCCESS)
                 }
@@ -30,10 +27,20 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getUserDetails(id: String) = runCatching {
-        firestore.collection(DataBaseType.USER.title).document(id).get().await()
+    override suspend fun getUserDetails(uid: String) = runCatching {
+        firestore.collection(DataBaseType.USER.title).document(uid).get().await()
             .toObject(UserEntity::class.java)
     }.onFailure {
         DataResultStatus.FAIL.apply { message = it.message?: "Unknown error" }
+    }
+
+    override suspend fun deleteUser(uid: String) = suspendCoroutine { continuation ->
+        firestore.collection(DataBaseType.USER.title).document(uid).delete()
+            .addOnSuccessListener {
+                continuation.resume(DataResultStatus.SUCCESS)
+            }
+            .addOnFailureListener {
+                continuation.resume(DataResultStatus.FAIL.apply { message = it.message?: "Unknown error" })
+            }
     }
 }

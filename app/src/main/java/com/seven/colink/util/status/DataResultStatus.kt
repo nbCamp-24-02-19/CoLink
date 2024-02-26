@@ -1,7 +1,7 @@
 package com.seven.colink.util.status
 
 enum class DataResultStatus(
-    var message: String?
+    var message: String
 ) {
     SUCCESS(
         message = "success"
