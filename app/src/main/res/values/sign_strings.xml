@@ -12,7 +12,12 @@
     <string name="sign_up_name">이름</string>
     <string name="sign_up_next">다음</string>
     <string name="sign_up_choose_major">나의 전문 분야를 선택해주세요</string>
+    <string name="sign_up_choose_major_sub">내가 선택한 전문분야로 나와 연관 된 그룹을 추천 받을 수 있어요!</string>
     <string name="sign_up_email">이메일</string>
     <string name="sign_up_password">비밀번호</string>
     <string name="sign_up_password_check">비밀번호 확인</string>
+    <string name="sign_up_main_category">대분류</string>
+    <string name="sign_up_sub_category">소분류</string>
+    <string name="sign_up_choose_skill">나의 보유 스킬을 선택해주세요</string>
+    <string name="sign_up_choose_skill_sub">내가 선택한 보유 스킬로 나와 연관 된 그룹을 추천 받을 수 있어요!</string>
 </resources>
