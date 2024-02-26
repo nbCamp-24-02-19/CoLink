@@ -6,21 +6,4 @@
     <string name="title_chat">채팅</string>
     <string name="title_my_info">내정보</string>
     <string name="util_dialog_confirm">확인</string>
-
-    <!--    Search    -->
-    <string name="search_filter">필터 :</string>
-    <string name="search_filter_project">Project</string>
-    <string name="search_filter_study">Study</string>
-    <string name="search_filter_end">모집완료</string>
-    <string name="search_filter_recruit">모집중</string>
-    <string name="search_edittext">검색어를 입력해주세요</string>
-    <string name="search_post_title">(취준 포폴용) 개발자 커뮤니티 제작하실 팀원 모집합니다.</string>
-    <string name="search_post_description">포트폴리오용 개발자 커뮤니티를 제작 해보실 팀원을 모집합니다. 포트폴리오용 개발자 커뮤니티를 제작 해보실 팀원을 모집합니다.</string>
-    <string name="search_post_tag"># 안드로이드</string>
-    <string name="search_post_poster">개발자취준생</string>
-    <string name="search_post_divider">·</string>
-    <string name="search_post_time">1시간 전</string>
-    <string name="search_post_heart">0</string>
-    <string name="search_post_view">0</string>
-
 </resources>
