@@ -29,8 +29,6 @@ class PostRepositoryImpl @Inject constructor(
         firebaseFirestore.collection(DataBaseType.POST.title).document(key)
             .get().await()
             .toObject(PostEntity::class.java)
-    }.onFailure {
-        DataResultStatus.FAIL.apply { message = it.message ?: "Unknown error" }
     }
 
     override suspend fun getPostByAuthId(authId: String) = runCatching {
@@ -39,8 +37,6 @@ class PostRepositoryImpl @Inject constructor(
             .documents.mapNotNull {
                 it.toObject(PostEntity::class.java)
             }
-    }.onFailure {
-        DataResultStatus.FAIL.message.apply { it.message }
     }
 
     override suspend fun getPostByContainUserId(userId: String) = runCatching {
@@ -49,8 +45,6 @@ class PostRepositoryImpl @Inject constructor(
             .documents.mapNotNull {
                 it.toObject(PostEntity::class.java)
             }
-    }.onFailure {
-        DataResultStatus.FAIL.message.apply { it.message }
     }
 
     override suspend fun deletePost(key: String) = suspendCoroutine { continuation ->
