@@ -44,7 +44,7 @@ class HomeFragment : Fragment() {
             title = "안녕하세요",
             message = "'다이얼로그'가 잘 작성 되는지 '확인' 해보는 다이얼로그",
             image = R.drawable.img_dialog_project,
-            confirmAction = {dialog -> dialog.dismiss()
+            confirmAction = { dialog -> dialog.dismiss()
                             requireContext().setDialog(
                                 title = "반갑고",
                                 message = "안녕하고",
