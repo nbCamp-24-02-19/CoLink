@@ -11,10 +11,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="24dp"
         android:orientation="vertical"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -36,10 +36,10 @@
                 android:paddingTop="2dp"
                 android:paddingEnd="4dp"
                 android:paddingBottom="2dp"
-                android:text="Project"
+                android:text="@string/search_filter_project"
                 android:textColor="@color/white"
                 android:textSize="10sp"
-                android:visibility="visible" />
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/tv_searchItem_study"
@@ -53,10 +53,10 @@
                 android:paddingTop="2dp"
                 android:paddingEnd="4dp"
                 android:paddingBottom="2dp"
-                android:text="Study"
+                android:text="@string/search_filter_study"
                 android:textColor="@color/white"
                 android:textSize="10sp"
-                android:visibility="visible" />
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/tv_searchItem_recruitEnd"
@@ -70,10 +70,10 @@
                 android:paddingTop="2dp"
                 android:paddingEnd="4dp"
                 android:paddingBottom="2dp"
-                android:text="모집완료"
+                android:text="@string/search_filter_end"
                 android:textColor="@color/white"
                 android:textSize="10sp"
-                android:visibility="visible" />
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/tv_searchItem_recruit"
@@ -87,10 +87,10 @@
                 android:paddingTop="2dp"
                 android:paddingEnd="4dp"
                 android:paddingBottom="2dp"
-                android:text="모집중"
+                android:text="@string/search_filter_recruit"
                 android:textColor="@color/white"
                 android:textSize="10sp"
-                android:visibility="visible" />
+                android:visibility="gone" />
 
         </LinearLayout>
 
@@ -102,7 +102,7 @@
             android:ellipsize="end"
             android:fontFamily="@font/inter_bold"
             android:maxLines="1"
-            android:text="(취준 포폴용) 개발자 커뮤니티 제작하실 팀원 모집합니다."
+            android:text="@string/search_post_title"
             android:textColor="@color/black"
             android:textSize="16sp" />
 
@@ -113,7 +113,7 @@
             android:ellipsize="end"
             android:fontFamily="@font/inter_regular"
             android:maxLines="2"
-            android:text="포트폴리오용 개발자 커뮤니티를 제작 해보실 팀원을 모집합니다. 포트폴리오용 개발자 커뮤니티를 제작 해보실 팀원을 모집합니다.포트폴리오용 개발자 커뮤니티를 제작 해보실 팀원을 모집합니다."
+            android:text="@string/search_post_description"
             android:textColor="@color/typo_color"
             android:textSize="13sp" />
 
@@ -128,18 +128,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="12dp"
                 android:fontFamily="@font/inter_regular"
-                android:text="# 안드로이드"
-                android:textColor="@color/forth_color"
-                android:textSize="11sp"
-                android:visibility="visible" />
-
-            <TextView
-                android:id="@+id/tv_searchItem_tag2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="12dp"
-                android:fontFamily="@font/inter_regular"
-                android:text="# 모바일 앱"
+                android:text="@string/search_post_tag"
                 android:textColor="@color/forth_color"
                 android:textSize="11sp"
                 android:visibility="visible" />
@@ -157,7 +146,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:fontFamily="@font/inter_regular"
-                android:text="개발자취준생"
+                android:text="@string/search_post_poster"
                 android:textColor="@color/typo_color"
                 android:textSize="11sp" />
 
@@ -166,7 +155,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:fontFamily="@font/inter_regular"
-                android:text="·"
+                android:text="@string/search_post_divider"
                 android:textColor="@color/typo_color"
                 android:textSize="11sp" />
 
@@ -175,7 +164,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/inter_regular"
-                android:text="1시간 전"
+                android:text="@string/search_post_time"
                 android:textColor="@color/typo_color"
                 android:textSize="11sp" />
 
@@ -191,7 +180,7 @@
                 android:layout_height="12dp"
                 android:layout_gravity="end|center_vertical"
                 android:layout_marginEnd="4dp"
-                android:src="@drawable/ic_chat" />
+                android:src="@drawable/ic_heart" />
 
             <TextView
                 android:id="@+id/tv_searchItem_heartCount"
@@ -199,7 +188,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:fontFamily="@font/inter_regular"
-                android:text="0"
+                android:text="@string/search_post_heart"
                 android:textColor="@color/typo_color"
                 android:textSize="11sp" />
 
@@ -209,7 +198,7 @@
                 android:layout_height="12dp"
                 android:layout_gravity="end|center_vertical"
                 android:layout_marginEnd="4dp"
-                android:src="@drawable/ic_close" />
+                android:src="@drawable/ic_view" />
 
             <TextView
                 android:id="@+id/tv_searchItem_viewCount"
@@ -217,7 +206,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:fontFamily="@font/inter_regular"
-                android:text="0"
+                android:text="@string/search_post_view"
                 android:textColor="@color/typo_color"
                 android:textSize="11sp" />
 
