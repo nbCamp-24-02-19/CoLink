@@ -2,7 +2,6 @@ package com.seven.colink.domain.entity
 
 import com.seven.colink.util.convert.convertLocalDateTime
 import java.time.LocalDateTime
-import java.util.UUID
 
 data class UserEntity(
     val uid: String = "",
@@ -16,7 +15,9 @@ data class UserEntity(
     val specialty: String = "",
     val grade: Double = 5.0,
     val skill: List<String> = emptyList(),
-    val blog: List<String> = emptyList(),
+    val git: String? = null,
+    val blog: String? = null,
+    val link: String? = null,
     val info: String? = null,
     val registeredDate: String = LocalDateTime.now().convertLocalDateTime(),
     val communication: Int? = null,

@@ -46,7 +46,7 @@ class UserRepositoryImplTest {
             skill = listOf("Kotlin", "Swift", "Flutter"),
             blog = listOf("https://blog.example.com/post1", "https://blog.example.com/post2"),
             info = "Experienced mobile developer",
-            joinDate = "2022-01-01")
+            registeredDate = "2022-01-01")
         val mockCollection = mock(CollectionReference::class.java)
         val mockDocument = mock(DocumentReference::class.java)
         `when`(firebaseFirestore.collection(anyString())).thenReturn(mockCollection)
@@ -85,7 +85,7 @@ class UserRepositoryImplTest {
             skill = listOf("Kotlin", "Swift", "Flutter"),
             blog = listOf("https://blog.example.com/post1", "https://blog.example.com/post2"),
             info = "Experienced mobile developer",
-            joinDate = "2022-01-01"
+            registeredDate = "2022-01-01"
         ))
 
         // When
