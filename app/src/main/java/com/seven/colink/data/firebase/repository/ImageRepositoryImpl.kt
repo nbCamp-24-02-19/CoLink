@@ -14,7 +14,5 @@ class ImageRepositoryImpl @Inject constructor(
         firebaseStorage.reference.child("img/${UUID.randomUUID()}.jpg").putFile(imageUri)
             .await().storage.downloadUrl.await()
 
-    }.onFailure {
-        DataResultStatus.FAIL.message.apply { it.message }
     }
 }
