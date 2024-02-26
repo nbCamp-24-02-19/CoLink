@@ -28,8 +28,6 @@ class CommentRepositoryImpl @Inject constructor(
             .documents.mapNotNull {
                 it.toObject(CommentEntity::class.java)
             }
-    }.onFailure {
-        DataResultStatus.FAIL.apply { message = it.message?: "Unknown error" }
     }
 
     override suspend fun deleteComment(key: String) = suspendCoroutine { continuation ->

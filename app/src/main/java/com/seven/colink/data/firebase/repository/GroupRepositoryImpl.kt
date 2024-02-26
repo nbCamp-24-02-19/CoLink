@@ -26,7 +26,5 @@ class GroupRepositoryImpl @Inject constructor(
     override suspend fun getGroupDetail(key: String) = runCatching {
         firestore.collection(DataBaseType.GROUP.title).document(key).get().await()
             .toObject(GroupEntity::class.java)
-    }.onFailure {
-        DataResultStatus.FAIL.apply { message = it.message?: "Unknown error" }
     }
 }
