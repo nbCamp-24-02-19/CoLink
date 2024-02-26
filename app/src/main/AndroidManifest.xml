@@ -20,6 +20,9 @@
         android:theme="@style/Theme.CoLink"
         tools:targetApi="31">
         <activity
+            android:name=".ui.post.PostActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.main.MainActivity"
             android:exported="true"
             android:label="@string/app_name">
