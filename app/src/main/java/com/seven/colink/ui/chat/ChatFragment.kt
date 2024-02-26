@@ -19,6 +19,7 @@ import com.seven.colink.ui.post.model.RecruitInfo
 import com.seven.colink.util.status.GroupType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class ChatFragment : Fragment() {
@@ -68,22 +69,23 @@ class ChatFragment : Fragment() {
                     skill = listOf("Kotlin", "Swift", "Flutter"),
                     blog = listOf("https://blog.example.com/post1", "https://blog.example.com/post2"),
                     info = "Experienced mobile developer",
-//                    joinDate = "2022-01-01"
                 ))
             }
         }
 
         login.setOnClickListener {
             lifecycleScope.launch {
-//                val id = AuthRepositoryImpl(FirebaseAuth.getInstance()).signIn("zxcasd@wdsad.com", "tlarbtkd")
-//                val user = UserRepositoryImpl(FirebaseAuth.getInstance(), FirebaseFirestore.getInstance()).getUserDetails(id?.uid ?: "error")
-//                withContext(Dispatchers.Main) {
-//                    if (user!= null) {
-//                        testInfo.text = user.toString()
-//                    } else {
-//                        Toast.makeText(context, "등록된 사용자가 없습니다", Toast.LENGTH_SHORT).show()
-//                    }
-//                }
+                val id = AuthRepositoryImpl(FirebaseAuth.getInstance()).signIn("zxcasd@wdsad.com", "tlarbtkd")
+                val user = UserRepositoryImpl(FirebaseAuth.getInstance(), FirebaseFirestore.getInstance()).getUserDetails(
+                    id.getOrNull()?.uid ?: ""
+                ).getOrNull()
+                withContext(Dispatchers.Main) {
+                    if (user!= null) {
+                        testInfo.text = user.toString()
+                    } else {
+                        Toast.makeText(context, "등록된 사용자가 없습니다", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
 
@@ -105,7 +107,6 @@ class ChatFragment : Fragment() {
                 precautions = "Be kind to everyone.",
                 recruitInfo = "Looking for a designer",
                 recruit = RecruitInfo("Designer", 2, 1, 0),
-//                datetime = "2023-10-02T12:00:00",
                 views = 0,
                 startDate = "2023-10-02",
                 endDate = "2023-12-31"

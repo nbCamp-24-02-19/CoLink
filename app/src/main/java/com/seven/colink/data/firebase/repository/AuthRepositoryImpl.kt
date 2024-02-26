@@ -26,18 +26,14 @@ class AuthRepositoryImpl @Inject constructor(
                 }
         }
 
-    override suspend fun signIn(email: String, password: String) = kotlin.runCatching {
+    override suspend fun signIn(email: String, password: String) = runCatching {
         firebaseAuth.signInWithEmailAndPassword(email, password).await()
         FirebaseAuth.getInstance().currentUser
-    }.onFailure {
-        DataResultStatus.FAIL.apply { message = it.message ?: "Unknown error" }
     }
 
 
     override suspend fun getCurrentUser() = runCatching {
         firebaseAuth.currentUser
-    }.onFailure {
-        DataResultStatus.FAIL.apply { message = it.message ?: "Unknown error" }
     }
 
     override suspend fun signOut() {
