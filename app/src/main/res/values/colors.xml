@@ -27,4 +27,12 @@
     <color name="selected_bg">#CFFFF6</color>
     <color name="enable_stroke">#c8c8c8</color>
 
+    <!--post-->
+    <color name="picture_bg">#F5F5F5</color>
+    <color name="picture_small_bg">#F1F1F1</color>
+    <color name="limit_color">#EC0000</color>
+    <color name="sharp">#787878</color>
+    <color name="edit_hint_color">#B6B6B6</color>
+    <color name="tag_bg">#CEFFF6</color>
+
 </resources>
