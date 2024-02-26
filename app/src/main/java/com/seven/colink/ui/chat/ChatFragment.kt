@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+//import com.google.firebase.auth.FirebaseAuth
+//import com.google.firebase.firestore.FirebaseFirestore
 import com.seven.colink.data.firebase.repository.AuthRepositoryImpl
 import com.seven.colink.data.firebase.repository.PostRepositoryImpl
 import com.seven.colink.data.firebase.repository.UserRepositoryImpl
@@ -70,23 +72,23 @@ class ChatFragment : Fragment() {
                     skill = listOf("Kotlin", "Swift", "Flutter"),
                     blog = listOf("https://blog.example.com/post1", "https://blog.example.com/post2"),
                     info = "Experienced mobile developer",
-                    joinDate = "2022-01-01"
+//                    joinDate = "2022-01-01"
                 ))
             }
         }
 
         login.setOnClickListener {
-            lifecycleScope.launch {
-                val id = AuthRepositoryImpl(FirebaseAuth.getInstance()).signIn("zxcasd@wdsad.com", "tlarbtkd")
-                val user = UserRepositoryImpl(FirebaseAuth.getInstance(), FirebaseFirestore.getInstance()).getUserDetails(id?.uid ?: "error")
-                withContext(Dispatchers.Main) {
-                    if (user!= null) {
-                        testInfo.text = user.toString()
-                    } else {
-                        Toast.makeText(context, "등록된 사용자가 없습니다", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
+//            lifecycleScope.launch {
+//                val id = AuthRepositoryImpl(FirebaseAuth.getInstance()).signIn("zxcasd@wdsad.com", "tlarbtkd")
+//                val user = UserRepositoryImpl(FirebaseAuth.getInstance(), FirebaseFirestore.getInstance()).getUserDetails(id?.uid ?: "error")
+//                withContext(Dispatchers.Main) {
+//                    if (user!= null) {
+//                        testInfo.text = user.toString()
+//                    } else {
+//                        Toast.makeText(context, "등록된 사용자가 없습니다", Toast.LENGTH_SHORT).show()
+//                    }
+//                }
+//            }
         }
 
         logout.setOnClickListener {
@@ -107,7 +109,7 @@ class ChatFragment : Fragment() {
                 precautions = "Be kind to everyone.",
                 recruitInfo = "Looking for a designer",
                 recruit = RecruitInfo("Designer", 2, 1, 0),
-                datetime = "2023-10-02T12:00:00",
+//                datetime = "2023-10-02T12:00:00",
                 views = 0,
                 startDate = "2023-10-02",
                 endDate = "2023-12-31"
