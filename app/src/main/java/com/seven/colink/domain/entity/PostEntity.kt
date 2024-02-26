@@ -1,13 +1,16 @@
 package com.seven.colink.domain.entity
 
-import com.seven.colink.ui.search.post.model.RecruitInfo
+import android.os.Parcelable
+import com.seven.colink.ui.post.model.RecruitInfo
 import com.seven.colink.util.convert.convertLocalDateTime
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
+import kotlinx.parcelize.Parcelize
 import java.time.LocalDateTime
 import java.util.UUID
 
-data class PostEntity (
+@Parcelize
+data class PostEntity(
     val key: String = "POST_" + UUID.randomUUID().toString(),
     val authId: String? = "",
     val title: String? = "",
@@ -18,11 +21,11 @@ data class PostEntity (
     val tags: List<String>? = emptyList(),
     val precautions: String? = "",
     val recruitInfo: String? = "",
-    val recruit: RecruitInfo? = RecruitInfo("",-1,-1,-1),
+    val recruit: RecruitInfo? = RecruitInfo("", -1, -1, -1),
     val registeredDate: String? = LocalDateTime.now().convertLocalDateTime(),
     val editDate: String? = null,
     val views: Int? = -1,
     val startDate: String? = "",
     val endDate: String? = "",
     val memberIds: List<String> = emptyList(),
-)
+) : Parcelable
