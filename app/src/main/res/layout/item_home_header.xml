@@ -10,7 +10,7 @@
         android:id="@+id/tv_home_header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="그룹 추천"
+        android:text="@string/home_header"
         android:textStyle="bold"
         android:textSize="24sp"
         android:layout_marginStart="24dp"
