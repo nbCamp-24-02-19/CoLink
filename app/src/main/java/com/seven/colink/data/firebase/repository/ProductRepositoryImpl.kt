@@ -27,8 +27,6 @@ class ProductRepositoryImpl @Inject constructor(
     override suspend fun getProductDetail(key: String) = runCatching {
         firestore.collection(DataBaseType.PRODUCT.title).document(key).get().await()
             .toObject(GroupEntity::class.java)
-    }.onFailure {
-        DataResultStatus.FAIL.apply { message = it.message?: "Unknown error" }
     }
 
     override suspend fun getProductsByAuthId(authId: String) = runCatching {
@@ -36,8 +34,6 @@ class ProductRepositoryImpl @Inject constructor(
             .documents.mapNotNull {
                 it.toObject(ProductEntity::class.java)
             }
-    }.onFailure {
-        DataResultStatus.FAIL.apply { message = it.message?: "Unknown error" }
     }
 
     override suspend fun getProductsByContainUserId(userId: String) = runCatching {
@@ -45,8 +41,6 @@ class ProductRepositoryImpl @Inject constructor(
             .documents.mapNotNull {
                 it.toObject(ProductEntity::class.java)
             }
-    }.onFailure {
-        DataResultStatus.FAIL.apply { message = it.message?: "Unknown error" }
     }
 
     override suspend fun deleteProduct(key: String) = suspendCoroutine { continuation ->
