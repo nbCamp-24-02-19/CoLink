@@ -135,11 +135,14 @@
                             android:fontFamily="@font/inter_medium"
                             android:hint="@string/search_edittext"
                             android:maxLines="1"
+                            android:inputType="text"
+                            android:imeOptions="actionDone"
                             android:paddingStart="12dp"
                             android:textColor="@color/typo_color"
                             android:textSize="12sp" />
 
                         <ImageView
+                            android:id="@+id/iv_search_button"
                             android:layout_width="18dp"
                             android:layout_height="18dp"
                             android:layout_gravity="end|center_vertical"
