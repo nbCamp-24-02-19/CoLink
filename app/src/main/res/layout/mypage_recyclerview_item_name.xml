@@ -101,6 +101,7 @@
         android:src="@drawable/ic_github"
         app:layout_constraintStart_toEndOf="@+id/iv_mypage_blog"
         app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/tv_mypage_item_edit"
         android:layout_width="wrap_content"

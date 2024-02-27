@@ -30,8 +30,6 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun getUserDetails(uid: String) = runCatching {
         firestore.collection(DataBaseType.USER.title).document(uid).get().await()
             .toObject(UserEntity::class.java)
-    }.onFailure {
-        DataResultStatus.FAIL.apply { message = it.message?: "Unknown error" }
     }
 
     override suspend fun deleteUser(uid: String) = suspendCoroutine { continuation ->
