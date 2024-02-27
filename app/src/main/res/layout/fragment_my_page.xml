@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.mypage.MyPageFragment">
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
@@ -50,6 +51,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/re_mypage"
         android:layout_width="match_parent"
@@ -70,6 +72,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/re_mypage" />
 
-    
 
 </androidx.constraintlayout.widget.ConstraintLayout>
