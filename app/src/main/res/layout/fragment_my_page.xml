@@ -54,6 +54,7 @@
         android:id="@+id/re_mypage"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="@color/mypage_bg_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />

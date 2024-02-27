@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--sign in-->
+    <string name="sign_in_id">아이디</string>
+    <string name="sign_in_password">비밀번호</string>
+    <string name="sign_in_login">로그인</string>
+    <string name="sign_in_register">회원가입</string>
+
+    <!--sign up-->
+    <string name="sign_up_input_name">이름을\n입력해주세요</string>
+    <string name="sign_up_name">이름</string>
+    <string name="sign_up_next">다음</string>
+    <string name="sign_up_choose_major">나의 전문 분야를 선택해주세요</string>
+    <string name="sign_up_email">이메일</string>
+    <string name="sign_up_password">비밀번호</string>
+    <string name="sign_up_password_check">비밀번호 확인</string>
+</resources>

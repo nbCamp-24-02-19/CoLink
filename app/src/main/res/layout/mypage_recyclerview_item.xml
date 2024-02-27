@@ -3,7 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@drawable/mypage_shape"
+    android:layout_marginTop="8dp"
+    android:layout_marginStart="25dp"
+    android:layout_marginEnd="25dp">
 
     <TextView
         android:id="@+id/tv_mypage_text"
