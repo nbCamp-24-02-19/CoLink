@@ -15,9 +15,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="11dp"
         android:layout_marginStart="14dp"
-        android:text="자기소개"
+        android:text="보유 스킬"
         android:textColor="@color/black"
-        android:textSize="14sp"
+        android:textSize="15sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -30,6 +30,10 @@
         android:layout_marginTop="13dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_mypage_text"/>
+        app:layout_constraintTop_toBottomOf="@+id/tv_mypage_text"
+        tools:listitem="@layout/mypage_recyclerview_item_skilitem"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="4"
+        tools:itemCount="4"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
