@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.post.PostActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="56dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp">
+
+            <ImageView
+                android:id="@+id/iv_background"
+                android:layout_width="match_parent"
+                android:layout_height="167dp"
+                android:layout_marginTop="56dp"
+                android:background="@color/picture_bg"
+                android:scaleType="centerCrop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:layout_width="46dp"
+                android:layout_height="42dp"
+                android:src="@drawable/ic_camera_24dp"
+                app:layout_constraintBottom_toBottomOf="@id/iv_background"
+                app:layout_constraintEnd_toEndOf="@id/iv_background"
+                app:layout_constraintStart_toStartOf="@id/iv_background"
+                app:layout_constraintTop_toTopOf="@id/iv_background" />
+
+            <ImageView
+                android:layout_width="92dp"
+                android:layout_height="92dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="177dp"
+                android:background="@color/picture_small_bg"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_camera_24dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/bt_project"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="278dp"
+                android:background="@drawable/bg_post_group_project_selector"
+                android:gravity="center"
+                android:text="@string/bt_project"
+                android:textColor="@color/main_color"
+                app:layout_constraintEnd_toStartOf="@id/bt_study"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/bt_study"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_marginTop="278dp"
+                android:layout_marginEnd="24dp"
+                android:background="@drawable/bg_post_group_study_selector"
+                android:gravity="center"
+                android:text="@string/bt_study"
+                android:textColor="@color/main_color"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/bt_project"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/et_title"
+                style="@style/PostEditTextStyle"
+                android:layout_height="wrap_content"
+                android:hint="@string/input_title"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/bt_project" />
+
+            <View
+                android:id="@+id/view_edit_line"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="17dp"
+                android:layout_marginEnd="24dp"
+                android:background="@color/picture_bg"
+                app:layout_constraintTop_toBottomOf="@id/et_title" />
+
+            <EditText
+                android:id="@+id/et_content"
+                style="@style/PostEditTextStyle"
+                android:layout_height="0dp"
+                android:gravity="top"
+                android:hint="@string/input_content_project"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toTopOf="@id/recycler_view_tags"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/view_edit_line" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_tags"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="550dp"
+                android:layout_marginEnd="24dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:listitem="@layout/item_list_post_tag" />
+
+            <TextView
+                android:id="@+id/tv_sharp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="34dp"
+                android:layout_marginTop="26dp"
+                android:text="@string/sharp"
+                android:textColor="@color/sharp"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/recycler_view_tags" />
+
+            <EditText
+                android:id="@+id/et_register_tag"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:hint="@string/input_tag"
+                android:textColorHint="@color/edit_hint_color"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@id/tv_sharp"
+                app:layout_constraintStart_toEndOf="@id/tv_sharp"
+                app:layout_constraintTop_toTopOf="@id/tv_sharp" />
+
+            <View
+                android:id="@+id/view_horizon_line"
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:layout_marginTop="4dp"
+                android:background="@color/picture_bg"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/et_register_tag" />
+
+            <TextView
+                android:id="@+id/tv_people_recruited"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="24dp"
+                android:text="@string/people_recruited"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/view_horizon_line" />
+
+            <TextView
+                android:id="@+id/tv_limited_people"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="@string/limited_people"
+                android:textColor="@color/limit_color"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@id/tv_people_recruited"
+                app:layout_constraintStart_toEndOf="@id/tv_people_recruited"
+                app:layout_constraintTop_toTopOf="@id/tv_people_recruited" />
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_recruit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@id/tv_limited_people"
+                tools:listitem="@layout/item_list_recruitment" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/bg_button_main_color"
+                android:text="@string/bt_complete"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/recycler_view_recruit" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

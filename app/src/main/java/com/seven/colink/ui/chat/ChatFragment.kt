@@ -9,13 +9,15 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+//import com.google.firebase.auth.FirebaseAuth
+//import com.google.firebase.firestore.FirebaseFirestore
 import com.seven.colink.data.firebase.repository.AuthRepositoryImpl
 import com.seven.colink.data.firebase.repository.PostRepositoryImpl
 import com.seven.colink.data.firebase.repository.UserRepositoryImpl
 import com.seven.colink.databinding.FragmentChatBinding
 import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.entity.UserEntity
-import com.seven.colink.ui.search.post.model.RecruitInfo
+import com.seven.colink.ui.post.model.RecruitInfo
 import com.seven.colink.util.status.GroupType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -78,14 +80,16 @@ class ChatFragment : Fragment() {
         login.setOnClickListener {
             lifecycleScope.launch {
                 val id = AuthRepositoryImpl(FirebaseAuth.getInstance()).signIn("zxcasd@wdsad.com", "tlarbtkd")
-//                val user = UserRepositoryImpl(FirebaseAuth.getInstance(), FirebaseFirestore.getInstance()).getUserDetails(id?.uid ?: "error")
-//                withContext(Dispatchers.Main) {
-//                    if (user!= null) {
-//                        testInfo.text = user.toString()
-//                    } else {
-//                        Toast.makeText(context, "등록된 사용자가 없습니다", Toast.LENGTH_SHORT).show()
-//                    }
-//                }
+                val user = UserRepositoryImpl(FirebaseAuth.getInstance(), FirebaseFirestore.getInstance()).getUserDetails(
+                    id.getOrNull()?.uid ?: ""
+                ).getOrNull()
+                withContext(Dispatchers.Main) {
+                    if (user!= null) {
+                        testInfo.text = user.toString()
+                    } else {
+                        Toast.makeText(context, "등록된 사용자가 없습니다", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
 
