@@ -1,5 +1,7 @@
 package com.seven.colink.domain.repository
 
+import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.QuerySnapshot
 import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.util.status.DataResultStatus
 
@@ -9,4 +11,5 @@ interface PostRepository {
     suspend fun getPostByAuthId(authId: String): Result<List<PostEntity>>
     suspend fun getPostByContainUserId(userId: String): Result<List<PostEntity>>
     suspend fun deletePost(key: String): DataResultStatus
+    suspend fun searchQuery(query: String): Result<List<PostEntity>>
 }
