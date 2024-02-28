@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/img_temporary"
+        android:scaleType="fitXY"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
@@ -18,7 +19,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/frame_coner_radius_5dp"
-        android:clipToOutline="true"
         android:src="@drawable/bg_gradient_left"
         app:layout_constraintBottom_toBottomOf="@id/iv_top"
         app:layout_constraintEnd_toEndOf="@id/iv_top"
@@ -32,10 +32,10 @@
         android:text="@string/home_top_example_team"
         android:textColor="@color/white"
         android:textSize="12sp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="180dp"
-        app:layout_constraintBottom_toBottomOf="@id/iv_top"
-        app:layout_constraintTop_toTopOf="@id/iv_top"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="120dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
     <TextView
@@ -59,7 +59,7 @@
         android:textSize="14sp"
         android:textStyle="bold"
         android:layout_marginBottom="3dp"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="70dp"
         android:ellipsize="end"
         android:maxLines="1"
         app:layout_constraintBottom_toTopOf="@id/tv_top_date"
