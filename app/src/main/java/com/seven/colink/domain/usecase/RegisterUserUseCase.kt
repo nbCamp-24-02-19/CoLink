@@ -10,11 +10,12 @@ class RegisterUserUseCase @Inject constructor(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
 ) {
-    suspend operator fun invoke(user: UserEntity): DataResultStatus {
-        var result = authRepository.register(user.email, user.password)
-        if (result == DataResultStatus.SUCCESS) {
-            result = userRepository.registerUser(user)
-        }
-        return result
-    }
+    suspend operator fun invoke(user: UserEntity): DataResultStatus =
+        if (user.email != null && user.password != null) {
+            var result = authRepository.register(user.email, user.password)
+            if (result == DataResultStatus.SUCCESS) {
+                result = userRepository.registerUser(user)
+            }
+            result
+        } else DataResultStatus.FAIL.apply { message = "email or password is null" }
 }

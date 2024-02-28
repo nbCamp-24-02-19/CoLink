@@ -13,6 +13,5 @@ class ImageRepositoryImpl @Inject constructor(
     override suspend fun uploadImage(imageUri: Uri) = runCatching {
         firebaseStorage.reference.child("img/${UUID.randomUUID()}.jpg").putFile(imageUri)
             .await().storage.downloadUrl.await()
-
     }
 }

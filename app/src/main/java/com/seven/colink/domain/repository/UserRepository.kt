@@ -7,4 +7,5 @@ interface UserRepository {
     suspend fun registerUser(user: UserEntity): DataResultStatus
     suspend fun getUserDetails(uid: String): Result<UserEntity?>
     suspend fun deleteUser(uid: String): DataResultStatus
+    suspend fun checkUserEmail(email: String): Boolean
 }
