@@ -17,6 +17,7 @@ import com.seven.colink.databinding.FragmentChatBinding
 import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.domain.entity.RecruitInfo
+import com.seven.colink.ui.sign.signin.SignInActivity
 import com.seven.colink.util.status.GroupType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -56,7 +57,7 @@ class ChatFragment : Fragment() {
 
         signup.setOnClickListener {
             lifecycleScope.launch {
-                startActivity(Intent(requireActivity(),SignInActivity::class.java))
+                startActivity(Intent(requireActivity(), SignInActivity::class.java))
             }
         }
 

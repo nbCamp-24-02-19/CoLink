@@ -22,7 +22,9 @@ class UserRepositoryImpl @Inject constructor(
                     continuation.resume(DataResultStatus.SUCCESS)
                 }
                 .addOnFailureListener { e ->
-                    continuation.resume(DataResultStatus.FAIL.apply { this.message = e.message?: "Unknown Error" })
+                    continuation.resume(DataResultStatus.FAIL.apply {
+                        this.message = e.message ?: "Unknown Error"
+                    })
                 }
         }
     }
@@ -38,7 +40,20 @@ class UserRepositoryImpl @Inject constructor(
                 continuation.resume(DataResultStatus.SUCCESS)
             }
             .addOnFailureListener {
-                continuation.resume(DataResultStatus.FAIL.apply { message = it.message?: "Unknown error" })
+                continuation.resume(DataResultStatus.FAIL.apply {
+                    message = it.message ?: "Unknown error"
+                })
             }
+    }
+
+    override suspend fun checkUserEmail(email: String) = try {
+        val querySnapshot = firestore.collection("users")
+            .whereEqualTo("email", email)
+            .get()
+            .await()
+
+        querySnapshot.documents.isNotEmpty()
+    } catch (e: Exception) {
+        false
     }
 }
