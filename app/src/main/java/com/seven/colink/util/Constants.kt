@@ -9,5 +9,10 @@ class Constants {
         const val EXTRA_GROUP_TYPE = "extra_group_type"
 
         const val LIMITED_PEOPLE = 9
+        const val LIMITED_TAG_COUNT = 5
+
+        // permission
+        const val MEDIA_PERMISSION = android.Manifest.permission.READ_EXTERNAL_STORAGE
+        const val IMAGE_PERMISSION = android.Manifest.permission.READ_MEDIA_IMAGES
     }
 }

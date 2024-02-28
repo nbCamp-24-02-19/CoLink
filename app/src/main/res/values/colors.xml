@@ -15,6 +15,7 @@
     <color name="third_color">#98B0A9</color>
     <color name="forth_color">#2DB7FF</color>
     <color name="typo_color">#717171</color>
+    <color name="mypage_bg_color">#F3FDFC</color>
     <color name="hint_color">#808080</color>
 
     <!--Level Dialog-->

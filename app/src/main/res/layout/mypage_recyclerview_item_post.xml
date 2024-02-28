@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/mypage_shape"
+    android:layout_marginTop="8dp"
+    android:layout_marginEnd="22dp"
+    android:layout_marginStart="22dp"
+    android:layout_marginBottom="24dp"
+    android:padding="14dp">
+
+    <TextView
+        android:id="@+id/mypage_re_item_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
+        android:text="등록글"
+        android:textColor="@color/main_color"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/tv_mypage_post_item_ing_text"
+        android:layout_width="64dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginStart="14dp"
+        android:background="@drawable/mypage_shape"
+        android:backgroundTint="@color/forth_color"
+        android:gravity="center"
+        android:text="참여중"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mypage_re_item_text" />
+
+    <TextView
+        android:id="@+id/tv_mypage_post_item_project_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="9dp"
+        android:text=" ㅁㅁ 프로젝트"
+        android:textSize="12sp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_mypage_post_item_ing_text"
+        app:layout_constraintStart_toEndOf="@+id/tv_mypage_post_item_ing_text"
+        app:layout_constraintTop_toTopOf="@+id/tv_mypage_post_item_ing_text" />
+
+    <TextView
+        android:id="@+id/tv_mypage_post_item_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="14dp"
+        android:text="현재"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_mypage_post_item_project_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_mypage_post_item_project_name" />
+
+
+
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_marginTop="23dp"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/mypage_re_item_text"-->
+<!--        tools:listitem="@layout/mypage_recyclerview_post_item"-->
+<!--        tools:itemCount="4"/>-->
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
