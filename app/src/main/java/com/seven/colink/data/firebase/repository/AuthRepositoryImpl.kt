@@ -1,6 +1,7 @@
 package com.seven.colink.data.firebase.repository
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthException
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.util.status.DataResultStatus
 import kotlinx.coroutines.tasks.await
@@ -20,20 +21,47 @@ class AuthRepositoryImpl @Inject constructor(
                     }
                 }
                 .addOnFailureListener { e ->
+                    if (e is FirebaseAuthException) {
+                        val errorCode = e.errorCode
+                        continuation.resume(DataResultStatus.FAIL.apply {
+                            this.message = errorCode
+                        })
+                    } else {
+                        continuation.resume(DataResultStatus.FAIL.apply {
+                            this.message = e.message ?: "Unknown error"
+                        })
+                    }
+                }
+        }
+
+    override suspend fun signIn(email: String, password: String) = suspendCoroutine { continuation ->
+        firebaseAuth.signInWithEmailAndPassword(email, password)
+            .addOnSuccessListener {
+                continuation.resume(DataResultStatus.SUCCESS)
+            }
+            .addOnFailureListener { e ->
+                if (e is FirebaseAuthException) {
+                    val errorCode = e.errorCode
+                    continuation.resume(DataResultStatus.FAIL.apply {
+                        this.message = errorCode
+                    })
+                } else {
                     continuation.resume(DataResultStatus.FAIL.apply {
                         this.message = e.message ?: "Unknown error"
                     })
                 }
-        }
-
-    override suspend fun signIn(email: String, password: String) = runCatching {
-        firebaseAuth.signInWithEmailAndPassword(email, password).await()
-        FirebaseAuth.getInstance().currentUser
+            }
     }
 
 
-    override suspend fun getCurrentUser() = runCatching {
-        firebaseAuth.currentUser
+    override suspend fun getCurrentUser(): DataResultStatus {
+        return if (firebaseAuth.currentUser != null) {
+            DataResultStatus.SUCCESS
+        } else {
+            DataResultStatus.FAIL.apply {
+                this.message = "No user"
+            }
+        }
     }
 
     override suspend fun signOut() {
@@ -45,10 +73,17 @@ class AuthRepositoryImpl @Inject constructor(
             ?.addOnSuccessListener {
                 continuation.resume(DataResultStatus.SUCCESS)
             }
-            ?.addOnFailureListener {
-                continuation.resume(DataResultStatus.FAIL.apply {
-                    message = it.message ?: "Unknown error"
-                })
+            ?.addOnFailureListener { e ->
+                if (e is FirebaseAuthException) {
+                    val errorCode = e.errorCode
+                    continuation.resume(DataResultStatus.FAIL.apply {
+                        this.message = errorCode
+                    })
+                } else {
+                    continuation.resume(DataResultStatus.FAIL.apply {
+                        this.message = e.message ?: "Unknown error"
+                    })
+                }
             }
     }
 }

@@ -1,6 +1,7 @@
 package com.seven.colink.data.firebase.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.toObject
 import com.seven.colink.data.firebase.type.DataBaseType
 import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.repository.PostRepository
@@ -40,7 +41,7 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getPostByContainUserId(userId: String) = runCatching {
-        firebaseFirestore.collection(DataBaseType.POST.title).whereArrayContains("userId", userId)
+        firebaseFirestore.collection(DataBaseType.POST.title).whereArrayContains("memberIds", userId)
             .get().await()
             .documents.mapNotNull {
                 it.toObject(PostEntity::class.java)
@@ -56,6 +57,16 @@ class PostRepositoryImpl @Inject constructor(
                 continuation.resume(DataResultStatus.FAIL.apply {
                     message = e.message ?: "Unknown error"
                 })
+            }
+    }
+
+    override suspend fun searchQuery(query: String) = runCatching {
+        firebaseFirestore.collection(DataBaseType.POST.title)
+            .orderBy("title")
+            .startAt(query)
+            .endAt(query + "\uf8ff")
+            .get().await().documents.mapNotNull {
+                it.toObject(PostEntity::class.java)
             }
     }
 }

@@ -174,7 +174,7 @@
         android:backgroundTint="@color/main_color"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_edit"
-        android:visibility="invisible"
+        android:visibility="visible"
         app:fabCustomSize="48dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

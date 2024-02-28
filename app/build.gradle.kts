@@ -91,4 +91,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     //mock
     testImplementation("org.mockito:mockito-core:5.3.0")
+
+    //material library
+    implementation ("com.google.android.material:material:1.11.0")
 }
