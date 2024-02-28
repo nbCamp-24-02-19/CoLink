@@ -87,7 +87,6 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
                     pager.setCurrentItem(current+1,false)
                 }
             }
-
         }
     }
 
