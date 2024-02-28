@@ -1,6 +1,7 @@
 package com.seven.colink.data.firebase.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.toObject
 import com.seven.colink.data.firebase.type.DataBaseType
 import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.repository.PostRepository
@@ -56,6 +57,15 @@ class PostRepositoryImpl @Inject constructor(
                 continuation.resume(DataResultStatus.FAIL.apply {
                     message = e.message ?: "Unknown error"
                 })
+            }
+    }
+
+    override suspend fun searchQuery(query: String) = runCatching {
+        firebaseFirestore.collection(DataBaseType.POST.title)
+            .whereGreaterThanOrEqualTo("title", query)
+            .whereLessThanOrEqualTo("title", query + '\uf8ff')
+            .get().await().documents.mapNotNull {
+                it.toObject(PostEntity::class.java)
             }
     }
 }
