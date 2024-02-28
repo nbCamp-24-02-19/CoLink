@@ -4,9 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentHomeBinding
 import com.seven.colink.util.dialog.setDialog
@@ -15,28 +14,41 @@ import com.seven.colink.util.dialog.setLevelDialog
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
+    private val mainAdapter by lazy { HomeMainAdapter() }
+    private lateinit var bottomAdapter : BottomViewPagerAdapter
+    private val topAdapter by lazy { TopViewPagerAdapter() }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
-
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-        val textView: TextView = binding.textHome
-        homeViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
-        return root
+        bottomAdapter = BottomViewPagerAdapter(this)
+        binding.vpHome.adapter = bottomAdapter
+        return binding.root
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        initViews()
+    }
+
+    private fun initViews() {
+        val homeItem : MutableList<HomeAdapterItems> = mutableListOf(
+            HomeAdapterItems.TopView(topAdapter),
+            HomeAdapterItems.Header("그룹 추천")
+        )
+
+        with(binding.rvHome) {
+            adapter = mainAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+        }
+        mainAdapter.submitList(homeItem)
+    }
+
 
     override fun onResume() {
         super.onResume()

@@ -6,5 +6,7 @@
     <string name="title_chat">채팅</string>
     <string name="title_my_info">내정보</string>
     <string name="util_dialog_confirm">확인</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="sign_up_skill">보유 스킬을 선택해주세요</string>
 </resources>

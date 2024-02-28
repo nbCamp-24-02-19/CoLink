@@ -25,9 +25,7 @@
     <style name="PostEditTextStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:background">@android:color/transparent</item>
-        <item name="android:layout_marginStart">24dp</item>
         <item name="android:layout_marginTop">17dp</item>
-        <item name="android:layout_marginEnd">24dp</item>
         <item name="android:textColorHint">@color/edit_hint_color</item>
     </style>
 

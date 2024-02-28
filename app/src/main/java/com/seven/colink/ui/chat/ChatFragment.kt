@@ -94,12 +94,7 @@ class ChatFragment : Fragment() {
                 tags = listOf("sample", "firstPost"),
                 precautions = "Be kind to everyone.",
                 recruitInfo = "Looking for a designer",
-                recruit = RecruitInfo(
-                    type = "Designer",
-                    level = 2,
-                    maxPersonnel = 1,
-                    nowPersonnel = 0
-                ),
+                recruit = emptyList(),
 //                datetime = "2023-10-02T12:00:00",
                 views = 0,
                 startDate = "2023-10-02",
