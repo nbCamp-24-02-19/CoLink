@@ -84,26 +84,12 @@ class ChatFragment : Fragment() {
         }
 
         makegle.setOnClickListener {
-            val newPost = PostEntity(
-                key = "unique_post_key",
-                authId = "user123",
-                title = "My First Post",
-                imageUrl = "https://example.com/image.jpg",
-                groupType = GroupType.PROJECT,
-                description = "This is a sample post description.",
-                tags = listOf("sample", "firstPost"),
-                precautions = "Be kind to everyone.",
-                recruitInfo = "Looking for a designer",
-                recruit = emptyList(),
-//                datetime = "2023-10-02T12:00:00",
-                views = 0,
-                startDate = "2023-10-02",
-                endDate = "2023-12-31"
-            )
 
             lifecycleScope.launch {
-                val a = PostRepositoryImpl(FirebaseFirestore.getInstance()).registerPost(newPost)
-                Toast.makeText(context, a.message , Toast.LENGTH_SHORT).show()
+                val a = PostRepositoryImpl(FirebaseFirestore.getInstance()).searchQuery("개발")
+                testInfo.text = a.getOrNull()?.map {
+                    it.title.toString() + it.description.toString()
+                }.toString()
             }
         }
 
