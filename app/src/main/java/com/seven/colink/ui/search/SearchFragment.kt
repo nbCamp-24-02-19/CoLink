@@ -12,8 +12,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.seven.colink.databinding.FragmentSearchBinding
 import com.seven.colink.domain.entity.PostEntity
+import dagger.hilt.android.AndroidEntryPoint
 import com.seven.colink.ui.evaluation.EvaluationActivity
 
+@AndroidEntryPoint
 class SearchFragment : Fragment() {
 
     private var _binding: FragmentSearchBinding? = null
