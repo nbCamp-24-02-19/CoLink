@@ -62,8 +62,9 @@ class PostRepositoryImpl @Inject constructor(
 
     override suspend fun searchQuery(query: String) = runCatching {
         firebaseFirestore.collection(DataBaseType.POST.title)
-            .whereGreaterThanOrEqualTo("title", query)
-            .whereLessThanOrEqualTo("title", query + '\uf8ff')
+            .orderBy("title")
+            .startAt(query)
+            .endAt(query + "\uf8ff")
             .get().await().documents.mapNotNull {
                 it.toObject(PostEntity::class.java)
             }
