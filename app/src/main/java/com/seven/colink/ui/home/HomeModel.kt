@@ -1,7 +1,7 @@
 package com.seven.colink.ui.home
 
 data class TopItems (
-    val img : String,
+    val img : Int,
     val team : String,
     val date : String,
     val title : String
@@ -13,14 +13,11 @@ data class BottomItems (
     val des : String,
     val kind : String,
     val lv : String,
-    val img : String,
-    val blind : Boolean = false,
-    val complete : Boolean = false
+    val img : Int,
+    val blind : Boolean,
+    val complete : Boolean
 )
 
-data class BottomView(
-    var adapter : BottomViewPagerAdapter
-)
 sealed class HomeAdapterItems {
     data class TopView(
         var adapter : TopViewPagerAdapter

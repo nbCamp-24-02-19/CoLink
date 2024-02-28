@@ -6,7 +6,6 @@ import com.seven.colink.ui.home.child.HomeProjectFragment
 import com.seven.colink.ui.home.child.HomeStudyFragment
 
 class BottomViewPagerAdapter (frag : Fragment) : FragmentStateAdapter(frag) {
-//    private lateinit var bottomViewPagerAdapter: BottomViewPagerAdapter
     private val frags = listOf<Fragment>(HomeProjectFragment(),HomeStudyFragment())
 
     override fun getItemCount(): Int {
