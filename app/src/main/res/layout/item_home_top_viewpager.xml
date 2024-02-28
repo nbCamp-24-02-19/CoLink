@@ -71,7 +71,7 @@
             android:id="@+id/tv_home_top_sum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="10"
+            android:text="0"
             android:textColor="@color/white"
             android:textSize="10sp"
             android:layout_marginStart="2dp"
