@@ -1,5 +1,6 @@
 package com.seven.colink.ui.search
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.seven.colink.databinding.FragmentSearchBinding
 import com.seven.colink.domain.entity.PostEntity
+import com.seven.colink.ui.evaluation.EvaluationActivity
 
 class SearchFragment : Fragment() {
 
@@ -37,6 +39,11 @@ class SearchFragment : Fragment() {
 //        searchViewModel.text.observe(viewLifecycleOwner) {
 //            textView.text = it
 //        }
+        // (다면평가 확인용) 팹버튼 클릭 시 다면평가로 가게 해둠
+        binding.fbSearchPost.setOnClickListener {
+            val intent = Intent(requireContext(),EvaluationActivity::class.java)
+            startActivity(intent)
+        }
         initRecyclerView()
 
         return root
