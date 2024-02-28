@@ -20,12 +20,7 @@ data class PostEntity(
     val tags: List<String>? = emptyList(),
     val precautions: String? = "",
     val recruitInfo: String? = "",
-    val recruit: RecruitInfo? = RecruitInfo(
-        type = "",
-        level = -1,
-        maxPersonnel = -1,
-        nowPersonnel = -1
-    ),
+    val recruit: List<RecruitInfo>? = emptyList(),
     val registeredDate: String? = LocalDateTime.now().convertLocalDateTime(),
     val editDate: String? = null,
     val views: Int? = -1,
