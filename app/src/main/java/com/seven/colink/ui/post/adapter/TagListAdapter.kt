@@ -1,49 +1,108 @@
 package com.seven.colink.ui.post.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.seven.colink.databinding.ItemListPostContentTagBinding
 import com.seven.colink.databinding.ItemListPostTagBinding
-import com.seven.colink.domain.entity.TagEntity
+import com.seven.colink.databinding.ItemUnknownBinding
+import com.seven.colink.ui.post.TagListItem
+import com.seven.colink.ui.post.TagListViewType
 
 class TagListAdapter(
-    private val onClickItem: (Int, TagEntity) -> Unit
-) : ListAdapter<TagEntity, TagListAdapter.ViewHolder>(
-    object : DiffUtil.ItemCallback<TagEntity>() {
+    private val onClickItem: (Int, TagListItem) -> Unit
+) : ListAdapter<TagListItem, TagListAdapter.TagViewHolder>(
+    object : DiffUtil.ItemCallback<TagListItem>() {
 
-        override fun areItemsTheSame(oldItem: TagEntity, newItem: TagEntity): Boolean =
-            oldItem.key == newItem.key
+        override fun areItemsTheSame(oldItem: TagListItem, newItem: TagListItem): Boolean =
+            when {
+                oldItem is TagListItem.Item && newItem is TagListItem.Item -> {
+                    oldItem.tagEntity?.key == newItem.tagEntity?.key
+                }
+
+                oldItem is TagListItem.ContentItem && newItem is TagListItem.ContentItem -> {
+                    oldItem.tagName == newItem.tagName
+                }
+
+                else -> oldItem == newItem
+
+            }
 
         override fun areContentsTheSame(
-            oldItem: TagEntity,
-            newItem: TagEntity
+            oldItem: TagListItem,
+            newItem: TagListItem
         ): Boolean = oldItem == newItem
 
     }
+
 ) {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding =
-            ItemListPostTagBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ViewHolder(binding, onClickItem)
+
+    abstract class TagViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        abstract fun onBind(item: TagListItem)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position))
+    override fun getItemViewType(position: Int): Int = when (getItem(position)) {
+        is TagListItem.Item -> TagListViewType.LIST_ITEM
+        is TagListItem.ContentItem -> TagListViewType.CONTENT_ITEM
+        else -> TagListViewType.UNKNOWN
+    }.ordinal
+
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TagViewHolder =
+        when (TagListViewType.from(viewType)) {
+            TagListViewType.LIST_ITEM -> TagListItemViewHolder(
+                ItemListPostTagBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                onClickItem
+            )
+
+            TagListViewType.CONTENT_ITEM -> TagContentItemViewHolder(
+                ItemListPostContentTagBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+            )
+
+            else -> TagUnknownViewHolder(
+                ItemUnknownBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            )
+        }
+
+    override fun onBindViewHolder(holder: TagViewHolder, position: Int) {
+        holder.onBind(getItem(position))
     }
 
-    class ViewHolder(
+    class TagListItemViewHolder(
         private val binding: ItemListPostTagBinding,
-        private val onClickItem: (Int, TagEntity) -> Unit,
-    ) :
-        RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: TagEntity) = with(binding) {
-            tvTagName.text = item.name
-            ivTagDelete.setOnClickListener {
-                onClickItem(adapterPosition, item)
+        private val onClickItem: (Int, TagListItem) -> Unit
+    ) : TagViewHolder(binding.root) {
+        override fun onBind(item: TagListItem) {
+            if (item is TagListItem.Item) {
+                binding.tvTagName.text = item.tagEntity?.name
+                binding.ivTagDelete.setOnClickListener {
+                    onClickItem(adapterPosition, item)
+                }
             }
         }
     }
+
+    class TagContentItemViewHolder(
+        private val binding: ItemListPostContentTagBinding,
+    ) : TagViewHolder(binding.root) {
+        override fun onBind(item: TagListItem) {
+            if (item is TagListItem.ContentItem) {
+                binding.tvTagName.text = item.tagName
+            }
+        }
+    }
+
+    class TagUnknownViewHolder(binding: ItemUnknownBinding) :
+        TagViewHolder(binding.root) {
+        override fun onBind(item: TagListItem) = Unit
+    }
+
 
 }
