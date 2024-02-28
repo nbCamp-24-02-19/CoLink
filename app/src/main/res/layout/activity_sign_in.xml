@@ -27,38 +27,42 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <EditText
-        android:id="@+id/et_sign_in_id"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_sign_in_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="44dp"
-        android:hint="@string/sign_in_id"
+        android:hint="@string/sign_up_email"
         android:textColorHint="@color/hint_color"
         app:layout_constraintTop_toBottomOf="@+id/iv_sign_in_logo"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <EditText
-        android:id="@+id/et_sign_in_password"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_sign_in_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_sign_in_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPassword"
         android:hint="@string/sign_in_password"
         android:textColorHint="@color/hint_color"
-        app:layout_constraintTop_toBottomOf="@+id/et_sign_in_id"
+        app:passwordToggleEnabled="true"
+        app:layout_constraintTop_toBottomOf="@+id/til_sign_in_id"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <ImageView
-        android:id="@+id/iv_sign_in_visible"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@drawable/ic_visibility"
-        android:layout_marginHorizontal="4dp"
-        app:layout_constraintTop_toTopOf="@id/et_sign_in_password"
-        app:layout_constraintEnd_toEndOf="@id/et_sign_in_password"
-        app:layout_constraintBottom_toBottomOf="@id/et_sign_in_password"
-        app:tint="@color/enable_stroke" />
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_sign_in_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/bt_sign_in_login"
@@ -72,7 +76,7 @@
         android:background="@drawable/bg_round_corner_8dp"
         android:clipToOutline="true"
         android:backgroundTint="@color/main_color"
-        app:layout_constraintTop_toBottomOf="@+id/et_sign_in_password"
+        app:layout_constraintTop_toBottomOf="@+id/til_sign_in_password"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:targetApi="s" />

@@ -63,17 +63,8 @@ class ChatFragment : Fragment() {
 
         login.setOnClickListener {
             lifecycleScope.launch {
-                val id = AuthRepositoryImpl(FirebaseAuth.getInstance()).signIn("zxcasd@wdsad.com", "tlarbtkd")
-                val user = UserRepositoryImpl(FirebaseAuth.getInstance(), FirebaseFirestore.getInstance()).getUserDetails(
-                    id.getOrNull()?.uid ?: ""
-                ).getOrNull()
-                withContext(Dispatchers.Main) {
-                    if (user!= null) {
-                        testInfo.text = user.toString()
-                    } else {
-                        Toast.makeText(context, "등록된 사용자가 없습니다", Toast.LENGTH_SHORT).show()
-                    }
-                }
+                val a = AuthRepositoryImpl(FirebaseAuth.getInstance()).getCurrentUser()
+                Toast.makeText(requireActivity(), a.toString(), Toast.LENGTH_SHORT).show()
             }
         }
 
