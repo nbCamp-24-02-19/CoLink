@@ -6,12 +6,37 @@
     android:layout_height="match_parent"
     tools:context=".ui.post.PostActivity">
 
-    <ScrollView
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/al_main_appbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_appbar"
+        android:elevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/iv_finish"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_arrow_left" />
+
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/al_main_appbar">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -21,7 +46,6 @@
                 android:id="@+id/iv_image_background"
                 android:layout_width="match_parent"
                 android:layout_height="167dp"
-                android:layout_marginTop="56dp"
                 android:background="@drawable/bg_post_image_background"
                 android:scaleType="centerCrop"
                 app:layout_constraintEnd_toEndOf="parent"
