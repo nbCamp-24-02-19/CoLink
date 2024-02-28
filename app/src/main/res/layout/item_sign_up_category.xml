@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    android:layout_marginBottom="40dp"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_bold"
+            android:text="@string/sign_up_choose_major"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_bold"
+            android:text=" *"
+            android:textColor="@color/red"
+            android:textSize="18sp" />
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:fontFamily="@font/inter_regular"
+        android:text="@string/sign_up_choose_major_sub"
+        android:textColor="@color/black"
+        android:textSize="14sp" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp">
+
+        <TextView
+            android:id="@+id/tv_dae_bun"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_up_main_category"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/bt_sign_up_main_category_btn"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            app:layout_constraintWidth_percent="0.48"
+            android:paddingStart="8dp"
+            android:text="기획"
+            android:textAlignment="textStart"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:background="@drawable/bg_round_corner_4dp_stroke_enable"
+            android:clipToOutline="true"
+            app:layout_constraintTop_toBottomOf="@id/tv_dae_bun"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:targetApi="s" />
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="13dp"
+            android:src="@drawable/ic_spinner_arrow"
+            android:layout_marginEnd="8dp"
+            android:elevation="2dp"
+            app:layout_constraintEnd_toEndOf="@+id/bt_sign_up_main_category_btn"
+            app:layout_constraintTop_toTopOf="@+id/bt_sign_up_main_category_btn"
+            app:layout_constraintBottom_toBottomOf="@+id/bt_sign_up_main_category_btn"/>
+
+        <TextView
+            android:id="@+id/tv_so_bun"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_up_sub_category"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/bt_sign_up_sub_category_btn"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/bt_sign_up_sub_category_btn"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            app:layout_constraintWidth_percent="0.48"
+            android:paddingStart="8dp"
+            android:text="기획"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:textAlignment="textStart"
+            android:background="@drawable/bg_round_corner_4dp_stroke_enable"
+            android:clipToOutline="true"
+            app:layout_constraintTop_toBottomOf="@id/tv_dae_bun"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:targetApi="s" />
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="13dp"
+            android:src="@drawable/ic_spinner_arrow"
+            android:layout_marginEnd="8dp"
+            android:elevation="2dp"
+            app:layout_constraintEnd_toEndOf="@+id/bt_sign_up_sub_category_btn"
+            app:layout_constraintTop_toTopOf="@+id/bt_sign_up_sub_category_btn"
+            app:layout_constraintBottom_toBottomOf="@+id/bt_sign_up_sub_category_btn"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>

@@ -43,4 +43,9 @@ enum class LevelEnum (
         info = R.string.util_dialog_level7_info,
         num = 7
     ),
+    UNKNOWN(
+        title = R.string.unknown,
+        info = R.string.unknown,
+        num = 0
+    )
 }

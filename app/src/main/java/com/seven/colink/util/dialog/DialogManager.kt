@@ -97,7 +97,8 @@ fun List<String>.setDialog(
         .create()
 
     val adapter = DialogAdapter(
-        onClick = action
+        onClick = action,
+        dialog = dialog
     )
 
     adapter.submitList(this)
@@ -110,12 +111,12 @@ fun List<String>.setDialog(
 
 fun Context.setLevelDialog(
     nowLevel: Int = 1,
-    action: (Int) -> Unit
+    action: (LevelEnum) -> Unit,
 ):AlertDialog {
     val binding = UtilCustomLevelDialogBinding.inflate(LayoutInflater.from(this))
     val dialog = AlertDialog.Builder(this)
         .setView(binding.root)
-        .show()  // 다이얼로그 표시
+        .show()
 
     dialog.window?.setLayout(
         ViewGroup.LayoutParams.MATCH_PARENT,
@@ -125,6 +126,7 @@ fun Context.setLevelDialog(
     val adapter = LevelDialogAdapter(
         selected = nowLevel,
         onClick = action,
+        dialog = dialog
     )
 
     adapter.submitList(
