@@ -4,8 +4,10 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
     <ImageView
+        android:id="@+id/iv_mypage_skil_icon"
         android:layout_width="48dp"
         android:layout_height="48dp"
+        android:layout_marginEnd="24dp"
         android:src="@drawable/ic_kotlin"/>
 
 </LinearLayout>
