@@ -1,12 +1,17 @@
 package com.seven.colink.ui.home
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import androidx.viewpager2.widget.ViewPager2
+import com.seven.colink.R
 import com.seven.colink.databinding.ItemHomeHeaderBinding
 import com.seven.colink.databinding.ItemHomeTopViewpagerBinding
+import kotlin.math.ceil
 
 class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUtil) {
     object HomeMainDiffUtil : DiffUtil.ItemCallback<HomeAdapterItems>() {
@@ -23,6 +28,8 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
 
     private val TOP_TYPE = 0
     private val HEADER_TYPE = 1
+    private var bannerPosition = 0
+    private val topAdapter by lazy { TopViewPagerAdapter() }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -45,8 +52,7 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
         if (item is HomeAdapterItems.TopView) {
             with(holder as TopViewHolder) {
                 pager.adapter = item.adapter
-                pos.text = item.toString()
-                sum.text = currentList.size.toString()
+                sum.text = item.adapter.currentList.size.toString()
             }
         }
         if (item is HomeAdapterItems.Header) {
@@ -64,7 +70,7 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
 
     inner class TopViewHolder(binding : ItemHomeTopViewpagerBinding) : ViewHolder(binding.root) {
         val pager = binding.vpHomeTop
-        val pos = binding.tvHomeTopCurrent
+        var pos = binding.tvHomeTopCurrent
         val sum = binding.tvHomeTopSum
         private val left = binding.btnHomeBack
         private val right = binding.btnHomeFront
@@ -87,6 +93,18 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
                     pager.setCurrentItem(current+1,false)
                 }
             }
+
+            pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    pos.text = ((position % TopViewPagerAdapter().itemCount)+1).toString()
+                    Log.d("Top","#aaa position = $position")
+                    Log.d("Top","#aaa size = ${TopViewPagerAdapter().itemCount}")
+                    Log.d("Top","#aaa current = ${topAdapter.currentList.size}")
+                }
+            })
+
+            bannerPosition = Int.MAX_VALUE / 2 - ceil(currentList.size.toDouble() / 2).toInt()
+            pager.setCurrentItem(bannerPosition,false)
         }
     }
 
