@@ -1,18 +1,28 @@
 package com.seven.colink.ui.mypage
 
+import android.app.AlertDialog
+import android.content.Intent
+import android.net.Uri
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentMyPageBinding
+import com.seven.colink.ui.mypage.adapter.MyPagePostAdapter
+import com.seven.colink.ui.mypage.adapter.MyPageSkilAdapter
 
 class MyPageFragment : Fragment() {
+    val TAG: String = "로그"
 
     private lateinit var binding: FragmentMyPageBinding
+    private lateinit var skiladapter: MyPageSkilAdapter
+    private lateinit var postadapter: MyPagePostAdapter
 
     companion object {
         fun newInstance() = MyPageFragment()
@@ -20,24 +30,21 @@ class MyPageFragment : Fragment() {
 
     private lateinit var viewModel: MyPageViewModel
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentMyPageBinding.inflate(layoutInflater)
 
-        //test
-        val dataList = mutableListOf(
-            MyPageData.MyPageName(R.drawable.ic_profile,R.drawable.ic_level_1,"강아지","Android"),
-            MyPageData.MyPageAboutMe("저는 코끼리를 좋아합니다. \n붕어빵은 맛있습니다. 먹고싶다.."),
-            MyPageData.MyPagePost("참여중", "코링 프로젝트", "현재"),
-            MyPageData.MyPageTerms("이용약관"),
-            MyPageData.MyPageTerms("개인정보처리방침"),
-            MyPageData.MyPageTerms("공지사항"),
-            MyPageData.MyPageTerms("운영자 1:1 문의")
-        )
 
-        val adapater = MyPageAdapater(dataList)
-        binding.reMypage.adapter = adapater
-        binding.reMypage.layoutManager = LinearLayoutManager(context)
+        SkilRecyclerView()
+        editClick()
+        mypageBlogClick()
+        mypagegitClick()
 
+        skiladapter.plusClick = object : MyPageSkilAdapter.PlusClick{
+            override fun onClick(item: MyPageItem, position: Int) {
+
+            }
+        }
 
         return binding.root
     }
@@ -46,6 +53,58 @@ class MyPageFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(MyPageViewModel::class.java)
         // TODO: Use the ViewModel
+    }
+
+    private fun SkilRecyclerView(){
+        skiladapter = MyPageSkilAdapter(MyPageSkilItemManager.getAllItem())
+        binding.reMypageItem.adapter = skiladapter
+        binding.reMypageItem.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+    }
+
+    private fun editClick(){
+        binding.ivMypageEdit.setOnClickListener {
+            val mDialogView = LayoutInflater.from(context).inflate(R.layout.mypage_edit_dialog, null)
+            val mBuilder = AlertDialog.Builder(context)
+                .setView(mDialogView)
+
+            val mAlertDialog = mBuilder.show()
+
+            val okButton = mDialogView.findViewById<Button>(R.id.btn_mypage_ok)
+            val mypageEdit = mDialogView.findViewById<EditText>(R.id.et_mypage_edit)
+            val cancelButton = mDialogView.findViewById<Button>(R.id.btn_mypage_cancel)
+
+            okButton.setOnClickListener {
+                binding.tvMypageName.text = mypageEdit.text
+                mAlertDialog.dismiss()
+
+            }
+            cancelButton.setOnClickListener {
+                mAlertDialog.dismiss()
+            }
+
+        }
+    }
+
+    private fun editTextClick(){
+        binding.tvMypageItemEdit.setOnClickListener {
+            //회원가입때 받았던 정보입력 페이지 재활용?
+        }
+    }
+
+    private fun mypageBlogClick(){
+        binding.ivMypageBlog.setOnClickListener {
+            //test 주소
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.naver.com/"))
+            startActivity(intent)
+        }
+    }
+
+    private fun mypagegitClick(){
+        binding.ivMypageBlog.setOnClickListener {
+            //test 주소
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.naver.com/"))
+            startActivity(intent)
+        }
     }
 
 }
