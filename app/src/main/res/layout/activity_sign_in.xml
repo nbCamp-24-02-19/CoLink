@@ -78,6 +78,7 @@
         tools:targetApi="s" />
 
     <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/bt_sign_in_register"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginTop="12dp"

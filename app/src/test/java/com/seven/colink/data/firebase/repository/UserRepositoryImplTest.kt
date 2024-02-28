@@ -44,7 +44,6 @@ class UserRepositoryImplTest {
             specialty = "Mobile Development",
             grade = 4.5,
             skill = listOf("Kotlin", "Swift", "Flutter"),
-            blog = listOf("https://blog.example.com/post1", "https://blog.example.com/post2"),
             info = "Experienced mobile developer",
             registeredDate = "2022-01-01")
         val mockCollection = mock(CollectionReference::class.java)
@@ -83,7 +82,6 @@ class UserRepositoryImplTest {
             specialty = "Mobile Development",
             grade = 4.5,
             skill = listOf("Kotlin", "Swift", "Flutter"),
-            blog = listOf("https://blog.example.com/post1", "https://blog.example.com/post2"),
             info = "Experienced mobile developer",
             registeredDate = "2022-01-01"
         ))

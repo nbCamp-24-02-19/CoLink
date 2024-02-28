@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white"
     android:layout_marginBottom="40dp"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -44,33 +45,45 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rc_sign_up_skills"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" />
+        android:layout_marginVertical="12dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:orientation="horizontal"
+        tools:listitem="@layout/item_list_post_tag" />
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp">
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/bt_sign_up_sub_category_btn"
             android:layout_width="0dp"
             android:layout_height="40dp"
-            app:layout_constraintWidth_percent="0.48"
-            android:text="   기획"
-            android:textAlignment="textStart"
             android:background="@drawable/bg_round_corner_4dp_stroke_enable"
+            android:paddingStart="8dp"
             android:clipToOutline="true"
-            app:layout_constraintTop_toBottomOf="@id/tv_dae_bun"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            android:text="코틀린"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:textAlignment="textStart"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <ImageView
             android:layout_width="16dp"
             android:layout_height="13dp"
-            android:src="@drawable/ic_spinner_arrow"
             android:layout_marginEnd="8dp"
             android:elevation="2dp"
+            android:src="@drawable/ic_spinner_arrow"
+            app:layout_constraintBottom_toBottomOf="@+id/bt_sign_up_sub_category_btn"
             app:layout_constraintEnd_toEndOf="@+id/bt_sign_up_sub_category_btn"
-            app:layout_constraintTop_toTopOf="@+id/bt_sign_up_sub_category_btn"
-            app:layout_constraintBottom_toBottomOf="@+id/bt_sign_up_sub_category_btn"/>
+            app:layout_constraintTop_toTopOf="@+id/bt_sign_up_sub_category_btn" />
 
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

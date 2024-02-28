@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -17,7 +18,8 @@ import com.seven.colink.util.setLevelIcon
 
 class LevelDialogAdapter(
     private val selected: Int,
-    private val onClick: (id: Int) -> Unit,
+    private val onClick: (item: LevelEnum) -> Unit,
+    private val dialog: AlertDialog
 ) : ListAdapter<LevelEnum, LevelDialogAdapter.DialogViewHolder>(
 
     object : DiffUtil.ItemCallback<LevelEnum>() {
@@ -46,6 +48,7 @@ class LevelDialogAdapter(
             binding = ItemLevelDialogBinding.inflate(LayoutInflater.from(parent.context),parent,false),
             selected = selected,
             onClick = onClick,
+            dialog = dialog
         )
 
     override fun onBindViewHolder(holder: DialogViewHolder, position: Int) {
@@ -55,7 +58,8 @@ class LevelDialogAdapter(
     class DialogItemViewHolder(
         private val binding: ItemLevelDialogBinding,
         private val selected: Int,
-        private val onClick: (id: Int) -> Unit
+        private val onClick: (item: LevelEnum) -> Unit,
+        private val dialog: AlertDialog
     ): DialogViewHolder(binding.root) {
         override fun onBind(item: LevelEnum) = with(binding) {
             tvLevelDiaIcon.text = item.num.toString()
@@ -79,7 +83,8 @@ class LevelDialogAdapter(
 
             clLevelDia.background = drawable
             clLevelDia.setOnClickListener {
-                item.num?.let { num -> onClick(num) }
+                onClick(item)
+                dialog.dismiss()
             }
         }
 
