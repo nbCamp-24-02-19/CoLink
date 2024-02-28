@@ -43,102 +43,32 @@ class HomeStudyFragment : Fragment() {
                 ,R.drawable.img_dialog_project,true,true),
             BottomItems("Study","지금 뭘로 정하지","뭘 해야하누","AOS","초급자"
                 ,R.drawable.img_dialog_project,true,true),
+        )       //dummy data
+
+        val layout = listOf(
+            binding.layStudyBottom1,binding.layStudyBottom2,
+            binding.layStudyBottom3,binding.layStudyBottom4,
+            binding.layStudyBottom5
         )
-        with(binding){
-            layStudyBottom1.tvHomeBottomProject.visibility = View.INVISIBLE
-            layStudyBottom2.tvHomeBottomProject.visibility = View.INVISIBLE
-            layStudyBottom3.tvHomeBottomProject.visibility = View.INVISIBLE
-            layStudyBottom4.tvHomeBottomProject.visibility = View.INVISIBLE
-            layStudyBottom5.tvHomeBottomProject.visibility = View.INVISIBLE
-        }
 
-        with(binding.layStudyBottom1) {
-            val item = bottomList[0]
-            tvHomeBottomStudy.visibility = View.VISIBLE
-            tvHomeBottomStudy.text = item.typeId
-            tvHomeBottomTitle.text = item.title
-            tvHomeBottomDes.text = item.des
-            tvHomeBottomKind.text = item.kind
-            tvHomeBottomLv.text = item.lv
-            ivHomeBottomThumubnail.load(item.img)
-            if (item.blind && item.complete) {
-                viewHomeBottomBlind.visibility = View.VISIBLE
-                tvHomeBottomBlind.visibility = View.VISIBLE
-            }else {
-                viewHomeBottomBlind.visibility = View.INVISIBLE
-                tvHomeBottomBlind.visibility = View.INVISIBLE
-            }
-        }
-
-        with(binding.layStudyBottom2) {
-            val item = bottomList[1]
-            tvHomeBottomStudy.visibility = View.VISIBLE
-            tvHomeBottomStudy.text = item.typeId
-            tvHomeBottomTitle.text = item.title
-            tvHomeBottomDes.text = item.des
-            tvHomeBottomKind.text = item.kind
-            tvHomeBottomLv.text = item.lv
-            ivHomeBottomThumubnail.load(item.img)
-            if (item.blind && item.complete) {
-                viewHomeBottomBlind.visibility = View.VISIBLE
-                tvHomeBottomBlind.visibility = View.VISIBLE
-            }else {
-                viewHomeBottomBlind.visibility = View.INVISIBLE
-                tvHomeBottomBlind.visibility = View.INVISIBLE
-            }
-        }
-
-        with(binding.layStudyBottom3) {
-            val item = bottomList[2]
-            tvHomeBottomStudy.visibility = View.VISIBLE
-            tvHomeBottomStudy.text = item.typeId
-            tvHomeBottomTitle.text = item.title
-            tvHomeBottomDes.text = item.des
-            tvHomeBottomKind.text = item.kind
-            tvHomeBottomLv.text = item.lv
-            ivHomeBottomThumubnail.load(item.img)
-            if (item.blind && item.complete) {
-                viewHomeBottomBlind.visibility = View.VISIBLE
-                tvHomeBottomBlind.visibility = View.VISIBLE
-            }else {
-                viewHomeBottomBlind.visibility = View.INVISIBLE
-                tvHomeBottomBlind.visibility = View.INVISIBLE
-            }
-        }
-
-        with(binding.layStudyBottom4) {
-            val item = bottomList[3]
-            tvHomeBottomStudy.visibility = View.VISIBLE
-            tvHomeBottomStudy.text = item.typeId
-            tvHomeBottomTitle.text = item.title
-            tvHomeBottomDes.text = item.des
-            tvHomeBottomKind.text = item.kind
-            tvHomeBottomLv.text = item.lv
-            ivHomeBottomThumubnail.load(item.img)
-            if (item.blind && item.complete) {
-                viewHomeBottomBlind.visibility = View.VISIBLE
-                tvHomeBottomBlind.visibility = View.VISIBLE
-            }else {
-                viewHomeBottomBlind.visibility = View.INVISIBLE
-                tvHomeBottomBlind.visibility = View.INVISIBLE
-            }
-        }
-
-        with(binding.layStudyBottom5) {
-            val item = bottomList[4]
-            tvHomeBottomStudy.visibility = View.VISIBLE
-            tvHomeBottomStudy.text = item.typeId
-            tvHomeBottomTitle.text = item.title
-            tvHomeBottomDes.text = item.des
-            tvHomeBottomKind.text = item.kind
-            tvHomeBottomLv.text = item.lv
-            ivHomeBottomThumubnail.load(item.img)
-            if (item.blind && item.complete) {
-                viewHomeBottomBlind.visibility = View.VISIBLE
-                tvHomeBottomBlind.visibility = View.VISIBLE
-            }else {
-                viewHomeBottomBlind.visibility = View.INVISIBLE
-                tvHomeBottomBlind.visibility = View.INVISIBLE
+        layout.forEachIndexed { index, bottom ->
+            val item = bottomList[index]        //dummy data
+            with(bottom) {
+                tvHomeBottomStudy.visibility = View.VISIBLE
+                tvHomeBottomProject.visibility = View.INVISIBLE
+                tvHomeBottomProject.text = item.typeId
+                tvHomeBottomTitle.text = item.title
+                tvHomeBottomDes.text = item.des
+                tvHomeBottomKind.text = item.kind
+                tvHomeBottomLv.text = item.lv
+                ivHomeBottomThumubnail.load(item.img)
+                if (item.blind && item.complete) {
+                    viewHomeBottomBlind.visibility = View.VISIBLE
+                    tvHomeBottomBlind.visibility = View.VISIBLE
+                }else {
+                    viewHomeBottomBlind.visibility = View.INVISIBLE
+                    tvHomeBottomBlind.visibility = View.INVISIBLE
+                }
             }
         }
     }

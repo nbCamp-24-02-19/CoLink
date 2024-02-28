@@ -38,7 +38,7 @@ class HomeProjectFragment : Fragment() {
             BottomItems("Project", "그거 뭘로 정하지", "뭐로하지", "Java", "없음", R.drawable.img_dialog_study, false, false),
             BottomItems("Project", "이곳 뭘로 정하지", "설명을 해야하나", "C언어", "중급자", R.drawable.img_dialog_project, true, true),
             BottomItems("Project", "지금 뭘로 정하지", "뭘 해야하누", "AOS", "초급자", R.drawable.img_dialog_project, true, true)
-        )
+        )       //dummy data
 
         val layout = listOf(
             binding.layProjectBottom1,binding.layProjectBottom2,
@@ -47,7 +47,7 @@ class HomeProjectFragment : Fragment() {
         )
 
         layout.forEachIndexed { index, bottom ->
-            val item = bottomList[index]
+            val item = bottomList[index]  //    dummy data
             with(bottom) {
                 tvHomeBottomStudy.visibility = View.INVISIBLE
                 tvHomeBottomProject.visibility = View.VISIBLE
