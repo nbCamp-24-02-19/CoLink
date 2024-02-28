@@ -17,7 +17,7 @@ import com.seven.colink.data.firebase.repository.UserRepositoryImpl
 import com.seven.colink.databinding.FragmentChatBinding
 import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.entity.UserEntity
-import com.seven.colink.ui.post.model.RecruitInfo
+import com.seven.colink.domain.entity.RecruitInfo
 import com.seven.colink.util.status.GroupType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -38,7 +38,7 @@ class ChatFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentChatBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -121,7 +121,12 @@ class ChatFragment : Fragment() {
                 tags = listOf("sample", "firstPost"),
                 precautions = "Be kind to everyone.",
                 recruitInfo = "Looking for a designer",
-                recruit = RecruitInfo("Designer", 2, 1, 0),
+                recruit = RecruitInfo(
+                    type = "Designer",
+                    level = 2,
+                    maxPersonnel = 1,
+                    nowPersonnel = 0
+                ),
 //                datetime = "2023-10-02T12:00:00",
                 views = 0,
                 startDate = "2023-10-02",

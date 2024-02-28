@@ -14,5 +14,11 @@
     <string name="limited_people">최대 %1$d명까지 모집할 수 있습니다.</string>
     <string name="personnel">%1$d명</string>
 
+    <string name="filed_of_recruitment">[모집 분야]</string>
+    <string name="total_personnel">총 %1$d명</string>
+
+    <string name="message_max_number">추가 가능한 태그는 최대 %1$d개입니다.</string>
+    <string name="message_already_exists">이미 추가된 태그입니다.</string>
+
     <string name="bt_complete">완료</string>
 </resources>

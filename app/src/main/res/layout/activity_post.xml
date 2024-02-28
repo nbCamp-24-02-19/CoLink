@@ -10,47 +10,37 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="56dp">
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="0dp">
 
             <ImageView
-                android:id="@+id/iv_background"
+                android:id="@+id/iv_image_background"
                 android:layout_width="match_parent"
                 android:layout_height="167dp"
                 android:layout_marginTop="56dp"
-                android:background="@color/picture_bg"
+                android:background="@drawable/bg_post_image_background"
                 android:scaleType="centerCrop"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:layout_width="46dp"
-                android:layout_height="42dp"
-                android:src="@drawable/ic_camera_24dp"
-                app:layout_constraintBottom_toBottomOf="@id/iv_background"
-                app:layout_constraintEnd_toEndOf="@id/iv_background"
-                app:layout_constraintStart_toStartOf="@id/iv_background"
-                app:layout_constraintTop_toTopOf="@id/iv_background" />
-
-            <ImageView
+                android:id="@+id/iv_add_image"
                 android:layout_width="92dp"
                 android:layout_height="92dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="177dp"
-                android:background="@color/picture_small_bg"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_camera_24dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="176dp"
+                android:background="@drawable/bg_post_image_register"
+                android:scaleType="centerCrop"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/bt_project"
+                android:id="@+id/tv_project"
                 android:layout_width="0dp"
                 android:layout_height="36dp"
                 android:layout_marginStart="24dp"
@@ -59,12 +49,12 @@
                 android:gravity="center"
                 android:text="@string/bt_project"
                 android:textColor="@color/main_color"
-                app:layout_constraintEnd_toStartOf="@id/bt_study"
+                app:layout_constraintEnd_toStartOf="@id/tv_study"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/bt_study"
+                android:id="@+id/tv_study"
                 android:layout_width="0dp"
                 android:layout_height="36dp"
                 android:layout_marginTop="278dp"
@@ -74,140 +64,179 @@
                 android:text="@string/bt_study"
                 android:textColor="@color/main_color"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/bt_project"
+                app:layout_constraintStart_toEndOf="@id/tv_project"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <EditText
-                android:id="@+id/et_title"
-                style="@style/PostEditTextStyle"
-                android:layout_height="wrap_content"
-                android:hint="@string/input_title"
-                android:textSize="20sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/bt_project" />
-
-            <View
-                android:id="@+id/view_edit_line"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraint_layout_content"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="17dp"
-                android:layout_marginEnd="24dp"
-                android:background="@color/picture_bg"
-                app:layout_constraintTop_toBottomOf="@id/et_title" />
-
-            <EditText
-                android:id="@+id/et_content"
-                style="@style/PostEditTextStyle"
                 android:layout_height="0dp"
-                android:gravity="top"
-                android:hint="@string/input_content_project"
-                android:textSize="14sp"
-                app:layout_constraintBottom_toTopOf="@id/recycler_view_tags"
+                android:layout_margin="24dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/view_edit_line" />
+                app:layout_constraintTop_toBottomOf="@id/tv_project">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view_tags"
+                <EditText
+                    android:id="@+id/et_title"
+                    style="@style/PostEditTextStyle"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/input_title"
+                    android:textSize="20sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/view_title_line"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@color/picture_bg"
+                    app:layout_constraintTop_toBottomOf="@id/et_title" />
+
+                <EditText
+                    android:id="@+id/et_content"
+                    style="@style/PostEditTextStyle"
+                    android:layout_height="200dp"
+                    android:gravity="top"
+                    android:hint="@string/input_content_project"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toTopOf="@id/recycler_view_tags"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/view_title_line" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view_tags"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/et_content"
+                    tools:listitem="@layout/item_list_post_tag" />
+
+                <TextView
+                    android:id="@+id/tv_sharp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/sharp"
+                    android:textColor="@color/sharp"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/recycler_view_tags" />
+
+                <EditText
+                    android:id="@+id/et_register_tag"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:hint="@string/input_tag"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:textColorHint="@color/edit_hint_color"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_sharp"
+                    app:layout_constraintStart_toEndOf="@id/tv_sharp"
+                    app:layout_constraintTop_toTopOf="@id/tv_sharp" />
+
+                <TextView
+                    android:id="@+id/tv_people_recruited"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/people_recruited"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/et_register_tag" />
+
+                <TextView
+                    android:id="@+id/tv_limited_people"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="@string/limited_people"
+                    android:textColor="@color/limit_color"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_people_recruited"
+                    app:layout_constraintStart_toEndOf="@id/tv_people_recruited"
+                    app:layout_constraintTop_toTopOf="@id/tv_people_recruited" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraint_layout_study"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="550dp"
-                android:layout_marginEnd="24dp"
-                android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:listitem="@layout/item_list_post_tag" />
-
-            <TextView
-                android:id="@+id/tv_sharp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="34dp"
-                android:layout_marginTop="26dp"
-                android:text="@string/sharp"
-                android:textColor="@color/sharp"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/recycler_view_tags" />
-
-            <EditText
-                android:id="@+id/et_register_tag"
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:hint="@string/input_tag"
-                android:textColorHint="@color/edit_hint_color"
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="@id/tv_sharp"
-                app:layout_constraintStart_toEndOf="@id/tv_sharp"
-                app:layout_constraintTop_toTopOf="@id/tv_sharp" />
-
-            <View
-                android:id="@+id/view_horizon_line"
-                android:layout_width="match_parent"
-                android:layout_height="10dp"
-                android:layout_marginTop="4dp"
-                android:background="@color/picture_bg"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@id/bt_complete"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/et_register_tag" />
+                app:layout_constraintTop_toBottomOf="@id/constraint_layout_content">
 
-            <TextView
-                android:id="@+id/tv_people_recruited"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="24dp"
-                android:text="@string/people_recruited"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/view_horizon_line" />
+                <include
+                    android:id="@+id/include_stepper_personnel"
+                    layout="@layout/layout_personnel_component" />
 
-            <TextView
-                android:id="@+id/tv_limited_people"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:text="@string/limited_people"
-                android:textColor="@color/limit_color"
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="@id/tv_people_recruited"
-                app:layout_constraintStart_toEndOf="@id/tv_people_recruited"
-                app:layout_constraintTop_toTopOf="@id/tv_people_recruited" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view_recruit"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraint_layout_project"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toBottomOf="@id/tv_limited_people"
-                tools:listitem="@layout/item_list_recruitment" />
+                android:layout_margin="24dp"
+                app:layout_constraintBottom_toTopOf="@id/bt_complete"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/constraint_layout_content">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view_recruit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:listitem="@layout/item_list_recruitment" />
+
+                <ImageView
+                    android:id="@+id/iv_add_recruit"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginTop="12dp"
+                    android:src="@drawable/ic_add_24"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/recycler_view_recruit" />
+
+                <TextView
+                    android:id="@+id/tv_total_recruit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/total_personnel"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/iv_add_recruit" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <Button
+                android:id="@+id/bt_complete"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginBottom="24dp"
+                android:layout_margin="24dp"
                 android:background="@drawable/bg_button_main_color"
                 android:text="@string/bt_complete"
                 android:textColor="@color/white"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/recycler_view_recruit" />
-
+                app:layout_constraintStart_toStartOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
