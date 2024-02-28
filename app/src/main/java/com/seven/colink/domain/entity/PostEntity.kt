@@ -1,7 +1,6 @@
 package com.seven.colink.domain.entity
 
 import android.os.Parcelable
-import com.seven.colink.ui.post.model.RecruitInfo
 import com.seven.colink.util.convert.convertLocalDateTime
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
@@ -21,7 +20,12 @@ data class PostEntity(
     val tags: List<String>? = emptyList(),
     val precautions: String? = "",
     val recruitInfo: String? = "",
-    val recruit: RecruitInfo? = RecruitInfo("", -1, -1, -1),
+    val recruit: RecruitInfo? = RecruitInfo(
+        type = "",
+        level = -1,
+        maxPersonnel = -1,
+        nowPersonnel = -1
+    ),
     val registeredDate: String? = LocalDateTime.now().convertLocalDateTime(),
     val editDate: String? = null,
     val views: Int? = -1,

@@ -1,6 +1,6 @@
 package com.seven.colink.ui.post
 
-import com.seven.colink.ui.post.model.RecruitInfo
+import com.seven.colink.domain.entity.RecruitInfo
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
 

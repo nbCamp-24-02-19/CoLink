@@ -1,10 +1,12 @@
-package com.seven.colink.ui.post.model
+package com.seven.colink.domain.entity
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import java.util.UUID
 
 @Parcelize
 data class RecruitInfo(
+    val key: String = UUID.randomUUID().toString(),
     val type: String = "",
     val level: Int = -1,
     val maxPersonnel: Int = -1,
