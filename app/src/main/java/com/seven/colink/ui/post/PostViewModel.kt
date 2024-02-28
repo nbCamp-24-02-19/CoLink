@@ -97,7 +97,7 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun removeTagItem(entityKey: String) {
+    fun removeTagItem(entityKey: String?) {
         _tagUiState.value = _tagUiState.value?.let { state ->
             state.copy(list = state.list.filterNot { it.key == entityKey })
         }
