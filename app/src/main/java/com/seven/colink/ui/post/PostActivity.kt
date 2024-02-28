@@ -72,11 +72,15 @@ class PostActivity : AppCompatActivity() {
 
     private val tagListAdapter: TagListAdapter by lazy {
         TagListAdapter(
-            onClickItem = { _, entity ->
-                viewModel.removeTagItem(entity.key)
+            onClickItem = { _, item ->
+                when (item) {
+                    is TagListItem.Item -> viewModel.removeTagItem(item.tagEntity?.key)
+                    is TagListItem.ContentItem -> Unit
+                }
             }
         )
     }
+
 
     private val recruitListAdapter: RecruitListAdapter by lazy {
         RecruitListAdapter(
@@ -247,7 +251,7 @@ class PostActivity : AppCompatActivity() {
         }
 
         tagUiState.observe(this@PostActivity) { state ->
-            tagListAdapter.submitList(state.list)
+            tagListAdapter.submitList(state.list.map { TagListItem.Item(tagEntity = it) })
         }
 
         recruitUiState.observe(this@PostActivity) { state ->

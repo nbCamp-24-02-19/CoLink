@@ -38,5 +38,8 @@
     <color name="sharp">#787878</color>
     <color name="edit_hint_color">#B6B6B6</color>
     <color name="tag_bg">#CEFFF6</color>
+    <color name="user_color">#CDCDCD</color>
+    <color name="date_color">#818181</color>
+    <color name="content_tag_color">#F6F6F6</color>
 
 </resources>
