@@ -1,24 +1,19 @@
 package com.seven.colink.data.firebase.repository
 
-import com.algolia.search.saas.Client
 import com.algolia.search.saas.Index
 import com.algolia.search.saas.Query
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.toObject
-import com.google.gson.JsonArray
-import com.seven.colink.BuildConfig
 import com.seven.colink.data.firebase.type.DataBaseType
 import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.util.status.DataResultStatus
+import com.seven.colink.util.status.GroupType
+import com.seven.colink.util.status.ProjectStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
-import okhttp3.internal.wait
 import org.json.JSONArray
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -76,8 +71,19 @@ class PostRepositoryImpl @Inject constructor(
             .toObject(PostEntity::class.java)
     }
 
-    override suspend fun searchQuery(query: String) = suspendCancellableCoroutine { continuation ->
-        algolia.searchAsync(Query(query)) { jsonArray, exception ->
+    override suspend fun searchQuery(query: String, groupType: GroupType?, projectStatus: ProjectStatus?) = suspendCancellableCoroutine { continuation ->
+        val algoliaQuery = Query(query)
+        val filters = mutableListOf<String>()
+        groupType?.let {
+            filters.add("groupType:${it}")
+        }
+        projectStatus?.let {
+            filters.add("projectStatus:${it}")
+        }
+        if (filters.isNotEmpty()) {
+            algoliaQuery.setFilters(filters.joinToString(" AND "))
+        }
+        algolia.searchAsync(algoliaQuery) { jsonArray, exception ->
             if (exception != null) {
                 continuation.resumeWithException(exception)
             } else {
