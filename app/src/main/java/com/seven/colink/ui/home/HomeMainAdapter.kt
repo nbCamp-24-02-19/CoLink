@@ -16,12 +16,14 @@ import kotlin.math.ceil
 class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUtil) {
     object HomeMainDiffUtil : DiffUtil.ItemCallback<HomeAdapterItems>() {
         override fun areItemsTheSame(
-            oldItem: HomeAdapterItems, newItem: HomeAdapterItems): Boolean {
+            oldItem: HomeAdapterItems, newItem: HomeAdapterItems
+        ): Boolean {
             return oldItem == newItem
         }
 
         override fun areContentsTheSame(
-            oldItem: HomeAdapterItems, newItem: HomeAdapterItems): Boolean {
+            oldItem: HomeAdapterItems, newItem: HomeAdapterItems
+        ): Boolean {
             return oldItem == newItem
         }
     }
@@ -29,18 +31,18 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
     private val TOP_TYPE = 0
     private val HEADER_TYPE = 1
     private var bannerPosition = 0
-    private val topAdapter by lazy { TopViewPagerAdapter() }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
 
-        return when(viewType) {
+        return when (viewType) {
             TOP_TYPE -> {
-                val topItem = ItemHomeTopViewpagerBinding.inflate(inflater,parent,false)
+                val topItem = ItemHomeTopViewpagerBinding.inflate(inflater, parent, false)
                 TopViewHolder(topItem)
             }
+
             else -> {
-                val header = ItemHomeHeaderBinding.inflate(inflater,parent,false)
+                val header = ItemHomeHeaderBinding.inflate(inflater, parent, false)
                 HeaderViewHolder(header)
             }
         }
@@ -62,13 +64,13 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when(getItem(position)) {
+        return when (getItem(position)) {
             is HomeAdapterItems.TopView -> TOP_TYPE
             is HomeAdapterItems.Header -> HEADER_TYPE
         }
     }
 
-    inner class TopViewHolder(binding : ItemHomeTopViewpagerBinding) : ViewHolder(binding.root) {
+    inner class TopViewHolder(binding: ItemHomeTopViewpagerBinding) : ViewHolder(binding.root) {
         val pager = binding.vpHomeTop
         var pos = binding.tvHomeTopCurrent
         val sum = binding.tvHomeTopSum
@@ -76,39 +78,31 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
         private val right = binding.btnHomeFront
 
         init {
-            left.setOnClickListener {
-                val current = pager.currentItem
-                if (current == 0) {
-                    pager.setCurrentItem(6,false)
-                }else {
-                    pager.setCurrentItem(current-1,false)
+            pager.post {
+                bannerPosition = Int.MAX_VALUE / 2 - ceil(TopViewPagerAdapter().currentList.size.toDouble() / 2).toInt()
+                pager.setCurrentItem(bannerPosition, false)
+
+                left.setOnClickListener {
+                    val current = pager.currentItem
+                    pager.setCurrentItem(current - 1, false)
                 }
+
+                right.setOnClickListener {
+                    val current = pager.currentItem
+                    pager.setCurrentItem(current + 1, false)
+
+                }
+
+                pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                    override fun onPageSelected(position: Int) {
+                        pos.text = ((position % 7) + 1).toString()
+                    }
+                })
             }
-
-            right.setOnClickListener {
-                val current = pager.currentItem
-                if (current == 6) {
-                    pager.setCurrentItem(0,false)
-                }else {
-                    pager.setCurrentItem(current+1,false)
-                }
-            }
-
-            pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    pos.text = ((position % TopViewPagerAdapter().itemCount)+1).toString()
-                    Log.d("Top","#aaa position = $position")
-                    Log.d("Top","#aaa size = ${TopViewPagerAdapter().itemCount}")
-                    Log.d("Top","#aaa current = ${topAdapter.currentList.size}")
-                }
-            })
-
-            bannerPosition = Int.MAX_VALUE / 2 - ceil(currentList.size.toDouble() / 2).toInt()
-            pager.setCurrentItem(bannerPosition,false)
         }
     }
 
-    inner class HeaderViewHolder (binding : ItemHomeHeaderBinding) : ViewHolder(binding.root) {
+    inner class HeaderViewHolder(binding: ItemHomeHeaderBinding) : ViewHolder(binding.root) {
         val header = binding.tvHomeHeader
     }
 }

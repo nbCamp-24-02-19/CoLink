@@ -1,5 +1,6 @@
 package com.seven.colink.ui.home
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -31,7 +32,7 @@ class HomeFragment : Fragment() {
         TopItems(R.drawable.img_dialog_project,"이거","yyyy-mm","title2"),
         TopItems(R.drawable.img_dialog_study,"뭐라고","yyyy-mm","title2"),
         TopItems(R.drawable.img_temporary,"할까","yyyy-mm","title2")
-    )
+    )          // dummy data
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,13 +47,11 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         initViews()
     }
 
     private fun initViews() {
         topAdapter.submitList(tolList)          // dummy data
-
 
         val homeItem : MutableList<HomeAdapterItems> = mutableListOf(
             HomeAdapterItems.TopView(topAdapter),
@@ -66,23 +65,6 @@ class HomeFragment : Fragment() {
         mainAdapter.submitList(homeItem)
     }
 
-    override fun onResume() {
-        super.onResume()
-//        requireContext().setDialog(
-//            title = "안녕하세요",
-//            message = "'다이얼로그'가 잘 작성 되는지 '확인' 해보는 다이얼로그",
-//            image = R.drawable.img_dialog_project,
-//            confirmAction = { dialog -> dialog.dismiss()
-//                            requireContext().setDialog(
-//                                title = "반갑고",
-//                                message = "안녕하고",
-//                                confirmAction = {dialog -> dialog.dismiss()
-//                                                requireContext().setLevelDialog { Unit }.show()},
-//                                cancelAction = {dialog -> dialog.dismiss()}
-//                            ).show()},
-//            cancelAction = {dialog -> dialog.dismiss()}
-//        ).show()
-    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

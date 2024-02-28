@@ -18,9 +18,6 @@ data class BottomItems (
     val complete : Boolean
 )
 
-data class BottomView(
-    var adapter : BottomViewPagerAdapter
-)
 sealed class HomeAdapterItems {
     data class TopView(
         var adapter : TopViewPagerAdapter

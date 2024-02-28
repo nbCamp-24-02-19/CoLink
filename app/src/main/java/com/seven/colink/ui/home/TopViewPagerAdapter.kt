@@ -40,22 +40,9 @@ class TopViewPagerAdapter : ListAdapter<TopItems, TopViewPagerAdapter.TopViewHol
         return TopViewHolder(binding)
     }
 
-//    override fun getItemCount(): Int = currentList.size
     override fun getItemCount(): Int = Int.MAX_VALUE
 
     override fun onBindViewHolder(holder: TopViewHolder, position: Int) {
-
         holder.onBind(currentList[position % currentList.size])
-        Log.d("Adapter","#aaa size = ${currentList.size}")
-
-//        val item = currentList[position]
-//        with(holder) {
-//            img.load(item.img)
-//            team.text = item.team
-//            date.text = item.date
-//            title.text = item.title
-//        }
     }
-
-    private val runnable = Runnable { currentList.addAll(currentList)}
 }
