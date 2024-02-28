@@ -5,10 +5,10 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class SignUpUserModel(
-    val id: String? = null,
     val name: String? = null,
     val email: String? = null,
     val password: String? = null,
+    val mainSpecialty: String? = null,
     val specialty: String? = null,
     val skill: List<String>? = emptyList(),
     val level: Int? = null,

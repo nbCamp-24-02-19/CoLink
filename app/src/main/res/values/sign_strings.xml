@@ -39,4 +39,7 @@
     <string name="sign_up_password_error">비밀번호를 확인해 주세요</string>
     <string name="sign_up_confirm_error">비밀번호가 다릅니다.</string>
     <string name="sign_up_pass" />
+    <string name="sign_up_specialty">전문 분야를 선택해주세요</string>
+    <string name="sign_up_level">레벨을 선택해주세요</string>
+    <string name="sign_up_email_duplication_error">이미 사용중인 이메일 입니다</string>
 </resources>

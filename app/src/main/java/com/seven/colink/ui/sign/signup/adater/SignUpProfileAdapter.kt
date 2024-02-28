@@ -1,8 +1,11 @@
 package com.seven.colink.ui.sign.signup.adater
 
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -27,7 +30,10 @@ import com.seven.colink.util.setLevelIcon
 import com.seven.colink.util.skillCategory
 
 class SignUpProfileAdapter(
-    private val onClickEnd: (Map<String, Any?>) -> Unit
+    private val skillAdapter: SkillAdapter,
+    private val skills: MutableList<String> = mutableListOf(),
+    private val onPlusSkill: (String) -> Unit,
+    private val onClickEnd: (Map<String, Any?>) -> Unit,
 ): ListAdapter<SignUpProfileItem, SignUpProfileAdapter.SignUpProfileViewHolder>(
     object : DiffUtil.ItemCallback<SignUpProfileItem>() {
         override fun areItemsTheSame(
@@ -67,8 +73,10 @@ class SignUpProfileAdapter(
         ) { key, value -> update(key, value) }
 
         SignUpProfileViewType.SKILL -> SkillViewHolder(
-            ItemSignUpSkillBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        ) { key, value -> update(key, value) }
+            binding = ItemSignUpSkillBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+            skillAdapter = skillAdapter,
+            onPlusSkill = onPlusSkill,
+        )
         SignUpProfileViewType.LEVEL -> LevelViewHolder(
             ItemSignUpLevelBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         ) { key, value -> update(key, value) }
@@ -119,17 +127,17 @@ class SignUpProfileAdapter(
 
     class SkillViewHolder(
         private val binding: ItemSignUpSkillBinding,
-        private val update: (String, Any?) -> Unit,
-        /*private val skillAdapter: SkillAdapter,*/
+        private val skillAdapter: SkillAdapter,
+        private val onPlusSkill: (String) -> Unit,
     ) : SignUpProfileViewHolder(binding.root) {
         override fun onBind(item: SignUpProfileItem) = with(binding) {
+            rcSignUpSkills.adapter = skillAdapter
             btSignUpSubCategoryBtn.setOnClickListener {
                 skillCategory.setDialog(root.context, "사용가능한 언어/툴을 선택해주세요"){
                     btSignUpSubCategoryBtn.text = it
+                    onPlusSkill(it)
                 }.show()
             }
-
-//            rcSignUpSkills.adapter = skillAdapter
         }
 
     }
@@ -157,13 +165,14 @@ class SignUpProfileAdapter(
         private val update: (String, Any?) -> Unit,
     ) : SignUpProfileViewHolder(binding.root) {
         override fun onBind(item: SignUpProfileItem) = with(binding) {
-            etSignUpInfo.setOnFocusChangeListener { _, hasFocus ->
-                if (hasFocus.not()){
-                    update("info", etSignUpInfo.text)
+            etSignUpInfo.addTextChangedListener (object : TextWatcher{
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
+                override fun afterTextChanged(s: Editable?) {
+                    update("info", s?.toString().takeIf { it?.isNotEmpty() == true })
                 }
+            })
             }
-        }
-
     }
 
     class BlogViewHolder(
@@ -174,6 +183,9 @@ class SignUpProfileAdapter(
     ) : SignUpProfileViewHolder(binding.root) {
         override fun onBind(item: SignUpProfileItem) = with(binding) {
             btSignUpEnd.setOnClickListener {
+                update("git",etSignUpGit.text.takeIf { it.isNotEmpty() }?.toString())
+                update("blog", etSignUpBlog.text.takeIf { it.isNotEmpty() }?.toString())
+                update("link", etSignUpLink.text.takeIf { it.isNotEmpty() }?.toString())
                 onClickEnd(storage)
             }
         }
