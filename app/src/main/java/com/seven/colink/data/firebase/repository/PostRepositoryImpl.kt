@@ -40,7 +40,7 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getPostByContainUserId(userId: String) = runCatching {
-        firebaseFirestore.collection(DataBaseType.POST.title).whereArrayContains("userId", userId)
+        firebaseFirestore.collection(DataBaseType.POST.title).whereArrayContains("memberIds", userId)
             .get().await()
             .documents.mapNotNull {
                 it.toObject(PostEntity::class.java)

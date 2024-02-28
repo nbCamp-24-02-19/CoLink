@@ -3,6 +3,7 @@ package com.seven.colink.util.dialog.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -10,6 +11,7 @@ import com.seven.colink.databinding.ItemListStringBinding
 
 class DialogAdapter(
     private val onClick: (id: String) -> Unit,
+    private val dialog: AlertDialog
 ) : ListAdapter<String, DialogAdapter.DialogViewHolder> (
 
     object : DiffUtil.ItemCallback<String>() {
@@ -36,7 +38,8 @@ class DialogAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DialogViewHolder =
         DialogItemViewHolder(
             binding = ItemListStringBinding.inflate(LayoutInflater.from(parent.context),parent,false),
-            onClick = onClick
+            onClick = onClick,
+            dialog = dialog
         )
 
     override fun onBindViewHolder(holder: DialogViewHolder, position: Int) {
@@ -45,12 +48,14 @@ class DialogAdapter(
 
     class DialogItemViewHolder(
         private val binding: ItemListStringBinding,
-        private val onClick: (id: String) -> Unit
+        private val onClick: (id: String) -> Unit,
+        private val dialog: AlertDialog
     ): DialogViewHolder(binding.root) {
         override fun onBind(item: String) = with(binding) {
             tvPersonalHeader.text = item
             tvPersonalHeader.setOnClickListener {
                 onClick(item)
+                dialog.dismiss()
             }
         }
 

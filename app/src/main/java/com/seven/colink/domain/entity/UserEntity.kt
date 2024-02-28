@@ -12,6 +12,7 @@ data class UserEntity(
     val photoUrl: String? = null,
     val phoneNumber: String? = null,
     val level: Int = 0,
+    val mainSpecialty: String = "",
     val specialty: String = "",
     val grade: Double = 5.0,
     val skill: List<String> = emptyList(),

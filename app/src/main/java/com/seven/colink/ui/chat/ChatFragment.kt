@@ -1,5 +1,6 @@
 package com.seven.colink.ui.chat
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,7 @@ import com.seven.colink.databinding.FragmentChatBinding
 import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.ui.post.model.RecruitInfo
+import com.seven.colink.ui.sign.signin.SignInActivity
 import com.seven.colink.util.status.GroupType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -55,22 +57,7 @@ class ChatFragment : Fragment() {
 
         signup.setOnClickListener {
             lifecycleScope.launch {
-                val a = AuthRepositoryImpl(FirebaseAuth.getInstance()).register("zxcasd@wdsad.com", "tlarbtkd")
-                UserRepositoryImpl(FirebaseAuth.getInstance(), FirebaseFirestore.getInstance()).registerUser(UserEntity(
-                    uid = FirebaseAuth.getInstance().currentUser?.uid ?: "",
-                    email = "zxcasd@wdsad.com",
-                    password = "tlarbtkd",
-                    id = "ID123",
-                    name = "John Doe",
-                    photoUrl = "https://example.com/photo.jpg",
-                    phoneNumber = "123-456-7890",
-                    level = 5,
-                    specialty = "Mobile Development",
-                    grade = 4.5,
-                    skill = listOf("Kotlin", "Swift", "Flutter"),
-                    blog = listOf("https://blog.example.com/post1", "https://blog.example.com/post2"),
-                    info = "Experienced mobile developer",
-                ))
+                startActivity(Intent(requireActivity(),SignInActivity::class.java))
             }
         }
 
@@ -123,7 +110,7 @@ class ChatFragment : Fragment() {
             val key = "unique_post_key"
             lifecycleScope.launch {
                 val post = PostRepositoryImpl(FirebaseFirestore.getInstance()).getPost(key)
-                testInfo.text = post.toString()
+                testInfo.text = (post.getOrNull() as PostEntity).title
             }
         }
     }
