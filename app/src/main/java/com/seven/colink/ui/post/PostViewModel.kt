@@ -7,11 +7,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.seven.colink.R
 import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.entity.TagEntity
 import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.entity.RecruitInfo
+import com.seven.colink.domain.repository.ImageRepository
 import com.seven.colink.util.Constants.Companion.EXTRA_ENTRY_TYPE
 import com.seven.colink.util.Constants.Companion.EXTRA_GROUP_TYPE
 import com.seven.colink.util.Constants.Companion.EXTRA_POST_ENTITY
@@ -19,12 +21,14 @@ import com.seven.colink.util.Constants.Companion.LIMITED_TAG_COUNT
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.PostEntryType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class PostViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val postRepository: PostRepository
+    private val postRepository: PostRepository,
+    private val imageRepository: ImageRepository
 ) : ViewModel() {
     private val entryType: PostEntryType? by lazy {
         savedStateHandle.get<PostEntryType>(EXTRA_ENTRY_TYPE)
@@ -124,6 +128,40 @@ class PostViewModel @Inject constructor(
             val selectedImageUri = data?.data
             _selectedImage.value = selectedImageUri
         }
+    }
+
+    fun registerPost(
+        title: String, description: String,
+        onSuccess: () -> Unit, onError: (Exception) -> Unit
+    ) = viewModelScope.launch {
+        try {
+            val imageUrl = selectedImage.value?.let { uploadImage(it) }.orEmpty()
+            val entity = createPostEntity(title, description, imageUrl)
+            postRepository.registerPost(entity)
+            onSuccess()
+        } catch (e: Exception) {
+            onError(e)
+        }
+    }
+
+    private fun createPostEntity(
+        title: String,
+        description: String,
+        imageUrl: String
+    ): PostEntity {
+        return PostEntity(
+            authId = "user123",
+            title = title,
+            imageUrl = imageUrl,
+            groupType = groupType,
+            description = description,
+            tags = tagUiState.value?.list?.map { it.name } ?: emptyList(),
+            recruit = recruitUiState.value?.list ?: emptyList(),
+        )
+    }
+
+    private suspend fun uploadImage(uri: Uri): String {
+        return imageRepository.uploadImage(uri).getOrThrow().toString()
     }
 
 }
