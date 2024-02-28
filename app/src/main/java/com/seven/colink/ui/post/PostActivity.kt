@@ -128,6 +128,24 @@ class PostActivity : AppCompatActivity() {
         ivAddImage.setOnClickListener {
             openGallery(galleryResultLauncher)
         }
+
+        btComplete.setOnClickListener {
+            viewModel.registerPost(
+                binding.etTitle.text.toString(),
+                binding.etContent.text.toString(),
+                onSuccess = {
+                    showToast(getString(R.string.post_register_success))
+                    finish()
+                },
+                onError = { exception ->
+                    showToast(exception.message ?: getString(R.string.post_register_fail))
+                }
+            )
+        }
+
+        ivFinish.setOnClickListener {
+            finish()
+        }
     }
 
     private fun initProjectView() {
@@ -141,6 +159,8 @@ class PostActivity : AppCompatActivity() {
     }
 
     private fun initStudyView() = with(binding) {
+        includeStepperPersonnel.tvRecruitPersonnel.text = "$totalPersonnelCount"
+
         includeStepperPersonnel.ivPlusPersonnel.setOnClickListener {
             incrementCount()
         }
