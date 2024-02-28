@@ -39,6 +39,7 @@ class MyPageFragment : Fragment() {
         editClick()
         mypageBlogClick()
         mypagegitClick()
+        PostRecyclerView()
 
         skiladapter.plusClick = object : MyPageSkilAdapter.PlusClick{
             override fun onClick(item: MyPageItem, position: Int) {
@@ -59,6 +60,12 @@ class MyPageFragment : Fragment() {
         skiladapter = MyPageSkilAdapter(MyPageSkilItemManager.getAllItem())
         binding.reMypageItem.adapter = skiladapter
         binding.reMypageItem.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+    }
+
+    private fun PostRecyclerView(){
+        postadapter = MyPagePostAdapter(MyPagePostItemManager.getItemAll())
+        binding.reMypageProject.adapter = postadapter
+        binding.reMypageProject.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
     }
 
     private fun editClick(){
