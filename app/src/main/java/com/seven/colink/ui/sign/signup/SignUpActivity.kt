@@ -23,6 +23,8 @@ import com.seven.colink.ui.sign.signup.type.SignUpEntryType
 import com.seven.colink.ui.sign.signup.type.SignUpUIState
 import com.seven.colink.ui.sign.signup.valid.SignUpErrorMessage
 import com.seven.colink.ui.sign.signup.viewmodel.SignUpViewModel
+import com.seven.colink.util.progress.hideProgressOverlay
+import com.seven.colink.util.progress.showProgressOverlay
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -137,11 +139,13 @@ class SignUpActivity : AppCompatActivity() {
                         }
                     }
                 }
+                this@SignUpActivity.hideProgressOverlay()
             }
         }
 
         lifecycleScope.launch {
             viewModel.registrationResult.collect{
+                this@SignUpActivity.hideProgressOverlay()
                 Toast.makeText(this@SignUpActivity, it, Toast.LENGTH_SHORT).show()
                 if (it == "등록 성공") {
                     finish()
@@ -213,6 +217,7 @@ class SignUpActivity : AppCompatActivity() {
     }
     private fun setButton(state: SignUpUIState) = with(binding){
         btSignUpBtn.setOnClickListener {
+            this@SignUpActivity.showProgressOverlay()
             it.isEnabled = false
             when(state) {
                 SignUpUIState.EMAIL -> viewModel.checkValid(state, etSignUpEmailId.text.toString(), etSignUpEmailService.text.toString())
@@ -261,6 +266,7 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun onClickEnd(map: Map<String, Any?>) {
+        this.showProgressOverlay()
         viewModel.checkValid(map)
     }
 }
