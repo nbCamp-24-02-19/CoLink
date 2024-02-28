@@ -11,5 +11,5 @@ interface PostRepository {
     suspend fun getPostByAuthId(authId: String): Result<List<PostEntity>>
     suspend fun getPostByContainUserId(userId: String): Result<List<PostEntity>>
     suspend fun deletePost(key: String): DataResultStatus
-    suspend fun searchQuery(query: String): Result<List<PostEntity>>
+    suspend fun searchQuery(query: String): List<PostEntity>
 }

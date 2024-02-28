@@ -8,21 +8,19 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.algolia.search.saas.Client
+import com.algolia.search.saas.Query
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.seven.colink.BuildConfig
 import com.seven.colink.data.firebase.repository.AuthRepositoryImpl
 import com.seven.colink.data.firebase.repository.PostRepositoryImpl
-import com.seven.colink.data.firebase.repository.UserRepositoryImpl
+import com.seven.colink.data.firebase.type.DataBaseType
 import com.seven.colink.databinding.FragmentChatBinding
 import com.seven.colink.domain.entity.PostEntity
-import com.seven.colink.domain.entity.UserEntity
-import com.seven.colink.domain.entity.RecruitInfo
 import com.seven.colink.ui.sign.signin.SignInActivity
-import com.seven.colink.util.status.GroupType
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class ChatFragment : Fragment() {
@@ -75,19 +73,29 @@ class ChatFragment : Fragment() {
         }
 
         makegle.setOnClickListener {
-
             lifecycleScope.launch {
-                val a = PostRepositoryImpl(FirebaseFirestore.getInstance()).searchQuery("개발")
-                testInfo.text = a.getOrNull()?.map {
-                    it.title.toString() + it.description.toString()
-                }.toString()
+                val result = PostRepositoryImpl(FirebaseFirestore.getInstance(), Client(
+                    BuildConfig.ALGOLIA_APP_ID,
+                    BuildConfig.ALGOLIA_API_KEY
+                ).getIndex(DataBaseType.POST.title)).searchQuery("팀원")
+
+                // 검색 결과를 문자열로 변환
+                val resultText = result.map { post ->
+                    "Title: ${post.title}, description: ${post.description}"
+                }
+
+                // 변환된 문자열을 텍스트 뷰에 설정
+                binding.testInfo.text = resultText.toString()
             }
         }
 
         seegle.setOnClickListener {
             val key = "unique_post_key"
             lifecycleScope.launch {
-                val post = PostRepositoryImpl(FirebaseFirestore.getInstance()).getPost(key)
+                val post = PostRepositoryImpl(FirebaseFirestore.getInstance(),Client(
+                    BuildConfig.ALGOLIA_APP_ID,
+                    BuildConfig.ALGOLIA_API_KEY
+                ).getIndex(DataBaseType.POST.title)).getPost(key)
                 testInfo.text = (post.getOrNull() as PostEntity).title
             }
         }
