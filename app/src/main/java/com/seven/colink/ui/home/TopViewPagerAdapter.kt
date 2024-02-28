@@ -1,5 +1,6 @@
 package com.seven.colink.ui.home
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -24,6 +25,13 @@ class TopViewPagerAdapter : ListAdapter<TopItems, TopViewPagerAdapter.TopViewHol
         val team = binding.tvTopTeam
         val date = binding.tvTopDate
         val title = binding.tvTopTitle
+
+        fun onBind(item : TopItems) {
+            img.load(item.img)
+            team.text = item.team
+            date.text = item.date
+            title.text = item.title
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TopViewHolder {
@@ -32,16 +40,9 @@ class TopViewPagerAdapter : ListAdapter<TopItems, TopViewPagerAdapter.TopViewHol
         return TopViewHolder(binding)
     }
 
-    override fun getItemCount(): Int = currentList.size
+    override fun getItemCount(): Int = Int.MAX_VALUE
 
     override fun onBindViewHolder(holder: TopViewHolder, position: Int) {
-        val item = currentList[position]
-
-        with(holder) {
-            img.load(item.img)
-            team.text = item.team
-            date.text = item.date
-            title.text = item.title
-        }
+        holder.onBind(currentList[position % currentList.size])
     }
 }
