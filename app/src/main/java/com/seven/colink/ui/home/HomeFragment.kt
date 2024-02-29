@@ -1,20 +1,16 @@
 package com.seven.colink.ui.home
 
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.viewpager.widget.ViewPager
-import androidx.viewpager2.widget.ViewPager2
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentHomeBinding
-import com.seven.colink.util.dialog.setDialog
-import com.seven.colink.util.dialog.setLevelDialog
+import com.seven.colink.ui.home.adapter.BottomViewPagerAdapter
+import com.seven.colink.ui.home.adapter.HomeMainAdapter
+import com.seven.colink.ui.home.adapter.TopViewPagerAdapter
 
 class HomeFragment : Fragment() {
 

@@ -1,6 +1,5 @@
-package com.seven.colink.ui.home
+package com.seven.colink.ui.home.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -8,6 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.load
 import com.seven.colink.databinding.ItemHomeTopBinding
+import com.seven.colink.ui.home.TopItems
 
 class TopViewPagerAdapter : ListAdapter<TopItems, TopViewPagerAdapter.TopViewHolder>(TopDiffUtil) {
     object TopDiffUtil : DiffUtil.ItemCallback<TopItems>() {
