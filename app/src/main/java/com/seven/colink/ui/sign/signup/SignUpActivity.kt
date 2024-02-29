@@ -94,6 +94,7 @@ class SignUpActivity : AppCompatActivity() {
         lifecycleScope.launch {
             uiStatus.collect { uiStatus ->
                 setUi(uiStatus)
+                this@SignUpActivity.hideProgressOverlay()
             }
         }
 
