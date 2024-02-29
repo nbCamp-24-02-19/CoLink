@@ -17,6 +17,8 @@
     <color name="typo_color">#717171</color>
     <color name="mypage_bg_color">#F3FDFC</color>
     <color name="hint_color">#808080</color>
+    <color name="purple">#7C5DA5</color>
+    <color name="ing_color">#E7F7FF</color>
 
     <!--Level Dialog-->
     <color name="level1">#F47171</color>

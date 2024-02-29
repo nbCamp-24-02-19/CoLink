@@ -1,12 +1,16 @@
 package com.seven.colink.ui.mypage.adapter
 
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.seven.colink.R
 import com.seven.colink.databinding.MypageRecyclerviewItemPostBinding
 import com.seven.colink.ui.mypage.MyPostItem
 
-class MyPagePostAdapter(val mItems: List<MyPostItem>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class MyPagePostAdapter(var mItems: List<MyPostItem>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
     companion object{
@@ -32,11 +36,23 @@ class MyPagePostAdapter(val mItems: List<MyPostItem>) : RecyclerView.Adapter<Rec
         when(val item = mItems[position]){
             is MyPostItem.MyPagePostItem ->{
                 (holder as ProjectViewHolder).holderProjecting.text = item.projecting
+                //여기서 if문으로 컬러 바꾸기
+                if (holder.holderProjecting.text == "참여중"){
+//                    holder.holderProjecting.setBackgroundColor(Color.parseColor("#2DB7FF"))
+                    holder.holderProjecting.setBackgroundResource(R.drawable.bg_mypage_ing_blue)
+                } else if(holder.holderProjecting.text == "중도하차"){
+                    holder.holderProjecting.setBackgroundResource(R.drawable.bg_mypage_ing_gray)
+                } else if(holder.holderProjecting.text =="완료"){
+                    holder.holderProjecting.setBackgroundResource(R.drawable.bg_mypage_ing_purple)
+                }
                 holder.projectname.text = item.projectName
                 holder.projecttime.text = item.projectTime
             }
             is MyPostItem.MyPageStudyItem ->{
                 (holder as StudyViewHolder).holderStudying.text = item.studying
+                if (holder.holderStudying.text == "참여중"){
+                    holder.holderStudying.setBackgroundResource(R.drawable.bg_mypage_ing_study)
+                }
                 holder.studyname.text = item.studyName
                 holder.studytime.text = item.studyTime
             }

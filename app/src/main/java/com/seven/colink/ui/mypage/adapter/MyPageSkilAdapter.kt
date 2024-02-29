@@ -4,8 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.seven.colink.databinding.ItemSignUpSkillBinding
 import com.seven.colink.databinding.MypageRecyclerviewItemSkilitemBinding
 import com.seven.colink.ui.mypage.MyPageItem
+import com.seven.colink.ui.mypage.MyPostItem
+import com.seven.colink.ui.sign.signup.adater.SignUpProfileAdapter
+import com.seven.colink.ui.sign.signup.type.SignUpProfileViewType
 
 class MyPageSkilAdapter(var mItems: List<MyPageItem>): RecyclerView.Adapter<ViewHolder>() {
 
@@ -35,6 +39,11 @@ class MyPageSkilAdapter(var mItems: List<MyPageItem>): RecyclerView.Adapter<View
 
     override fun getItemCount(): Int {
         return mItems.size
+    }
+
+    fun changeDataset(newDataSet: List<MyPageItem>){
+        mItems = newDataSet
+        notifyDataSetChanged()
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
