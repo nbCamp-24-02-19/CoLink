@@ -1,5 +1,6 @@
 package com.seven.colink.domain.entity
 
+import com.seven.colink.ui.chat.type.ChatTabType
 import com.seven.colink.util.convert.convertLocalDateTime
 import java.time.LocalDateTime
 import java.util.UUID
@@ -9,6 +10,7 @@ data class ChatRoomEntity(
     val title: String? = "",
     val participantsUid: List<String> = emptyList(),
     val thumbnail: String? = "",
+    val type: ChatTabType? = ChatTabType.GENERAL,
     val registerDate: String = LocalDateTime.now().convertLocalDateTime(),
 )
 data class MessageEntity (
