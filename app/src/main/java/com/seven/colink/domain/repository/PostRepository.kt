@@ -15,7 +15,9 @@ interface PostRepository {
     suspend fun deletePost(key: String): DataResultStatus
     suspend fun searchQuery(
         query: String,
-        groupType: GroupType?,
+        groupType: GroupType? = null,
         projectStatus: ProjectStatus? = null
     ): List<PostEntity>
+
+    suspend fun getRecentPost(count: Int): List<PostEntity>
 }

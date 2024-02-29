@@ -4,9 +4,24 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <ImageView
+        android:id="@+id/iv_member_group_type"
+        android:layout_width="36dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="24dp"
+        android:elevation="10dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_level_insignia"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/bg_round_corner_20dp"
+        android:backgroundTint="@color/white"
+        android:clipToOutline="true"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -15,12 +30,13 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_memeber_thumbnail"
             android:layout_width="match_parent"
-            android:layout_height="200dp">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/iv_member_thumbnail"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintDimensionRatio="16:9"
                 android:layout_marginTop="4dp"
                 android:background="@drawable/bg_round_top_corner_20dp"
                 android:clipToOutline="true"
@@ -31,15 +47,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/iv_member_group_type"
-                android:layout_width="36dp"
-                android:layout_height="56dp"
-                android:layout_marginStart="24dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/img_dialog_project"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

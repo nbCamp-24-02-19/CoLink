@@ -56,7 +56,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun getCurrentUser(): DataResultStatus {
         return if (firebaseAuth.currentUser != null) {
-            DataResultStatus.SUCCESS
+            DataResultStatus.SUCCESS.apply { message = firebaseAuth.currentUser!!.uid }
         } else {
             DataResultStatus.FAIL.apply {
                 this.message = "No user"

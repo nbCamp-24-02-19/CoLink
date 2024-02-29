@@ -1,33 +1,22 @@
 package com.seven.colink.ui.chat
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
-import com.algolia.search.saas.Client
-import com.algolia.search.saas.Query
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.seven.colink.BuildConfig
-import com.seven.colink.data.firebase.repository.AuthRepositoryImpl
-import com.seven.colink.data.firebase.repository.PostRepositoryImpl
-import com.seven.colink.data.firebase.type.DataBaseType
+import androidx.fragment.app.viewModels
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.google.android.material.tabs.TabLayoutMediator
 import com.seven.colink.databinding.FragmentChatBinding
-import com.seven.colink.domain.entity.PostEntity
-import com.seven.colink.ui.sign.signin.SignInActivity
+import com.seven.colink.ui.chat.type.ChatTabType
+import com.seven.colink.ui.chat.viewmodel.ChatTabViewModel
+import com.seven.colink.ui.chat.viewmodel.ChatViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ChatFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = ChatFragment()
-    }
     private var _binding: FragmentChatBinding? = null
     private lateinit var viewModel: ChatViewModel
 
@@ -48,8 +37,9 @@ class ChatFragment : Fragment() {
     }
 
     private fun initView() {
-        initButton()
+        setViewPager()
     }
+
 
     private fun initButton() = with(binding) {
 
@@ -82,23 +72,25 @@ class ChatFragment : Fragment() {
                 // 검색 결과를 문자열로 변환
                 val resultText = result.map { post ->
                     "Title: ${post.title}, description: ${post.description}"
+    private fun setViewPager() = with(binding) {
+        vpChatPager.adapter = object : FragmentStateAdapter(this@ChatFragment) {
+            override fun getItemCount() = 3
+            override fun createFragment(position: Int): Fragment {
+                return when(position){
+                    0 -> ChatTabFragment.newInstance(ChatTabType.GENERAL)
+                    1 -> ChatTabFragment.newInstance(ChatTabType.PROJECT)
+                    else -> ChatTabFragment.newInstance(ChatTabType.STUDY)
                 }
-
-                // 변환된 문자열을 텍스트 뷰에 설정
-                binding.testInfo.text = resultText.toString()
             }
         }
 
-        seegle.setOnClickListener {
-            val key = "unique_post_key"
-            lifecycleScope.launch {
-                val post = PostRepositoryImpl(FirebaseFirestore.getInstance(),Client(
-                    BuildConfig.ALGOLIA_APP_ID,
-                    BuildConfig.ALGOLIA_API_KEY
-                ).getIndex(DataBaseType.POST.title)).getPost(key)
-                testInfo.text = (post.getOrNull() as PostEntity).title
+        TabLayoutMediator(tlChatTab, vpChatPager) { tab, position ->
+            tab.text = when (position) {
+                0 -> "일반 채팅"
+                1 -> "프로젝트 채팅"
+                else -> "스터디 채팅"
             }
-        }
+        }.attach()
     }
 
     override fun onDestroy() {
