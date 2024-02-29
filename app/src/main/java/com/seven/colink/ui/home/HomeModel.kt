@@ -1,5 +1,7 @@
 package com.seven.colink.ui.home
 
+import com.seven.colink.ui.home.adapter.TopViewPagerAdapter
+
 data class TopItems (
     val img : Int,
     val team : String,
