@@ -23,6 +23,9 @@
         android:theme="@style/Theme.CoLink"
         tools:targetApi="31">
         <activity
+            android:name=".ui.chat.ChatRoomActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.post.content.PostContentActivity"
             android:exported="false" />
         <activity
@@ -33,12 +36,12 @@
             android:exported="false" />
         <activity
             android:name=".ui.sign.signup.SignUpActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.sign.signin.SignInActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.main.MainActivity"
             android:exported="true"

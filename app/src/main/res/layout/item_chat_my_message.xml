@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/tv_chat_my_view_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:textSize="12sp"
+        android:textColor="@color/study_color"
+        app:layout_constraintBottom_toTopOf="@id/tv_chat_my_register_time"
+        app:layout_constraintEnd_toEndOf="@id/tv_chat_my_register_time"/>
+
+    <TextView
+        android:id="@+id/tv_chat_my_register_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:text="오후 1:04"
+        android:textSize="12sp"
+        android:textColor="@color/typo_color"
+        app:layout_constraintEnd_toStartOf="@+id/tv_chat_my_message"
+        app:layout_constraintBottom_toBottomOf="@id/tv_chat_my_message"/>
+    <TextView
+        android:id="@+id/tv_chat_my_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingVertical="8dp"
+        android:paddingHorizontal="12dp"
+        android:background="@drawable/chat_bubble"
+        android:backgroundTint="@color/main_color"
+        android:text="안녕하세요"
+        android:textSize="14sp"
+        android:fontFamily="@font/roboto_medium"
+        android:textColor="@color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -17,7 +17,6 @@ import com.seven.colink.ui.sign.signup.valid.SignUpValidExtension.numAndEnglish
 import com.seven.colink.ui.sign.signup.valid.SignUpValidExtension.validEmailServiceProvider
 import com.seven.colink.util.status.DataResultStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

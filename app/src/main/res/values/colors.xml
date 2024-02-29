@@ -17,6 +17,7 @@
     <color name="typo_color">#717171</color>
     <color name="mypage_bg_color">#F3FDFC</color>
     <color name="hint_color">#808080</color>
+    <color name="study_color">#EB8447</color>
 
     <!--Level Dialog-->
     <color name="level1">#F47171</color>
@@ -41,5 +42,9 @@
     <color name="user_color">#CDCDCD</color>
     <color name="date_color">#818181</color>
     <color name="content_tag_color">#F6F6F6</color>
+
+    <!-- chat -->
+    <color name="chat_notice">#ED2478</color>
+
 
 </resources>

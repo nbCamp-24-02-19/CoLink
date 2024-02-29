@@ -3,6 +3,7 @@ package com.seven.colink.data.firebase.repository
 import com.algolia.search.saas.Index
 import com.algolia.search.saas.Query
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.toObject
 import com.seven.colink.data.firebase.type.DataBaseType
 import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.repository.PostRepository
@@ -81,7 +82,7 @@ class PostRepositoryImpl @Inject constructor(
             filters.add("projectStatus:${it}")
         }
         if (filters.isNotEmpty()) {
-            algoliaQuery.setFilters(filters.joinToString(" AND "))
+            algoliaQuery.filters = filters.joinToString(" AND ")
         }
         algolia.searchAsync(algoliaQuery) { jsonArray, exception ->
             if (exception != null) {
@@ -120,5 +121,14 @@ class PostRepositoryImpl @Inject constructor(
         }
         job.join()
     }
+
+    override suspend fun getRecentPost(count: Int) =
+        firebaseFirestore.collection(DataBaseType.POST.title)
+            .orderBy("registeredDate", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            .limit(count.toLong())
+            .get().await()
+            .documents.mapNotNull {
+                it.toObject(PostEntity::class.java)
+            }
 }
 

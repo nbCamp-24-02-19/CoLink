@@ -26,5 +26,4 @@ data class UserEntity(
     val flexibility: Int? = null,
     val creativity: Int? = null,
     val evaluatedNumber: Int = 0,
-    val chatRoomKeyList: List<String>? = emptyList(),
 )
