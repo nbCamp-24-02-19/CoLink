@@ -11,8 +11,12 @@ import com.seven.colink.domain.entity.ChatRoomEntity
 import com.seven.colink.domain.entity.MessageEntity
 import com.seven.colink.domain.repository.ChatRepository
 import com.seven.colink.util.status.DataResultStatus
+import kotlinx.coroutines.internal.resumeCancellableWith
+import kotlinx.coroutines.suspendCancellableCoroutine
+import java.lang.RuntimeException
 import javax.inject.Inject
 import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 class ChatRepositoryImpl @Inject constructor(
@@ -33,15 +37,31 @@ class ChatRepositoryImpl @Inject constructor(
                     }
 
                     override fun onCancelled(error: DatabaseError) {
-                        continuation.resume(DataResultStatus.FAIL.apply { message = error.message })
+                        continuation.resume(null)
                     }
 
                 }
             )
     }
 
+    override suspend fun deleteChatRoom(chatRoomId: String) {
+        db.reference.child(DataBaseType.CHATROOM.title).child(chatRoomId).removeValue()
+    }
+
     override suspend fun getChatRoomList(userId: String) = runCatching {
         db.reference.child(DataBaseType.CHATROOM.title)
+    }
+    override suspend fun getChatRoomMessage(chatRoomId: String) = suspendCancellableCoroutine {  continuation ->
+        db.reference.child(DataBaseType.MESSAGE.title).child(chatRoomId)
+            .addValueEventListener(
+                object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot)
+                    = continuation.resume(snapshot.children.mapNotNull { it.getValue(MessageEntity::class.java) })
+
+                    override fun onCancelled(error: DatabaseError)
+                    = continuation.resumeWithException(RuntimeException(error.message))
+                }
+            )
     }
 
     override suspend fun sendMessage(message: MessageEntity) {
@@ -53,7 +73,7 @@ class ChatRepositoryImpl @Inject constructor(
         chatRoom: ChatRoomEntity,
         callback: (List<MessageEntity>) -> Unit
     ) {
-        FirebaseDatabase.getInstance().reference.child(DataBaseType.MESSAGE.title)
+        db.reference.child(DataBaseType.MESSAGE.title)
             .child(chatRoom.key)
             .addValueEventListener(
                 object : ValueEventListener {

@@ -8,7 +8,9 @@ interface ChatRepository {
 
     suspend fun sendMessage(message: MessageEntity)
     suspend fun createChatRoom(chatRoom: ChatRoomEntity)
-    suspend fun getChatRoom(chatRoomId: String): Any?
+    suspend fun getChatRoom(chatRoomId: String): ChatRoomEntity?
     suspend fun observeMessages(chatRoom: ChatRoomEntity, callback: (List<MessageEntity>) -> Unit)
     suspend fun getChatRoomList(userId: String): Result<DatabaseReference>
+    suspend fun deleteChatRoom(chatRoomId: String)
+    suspend fun getChatRoomMessage(chatRoomId: String): List<MessageEntity>
 }
