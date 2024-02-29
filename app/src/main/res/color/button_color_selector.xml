@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-        <!-- 비활성화 상태일 때의 색상 -->
         <item android:color="@color/disabled_color" android:state_enabled="false"/>
-        <!-- 기본 상태(활성화 상태)의 색상 -->
         <item android:color="@color/main_color"/>
 </selector>
