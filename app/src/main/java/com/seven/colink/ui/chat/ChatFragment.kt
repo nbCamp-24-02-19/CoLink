@@ -77,7 +77,7 @@ class ChatFragment : Fragment() {
                 val result = PostRepositoryImpl(FirebaseFirestore.getInstance(), Client(
                     BuildConfig.ALGOLIA_APP_ID,
                     BuildConfig.ALGOLIA_API_KEY
-                ).getIndex(DataBaseType.POST.title)).searchQuery("팀원")
+                ).getIndex(DataBaseType.POST.title)).searchQuery("팀원", null, null)
 
                 // 검색 결과를 문자열로 변환
                 val resultText = result.map { post ->
