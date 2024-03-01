@@ -3,7 +3,6 @@ package com.seven.colink.data.firebase.repository
 import com.algolia.search.saas.Index
 import com.algolia.search.saas.Query
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.toObject
 import com.seven.colink.data.firebase.type.DataBaseType
 import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.repository.PostRepository
@@ -130,5 +129,19 @@ class PostRepositoryImpl @Inject constructor(
             .documents.mapNotNull {
                 it.toObject(PostEntity::class.java)
             }
+
+    override suspend fun updatePost(key: String, updatedPost: PostEntity) =
+        suspendCoroutine { continuation ->
+            firebaseFirestore.collection(DataBaseType.POST.title).document(key)
+                .set(updatedPost, com.google.firebase.firestore.SetOptions.merge())
+                .addOnSuccessListener {
+                    continuation.resume(DataResultStatus.SUCCESS)
+                }
+                .addOnFailureListener { e ->
+                    continuation.resume(DataResultStatus.FAIL.apply {
+                        message = e.message ?: "Unknown error"
+                    })
+                }
+        }
 }
 
