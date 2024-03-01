@@ -3,22 +3,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:padding="24dp">
 
     <TextView
         android:id="@+id/tv_group_type"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/roboto_regular"
-        android:textColor="@color/forth_color"
-        android:textSize="12sp"
+        android:background="@drawable/bg_round_corner_12dp"
+        android:backgroundTint="@color/forth_color"
+        android:fontFamily="@font/inter_bold"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="4dp"
+        android:text="@string/search_filter_project"
+        android:textColor="@color/white"
+        android:textSize="11sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_title"
-        style="@style/PostEditTextStyle"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
         android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -30,26 +38,63 @@
         android:id="@+id/recycler_view_tag"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="4dp"
         android:orientation="horizontal"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintTop_toBottomOf="@id/tv_title"
         tools:listitem="@layout/item_list_post_content_tag" />
 
     <TextView
-        android:id="@+id/tv_register_datetime"
+        android:id="@+id/tv_writer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/register_datetime"
         android:textColor="@color/date_color"
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/recycler_view_tag" />
+
+    <TextView
+        android:id="@+id/tv_register_datetime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:textColor="@color/date_color"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@id/tv_writer"
+        app:layout_constraintStart_toEndOf="@id/tv_writer"
+        app:layout_constraintTop_toTopOf="@id/tv_writer" />
+
+    <TextView
+        android:id="@+id/tv_hits_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/hits"
+        android:textColor="@color/date_color"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@id/tv_register_datetime"
+        app:layout_constraintStart_toEndOf="@id/tv_register_datetime"
+        app:layout_constraintTop_toTopOf="@id/tv_register_datetime" />
+
+    <TextView
+        android:id="@+id/tv_hits"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:textColor="@color/date_color"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@id/tv_hits_text"
+        app:layout_constraintStart_toEndOf="@id/tv_hits_text"
+        app:layout_constraintTop_toTopOf="@id/tv_hits_text" />
 
     <View
         android:id="@+id/view_title_line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="12dp"
-        android:background="@color/picture_bg"
+        android:background="@color/bg"
         app:layout_constraintTop_toBottomOf="@id/tv_register_datetime" />
 
     <TextView
