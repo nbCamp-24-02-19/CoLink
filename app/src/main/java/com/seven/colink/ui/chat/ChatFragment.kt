@@ -40,6 +40,38 @@ class ChatFragment : Fragment() {
         setViewPager()
     }
 
+
+    private fun initButton() = with(binding) {
+
+        signup.setOnClickListener {
+            lifecycleScope.launch {
+                startActivity(Intent(requireActivity(), SignInActivity::class.java))
+            }
+        }
+
+        login.setOnClickListener {
+            lifecycleScope.launch {
+                val a = AuthRepositoryImpl(FirebaseAuth.getInstance()).getCurrentUser()
+                Toast.makeText(requireActivity(), a.toString(), Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        logout.setOnClickListener {
+            lifecycleScope.launch {
+                AuthRepositoryImpl(FirebaseAuth.getInstance()).signOut()
+            }
+        }
+
+        makegle.setOnClickListener {
+            lifecycleScope.launch {
+                val result = PostRepositoryImpl(FirebaseFirestore.getInstance(), Client(
+                    BuildConfig.ALGOLIA_APP_ID,
+                    BuildConfig.ALGOLIA_API_KEY
+                ).getIndex(DataBaseType.POST.title)).searchQuery("팀원", null, null)
+
+                // 검색 결과를 문자열로 변환
+                val resultText = result.map { post ->
+                    "Title: ${post.title}, description: ${post.description}"
     private fun setViewPager() = with(binding) {
         vpChatPager.adapter = object : FragmentStateAdapter(this@ChatFragment) {
             override fun getItemCount() = 3
