@@ -10,9 +10,11 @@ import com.seven.colink.data.firebase.type.DataBaseType
 import com.seven.colink.domain.entity.ChatRoomEntity
 import com.seven.colink.domain.entity.MessageEntity
 import com.seven.colink.domain.repository.ChatRepository
+import com.seven.colink.ui.chat.type.ChatTabType
 import com.seven.colink.util.status.DataResultStatus
 import kotlinx.coroutines.internal.resumeCancellableWith
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.tasks.await
 import java.lang.RuntimeException
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -48,10 +50,24 @@ class ChatRepositoryImpl @Inject constructor(
         db.reference.child(DataBaseType.CHATROOM.title).child(chatRoomId).removeValue()
     }
 
-    override suspend fun getChatRoomList(userId: String) = runCatching {
-        db.reference.child(DataBaseType.CHATROOM.title)
+    override suspend fun getChatRoomList(userId: String, type: ChatTabType) = runCatching {
+        val chatRoomList = mutableListOf<ChatRoomEntity>()
+        val snapshot = db.reference.child(DataBaseType.CHATROOM.title)
+            .orderByChild("participantsUid/$userId").equalTo(userId)
+            .get()
+            .await()
+
+        for (childSnapshot in snapshot.children) {
+            val chatRoom = childSnapshot.getValue(ChatRoomEntity::class.java)
+            if (chatRoom != null && chatRoom.type == type) {
+                chatRoomList.add(chatRoom)
+            }
+        }
+        chatRoomList.toList()
     }
-    override suspend fun getChatRoomMessage(chatRoomId: String) = suspendCancellableCoroutine {  continuation ->
+    override suspend fun getChatRoomMessage(
+        chatRoomId: String,
+        ) = suspendCancellableCoroutine {  continuation ->
         db.reference.child(DataBaseType.MESSAGE.title).child(chatRoomId)
             .addValueEventListener(
                 object : ValueEventListener {
