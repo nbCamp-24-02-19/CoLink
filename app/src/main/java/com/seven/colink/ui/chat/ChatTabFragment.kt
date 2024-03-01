@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.seven.colink.databinding.FragmentChatTabBinding
 import com.seven.colink.ui.chat.adapter.ChatListAdapter
@@ -14,6 +15,8 @@ import com.seven.colink.ui.chat.type.ChatTabType
 import com.seven.colink.ui.chat.viewmodel.ChatTabViewModel
 import com.seven.colink.ui.sign.signup.SignUpActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ChatTabFragment: Fragment() {
@@ -50,6 +53,15 @@ class ChatTabFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initView()
+        initViewModel()
+    }
+
+    private fun initViewModel() = with(viewModel){
+        lifecycleScope.launch {
+            chatList.collect{
+                adapter.submitList(it)
+            }
+        }
     }
 
     private fun initView() {
