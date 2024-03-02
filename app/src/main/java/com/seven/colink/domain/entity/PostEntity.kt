@@ -23,7 +23,7 @@ data class PostEntity(
     val recruit: List<RecruitInfo>? = emptyList(),
     val registeredDate: String? = LocalDateTime.now().convertLocalDateTime(),
     val editDate: String? = null,
-    val views: Int? = -1,
+    val views: Int? = 0,
     val startDate: String? = "",
     val endDate: String? = "",
     val memberIds: List<String> = emptyList(),

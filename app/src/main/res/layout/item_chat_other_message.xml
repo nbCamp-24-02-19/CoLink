@@ -10,16 +10,18 @@
         android:layout_height="wrap_content"
         android:text="꼬링크"
         android:textSize="10sp"
+        android:visibility="gone"
         android:textColor="@color/typo_color"
         android:fontFamily="@font/inter_thin"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/tv_chat_message"/>
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cd"
+        android:id="@+id/cv_chat_profile_view"
         android:layout_width="32dp"
         android:layout_height="32dp"
         app:cardCornerRadius="32dp"
+        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
@@ -39,6 +41,7 @@
         android:layout_height="wrap_content"
         android:text="1"
         android:textSize="10sp"
+        android:visibility="invisible"
         android:textColor="@color/study_color"
         app:layout_constraintBottom_toTopOf="@id/tv_chat_register_time"
         app:layout_constraintStart_toStartOf="@id/tv_chat_register_time"/>
@@ -50,6 +53,7 @@
         android:layout_marginStart="4dp"
         android:text="오후 1:04"
         android:textSize="10sp"
+        android:visibility="invisible"
         android:textColor="@color/typo_color"
         app:layout_constraintStart_toEndOf="@+id/tv_chat_message"
         app:layout_constraintBottom_toBottomOf="@id/tv_chat_message"/>
@@ -68,7 +72,7 @@
         android:fontFamily="@font/roboto_medium"
         android:textColor="@color/black"
         app:layout_constraintTop_toBottomOf="@+id/tv_chat_auth_name"
-        app:layout_constraintStart_toEndOf="@+id/cd"
+        app:layout_constraintStart_toEndOf="@+id/cv_chat_profile_view"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
