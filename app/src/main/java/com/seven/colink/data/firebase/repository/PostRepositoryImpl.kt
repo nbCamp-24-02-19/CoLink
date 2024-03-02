@@ -81,7 +81,7 @@ class PostRepositoryImpl @Inject constructor(
             filters.add("projectStatus:${it}")
         }
         if (filters.isNotEmpty()) {
-            algoliaQuery.setFilters(filters.joinToString(" AND "))
+            algoliaQuery.filters = filters.joinToString(" AND ")
         }
         algolia.searchAsync(algoliaQuery) { jsonArray, exception ->
             if (exception != null) {
@@ -120,5 +120,28 @@ class PostRepositoryImpl @Inject constructor(
         }
         job.join()
     }
+
+    override suspend fun getRecentPost(count: Int) =
+        firebaseFirestore.collection(DataBaseType.POST.title)
+            .orderBy("registeredDate", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            .limit(count.toLong())
+            .get().await()
+            .documents.mapNotNull {
+                it.toObject(PostEntity::class.java)
+            }
+
+    override suspend fun updatePost(key: String, updatedPost: PostEntity) =
+        suspendCoroutine { continuation ->
+            firebaseFirestore.collection(DataBaseType.POST.title).document(key)
+                .set(updatedPost, com.google.firebase.firestore.SetOptions.merge())
+                .addOnSuccessListener {
+                    continuation.resume(DataResultStatus.SUCCESS)
+                }
+                .addOnFailureListener { e ->
+                    continuation.resume(DataResultStatus.FAIL.apply {
+                        message = e.message ?: "Unknown error"
+                    })
+                }
+        }
 }
 
