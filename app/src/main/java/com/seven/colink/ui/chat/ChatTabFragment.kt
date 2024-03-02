@@ -38,7 +38,9 @@ class ChatTabFragment: Fragment() {
 
     private val adapter by lazy {
         ChatListAdapter(
-            onClick = { Unit }
+            onClick = {
+                ChatRoomActivity.newInstance(it)
+            }
         )
     }
     override fun onCreateView(

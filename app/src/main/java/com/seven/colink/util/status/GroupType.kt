@@ -7,6 +7,6 @@ enum class GroupType {
     companion object {
         fun from(ordinal: Int): GroupType = GroupType.values().find {
             it.ordinal == ordinal
-        } ?: GroupType.UNKNOWN
+        } ?: UNKNOWN
     }
 }
