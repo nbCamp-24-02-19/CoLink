@@ -12,6 +12,7 @@
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -42,10 +43,10 @@
                             android:id="@+id/tv_search_filter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
                             android:fontFamily="@font/inter_regular"
                             android:text="@string/search_filter"
                             android:textColor="@color/typo_color"
-                            android:layout_marginEnd="8dp"
                             android:textSize="12sp" />
 
                         <TextView
@@ -54,7 +55,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/inter_bold"
                             android:text="@string/search_filter_project"
-                            android:textColor="@color/typo_color"
+                            android:textColor="@color/forth_color"
                             android:textSize="14sp" />
 
                         <ImageView
@@ -72,7 +73,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/inter_bold"
                             android:text="@string/search_filter_study"
-                            android:textColor="@color/typo_color"
+                            android:textColor="@color/forth_color"
                             android:textSize="14sp" />
 
                         <ImageView
@@ -90,7 +91,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/inter_bold"
                             android:text="@string/search_filter_end"
-                            android:textColor="@color/typo_color"
+                            android:textColor="@color/main_color"
                             android:textSize="14sp" />
 
                         <ImageView
@@ -108,7 +109,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/inter_bold"
                             android:text="@string/search_filter_recruit"
-                            android:textColor="@color/typo_color"
+                            android:textColor="@color/main_color"
                             android:textSize="14sp" />
 
                     </LinearLayout>
@@ -134,9 +135,9 @@
                             android:ellipsize="end"
                             android:fontFamily="@font/inter_medium"
                             android:hint="@string/search_edittext"
-                            android:maxLines="1"
-                            android:inputType="text"
                             android:imeOptions="actionDone"
+                            android:inputType="text"
+                            android:maxLines="1"
                             android:paddingStart="12dp"
                             android:textColor="@color/typo_color"
                             android:textSize="12sp" />
