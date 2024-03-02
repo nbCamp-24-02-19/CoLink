@@ -53,6 +53,6 @@ data class PostUiState(
 }
 
 sealed interface PostContentButtonUiState {
-    data object Create : PostContentButtonUiState
-    data object Update : PostContentButtonUiState
+    data object Writer : PostContentButtonUiState
+    data object Supporter : PostContentButtonUiState
 }

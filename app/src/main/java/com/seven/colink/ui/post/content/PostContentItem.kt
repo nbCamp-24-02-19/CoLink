@@ -1,42 +1,41 @@
 package com.seven.colink.ui.post.content
 
 import com.seven.colink.domain.entity.RecruitInfo
+import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.util.status.GroupType
+import com.seven.colink.util.status.ProjectStatus
 
 sealed interface PostContentItem {
     data class Item(
-        val id: String?,
-        val groupType: GroupType?,
+        val key: String?,
+        val authId: String?,
         val title: String?,
+        val status: ProjectStatus?,
+        val groupType: GroupType?,
+        val description: String?,
         val tags: List<String>?,
-        val datetime: String?,
-        val content: String?
+        val registeredDate: String?,
+        val views: Int?
     ) : PostContentItem
 
     data class RecruitItem(
-        val recruit: RecruitInfo
+        val recruit: RecruitInfo,
+        val buttonUiState: PostContentButtonUiState
     ) : PostContentItem
 
     data class MemberItem(
-        val userInfo: String
+        val userInfo: UserEntity
     ) : PostContentItem
 
     data class ImageItem(
         val imageUrl: String
     ) : PostContentItem
-}
 
-enum class PostContentViewType {
-    ITEM,
-    RECRUIT,
-    MEMBER,
-    IMAGE,
-    UNKNOWN
-    ;
+    data class TitleItem(
+        val titleRes: Int
+    ) : PostContentItem
 
-    companion object {
-        fun from(ordinal: Int): PostContentViewType = PostContentViewType.values().find {
-            it.ordinal == ordinal
-        } ?: UNKNOWN
-    }
+    data class SubTitleItem(
+        val titleRes: Int
+    ) : PostContentItem
 }

@@ -25,4 +25,17 @@
     <string name="post_register_success">게시물 작성에 성공했습니다.</string>
     <string name="post_register_fail">게시물 작성에 실패했습니다.</string>
 
+    <string name="recruitment_status">모집 현황</string>
+    <string name="project_member_info">프로젝트 멤버</string>
+    <string name="project_team_member">팀원</string>
+    <string name="study_member_info">스터디 멤버</string>
+    <string name="register_datetime">작성일</string>
+    <string name="hits">조회수</string>
+    <string name="slash">/</string>
+    <string name="project_support">지원</string>
+
+    <string name="edit">수정</string>
+
+    <string name="support_dialog_message">선택하신 %1$s %2$s에 지원하시겠습니까?</string>
+    <string name="support_dialog_title">%1$s 지원</string>
 </resources>
