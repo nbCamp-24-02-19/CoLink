@@ -17,6 +17,8 @@
     <color name="typo_color">#717171</color>
     <color name="mypage_bg_color">#F3FDFC</color>
     <color name="hint_color">#808080</color>
+    <color name="purple">#7C5DA5</color>
+    <color name="ing_color">#E7F7FF</color>
     <color name="study_color">#EB8447</color>
 
     <!--Level Dialog-->
@@ -33,7 +35,7 @@
     <color name="enable_stroke">#c8c8c8</color>
 
     <!--post-->
-    <color name="picture_bg">#F5F5F5</color>
+    <color name="bg">#F5F5F5</color>
     <color name="picture_small_bg">#F1F1F1</color>
     <color name="limit_color">#EC0000</color>
     <color name="sharp">#787878</color>

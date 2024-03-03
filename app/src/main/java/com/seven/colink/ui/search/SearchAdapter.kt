@@ -1,19 +1,36 @@
 package com.seven.colink.ui.search
 
+import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.seven.colink.databinding.ItemSearchPostBinding
 import com.seven.colink.domain.entity.PostEntity
+import com.seven.colink.util.convert.convertError
+import com.seven.colink.util.convert.convertLocalDateTime
+import com.seven.colink.util.status.GroupType
+import com.seven.colink.util.status.ProjectStatus
+import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
-class SearchAdapter(val mItems: MutableList<PostEntity>) :
+class SearchAdapter(val mItems: MutableList<SearchModel>) :
     RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
+
+//    var mItemsCopy: MutableList<SearchModel> = mItems.map { it.copy() }.toMutableList()
+
+    interface ItemClick {
+        fun onClick(item: SearchModel, position: Int)
+    }
+
+    var itemClick: ItemClick? = null
 
     inner class SearchViewHolder(binding: ItemSearchPostBinding) :
         RecyclerView.ViewHolder(binding.root) {
+        val itemBox = binding.linearLayout
         val project = binding.tvSearchItemProject
         val study = binding.tvSearchItemStudy
         val recruit = binding.tvSearchItemRecruit
@@ -29,27 +46,72 @@ class SearchAdapter(val mItems: MutableList<PostEntity>) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
-        Log.d("Adapter", "onCreateViewHolder")
         val binding =
             ItemSearchPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return SearchViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
-        holder.recruit.visibility = View.VISIBLE
-        holder.project.visibility = View.VISIBLE
-        holder.title.text = "Title"
-        holder.description.text = "Description"
-        holder.tag.text = "Tags"
-        holder.poster.text = "Poster"
-        holder.time.text = "Time"
-        holder.viewCount.text = "244"
+        val item = mItems[position]
 
-        Log.d("Adapter", "viewCount = ${holder.viewCount}")
+        holder.itemBox.setOnClickListener {
+            itemClick?.onClick(mItems[position], position)
+        }
+
+        if (item.groupType == GroupType.PROJECT) {
+            holder.project.visibility = View.VISIBLE
+            holder.study.visibility = View.GONE
+        } else {
+            holder.study.visibility = View.VISIBLE
+            holder.project.visibility = View.GONE
+        }
+        if (item.status == ProjectStatus.RECRUIT) {
+            holder.recruit.visibility = View.VISIBLE
+            holder.recruitEnd.visibility = View.GONE
+        } else {
+            holder.recruitEnd.visibility = View.VISIBLE
+            holder.recruit.visibility = View.GONE
+        }
+        holder.title.text = item.title
+        holder.description.text = item.description
+        holder.tag.text = item.tags?.map { "# " + it }?.joinToString("   ","","")
+        holder.poster.text = item.authId
+        holder.time.text = item.registeredDate
+        holder.viewCount.text = item.views.toString()
     }
 
     override fun getItemCount(): Int {
-        return 7
+        return mItems.size
     }
+
+//    fun filterType(items: MutableList<SearchModel>) {
+//        if (items.isEmpty()) {
+//            mItems.clear()
+//            mItems.addAll(mItemsCopy)
+//        } else {
+//            val filtered = mItems.filter { it.groupType == GroupType.PROJECT }
+//            mItems.clear()
+//            mItems.addAll(filtered)
+//        }
+//        notifyDataSetChanged()
+//    }
+//
+//    fun filterTypeClear() {
+//        mItemsCopy.clear()
+//        mItemsCopy.addAll(mItems)
+//        notifyDataSetChanged()
+//    }
+//
+//    fun filterStatus(items: MutableList<SearchModel>) {
+//        if (items.isEmpty()) {
+//            mItems.clear()
+//            mItems.addAll(mItemsCopy)
+//        } else {
+//            val filtered = mItems.filter { it.status == ProjectStatus.RECRUIT }
+//            mItems.clear()
+//            mItems.addAll(filtered)
+//        }
+//        notifyDataSetChanged()
+//    }
 
 }
