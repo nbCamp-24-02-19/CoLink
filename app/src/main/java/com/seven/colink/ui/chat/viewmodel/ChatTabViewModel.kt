@@ -1,6 +1,5 @@
 package com.seven.colink.ui.chat.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,6 +11,7 @@ import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.ui.chat.ChatTabFragment.Companion.CHAT_TYPE
 import com.seven.colink.ui.chat.model.ChatListItem
 import com.seven.colink.ui.chat.type.ChatTabType
+import com.seven.colink.util.convert.convertTime
 import com.seven.colink.util.status.DataResultStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -41,25 +41,20 @@ class ChatTabViewModel @Inject constructor(
         _chatType.value = handle.get<ChatTabType>(CHAT_TYPE)?: ChatTabType.GENERAL
     }
 
-    suspend fun setChat(type: ChatTabType) {
+    suspend fun setChat() {
         viewModelScope.launch {
             val result = authRepository.getCurrentUser()
-            Log.d("result", "$result")
             if (result == DataResultStatus.SUCCESS) {
-                val chatRooms = chatRepository.getChatRoomList(result.message, type).getOrNull() ?: emptyList()
-                val deferredList = chatRooms.map { chatRoom ->
-                    Log.d("setChatRoom", "$chatRoom")
-                    async { chatRoom.convert(result.message) }
-                }
-                val list = deferredList.awaitAll().filterNotNull()
-                Log.d("setChat", "$list")
-
-                _chatList.value = list
+                val list = userRepository.getUserDetails(result.message).getOrNull()?.participantsChatRoomIds?.map {
+                    async { chatRepository.getChatRoom(it)?.convert(result.message,chatType.value)}
+                }?: return@launch
+                _chatList.value = list.awaitAll().filterNotNull()
             }
         }
     }
 
-    private suspend fun ChatRoomEntity.convert(uid: String) = withContext(Dispatchers.IO) {
+    private suspend fun ChatRoomEntity.convert(uid: String, tabType: ChatTabType) = withContext(Dispatchers.IO) {
+        if (type != tabType) return@withContext null
         var opponent: UserEntity? = null
         if (type == ChatTabType.GENERAL) opponent = userRepository.getUserDetails(participantsUid.keys.first { it != uid }).getOrNull()
         val title = opponent?.name?: title
@@ -68,14 +63,13 @@ class ChatTabViewModel @Inject constructor(
             async {
                 chatRepository.getChatRoomMessage(key)
             }
-
         val message = messageDeferred.await()
         ChatListItem(
             key = key,
             title = title.toString(),
-            message = message?.first()?.text?: return@withContext null,
+            message = message?.lastOrNull()?.text?: return@withContext null,
             thumbnail = thumbnail,
-            recentTime = message.first().registerDate,
+            recentTime = message.last().registerDate.convertTime(),
             unreadCount = message.count { entity -> entity.viewUsers.none { it == uid } }
         )
     }

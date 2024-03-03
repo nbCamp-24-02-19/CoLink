@@ -40,25 +40,6 @@ class ChatFragment : Fragment() {
 
     private fun initView() {
         setViewPager()
-        setTest()
-    }
-
-    private fun setTest() = with(binding){
-        login1.setOnClickListener {
-            startActivity(Intent(requireContext(), SignInActivity::class.java))
-        }
-
-        chatMake.setOnClickListener {
-            viewModel.createChat()
-
-        }
-        viewModel.a.observe(viewLifecycleOwner){
-            it?.let { it1 -> startActivity(ChatRoomActivity.newIntent(requireActivity(),it1)) }
-        }
-
-        logout1.setOnClickListener {
-            viewModel.logout()
-        }
     }
 
     private fun setViewPager() = with(binding) {

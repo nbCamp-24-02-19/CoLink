@@ -10,10 +10,10 @@ import com.seven.colink.domain.repository.ChatRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.ui.chat.ChatRoomActivity.Companion.CHAT_ID
 import com.seven.colink.ui.chat.model.ChatRoomItem
+import com.seven.colink.util.convert.convertTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -44,10 +44,12 @@ class ChatRoomViewModel @Inject constructor(
 
             _chatRoom.value = chatRoomDeferred.await()
             uid = uidDeferred.await()
+
+            setMessages(chatRoom.value)
         }
     }
 
-    suspend fun setMessages(room: ChatRoomEntity) {
+    private suspend fun setMessages(room: ChatRoomEntity) {
         _messageList.value = chatRoom.run {
             chatRepository.getChatRoomMessage(room.key)?.map {
                 withContext(Dispatchers.IO) {
@@ -58,13 +60,19 @@ class ChatRoomViewModel @Inject constructor(
     }
 
     suspend fun observeMessage(room: ChatRoomEntity) {
-        chatRepository.observeMessages(room) { messages ->
+        chatRepository.observeNewMessage(room) { newMessage ->
             viewModelScope.launch(Dispatchers.IO) {
-                _messageList.value = messages.map { message ->
-                    async(Dispatchers.IO) { message.convert(room.participantsUid.size) }
-                }.awaitAll()
+               readMessage(newMessage)
             }
         }
+    }
+
+    private suspend fun readMessage(message: MessageEntity) {
+            message.viewUsers.takeUnless { it.contains(uid) }?.also {
+                val updatedMessage = message.copy(viewUsers = it + uid)
+                chatRepository.updateMessage(updatedMessage)
+            }
+        setMessages(chatRoom.value)
     }
 
     fun sendMessage(text: String) {
@@ -87,8 +95,8 @@ class ChatRoomViewModel @Inject constructor(
     private fun MessageEntity.convertMyMessage(users: Int) = ChatRoomItem.MyMessage(
         key = key,
         text = text.toString(),
-        time = registerDate,
-        viewCount = (users - viewUsers.size).toString()
+        time = registerDate.convertTime(),
+        viewCount = (users - viewUsers.size)
     )
 
     private suspend fun MessageEntity.convertOtherMessage(users: Int, authId: String) =
@@ -96,8 +104,8 @@ class ChatRoomViewModel @Inject constructor(
             ChatRoomItem.OtherMessage(
                 key = key,
                 text = text.toString(),
-                time = registerDate,
-                viewCount = (users - viewUsers.size).toString(),
+                time = registerDate.convertTime(),
+                viewCount = (users - viewUsers.size),
                 profileUrl = it.getOrNull()?.photoUrl,
                 name = it.getOrNull()?.name.toString(),
             )

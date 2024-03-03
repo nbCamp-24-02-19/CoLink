@@ -1,6 +1,7 @@
 package com.seven.colink.data.firebase.repository
 
 import android.util.Log
+import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -85,46 +86,48 @@ class ChatRepositoryImpl @Inject constructor(
             )
     }
 
+    override suspend fun updateMessage(newMessage: MessageEntity) {
+        db.reference.child(DataBaseType.MESSAGE.title).child(newMessage.chatRoomId).child(newMessage.key)
+            .setValue(newMessage)
+    }
     override suspend fun sendMessage(message: MessageEntity) {
-        db.reference.child(DataBaseType.MESSAGE.title).child(message.chatRoomId)
-            .push().setValue(message)
+        val messageRef = db.reference.child(DataBaseType.MESSAGE.title).child(message.chatRoomId).push()
+        messageRef.setValue(message.copy(key = messageRef.key!!))
     }
 
-    override suspend fun observeMessages(
+    override suspend fun observeNewMessage(
         chatRoom: ChatRoomEntity,
-        callback: (List<MessageEntity>) -> Unit
+        callback: (MessageEntity) -> Unit
     ) {
+        updateChatParticipants(chatRoom)
         db.reference.child(DataBaseType.MESSAGE.title)
             .child(chatRoom.key)
-            .addValueEventListener(
-                object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        val messages =
-                            snapshot.children.mapNotNull { it.getValue(MessageEntity::class.java) }
-                        chatRoom.participantsUid.forEach { (uid, _) ->
-                            firestore.runTransaction { transaction ->
-                                val ref =
-                                    firestore.collection(DataBaseType.USER.title).document(uid)
-                                val snapshot = transaction.get(ref)
-                                val currentList =
-                                    snapshot.get("chatRoomKeyList") as? List<String> ?: emptyList()
-                                if (!currentList.contains(chatRoom.key)) {
-                                    val updatedChatRoomKeyList = currentList + chatRoom.key
-                                    transaction.update(
-                                        ref,
-                                        "chatRoomKeyList",
-                                        updatedChatRoomKeyList
-                                    )
-                                }
-                            }
-                        }
-                        callback(messages)
+            .addChildEventListener(
+                object : ChildEventListener {
+                    override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                        snapshot.getValue(MessageEntity::class.java)?.let { callback(it) }
                     }
-
+                    override fun onChildChanged(snapshot: DataSnapshot,previousChildName: String?) = Unit
+                    override fun onChildRemoved(snapshot: DataSnapshot) = Unit
+                    override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) = Unit
                     override fun onCancelled(error: DatabaseError) {
-                        Log.e("ChatRepo_observeMessage", "error: $error")
+                        Log.e("observeNewMessages", "ERROR: $error")
                     }
                 })
+    }
+
+    private fun updateChatParticipants(chatRoom: ChatRoomEntity) {
+        chatRoom.participantsUid.forEach { (uid, _) ->
+            firestore.runTransaction { transaction ->
+                val ref = firestore.collection(DataBaseType.USER.title).document(uid)
+                val snapshot = transaction.get(ref)
+                val currentList = snapshot.get("participantsChatRoomIds") as? List<String> ?: emptyList()
+                if (!currentList.contains(chatRoom.key)) {
+                    val updatedChatRoomKeyList = currentList + chatRoom.key
+                    transaction.update(ref, "participantsChatRoomIds", updatedChatRoomKeyList)
+                }
+            }
+        }
     }
 
 }

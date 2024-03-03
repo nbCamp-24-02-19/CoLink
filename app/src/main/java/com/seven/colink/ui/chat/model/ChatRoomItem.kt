@@ -5,7 +5,7 @@ sealed interface ChatRoomItem {
         val key: String,
         val text: String,
         val time: String,
-        val viewCount: String,
+        val viewCount: Int,
     ): ChatRoomItem
 
     data class OtherMessage (
@@ -14,6 +14,6 @@ sealed interface ChatRoomItem {
         val profileUrl: String?,
         val text: String,
         val time: String,
-        val viewCount: String,
+        val viewCount: Int,
     ): ChatRoomItem
 }

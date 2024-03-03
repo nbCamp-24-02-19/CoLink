@@ -14,7 +14,7 @@ data class ChatRoomEntity(
     val registerDate: String = LocalDateTime.now().convertLocalDateTime(),
 )
 data class MessageEntity (
-    val key: String = "MSG_" + UUID.randomUUID().toString(),
+    val key: String = "MSG_" + System.currentTimeMillis().toString() + "_" + UUID.randomUUID().toString(),
     val chatRoomId: String = "",
     val text: String? = "",
     val authId: String? = "",

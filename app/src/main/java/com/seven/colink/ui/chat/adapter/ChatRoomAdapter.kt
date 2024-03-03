@@ -86,7 +86,8 @@ class ChatRoomAdapter(
             if (item !is ChatRoomItem.OtherMessage) return@with
             ivChatProfile.load(item.profileUrl?: R.drawable.ic_profile)
             tvChatAuthName.text = item.name
-            tvChatViewCount.text = item.viewCount
+            tvChatViewCount.text = item.viewCount.toString()
+            tvChatViewCount.isVisible = item.viewCount != 0
             tvChatMessage.text = item.text
             tvChatRegisterTime.text = item.time
         }
@@ -118,7 +119,8 @@ class ChatRoomAdapter(
             if (item !is ChatRoomItem.MyMessage) return@with
             tvChatMyMessage.text = item.text
             tvChatMyRegisterTime.text = item.time
-            tvChatMyViewCount.text = item.viewCount
+            tvChatMyViewCount.text = item.viewCount.toString()
+            tvChatMyViewCount.isVisible = item.viewCount != 0
         }
 
         override fun setState(state: MessageState) = with(binding) {

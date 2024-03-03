@@ -15,6 +15,8 @@ import com.seven.colink.ui.chat.adapter.ChatListAdapter
 import com.seven.colink.ui.chat.type.ChatTabType
 import com.seven.colink.ui.chat.viewmodel.ChatTabViewModel
 import com.seven.colink.ui.sign.signup.SignUpActivity
+import com.seven.colink.util.progress.hideProgressOverlay
+import com.seven.colink.util.progress.showProgressOverlay
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -40,7 +42,7 @@ class ChatTabFragment: Fragment() {
     private val adapter by lazy {
         ChatListAdapter(
             onClick = {
-                startActivity(ChatRoomActivity.newIntent(requireContext(),it))
+                startActivity(ChatRoomActivity.newIntent(requireContext(),it.key, it.title))
             }
         )
     }
@@ -62,13 +64,13 @@ class ChatTabFragment: Fragment() {
     private fun initViewModel() = with(viewModel){
         lifecycleScope.launch {
             chatType.collect {
-                setChat(it)
+                hideProgressOverlay()
+                setChat()
             }
         }
 
         lifecycleScope.launch {
             chatList.collect{
-                Log.d("chatabfrag", "$it")
                 adapter.submitList(it)
             }
         }
@@ -77,6 +79,8 @@ class ChatTabFragment: Fragment() {
 
     private fun initView() {
         setList()
+
+        showProgressOverlay()
     }
 
     private fun setList() = with(binding){
