@@ -17,7 +17,7 @@ class GetChatRoomUsecase @Inject constructor(
         val currentUid = authRepository.getCurrentUser().message
         val newChat = ChatRoomEntity(
             key = "CR_" + listOf(uid, currentUid).sorted().joinToString(""),
-            participantsUid = listOf(uid, currentUid),
+            participantsUid = mapOf(uid to true, currentUid to true),
             type = type
         )
         val chatRoom = chatRepository.getChatRoom(newChat.key)
@@ -33,13 +33,13 @@ class GetChatRoomUsecase @Inject constructor(
         key: String,
         uids: List<String>,
         title: String,
-        type: ChatTabType = ChatTabType.GENERAL,
+        type: ChatTabType = ChatTabType.PROJECT,
         thumbnail: String?
     ): ChatRoomEntity {
         val newChat = ChatRoomEntity(
             key = "CR_$key",
             title = title,
-            participantsUid = uids,
+            participantsUid = uids.associateWith { true },
             thumbnail = thumbnail,
             type = type
         )

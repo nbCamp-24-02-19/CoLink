@@ -8,7 +8,7 @@ import java.util.UUID
 data class ChatRoomEntity(
     val key: String = "CR_" + UUID.randomUUID().toString(),
     val title: String? = "",
-    val participantsUid: List<String> = emptyList(),
+    val participantsUid: Map<String, Boolean> = emptyMap(),
     val thumbnail: String? = "",
     val type: ChatTabType? = ChatTabType.GENERAL,
     val registerDate: String = LocalDateTime.now().convertLocalDateTime(),

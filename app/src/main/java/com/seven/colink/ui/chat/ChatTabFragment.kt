@@ -2,6 +2,7 @@ package com.seven.colink.ui.chat
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,7 +40,7 @@ class ChatTabFragment: Fragment() {
     private val adapter by lazy {
         ChatListAdapter(
             onClick = {
-                ChatRoomActivity.newInstance(it)
+                startActivity(ChatRoomActivity.newIntent(requireContext(),it))
             }
         )
     }
@@ -60,10 +61,18 @@ class ChatTabFragment: Fragment() {
 
     private fun initViewModel() = with(viewModel){
         lifecycleScope.launch {
+            chatType.collect {
+                setChat(it)
+            }
+        }
+
+        lifecycleScope.launch {
             chatList.collect{
+                Log.d("chatabfrag", "$it")
                 adapter.submitList(it)
             }
         }
+
     }
 
     private fun initView() {
