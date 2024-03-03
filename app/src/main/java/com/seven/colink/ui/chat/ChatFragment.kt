@@ -1,5 +1,6 @@
 package com.seven.colink.ui.chat
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,13 +13,14 @@ import com.seven.colink.databinding.FragmentChatBinding
 import com.seven.colink.ui.chat.type.ChatTabType
 import com.seven.colink.ui.chat.viewmodel.ChatTabViewModel
 import com.seven.colink.ui.chat.viewmodel.ChatViewModel
+import com.seven.colink.ui.sign.signin.SignInActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ChatFragment : Fragment() {
 
     private var _binding: FragmentChatBinding? = null
-    private lateinit var viewModel: ChatViewModel
+    private val  viewModel: ChatViewModel by viewModels()
 
     private val binding get() = _binding!!
 
@@ -38,6 +40,25 @@ class ChatFragment : Fragment() {
 
     private fun initView() {
         setViewPager()
+        setTest()
+    }
+
+    private fun setTest() = with(binding){
+        login1.setOnClickListener {
+            startActivity(Intent(requireContext(), SignInActivity::class.java))
+        }
+
+        chatMake.setOnClickListener {
+            viewModel.createChat()
+
+        }
+        viewModel.a.observe(viewLifecycleOwner){
+            it?.let { it1 -> startActivity(ChatRoomActivity.newIntent(requireActivity(),it1)) }
+        }
+
+        logout1.setOnClickListener {
+            viewModel.logout()
+        }
     }
 
     private fun setViewPager() = with(binding) {

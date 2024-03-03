@@ -2,11 +2,11 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:theme="@style/Theme.MaterialComponents.NoActionBar"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
     android:paddingHorizontal="12dp"
+    android:theme="@style/Theme.MaterialComponents.NoActionBar"
     tools:context=".ui.chat.ChatRoomActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -31,11 +31,11 @@
                 android:id="@+id/tv_chat_room_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_bold"
                 android:paddingStart="8dp"
                 android:text="채팅방 이름"
-                android:textSize="18sp"
                 android:textColor="@color/black"
-                android:fontFamily="@font/roboto_bold"/>
+                android:textSize="18sp" />
 
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
@@ -45,45 +45,59 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:layout_marginBottom="?attr/actionBarSize"/>
+        android:layout_marginBottom="?attr/actionBarSize"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-<com.google.android.material.bottomappbar.BottomAppBar
-    android:layout_gravity="bottom"
-    android:backgroundTint="@color/white"
-    android:elevation="4dp"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
-        android:background="@color/white"
-        app:boxStrokeColor="@color/message_input_strok_tint_list"
-        app:boxStrokeWidth="1dp"
-        android:layout_marginEnd="56dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_chatroom_message"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:backgroundTint="@color/white"
+        android:elevation="4dp"
+        android:orientation="horizontal">
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:maxLines="4"
-            android:hint="send message"/>
+            android:paddingEnd="56dp"
+            android:background="@color/white"
+            android:backgroundTint="@color/white"
+            app:boxBackgroundColor="@color/white"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="@color/message_input_stroke_tint_list"
+            app:boxStrokeWidth="1dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-    </com.google.android.material.textfield.TextInputLayout>
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/bt_chatroom_send"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
-        android:layout_gravity="end|center_vertical"
-        android:padding="12dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_send_message"
-        android:tint="@color/white"
-        android:clipToOutline="true"
-        android:background="@drawable/bg_round_corner_8dp"
-        android:backgroundTint="@color/enable_stroke"/>
-</com.google.android.material.bottomappbar.BottomAppBar>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_chatroom_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:hint="send message"
+                android:maxLines="4" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/bt_chatroom_send"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_gravity="end|center_vertical"
+            android:background="@drawable/bg_round_corner_8dp"
+            android:backgroundTint="@color/enable_stroke"
+            android:clipToOutline="true"
+            android:padding="12dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_send_message"
+            android:tint="@color/white"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

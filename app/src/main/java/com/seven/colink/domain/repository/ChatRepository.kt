@@ -13,5 +13,5 @@ interface ChatRepository {
     suspend fun observeMessages(chatRoom: ChatRoomEntity, callback: (List<MessageEntity>) -> Unit)
     suspend fun deleteChatRoom(chatRoomId: String)
     suspend fun getChatRoomList(userId: String, type: ChatTabType): Result<List<ChatRoomEntity>>
-    suspend fun getChatRoomMessage(chatRoomId: String): List<MessageEntity>
+    suspend fun getChatRoomMessage(chatRoomId: String): List<MessageEntity>?
 }

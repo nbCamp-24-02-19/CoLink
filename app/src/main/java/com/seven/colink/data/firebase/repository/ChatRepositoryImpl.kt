@@ -53,7 +53,6 @@ class ChatRepositoryImpl @Inject constructor(
     override suspend fun getChatRoomList(userId: String, type: ChatTabType) = runCatching {
         val chatRoomList = mutableListOf<ChatRoomEntity>()
         val snapshot = db.reference.child(DataBaseType.CHATROOM.title)
-            .orderByChild("participantsUid/$userId").equalTo(userId)
             .get()
             .await()
 
@@ -64,24 +63,30 @@ class ChatRepositoryImpl @Inject constructor(
             }
         }
         chatRoomList.toList()
+    }.onFailure { exception ->
+        Log.e("getChatRoomList", "Exception while getting chat room list", exception)
     }
     override suspend fun getChatRoomMessage(
         chatRoomId: String,
         ) = suspendCancellableCoroutine {  continuation ->
         db.reference.child(DataBaseType.MESSAGE.title).child(chatRoomId)
-            .addValueEventListener(
+            .addListenerForSingleValueEvent(
                 object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot)
                     = continuation.resume(snapshot.children.mapNotNull { it.getValue(MessageEntity::class.java) })
 
                     override fun onCancelled(error: DatabaseError)
-                    = continuation.resumeWithException(RuntimeException(error.message))
+                    = if (error.message == "Permission denied") {
+                        continuation.resume(null)
+                    } else {
+                        continuation.resumeWithException(RuntimeException(error.message))
+                    }
                 }
             )
     }
 
     override suspend fun sendMessage(message: MessageEntity) {
-        db.reference.child(DataBaseType.MESSAGE.title).child(message.chatRoomId).child(message.key)
+        db.reference.child(DataBaseType.MESSAGE.title).child(message.chatRoomId)
             .push().setValue(message)
     }
 
@@ -96,7 +101,7 @@ class ChatRepositoryImpl @Inject constructor(
                     override fun onDataChange(snapshot: DataSnapshot) {
                         val messages =
                             snapshot.children.mapNotNull { it.getValue(MessageEntity::class.java) }
-                        chatRoom.participantsUid.forEach { uid ->
+                        chatRoom.participantsUid.forEach { (uid, _) ->
                             firestore.runTransaction { transaction ->
                                 val ref =
                                     firestore.collection(DataBaseType.USER.title).document(uid)

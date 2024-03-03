@@ -1,17 +1,15 @@
 package com.seven.colink.ui.chat
 
+import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.LayoutInflater
 import androidx.activity.viewModels
-import androidx.lifecycle.viewModelScope
-import com.seven.colink.R
+import androidx.lifecycle.lifecycleScope
 import com.seven.colink.databinding.ActivityChatRoomBinding
 import com.seven.colink.ui.chat.adapter.ChatRoomAdapter
-import com.seven.colink.ui.chat.type.ChatTabType
 import com.seven.colink.ui.chat.viewmodel.ChatRoomViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -20,10 +18,11 @@ class ChatRoomActivity : AppCompatActivity() {
     companion object {
         const val CHAT_ID = "chatId"
 
-        fun newInstance(chatId: String) = ChatTabFragment().apply {
-            arguments = Bundle().apply {
-                putSerializable(CHAT_ID, chatId)
-            }
+        fun newIntent(
+            context: Context,
+            roomId: String,
+            ) = Intent(context, ChatRoomActivity()::class.java).apply {
+            putExtra(CHAT_ID, roomId)
         }
     }
 
@@ -45,9 +44,14 @@ class ChatRoomActivity : AppCompatActivity() {
     }
 
     private fun initViewModel() = with(viewModel){
-        observeMessage()
+        lifecycleScope.launch {
+            chatRoom.collect{
+                setMessages(it)
+                observeMessage(it)
+            }
+        }
 
-        viewModelScope.launch {
+        lifecycleScope.launch {
             messageList.collect{
                 adapter.submitList(it)
             }
@@ -56,6 +60,16 @@ class ChatRoomActivity : AppCompatActivity() {
 
     private fun initView() {
         setAdapter()
+        setButton()
+    }
+
+    private fun setButton() = with(binding) {
+        ivChatRoomBack.setOnClickListener {
+            finish()
+        }
+        btChatroomSend.setOnClickListener {
+            viewModel.sendMessage(etChatroomMessage.text.toString())
+        }
     }
 
     private fun setAdapter() = with(binding) {
