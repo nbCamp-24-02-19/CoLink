@@ -13,11 +13,15 @@ import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.entity.TagEntity
 import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.entity.RecruitInfo
+import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.ImageRepository
 import com.seven.colink.util.Constants.Companion.EXTRA_ENTRY_TYPE
 import com.seven.colink.util.Constants.Companion.EXTRA_GROUP_TYPE
 import com.seven.colink.util.Constants.Companion.EXTRA_POST_ENTITY
+import com.seven.colink.util.Constants.Companion.LIMITED_PEOPLE
 import com.seven.colink.util.Constants.Companion.LIMITED_TAG_COUNT
+import com.seven.colink.util.PersonnelUtils
+import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.PostEntryType
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,7 +32,8 @@ import javax.inject.Inject
 class PostViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val postRepository: PostRepository,
-    private val imageRepository: ImageRepository
+    private val imageRepository: ImageRepository,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
     private val entryType: PostEntryType? by lazy {
         savedStateHandle.get<PostEntryType>(EXTRA_ENTRY_TYPE)
@@ -44,15 +49,14 @@ class PostViewModel @Inject constructor(
     private val _uiState: MutableLiveData<PostViewState> = MutableLiveData(PostViewState.init())
     val uiState: LiveData<PostViewState> get() = _uiState
 
-    private val _tagUiState: MutableLiveData<TagUiState> = MutableLiveData(TagUiState.init())
-    val tagUiState: LiveData<TagUiState> get() = _tagUiState
-
-    private val _recruitUiState: MutableLiveData<RecruitUiState> =
-        MutableLiveData(RecruitUiState.init())
-    val recruitUiState: LiveData<RecruitUiState> get() = _recruitUiState
+    private val _postUiState: MutableLiveData<PostUiState> = MutableLiveData(PostUiState.init())
+    val postUiState: LiveData<PostUiState> get() = _postUiState
 
     private val _selectedImage: MutableLiveData<Uri?> = MutableLiveData(null)
     val selectedImage: LiveData<Uri?> get() = _selectedImage
+
+    private val _selectedPersonnelCount: MutableLiveData<Int> = MutableLiveData(0)
+    val selectedPersonnelCount: LiveData<Int> get() = _selectedPersonnelCount
 
     init {
         initViewState()
@@ -79,7 +83,7 @@ class PostViewModel @Inject constructor(
     }
 
     fun addTagItem(entity: TagEntity): AddTagResult {
-        val currentList = _tagUiState.value?.list.orEmpty().toMutableList()
+        val currentList = _postUiState.value?.tagList.orEmpty().toMutableList()
         return when {
             currentList.size >= LIMITED_TAG_COUNT -> {
                 AddTagResult.MaxNumberExceeded
@@ -90,37 +94,35 @@ class PostViewModel @Inject constructor(
             }
 
             else -> {
-                currentList.add(entity)
-                _tagUiState.value = _tagUiState.value?.copy(list = currentList)
+                _postUiState.value = _postUiState.value?.copy(tagList = currentList + entity)
                 AddTagResult.Success
             }
         }
     }
 
     fun removeTagItem(entityKey: String?) {
-        _tagUiState.value = _tagUiState.value?.let { state ->
-            state.copy(list = state.list.filterNot { it.key == entityKey })
+        _postUiState.value = _postUiState.value?.let { state ->
+            state.copy(tagList = state.tagList.filterNot { it.key == entityKey })
         }
     }
 
     fun addRecruitInfo(recruitInfo: RecruitInfo) {
-        val currentList = _recruitUiState.value?.list.orEmpty().toMutableList()
+        val currentList = _postUiState.value?.recruitList.orEmpty().toMutableList()
         currentList.add(recruitInfo)
-        _recruitUiState.value = _recruitUiState.value?.copy(list = currentList)
+        _postUiState.value = _postUiState.value?.copy(recruitList = currentList)
         updateTotalPersonnelCount()
     }
 
     fun removeRecruitInfo(key: String) {
-        _recruitUiState.value = _recruitUiState.value?.let { state ->
-            state.copy(list = state.list.filterNot { it.key == key })
+        _postUiState.value = _postUiState.value?.let { state ->
+            state.copy(recruitList = state.recruitList.filterNot { it.key == key })
         }
         updateTotalPersonnelCount()
     }
 
     private fun updateTotalPersonnelCount() {
-        val totalPersonnelCount = _recruitUiState.value?.list?.sumOf { it.maxPersonnel } ?: 0
-        _recruitUiState.value =
-            _recruitUiState.value?.copy(totalPersonnelCount = totalPersonnelCount)
+        val totalPersonnelCount = _postUiState.value?.recruitList?.sumOf { it.maxPersonnel } ?: 0
+        _postUiState.value = _postUiState.value?.copy(totalPersonnelCount = totalPersonnelCount)
     }
 
     fun handleGalleryResult(resultCode: Int, data: Intent?) {
@@ -144,24 +146,63 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    private fun createPostEntity(
+    private suspend fun createPostEntity(
         title: String,
         description: String,
         imageUrl: String
     ): PostEntity {
         return PostEntity(
-            authId = "user123",
+            authId = getCurrentUser(),
             title = title,
             imageUrl = imageUrl,
             groupType = groupType,
             description = description,
-            tags = tagUiState.value?.list?.map { it.name } ?: emptyList(),
-            recruit = recruitUiState.value?.list ?: emptyList(),
+            tags = postUiState.value?.tagList?.map { it.name } ?: emptyList(),
+            recruit = if (groupType == GroupType.PROJECT) postUiState.value?.recruitList
+                ?: emptyList()
+            else postUiState.value?.singleRecruitInfo?.let { listOf(it) } ?: emptyList(),
+            memberIds = getCurrentUser()?.let { listOf(it) } ?: emptyList()
         )
     }
 
     private suspend fun uploadImage(uri: Uri): String {
         return imageRepository.uploadImage(uri).getOrThrow().toString()
+    }
+
+    private fun performCountOperation(operation: (Int, Int, Int) -> Pair<Int, Int>) {
+        val (updateSelectedCount, updateTotalCount) = operation(
+            _selectedPersonnelCount.value ?: 0,
+            _postUiState.value?.totalPersonnelCount ?: 0,
+            LIMITED_PEOPLE
+        )
+        _selectedPersonnelCount.value = updateSelectedCount
+
+        _postUiState.value = _postUiState.value?.let { currentState ->
+            val updatedRecruitInfo =
+                currentState.singleRecruitInfo?.copy(maxPersonnel = updateTotalCount)
+            currentState.copy(
+                totalPersonnelCount = updateTotalCount,
+                singleRecruitInfo = updatedRecruitInfo
+            )
+        }
+    }
+
+    fun incrementCount() {
+        performCountOperation { selected, total, limit ->
+            PersonnelUtils.incrementCount(selected, total, limit)
+        }
+    }
+
+    fun decrementCount() {
+        performCountOperation { selected, total, _ ->
+            PersonnelUtils.decrementCount(selected, total)
+        }
+    }
+
+    private suspend fun getCurrentUser(): String? {
+        return authRepository.getCurrentUser().let {
+            if (it == DataResultStatus.SUCCESS) it.message else null
+        }
     }
 
 }

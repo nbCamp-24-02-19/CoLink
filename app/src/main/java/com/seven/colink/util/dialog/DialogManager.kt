@@ -14,6 +14,9 @@ import com.seven.colink.R
 import com.seven.colink.databinding.UtilCustomBasicDialogBinding
 import com.seven.colink.databinding.UtilCustomLevelDialogBinding
 import com.seven.colink.databinding.UtilCustomListDialogBinding
+import com.seven.colink.databinding.UtilMemberInfoDialogBinding
+import com.seven.colink.domain.entity.UserEntity
+import com.seven.colink.ui.post.adapter.MemberListAdapter
 import com.seven.colink.util.dialog.adapter.DialogAdapter
 import com.seven.colink.util.dialog.adapter.LevelDialogAdapter
 import com.seven.colink.util.dialog.enum.LevelEnum
@@ -142,5 +145,30 @@ fun Context.setLevelDialog(
     )
     binding.rcLevelDia.adapter = adapter
     binding.rcLevelDia.layoutManager = LinearLayoutManager(this)
+    return dialog
+}
+
+fun List<UserEntity>.setUserInfoDialog(
+    context: Context,
+    action: (UserEntity, isRefuseButton: Boolean) -> Unit,
+): AlertDialog {
+    val binding = UtilMemberInfoDialogBinding.inflate(LayoutInflater.from(context))
+    val dialog = AlertDialog.Builder(context)
+        .setView(binding.root)
+        .show()
+
+    dialog.window?.setLayout(
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        ViewGroup.LayoutParams.MATCH_PARENT
+    )
+
+    val adapter = MemberListAdapter { position, user, isRefuseButton ->
+        action(user, isRefuseButton)
+        dialog.dismiss()
+    }
+
+    binding.recyclerViewMember.adapter = adapter
+    adapter.submitList(this)
+
     return dialog
 }
