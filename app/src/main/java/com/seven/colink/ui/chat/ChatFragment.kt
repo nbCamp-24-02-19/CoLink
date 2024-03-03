@@ -1,17 +1,17 @@
 package com.seven.colink.ui.chat
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import com.seven.colink.databinding.FragmentChatBinding
 import com.seven.colink.ui.chat.type.ChatTabType
 import com.seven.colink.ui.chat.viewmodel.ChatViewModel
-import com.seven.colink.ui.sign.signin.SignInActivity
+import com.seven.colink.util.progress.showProgressOverlay
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -38,6 +38,7 @@ class ChatFragment : Fragment() {
 
     private fun initView() {
         setViewPager()
+        showProgressOverlay()
     }
 
     private fun setViewPager() = with(binding) {
