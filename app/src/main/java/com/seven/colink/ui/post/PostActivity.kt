@@ -27,7 +27,6 @@ import com.seven.colink.util.Constants.Companion.EXTRA_POSITION_ENTITY
 import com.seven.colink.util.Constants.Companion.EXTRA_POST_ENTITY
 import com.seven.colink.util.Constants.Companion.LIMITED_PEOPLE
 import com.seven.colink.util.Constants.Companion.LIMITED_TAG_COUNT
-import com.seven.colink.util.PersonnelUtils
 import com.seven.colink.util.dialog.RecruitDialog
 import com.seven.colink.util.openGallery
 import com.seven.colink.util.showToast
@@ -41,7 +40,6 @@ class PostActivity : AppCompatActivity() {
         ActivityPostBinding.inflate(layoutInflater)
     }
     private var totalPersonnelCount = 0
-    private var selectedPersonnelCount = 0
     private var selectedImageUri: Uri? = null
     private lateinit var galleryResultLauncher: ActivityResultLauncher<Intent>
     private var recruitTypes: List<String> = emptyList()
@@ -163,44 +161,12 @@ class PostActivity : AppCompatActivity() {
     }
 
     private fun initStudyView() = with(binding) {
-        includeStepperPersonnel.tvRecruitPersonnel.text = "$totalPersonnelCount"
-
         includeStepperPersonnel.ivPlusPersonnel.setOnClickListener {
-            incrementCount()
+            viewModel.incrementCount()
         }
 
         includeStepperPersonnel.ivMinusPersonnel.setOnClickListener {
-            decrementCount()
-        }
-    }
-
-    private fun performCountOperation(operation: (Int, Int, Int) -> Pair<Int, Int>) {
-        val (updateSelectedCount, updateTotalCount) = operation(
-            selectedPersonnelCount,
-            totalPersonnelCount,
-            LIMITED_PEOPLE
-        )
-        selectedPersonnelCount = updateSelectedCount
-        totalPersonnelCount = updateTotalCount
-        binding.includeStepperPersonnel.tvRecruitPersonnel.text = "$selectedPersonnelCount"
-    }
-
-    private fun incrementCount() {
-        performCountOperation { selected, total, limit ->
-            PersonnelUtils.incrementCount(
-                selected,
-                total,
-                limit
-            )
-        }
-    }
-
-    private fun decrementCount() {
-        performCountOperation { selected, total, _ ->
-            PersonnelUtils.decrementCount(
-                selected,
-                total
-            )
+            viewModel.decrementCount()
         }
     }
 
@@ -250,16 +216,18 @@ class PostActivity : AppCompatActivity() {
             }
         }
 
-        tagUiState.observe(this@PostActivity) { state ->
-            tagListAdapter.submitList(state.list.map { TagListItem.Item(tagEntity = it) })
-        }
-
-        recruitUiState.observe(this@PostActivity) { state ->
-            recruitListAdapter.submitList(state.list)
+        postUiState.observe(this@PostActivity) { state ->
+            recruitListAdapter.submitList(state.recruitList)
             binding.tvTotalRecruit.text =
                 getString(R.string.total_personnel, state.totalPersonnelCount)
             totalPersonnelCount = state.totalPersonnelCount
-            recruitTypes = state.list.map { it.type }
+            recruitTypes = state.recruitList.map { it.type }
+
+            tagListAdapter.submitList(state.tagList.map { TagListItem.Item(tagEntity = it) })
+        }
+
+        selectedPersonnelCount.observe(this@PostActivity) { count ->
+            binding.includeStepperPersonnel.tvRecruitPersonnel.text = count.toString()
         }
 
         selectedImage.observe(this@PostActivity) { selected ->

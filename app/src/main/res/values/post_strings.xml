@@ -9,6 +9,8 @@
 
     <string name="bt_project">Project</string>
     <string name="bt_study">Study</string>
+    <string name="project_kor">프로젝트</string>
+    <string name="study_kor">스터디</string>
 
     <string name="people_recruited">[모집 인원]</string>
     <string name="limited_people">최대 %1$d명까지 모집할 수 있습니다.</string>
@@ -38,4 +40,9 @@
 
     <string name="support_dialog_message">선택하신 %1$s %2$s에 지원하시겠습니까?</string>
     <string name="support_dialog_title">%1$s 지원</string>
+
+    <string name="successful_support">프로젝트에 성공적으로 지원하였습니다.</string>
+    <string name="already_supported">이미 지원한 상태입니다.</string>
+    <string name="support_failed_error">예기치 못한 오류로 지원에 실패하였습니다.</string>
+
 </resources>
