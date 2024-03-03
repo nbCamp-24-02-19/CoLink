@@ -8,6 +8,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.google.firebase.Firebase
+import com.google.firebase.database.database
 import com.seven.colink.R
 import com.seven.colink.databinding.ActivityMainBinding
 import com.seven.colink.util.Constants
