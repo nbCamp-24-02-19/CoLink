@@ -4,16 +4,19 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.seven.colink.R
 import com.seven.colink.databinding.ActivityPostContentBinding
 import com.seven.colink.domain.entity.PostEntity
+import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.ui.post.adapter.PostContentListAdapter
 import com.seven.colink.util.Constants
 import com.seven.colink.util.dialog.setDialog
-import com.seven.colink.util.status.GroupType
+import com.seven.colink.util.dialog.setUserInfoDialog
+import com.seven.colink.util.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -22,11 +25,9 @@ class PostContentActivity : AppCompatActivity() {
     companion object {
         fun newIntentForUpdate(
             context: Context,
-            groupType: GroupType,
             position: Int,
             entity: PostEntity
         ) = Intent(context, PostContentActivity::class.java).apply {
-            putExtra(Constants.EXTRA_GROUP_TYPE, groupType)
             putExtra(Constants.EXTRA_POSITION_ENTITY, position)
             putExtra(Constants.EXTRA_POST_ENTITY, entity)
         }
@@ -63,6 +64,10 @@ class PostContentActivity : AppCompatActivity() {
                 } ?: View.GONE
 
         }
+
+        dialogUiState.observe(this@PostContentActivity) { state ->
+            showDialog(state)
+        }
     }
 
     private fun initView() = with(binding) {
@@ -96,25 +101,52 @@ class PostContentActivity : AppCompatActivity() {
         buttonUiState: PostContentButtonUiState
     ) {
         when (buttonUiState) {
-            PostContentButtonUiState.Supporter -> showSupportDialog(item)
-            PostContentButtonUiState.Writer -> { /* Handle Create click */
+            PostContentButtonUiState.Supporter -> {
+                viewModel.createDialog(item)
+            }
+
+            PostContentButtonUiState.Writer -> {
+                lifecycleScope.launch {
+                    val userEntities = viewModel.getUserEntitiesFromRecruit()
+                    if (userEntities.isNotEmpty()) {
+                        showUserEntitiesDialog(userEntities)
+                    } else {
+                        showToast("지원 목록이 없습니다.")
+                    }
+                }
             }
         }
     }
 
-    private fun showSupportDialog(recruitItem: PostContentItem.RecruitItem) {
-        setDialog(
-            title = getString(R.string.support_dialog_title, ""),
-            message = getString(R.string.support_dialog_message, "", ""),
-            R.drawable.img_dialog_study,
-            confirmAction = {
-                lifecycleScope.launch {
-                    val result = viewModel.applyForProject(recruitItem = recruitItem)
-                    it.dismiss()
-                }
-            },
-            cancelAction = { it.dismiss() }
-        ).show()
+    private fun showDialog(state: DialogUiState?) {
+        state?.recruitItem?.let {
+            setDialog(
+                title = getString(R.string.support_dialog_title, state.title),
+                message = getString(R.string.support_dialog_message, state.message, state.title),
+                R.drawable.img_dialog_study,
+                confirmAction = {
+                    lifecycleScope.launch {
+                        val result = viewModel.applyForProject(
+                            recruitItem = state.recruitItem
+                        )
+                        showToast(result.message)
+                        it.dismiss()
+                    }
+                },
+                cancelAction = { it.dismiss() }
+            ).show()
+        }
     }
-    
+
+    private fun showUserEntitiesDialog(userEntities: List<UserEntity>) {
+        userEntities.setUserInfoDialog(this) { user, isRefuseButton ->
+            if (isRefuseButton) {
+
+            } else {
+
+            }
+        }.show()
+    }
+
+
 }
