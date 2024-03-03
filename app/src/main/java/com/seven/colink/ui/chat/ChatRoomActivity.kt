@@ -75,6 +75,7 @@ class ChatRoomActivity : AppCompatActivity() {
     }
 
     private fun setButton() = with(binding) {
+        btChatroomSend.isEnabled = false
         ivChatRoomBack.setOnClickListener {
             finish()
         }
@@ -86,7 +87,7 @@ class ChatRoomActivity : AppCompatActivity() {
 
     private fun setTextChangeListener() = with(binding){
         etChatroomMessage.addTextChangedListener {
-            btChatroomSend.isEnabled != it?.isEmpty()
+            btChatroomSend.isEnabled = it?.isNotEmpty() ?: false
         }
     }
 

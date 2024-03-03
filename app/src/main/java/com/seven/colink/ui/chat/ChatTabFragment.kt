@@ -19,6 +19,7 @@ import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -64,14 +65,16 @@ class ChatTabFragment: Fragment() {
     private fun initViewModel() = with(viewModel){
         lifecycleScope.launch {
             chatType.collect {
-                hideProgressOverlay()
                 setChat()
             }
         }
 
         lifecycleScope.launch {
-            chatList.collect{
+            chatList
+                .drop(1)
+                .collect{
                 adapter.submitList(it)
+                hideProgressOverlay()
             }
         }
 
