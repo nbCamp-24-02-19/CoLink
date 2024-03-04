@@ -17,7 +17,6 @@ class MyPageViewModel @Inject constructor(
     private fun MyPageUserModel.convertUserEntity() = UserEntity(
         name = name,
         email = email,
-        password = password,
         mainSpecialty = mainSpecialty,
         specialty = specialty,
         skill = skill,
