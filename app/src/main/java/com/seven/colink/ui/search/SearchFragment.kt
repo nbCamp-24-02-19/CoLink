@@ -187,7 +187,6 @@ class SearchFragment : Fragment() {
                     if (entity != null){
                         val intent = PostContentActivity.newIntentForUpdate(
                             requireContext(),
-                            item.groupType?:GroupType.UNKNOWN,
                             position,
                             entity
                             )
