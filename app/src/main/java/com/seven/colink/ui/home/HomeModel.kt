@@ -3,13 +3,14 @@ package com.seven.colink.ui.home
 import com.seven.colink.ui.home.adapter.TopViewPagerAdapter
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
+import java.util.UUID
 
 data class TopItems (
     val img : String?,
     val team : String?,
     val date : String?,
     val title : String?,
-    val key : String?
+    val key : String? = "POST_" + UUID.randomUUID().toString()
 )
 
 data class BottomItems (

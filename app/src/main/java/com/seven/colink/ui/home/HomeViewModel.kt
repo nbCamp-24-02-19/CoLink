@@ -1,12 +1,12 @@
 package com.seven.colink.ui.home
 
-import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.repository.PostRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -89,5 +89,9 @@ class HomeViewModel @Inject constructor(
 //                Toast.makeText(mContext, "다음에 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    suspend fun getPost(key: String): PostEntity? {
+        return postRepository.getPost(key).getOrNull()
     }
 }
