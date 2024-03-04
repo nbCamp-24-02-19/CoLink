@@ -1,0 +1,6 @@
+documentation:
+  - docs/**/*
+bug:
+  - src/**/*Bug*.java
+feature:
+  - src/**/*Feature*.java
