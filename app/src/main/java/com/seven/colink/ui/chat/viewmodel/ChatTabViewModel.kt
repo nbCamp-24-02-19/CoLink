@@ -13,6 +13,7 @@ import com.seven.colink.ui.chat.model.ChatListItem
 import com.seven.colink.ui.chat.type.ChatTabType
 import com.seven.colink.util.convert.convertTime
 import com.seven.colink.util.status.DataResultStatus
+import com.seven.colink.util.status.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -34,8 +35,8 @@ class ChatTabViewModel @Inject constructor(
     private val _chatType = MutableStateFlow(ChatTabType.GENERAL)
     val chatType: StateFlow<ChatTabType> = _chatType
 
-    private val _chatList = MutableStateFlow<List<ChatListItem>>(emptyList())
-    val chatList: StateFlow<List<ChatListItem>> = _chatList
+    private val _chatList = MutableStateFlow<UiState<List<ChatListItem>>>(UiState.Loading)
+    val chatList: StateFlow<UiState<List<ChatListItem>>> = _chatList
 
     init {
         _chatType.value = handle.get<ChatTabType>(CHAT_TYPE)?: ChatTabType.GENERAL
@@ -43,12 +44,20 @@ class ChatTabViewModel @Inject constructor(
 
     suspend fun setChat() {
         viewModelScope.launch {
-            val result = authRepository.getCurrentUser()
-            if (result == DataResultStatus.SUCCESS) {
-                val list = userRepository.getUserDetails(result.message).getOrNull()?.participantsChatRoomIds?.map {
-                    async { chatRepository.getChatRoom(it)?.convert(result.message,chatType.value)}
-                }?: return@launch
-                _chatList.value = list.awaitAll().filterNotNull()
+            _chatList.value = UiState.Loading
+            try {
+                val result = authRepository.getCurrentUser()
+                if (result == DataResultStatus.SUCCESS) {
+                    val list = userRepository.getUserDetails(result.message)
+                        .getOrNull()?.participantsChatRoomIds?.map {
+                        async {
+                            chatRepository.getChatRoom(it)?.convert(result.message, chatType.value)
+                        }
+                    } ?: return@launch
+                    _chatList.value = UiState.Success(list.awaitAll().filterNotNull())
+                }
+            } catch (e: Exception) {
+                _chatList.value = UiState.Error(e)
             }
         }
     }

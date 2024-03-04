@@ -11,6 +11,7 @@ import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.ui.chat.ChatRoomActivity.Companion.CHAT_ID
 import com.seven.colink.ui.chat.model.ChatRoomItem
 import com.seven.colink.util.convert.convertTime
+import com.seven.colink.util.status.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -27,9 +28,9 @@ class ChatRoomViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val handle: SavedStateHandle,
 ) : ViewModel() {
-    private val _messageList = MutableStateFlow<List<ChatRoomItem>?>(emptyList())
+    private val _messageList = MutableStateFlow<UiState<List<ChatRoomItem>?>>(UiState.Loading)
 
-    val messageList: StateFlow<List<ChatRoomItem>?> = _messageList
+    val messageList: StateFlow<UiState<List<ChatRoomItem>?>> = _messageList
     private val chatRoomKey get() = handle.get<String>(CHAT_ID)
 
     private val _chatRoom = MutableStateFlow(ChatRoomEntity())
@@ -50,12 +51,16 @@ class ChatRoomViewModel @Inject constructor(
     }
 
     private suspend fun setMessages(room: ChatRoomEntity) {
-        _messageList.value = chatRoom.run {
+        _messageList.value =
+            try {
+                UiState.Success(chatRoom.run {
             chatRepository.getChatRoomMessage(room.key)?.map {
                 withContext(Dispatchers.IO) {
                     async { it.convert(room.participantsUid.count()) }
                 }.await()
             }
+        })} catch (e:Exception) {
+            UiState.Error(e)
         }
     }
 

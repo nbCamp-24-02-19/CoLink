@@ -42,7 +42,7 @@ fun Fragment.hideProgressOverlay() {
     val activity = activity ?: return
     val container = activity.findViewById<ViewGroup>(android.R.id.content)
     val layout = container.findViewById<View>(R.id.progress_bar)
-//    if (layout != null) {
+    if (layout != null) {
         container.removeView(layout)
-//    }
+    }
 }
