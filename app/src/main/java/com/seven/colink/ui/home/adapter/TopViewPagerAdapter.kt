@@ -1,5 +1,6 @@
 package com.seven.colink.ui.home.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +14,7 @@ import com.seven.colink.ui.home.TopItems
 class TopViewPagerAdapter : ListAdapter<TopItems, TopViewPagerAdapter.TopViewHolder>(TopDiffUtil) {
     object TopDiffUtil : DiffUtil.ItemCallback<TopItems>() {
         override fun areItemsTheSame(oldItem: TopItems, newItem: TopItems): Boolean {
-            return oldItem.team == newItem.team
+            return oldItem.key == newItem.key
         }
 
         override fun areContentsTheSame(oldItem: TopItems, newItem: TopItems): Boolean {
@@ -50,10 +51,9 @@ class TopViewPagerAdapter : ListAdapter<TopItems, TopViewPagerAdapter.TopViewHol
     override fun getItemCount(): Int = Int.MAX_VALUE
 
     override fun onBindViewHolder(holder: TopViewHolder, position: Int) {
+        Log.d("Adpater","#bbb viewholder")
         if (currentList.size > 0) {
             holder.onBind(currentList[position % currentList.size])
-        }else {
-            holder.onBind(getItem(position))
         }
 
 //        holder.onBind(getItem(position % currentList.size))
