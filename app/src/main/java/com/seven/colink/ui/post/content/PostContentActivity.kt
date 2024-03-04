@@ -25,10 +25,10 @@ class PostContentActivity : AppCompatActivity() {
     companion object {
         fun newIntentForUpdate(
             context: Context,
-            position: Int,
+//            position: Int,
             entity: PostEntity
         ) = Intent(context, PostContentActivity::class.java).apply {
-            putExtra(Constants.EXTRA_POSITION_ENTITY, position)
+//            putExtra(Constants.EXTRA_POSITION_ENTITY, position)
             putExtra(Constants.EXTRA_POST_ENTITY, entity)
         }
     }
