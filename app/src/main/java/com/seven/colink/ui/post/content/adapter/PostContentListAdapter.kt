@@ -177,8 +177,11 @@ class PostContentListAdapter(
                 binding.tvNowPersonnel.text = "${item.recruit.nowPersonnel}"
                 binding.tvMaxPersonnel.text = "${item.recruit.maxPersonnel}"
 
-                binding.btRecruit.isEnabled = item.recruit.nowPersonnel < item.recruit.maxPersonnel
-                binding.btRecruit.alpha = if (binding.btRecruit.isEnabled) 1.0f else 0.5f
+                if (item.buttonUiState == PostContentButtonUiState.Supporter) {
+                    binding.btRecruit.isEnabled =
+                        item.recruit.nowPersonnel < (item.recruit.maxPersonnel ?: -1)
+                    binding.btRecruit.alpha = if (binding.btRecruit.isEnabled) 1.0f else 0.5f
+                }
 
                 binding.btRecruit.text = context.getString(
                     if (item.buttonUiState == PostContentButtonUiState.Writer) R.string.util_dialog_button_confirm
