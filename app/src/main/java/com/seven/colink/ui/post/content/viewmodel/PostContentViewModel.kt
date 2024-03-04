@@ -33,7 +33,6 @@ class PostContentViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val postRepository: PostRepository
 ) : ViewModel() {
-
     private val entity: String = savedStateHandle.get<String>(Constants.EXTRA_POST_ENTITY)
         ?: throw IllegalStateException("Entity cannot be null")
 
@@ -53,10 +52,11 @@ class PostContentViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            _uiState.value = getPost(entity)
+            getPostByKey()
             uiState.value?.let { postEntity ->
                 determineUserButtonUiState(postEntity)
                 updatePostContentItems(postEntity.recruit)
+                incrementPostViews()
             }
         }
     }
@@ -147,7 +147,7 @@ class PostContentViewModel @Inject constructor(
 
     private suspend fun isAlreadySupported(recruitItem: PostContentItem.RecruitItem): Boolean {
         return uiState.value?.recruit?.any { recruitInfo ->
-            recruitInfo.key == recruitItem.recruit.key &&
+            recruitInfo.type == recruitItem.recruit.type &&
                     recruitInfo.applicationInfos?.any { it.userId == getCurrentUser() } == true
         } == true
     }
@@ -157,7 +157,7 @@ class PostContentViewModel @Inject constructor(
         newApplicationInfo: ApplicationInfo
     ): List<RecruitInfo>? {
         return uiState.value?.recruit?.map { recruitInfo ->
-            if (recruitInfo.key == recruitItem.recruit.key) {
+            if (recruitInfo.type == recruitItem.recruit.type) {
                 recruitInfo.copy(applicationInfos = (recruitInfo.applicationInfos.orEmpty() + newApplicationInfo).toList())
             } else {
                 recruitInfo
@@ -227,7 +227,7 @@ class PostContentViewModel @Inject constructor(
         item: PostContentItem.RecruitItem
     ): List<RecruitInfo>? {
         return uiState.value?.recruit?.map { recruitInfo ->
-            if (recruitInfo.key == item.recruit.key) {
+            if (recruitInfo.type == item.recruit.type) {
                 recruitInfo.copy(
                     applicationInfos = recruitInfo.applicationInfos?.map { applicationInfo ->
                         if (applicationInfo.userId == userEntity.uid) {
@@ -277,12 +277,12 @@ class PostContentViewModel @Inject constructor(
         }
     }
 
-    suspend fun getPost(key: String = entity): PostEntity? =
-        postRepository.getPost(key).getOrNull()
-
-    suspend fun incrementPostViews(): DataResultStatus {
-        return postRepository.incrementPostViews(entity)
+    private suspend fun getPostByKey() {
+        _uiState.value = postRepository.getPost(entity).getOrNull()
     }
+
+    private suspend fun incrementPostViews(): DataResultStatus =
+        postRepository.incrementPostViews(entity)
 
 
 }

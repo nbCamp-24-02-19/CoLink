@@ -1,7 +1,5 @@
 package com.seven.colink.ui.home
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,9 +11,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.seven.colink.databinding.FragmentHomeBinding
-import com.seven.colink.ui.sign.signin.SignInActivity
-import com.seven.colink.util.dialog.setDialog
-import com.seven.colink.util.dialog.setLevelDialog
 import com.seven.colink.ui.home.adapter.BottomViewPagerAdapter
 import com.seven.colink.ui.home.adapter.HomeMainAdapter
 import com.seven.colink.ui.home.adapter.TopViewPagerAdapter
@@ -98,12 +93,10 @@ class HomeFragment : Fragment() {
         override fun onClick(view: View, position: Int, item: TopItems) {
             lifecycleScope.launch {
                 val key = item.key
-                val entity = key?.let { homeViewModel.getPost(it) }
-                if (entity != null) {
-                    val intent = PostContentActivity.newIntentForUpdate(
+                if (key != null) {
+                    val intent = PostContentActivity.newIntent(
                         requireContext(),
-                        position,
-                        entity
+                        key
                     )
                     startActivity(intent)
                 }else {
