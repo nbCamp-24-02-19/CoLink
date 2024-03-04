@@ -16,4 +16,5 @@
     <string name="search_post_time">1시간 전</string>
     <string name="search_post_heart">0</string>
     <string name="search_post_view">0</string>
+    <string name="group_type_options">게시물 타입 선택</string>
 </resources>
