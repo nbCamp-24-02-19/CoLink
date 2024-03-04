@@ -7,8 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.seven.colink.R
 import com.seven.colink.databinding.FragmentHomeBinding
 import com.seven.colink.ui.home.adapter.BottomViewPagerAdapter
 import com.seven.colink.ui.home.adapter.HomeMainAdapter
@@ -20,14 +23,13 @@ class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private val homeViewModel : HomeViewModel by viewModels()
     private val mainAdapter by lazy { HomeMainAdapter() }
     private lateinit var bottomAdapter : BottomViewPagerAdapter
-    private val topAdapter by lazy { TopViewPagerAdapter() }
-    private var homeItem : MutableList<HomeAdapterItems> = mutableListOf(
-        HomeAdapterItems.TopView(topAdapter),
-        HomeAdapterItems.Header("그룹 추천")
-    )
+//    private val topAdapter by lazy { TopViewPagerAdapter() }
+    private lateinit var topAdapter : TopViewPagerAdapter
+//    private val homeViewModel by viewModels<HomeViewModel>()
+    private val homeViewModel : HomeViewModel by activityViewModels()
+    private lateinit var homeItem : MutableList<HomeAdapterItems>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,12 +46,19 @@ class HomeFragment : Fragment() {
     }
 
     private fun initViews() {
-        setTopItems()
         initViewAdapter()
         setObserve()
+        setTopItems()
     }
 
     private fun initViewAdapter() {
+        topAdapter = TopViewPagerAdapter()
+
+        homeItem = mutableListOf(
+            HomeAdapterItems.TopView(topAdapter),
+            HomeAdapterItems.Header("그룹 추천")
+        )
+
         with(binding.rvHome) {
             adapter = mainAdapter
             layoutManager = LinearLayoutManager(requireContext())
@@ -58,16 +67,19 @@ class HomeFragment : Fragment() {
 
         bottomAdapter = BottomViewPagerAdapter(this)
         binding.vpHome.adapter = bottomAdapter
+
     }
 
     private fun setTopItems() {
         homeViewModel.getTopItems(7)
+        Log.d("Home","#bbb setTop = ${homeViewModel.topItems.value}")
     }
 
     private fun setObserve() {
         homeViewModel.topItems.observe(viewLifecycleOwner){
-            topAdapter.submitList(it)
-            Log.d("Home","#aaa null이니? = $it")
+            Log.d("Home","#bbb null이니? = ${it}")
+            val newItems = it.toMutableList()
+            topAdapter.submitList(newItems)
         }
     }
 

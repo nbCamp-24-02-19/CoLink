@@ -28,13 +28,26 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             getTopItemList.clear()
             val repository = postRepository.getRecentPost(num)
+
             kotlin.runCatching {
-                val item = repository.getOrNull(num)
+//                val item = repository.getOrNull(num)
                 repository.forEach {
-                    var topRecentItem = TopItems(item?.imageUrl,item?.recruitInfo,item?.startDate,
-                        item?.title,item?.key)
+                    var topRecentItem = TopItems(it.imageUrl,it.recruitInfo,it.registeredDate,
+                        it.title,it.key)
+
                     getTopItemList.add(topRecentItem)
+
                 }
+
+
+//                Log.d("ViewModel","#aaa 여긴 뭐니? $item")
+//                repository.forEach {
+//                    var topRecentItem = TopItems(item.imageUrl,item.recruitInfo,item.startDate,
+//                        item.title,item.key)
+//                    Log.d("ViewModel","#aaa 데이터 가져온거 변환$topRecentItem")
+//                    getTopItemList.add(topRecentItem)
+//                    Log.d("ViewModel","#aaa 데이터 가져온거 집어넣기${getTopItemList[0]}")
+//                }
                 _topItems.value = getTopItemList
 
             }.onFailure { exception ->
@@ -50,19 +63,27 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             getBottomItemList.clear()
             val repository = postRepository.getRecentPost(num)
+            Log.d("ViewModel","#aaa 여긴 null 아니고$repository")
             kotlin.runCatching {
-                val item = repository.getOrNull(num)
-
                 repository.forEach {
-                    val lv = item?.recruit?.forEach { lv ->
-                        lv.level
-                    }.toString()
-
-                    var bottomRecentItem = BottomItems(item?.groupType,item?.title,item?.description
-                    ,item?.tags,lv,item?.imageUrl,item?.key,item?.status,item?.status)
+                    var bottomRecentItem = BottomItems(it.groupType,it.title,it.description
+                    ,it.tags,it.imageUrl,it.key,it.status,it.status)
+                    Log.d("ViewModel","#aaa 데이터 가져온거 변환$bottomRecentItem")
                     getBottomItemList.add(bottomRecentItem)
+                    Log.d("ViewModel","#aaa 데이터 가져온거 집어넣기${getBottomItemList[0]}")
                 }
                 _bottomItems.value = getBottomItemList
+//                val item = repository.getOrNull(num)
+//
+//                repository.forEach {
+////                    val lv = item?.recruit?.forEach { lv ->
+////                        lv.
+////                    }.toString()
+//                    var bottomRecentItem = BottomItems(item?.groupType,item?.title,item?.description
+//                    ,item?.tags,item?.imageUrl,item?.key,item?.status,item?.status)
+//                    getBottomItemList.add(bottomRecentItem)
+//                }
+//                _bottomItems.value = getBottomItemList
             }.onFailure { exception ->
                 Log.e("HomeViewModel", "#aaa error $exception")
 //                Toast.makeText(mContext, "다음에 다시 시도해주세요.", Toast.LENGTH_SHORT).show()

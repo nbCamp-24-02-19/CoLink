@@ -5,7 +5,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentHomeBinding
@@ -19,7 +21,8 @@ class HomeStudyFragment : Fragment() {
 
     private var _binding: FragmentHomeStudyBinding? = null
     private val binding get() = _binding!!
-    private val homeViewModel : HomeViewModel by viewModels()
+//    private val homeViewModel : HomeViewModel by viewModels()
+    private val homeViewModel : HomeViewModel by activityViewModels()
     private val mAdapter by lazy { BottomHomeStudyAdapter() }
 
     override fun onCreateView(

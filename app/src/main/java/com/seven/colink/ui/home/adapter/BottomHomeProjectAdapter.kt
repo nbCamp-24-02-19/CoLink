@@ -1,5 +1,6 @@
 package com.seven.colink.ui.home.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,6 +44,7 @@ class BottomHomeProjectAdapter : ListAdapter<BottomItems,BottomHomeProjectAdapte
                         tvHomeBottomStudy.visibility = View.INVISIBLE
                         tvHomeBottomProject.visibility = View.VISIBLE
                         tvHomeBottomTitle.text = item.title
+                        Log.d("Adapter","#aaa ${item.title}")
                         tvHomeBottomDes.text = item.des
                         tvHomeBottomKind.text = item.kind?.toString()
                         tvHomeBottomLv.text = item.lv

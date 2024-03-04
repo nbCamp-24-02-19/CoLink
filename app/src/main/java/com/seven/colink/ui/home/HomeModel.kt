@@ -19,13 +19,13 @@ data class BottomItems (
     val des : String?,
 //    val kind : String?,
     val kind : List<String>?,
-    val lv : String?,
     val img : String?,
     val key : String?,
 //    val blind : Boolean,
 //    val complete : Boolean
     val blind : ProjectStatus?,
-    val complete : ProjectStatus?
+    val complete : ProjectStatus?,
+    val lv : String? = "0"
 )
 
 sealed class HomeAdapterItems {
