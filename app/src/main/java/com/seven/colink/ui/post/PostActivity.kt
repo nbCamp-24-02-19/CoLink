@@ -83,7 +83,8 @@ class PostActivity : AppCompatActivity() {
     private val recruitListAdapter: RecruitListAdapter by lazy {
         RecruitListAdapter(
             onClickItem = { _, entity ->
-                viewModel.removeRecruitInfo(entity.key)
+                viewModel.removeRecruitInfo(entity.type
+                )
             }
         )
     }
@@ -221,7 +222,7 @@ class PostActivity : AppCompatActivity() {
             binding.tvTotalRecruit.text =
                 getString(R.string.total_personnel, state.totalPersonnelCount)
             totalPersonnelCount = state.totalPersonnelCount
-            recruitTypes = state.recruitList.map { it.type }
+            recruitTypes = state.recruitList.map { it.type.toString() }
 
             tagListAdapter.submitList(state.tagList.map { TagListItem.Item(tagEntity = it) })
         }

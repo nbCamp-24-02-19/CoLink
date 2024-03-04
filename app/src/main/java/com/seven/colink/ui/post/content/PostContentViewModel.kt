@@ -116,7 +116,7 @@ class PostContentViewModel @Inject constructor(
         recruitItem: PostContentItem.RecruitItem
     ): DataResultStatus {
         if (entity.recruit?.any { recruitInfo ->
-                recruitInfo.key == recruitItem.recruit.key &&
+                recruitInfo.type == recruitItem.recruit.type &&
                         recruitInfo.applicationInfos?.any { it.userId == getCurrentUser() } == true
             } == true) {
             return DataResultStatus.FAIL.apply {
@@ -129,7 +129,7 @@ class PostContentViewModel @Inject constructor(
             applicationStatus = ApplicationStatus.PENDING
         )
         val updatedRecruitList = entity.recruit?.map { recruitInfo ->
-            if (recruitInfo.key == recruitItem.recruit.key) {
+            if (recruitInfo.type == recruitItem.recruit.type) {
                 recruitInfo.copy(applicationInfos = (recruitInfo.applicationInfos.orEmpty() + newApplicationInfo).toList())
             } else {
                 recruitInfo
