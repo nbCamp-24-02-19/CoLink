@@ -1,25 +1,19 @@
 package com.seven.colink.ui.home
 
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.seven.colink.R
 import com.seven.colink.databinding.FragmentHomeBinding
 import com.seven.colink.ui.home.adapter.BottomViewPagerAdapter
 import com.seven.colink.ui.home.adapter.HomeMainAdapter
 import com.seven.colink.ui.home.adapter.TopViewPagerAdapter
 import com.seven.colink.ui.post.content.PostContentActivity
-import com.seven.colink.util.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -48,7 +42,6 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
-
     }
 
     override fun onResume() {
@@ -59,7 +52,6 @@ class HomeFragment : Fragment() {
     private fun initViews() {
         initViewAdapter()
         setObserve()
-
     }
 
     private fun initViewAdapter() {
@@ -84,14 +76,12 @@ class HomeFragment : Fragment() {
 
     private fun setTopItems() {
         homeViewModel.getTopItems(7)
-        Log.d("Home","#bbb setTop = ${homeViewModel.topItems.value}")
     }
 
     private fun setObserve() {
         homeViewModel.topItems.observe(viewLifecycleOwner){
-            Log.d("Home","#bbb null이니? = ${it}")
             val newItems = ArrayList(it)
-            topAdapter.submitList(newItems){Log.d("Home","#bbb submitList")}
+            topAdapter.submitList(newItems)
         }
     }
 
@@ -99,9 +89,7 @@ class HomeFragment : Fragment() {
         override fun onClick(view: View, position: Int, item: TopItems) {
             lifecycleScope.launch {
                 val key = item.key
-                Log.d("Detail","#ccc key = $key")
                 val entity = key?.let { homeViewModel.getPost(it) }
-                Log.d("Detail","#ccc 새로 받은 entitiy = $entity")
                 if (entity != null) {
                     val intent = PostContentActivity.newIntentForUpdate(
                         requireContext(),
