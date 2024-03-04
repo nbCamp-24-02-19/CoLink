@@ -1,8 +1,6 @@
 package com.seven.colink.ui.home.child
 
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +12,6 @@ import coil.load
 import com.seven.colink.databinding.FragmentHomeStudyBinding
 import com.seven.colink.ui.home.HomeViewModel
 import com.seven.colink.ui.post.content.PostContentActivity
-import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
 import kotlinx.coroutines.launch
 
@@ -91,12 +88,10 @@ class HomeStudyFragment : Fragment() {
                         layBottom.setOnClickListener {
                             lifecycleScope.launch {
                                 val key = bottom.key
-                                val entity = key?.let { homeViewModel.getPost(it) }
-                                if (entity != null) {
-                                    val intent = PostContentActivity.newIntentForUpdate(
+                                if (key != null) {
+                                    val intent = PostContentActivity.newIntent(
                                         requireContext(),
-                                        index,
-                                        entity
+                                        key
                                     )
                                     startActivity(intent)
                                 } else {
