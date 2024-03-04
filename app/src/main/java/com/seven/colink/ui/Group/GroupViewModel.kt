@@ -1,10 +1,10 @@
-package com.seven.colink.ui.member
+package com.seven.colink.ui.Group
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class MemberViewModel : ViewModel() {
+class GroupViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
         value = "This is notifications Fragment"

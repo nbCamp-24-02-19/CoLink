@@ -19,9 +19,9 @@
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.seven.colink.ui.member.MemberFragment"
+        android:name="com.seven.colink.ui.Group.GroupFragment"
         android:label="@string/title_member"
-        tools:layout="@layout/fragment_member" />
+        tools:layout="@layout/fragment_group" />
 
     <fragment
         android:id="@+id/navigation_chat"
