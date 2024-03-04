@@ -50,7 +50,15 @@ class SearchViewModel @Inject constructor(
                 it.convertSearchModel()
             }
             Log.d("doSearch", "SearchValue = ${groupType} , ${recruitType}")
+            Log.d("doSearch", "SearchValueResult = ${_searchModel.value}")
+
         }
+    }
+
+    suspend fun getPost(key: String) : PostEntity?{
+        val post = postRepository.getPost(key).getOrNull()
+        Log.d("getPost", "post = ${post}")
+        return post
     }
 
     fun setGroupBoth(query: String){
