@@ -16,13 +16,18 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.findFragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentMyPageBinding
 import com.seven.colink.databinding.ItemSignUpSkillBinding
 import com.seven.colink.databinding.MypageEditDialogBinding
+import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.ui.mypage.adapter.MyPagePostAdapter
 import com.seven.colink.ui.mypage.adapter.MyPageSkilAdapter
+import com.seven.colink.ui.userdetail.UserDetailFragment
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.skillCategory
 
@@ -35,6 +40,7 @@ class MyPageFragment : Fragment() {
     private lateinit var postadapter: MyPagePostAdapter
 
 
+
     var imageUri: Uri? = null
 
 
@@ -42,7 +48,7 @@ class MyPageFragment : Fragment() {
         fun newInstance() = MyPageFragment()
     }
 
-    private lateinit var viewModel: MyPageViewModel
+    private val viewModel: MyPageViewModel by viewModels()
 
 
 
@@ -52,11 +58,12 @@ class MyPageFragment : Fragment() {
 
 
         SkilRecyclerView()
-        editClick()
         mypageBlogClick()
         mypagegitClick()
         PostRecyclerView()
+        settingClick()
 
+        //스킬 추가
         skiladapter.plusClick = object : MyPageSkilAdapter.PlusClick{
             override fun onClick(item: MyPageItem, position: Int) {
 
@@ -71,15 +78,55 @@ class MyPageFragment : Fragment() {
                 }.show()
             }
         }
+        //스킬 삭제
+        skiladapter.skilLongClick = object : MyPageSkilAdapter.SkilLongClick{
+            override fun onLongClick(language: String, position: Int) {
+                val ad = AlertDialog.Builder(context)
+                ad.setTitle("삭제")
+                ad.setMessage("정말로 삭제하시겠습니까?")
+                ad.setPositiveButton("확인"){dialog,_ ->
+                    MyPageSkilItemManager.removeItem(language)
+                    skiladapter.changeDataset(MyPageSkilItemManager.getAllItem())
+                }
+                ad.setNegativeButton("취소"){dialog,_ ->
+                    dialog.dismiss()
+                }
+                ad.show()
+            }
+        }
+
+
+        viewModel.userDetails.observe(viewLifecycleOwner) { userDetails ->
+            // Update UI with user details
+            updateUI(userDetails)
+        }
 
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(MyPageViewModel::class.java)
-        // TODO: Use the ViewModel
+
+    private fun updateUI(user: UserEntity) {
+        // Update your views with user information
+        Log.d("Tag","user = ${user}")
     }
+
+
+
+    private fun settingClick(){
+        binding.ivMypageSetting.setOnClickListener {
+            val myPageEditDetailFragment = LayoutInflater.from(context).inflate(R.layout.fragment_my_page_edit_detail, null)
+            val myBuilder = AlertDialog.Builder(context)
+                .setView(myPageEditDetailFragment)
+            val mAlertDialog = myBuilder.show()
+
+            val mypageBackButton = myPageEditDetailFragment.findViewById<ImageView>(R.id.iv_mypage_detail_back)
+
+            mypageBackButton.setOnClickListener {
+                mAlertDialog.dismiss()
+            }
+        }
+    }
+
 
     private fun SkilRecyclerView(){
         skiladapter = MyPageSkilAdapter(MyPageSkilItemManager.getAllItem())
@@ -93,75 +140,6 @@ class MyPageFragment : Fragment() {
         binding.reMypageProject.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
     }
 
-
-    private fun editClick(){
-        binding.ivMypageEdit.setOnClickListener {
-            val mDialogView = LayoutInflater.from(context).inflate(R.layout.mypage_edit_dialog, null)
-            val mBuilder = AlertDialog.Builder(context)
-                .setView(mDialogView)
-
-            val mAlertDialog = mBuilder.show()
-
-
-            val profileCilck = mDialogView.findViewById<ImageView>(R.id.iv_mypage_edit)
-            val okButton = mDialogView.findViewById<Button>(R.id.btn_mypage_ok)
-            val mypageEdit = mDialogView.findViewById<EditText>(R.id.et_mypage_edit)
-            val cancelButton = mDialogView.findViewById<Button>(R.id.btn_mypage_cancel)
-
-            profileCilck.setOnClickListener {
-                //갤러리 권한...ㅠㅠ
-                if (imageUri != null) { //이미 프로필 사진이 있는 경우, 프로필 삭제
-                    imageUri = null
-
-                    _binding.ivMypageEdit.clipToOutline = true
-
-                    return@setOnClickListener
-                }
-                //갤러리에서 프로필 사진 가져오기
-                val imageIntent = Intent(
-                    Intent.ACTION_GET_CONTENT,
-                    MediaStore.Images.Media.INTERNAL_CONTENT_URI
-                )
-
-                imageIntentLauncher.launch(imageIntent)
-
-//                imageIntent = binding.ivMypageProfile.setImageResource()
-
-            }
-
-            okButton.setOnClickListener {
-                binding.tvMypageName.text = mypageEdit.text
-                mAlertDialog.dismiss()
-
-            }
-            cancelButton.setOnClickListener {
-                mAlertDialog.dismiss()
-            }
-
-        }
-    }
-
-    private val imageIntentLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) {
-        if (it.resultCode == Activity.RESULT_OK) {
-            imageUri = it.data?.data
-            activity?.grantUriPermission(
-                "com.seven.colink.ui.mypage",
-                imageUri,
-                Intent.FLAG_GRANT_READ_URI_PERMISSION
-            )
-
-            _binding.ivMypageEdit.setImageURI(imageUri)
-            _binding.ivMypageEdit.clipToOutline = true
-        }
-    }
-
-    private fun editTextClick(){
-        binding.tvMypageItemEdit.setOnClickListener {
-            //회원가입때 받았던 정보입력 페이지 재활용?
-        }
-    }
 
     private fun mypageBlogClick(){
         binding.ivMypageBlog.setOnClickListener {
