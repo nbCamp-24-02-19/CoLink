@@ -1,4 +1,4 @@
-package com.seven.colink.ui.Group
+package com.seven.colink.ui.group
 
 import android.content.Intent
 import android.os.Bundle

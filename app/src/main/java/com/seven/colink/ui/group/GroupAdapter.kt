@@ -1,4 +1,4 @@
-package com.seven.colink.ui.Group
+package com.seven.colink.ui.group
 
 import android.view.LayoutInflater
 import android.view.View

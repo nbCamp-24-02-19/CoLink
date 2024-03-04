@@ -1,4 +1,4 @@
-package com.seven.colink.ui.Group
+package com.seven.colink.ui.group
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
