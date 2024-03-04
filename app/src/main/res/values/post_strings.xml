@@ -24,8 +24,9 @@
 
     <string name="bt_complete">완료</string>
 
-    <string name="post_register_success">게시물 작성에 성공했습니다.</string>
+    <string name="post_register_success">게시물 작성이 완료되었습니다.</string>
     <string name="post_register_fail">게시물 작성에 실패했습니다.</string>
+    <string name="post_update_success">게시물 수정이 완료되었습니다.</string>
 
     <string name="recruitment_status">모집 현황</string>
     <string name="project_member_info">프로젝트 멤버</string>
@@ -43,6 +44,9 @@
 
     <string name="successful_support">프로젝트에 성공적으로 지원하였습니다.</string>
     <string name="already_supported">이미 지원한 상태입니다.</string>
-    <string name="support_failed_error">예기치 못한 오류로 지원에 실패하였습니다.</string>
+    <string name="failed_error">예기치 못한 오류가 발생하였습니다.</string>
+    <string name="no_support_list">지원 목록이 없습니다.</string>
 
+    <string name="approved_processing_completed">승인 처리가 완료되었습니다.</string>
+    <string name="refusal_completed">거절 처리가 완료되었습니다.</string>
 </resources>

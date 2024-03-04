@@ -1,4 +1,4 @@
-package com.seven.colink.ui.post.content
+package com.seven.colink.ui.post.content.model
 
 import com.seven.colink.domain.entity.RecruitInfo
 import com.seven.colink.domain.entity.UserEntity

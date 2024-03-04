@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentGroupBinding
-import com.seven.colink.ui.post.PostActivity
+import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.ui.search.SearchFragment
 
 class GroupFragment : Fragment() {
