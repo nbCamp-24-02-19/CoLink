@@ -1,6 +1,7 @@
 package com.seven.colink.domain.entity
 
 import android.os.Parcelable
+import com.seven.colink.util.status.ApplicationStatus
 import kotlinx.parcelize.Parcelize
 import java.util.UUID
 
@@ -11,5 +12,5 @@ data class RecruitInfo(
     val applicationInfos: List<ApplicationInfo>? = emptyList()
 ) : Parcelable {
     val nowPersonnel: Int
-        get() = applicationInfos?.size ?: 0
+        get() = applicationInfos?.count { it.applicationStatus == ApplicationStatus.APPROVE } ?: 0
 }

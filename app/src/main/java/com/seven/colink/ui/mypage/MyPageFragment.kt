@@ -3,6 +3,9 @@ package com.seven.colink.ui.mypage
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -16,6 +19,8 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.findFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewModelScope
@@ -30,7 +35,6 @@ import com.seven.colink.ui.mypage.adapter.MyPageSkilAdapter
 import com.seven.colink.ui.userdetail.UserDetailFragment
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.skillCategory
-import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MyPageFragment : Fragment() {
@@ -58,9 +62,8 @@ class MyPageFragment : Fragment() {
         _binding = MypageEditDialogBinding.inflate(layoutInflater)
 
 
+        privacypolicy()
         SkilRecyclerView()
-        mypageBlogClick()
-        mypagegitClick()
         PostRecyclerView()
         settingClick()
 
@@ -100,15 +103,104 @@ class MyPageFragment : Fragment() {
         viewModel.userDetails.observe(viewLifecycleOwner) { userDetails ->
             // Update UI with user details
             updateUI(userDetails)
+            skiladapter.changeDataset(userDetails.skill?.map { MyPageItem.skilItems(skillCategory.indexOf(it),it,MyPageSkilItemManager.addItem(it))  }
+                ?.plus(MyPageItem.plusItems(99,R.drawable.ic_add_24)) ?: emptyList())
+
+            Log.d("Tag", "${userDetails.skill}")
         }
+
+        viewModel.userPost.observe(viewLifecycleOwner) { it ->
+            it?.map{post ->
+                if (post.grouptype == GroupType.PROJECT){
+                    MyPostItem.MyPagePostItem(if (post.ing != ProjectStatus.END){
+                        "참여중"
+                    } else "완료", projectName = post.title.toString(), projectTime = post.time.toString())
+                } else {
+                    MyPostItem.MyPageStudyItem(if(post.ing != ProjectStatus.END){
+                        "참여중"
+                    } else "완료",  post.title.toString(), post.time.toString()
+                    )
+
+                }}?.let { it1 -> postadapter.changeDataset(it1) }
+            Log.e("Tag","${it}")
+            }
 
         return binding.root
     }
 
 
-    private fun updateUI(user: UserEntity) {
+    private fun updateUI(user: MyPageUserModel) {
         // Update your views with user information
+        binding.tvMypageName.text = user.name
+        binding.tvMypageSpecialization2.text = user.mainSpecialty
+        binding.ivMypageBlog.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(user.blog))
+            startActivity(intent)
+        }
+        binding.ivMypageGit.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(user.git))
+            startActivity(intent)
+        }
+        binding.tvMypageAboutMe.text = user.info
+
+        val level = user.level
+        val levelicon: Drawable = DrawableCompat.wrap(binding.ivMypageLevel.drawable)
+        if (level == 1){
+            binding.tvMypageLevel.text = "1"
+            DrawableCompat.setTint(
+                levelicon.mutate(),
+                ContextCompat.getColor(requireContext(),R.color.level1)
+            )
+        } else if(level == 2){
+            binding.tvMypageLevel.text = "2"
+            DrawableCompat.setTint(
+                levelicon.mutate(),
+                ContextCompat.getColor(requireContext(),R.color.level2)
+            )
+        }
+        else if(level == 3){
+            binding.tvMypageLevel.text = "3"
+            DrawableCompat.setTint(
+                levelicon.mutate(),
+                ContextCompat.getColor(requireContext(),R.color.level3)
+            )
+        }
+        else if(level == 4){
+            binding.tvMypageLevel.text = "4"
+            DrawableCompat.setTint(
+                levelicon.mutate(),
+                ContextCompat.getColor(requireContext(),R.color.level4)
+            )
+        }
+        else if(level == 5){
+            binding.tvMypageLevel.text = "5"
+            DrawableCompat.setTint(
+                levelicon.mutate(),
+                ContextCompat.getColor(requireContext(),R.color.level5)
+            )
+        }
+        else if(level == 6){
+            binding.tvMypageLevel.text = "6"
+            DrawableCompat.setTint(
+                levelicon.mutate(),
+                ContextCompat.getColor(requireContext(),R.color.level6)
+            )
+        } else{
+            binding.tvMypageLevel.text = "7"
+            DrawableCompat.setTint(
+                levelicon.mutate(),
+                ContextCompat.getColor(requireContext(),R.color.level7)
+            )
+        }
+
         Log.d("Tag","user = ${user}")
+    }
+
+    private fun privacypolicy(){
+        binding.ctMypage2.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://guri999.github.io/"))
+            startActivity(intent)
+        }
     }
 
 
@@ -141,21 +233,5 @@ class MyPageFragment : Fragment() {
         binding.reMypageProject.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
     }
 
-
-    private fun mypageBlogClick(){
-        binding.ivMypageBlog.setOnClickListener {
-            //test 주소
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.naver.com/"))
-            startActivity(intent)
-        }
-    }
-
-    private fun mypagegitClick(){
-        binding.ivMypageBlog.setOnClickListener {
-            //test 주소
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.naver.com/"))
-            startActivity(intent)
-        }
-    }
 
 }

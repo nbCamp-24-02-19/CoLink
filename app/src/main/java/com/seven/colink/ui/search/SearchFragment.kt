@@ -1,7 +1,6 @@
 package com.seven.colink.ui.search
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -14,11 +13,16 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.seven.colink.R
 import com.seven.colink.databinding.FragmentSearchBinding
 import com.seven.colink.ui.post.PostActivity
+import dagger.hilt.android.AndroidEntryPoint
+import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.ui.post.content.PostContentActivity
 import com.seven.colink.util.showToast
 import dagger.hilt.android.AndroidEntryPoint
+import com.seven.colink.util.dialog.setDialog
+import com.seven.colink.util.status.GroupType
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -37,6 +41,12 @@ class SearchFragment : Fragment() {
     private var recruit = true
     private var recruitEnd = true
 
+    private val groupTypeOptions: List<String>
+        get() = listOf(
+            getString(R.string.project_kor),
+            getString(R.string.study_kor)
+        )
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -48,8 +58,32 @@ class SearchFragment : Fragment() {
         val root: View = binding.root
 
         binding.fbSearchPost.setOnClickListener {
-            val intent = Intent(requireContext(), PostActivity::class.java)
-            startActivity(intent)
+            groupTypeOptions.setDialog(
+                requireContext(),
+                getString(R.string.group_type_options)
+            ) { selectedOption ->
+                when (selectedOption) {
+                    getString(R.string.project_kor) -> {
+                        startActivity(
+                            PostActivity.newIntentForCreate(
+                                requireContext(),
+                                GroupType.PROJECT
+                            )
+                        )
+                    }
+
+                    getString(R.string.study_kor) -> {
+                        startActivity(
+                            PostActivity.newIntentForCreate(
+                                requireContext(),
+                                GroupType.STUDY
+                            )
+                        )
+                    }
+
+                    else -> Unit
+                }
+            }.show()
         }
 
         binding.ivSearchButton.setOnClickListener {
@@ -86,7 +120,7 @@ class SearchFragment : Fragment() {
             if (study) {
                 study = false
                 offColor(binding.tvSearchStudy)
-                if(!study && project){
+                if (!study && project) {
                     searchViewModel.setProjectFilter(query)
                 } else {
                     searchViewModel.setGroupNone(query)
@@ -94,7 +128,7 @@ class SearchFragment : Fragment() {
             } else {
                 study = true
                 getGroupColor(binding.tvSearchStudy)
-                if (study && !project){
+                if (study && !project) {
                     searchViewModel.setStudyFilter(query)
                 } else {
                     searchViewModel.setGroupBoth(query)
@@ -107,7 +141,7 @@ class SearchFragment : Fragment() {
             if (recruitEnd) {
                 recruitEnd = false
                 offColor(binding.tvSearchRecruitEnd)
-                if (!recruitEnd && recruit){
+                if (!recruitEnd && recruit) {
                     searchViewModel.setRecruitFilter(query)
                 } else {
                     searchViewModel.setRecruitNone(query)
@@ -115,7 +149,7 @@ class SearchFragment : Fragment() {
             } else {
                 recruitEnd = true
                 getRecruitColor(binding.tvSearchRecruitEnd)
-                if (recruitEnd && !recruit){
+                if (recruitEnd && !recruit) {
                     searchViewModel.setRecruitEndFilter(query)
                 } else {
                     searchViewModel.setRecruitBoth(query)
@@ -128,7 +162,7 @@ class SearchFragment : Fragment() {
             if (recruit) {
                 recruit = false
                 offColor(binding.tvSearchRecruit)
-                if (!recruit && recruitEnd){
+                if (!recruit && recruitEnd) {
                     searchViewModel.setRecruitEndFilter(query)
                 } else {
                     searchViewModel.setRecruitNone(query)
@@ -136,7 +170,7 @@ class SearchFragment : Fragment() {
             } else {
                 recruit = true
                 getRecruitColor(binding.tvSearchRecruit)
-                if (recruit && !recruitEnd){
+                if (recruit && !recruitEnd) {
                     searchViewModel.setRecruitFilter(query)
                 } else {
                     searchViewModel.setRecruitBoth(query)
@@ -173,20 +207,14 @@ class SearchFragment : Fragment() {
     }
 
     private fun goDetail() {
-        searchAdapter.itemClick = object : SearchAdapter.ItemClick{
+        searchAdapter.itemClick = object : SearchAdapter.ItemClick {
             override fun onClick(item: SearchModel, position: Int) {
                 lifecycleScope.launch {
-                    val entity = searchViewModel.getPost(item.key)
-                    if (entity != null){
-                        val intent = PostContentActivity.newIntentForUpdate(
-                            requireContext(),
-                            position,
-                            entity
-                            )
-                        startActivity(intent)
-                    } else {
-                        requireContext().showToast("키값이 존재하지 않습니다.")
-                    }
+                    val intent = PostContentActivity.newIntent(
+                        requireContext(),
+                        item.key
+                    )
+                    startActivity(intent)
                 }
             }
         }
@@ -198,14 +226,15 @@ class SearchFragment : Fragment() {
         inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 
-    private fun offColor(text: TextView){
+    private fun offColor(text: TextView) {
         text.setTextColor(Color.parseColor("#717171"))
     }
 
-    private fun getGroupColor(text: TextView){
+    private fun getGroupColor(text: TextView) {
         text.setTextColor(Color.parseColor("#64B5F6"))
     }
-    private fun getRecruitColor(text: TextView){
+
+    private fun getRecruitColor(text: TextView) {
         text.setTextColor(Color.parseColor("#17B397"))
     }
 
