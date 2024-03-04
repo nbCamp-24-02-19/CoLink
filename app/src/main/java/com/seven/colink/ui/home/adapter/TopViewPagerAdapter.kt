@@ -42,7 +42,7 @@ class TopViewPagerAdapter : ListAdapter<TopItems, TopViewPagerAdapter.TopViewHol
 
         fun onBind(item : TopItems) {
             img.load(item.img)
-            team.text = item.team
+            team.text = "팀 스파르타"
             date.text = item.date
             title.text = item.title
         }
