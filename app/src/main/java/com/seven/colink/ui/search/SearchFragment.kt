@@ -10,22 +10,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.annotations.concurrent.Background
 import com.seven.colink.databinding.FragmentSearchBinding
-import com.seven.colink.domain.entity.PostEntity
-import com.seven.colink.domain.repository.PostRepository
-import dagger.hilt.android.AndroidEntryPoint
-import com.seven.colink.ui.evaluation.EvaluationActivity
 import com.seven.colink.ui.post.PostActivity
 import com.seven.colink.ui.post.content.PostContentActivity
 import com.seven.colink.util.showToast
-import com.seven.colink.util.status.GroupType
-import com.seven.colink.util.status.ProjectStatus
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
