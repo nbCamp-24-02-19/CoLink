@@ -18,10 +18,15 @@ class MyPageSkilAdapter(var mItems: List<MyPageItem>): RecyclerView.Adapter<View
         private const val VIEW_TYPE_PLUS = 2
     }
 
+    interface SkilLongClick{
+            fun onLongClick(language: String, position: Int)
+    }
+
     interface PlusClick{
         fun onClick(item: MyPageItem, position: Int)
     }
 
+    var skilLongClick: SkilLongClick? = null
     var plusClick: PlusClick? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -41,6 +46,10 @@ class MyPageSkilAdapter(var mItems: List<MyPageItem>): RecyclerView.Adapter<View
         return mItems.size
     }
 
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
     fun changeDataset(newDataSet: List<MyPageItem>){
         mItems = newDataSet
         notifyDataSetChanged()
@@ -51,6 +60,10 @@ class MyPageSkilAdapter(var mItems: List<MyPageItem>): RecyclerView.Adapter<View
         when (item){
             is MyPageItem.skilItems -> {
                 (holder as SkilViewHolder).icon.setImageResource(item.languageIcon)
+                holder.itemView.setOnClickListener() OnLongClickListener@{
+                    skilLongClick?.onLongClick(item.language,position)
+                    return@OnLongClickListener
+                }
             }
             is MyPageItem.plusItems -> {
                 (holder as PlusViewHolder).icon.setImageResource(item.plusIcon)
