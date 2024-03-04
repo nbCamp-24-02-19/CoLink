@@ -52,11 +52,11 @@ class MyPageFragment : Fragment() {
 
 
         SkilRecyclerView()
-        editClick()
         mypageBlogClick()
         mypagegitClick()
         PostRecyclerView()
 
+        //스킬 추가
         skiladapter.plusClick = object : MyPageSkilAdapter.PlusClick{
             override fun onClick(item: MyPageItem, position: Int) {
 
@@ -69,6 +69,22 @@ class MyPageFragment : Fragment() {
 
                     Log.d("tag", "skil = $it")
                 }.show()
+            }
+        }
+        //스킬 삭제
+        skiladapter.skilLongClick = object : MyPageSkilAdapter.SkilLongClick{
+            override fun onLongClick(language: String, position: Int) {
+                val ad = AlertDialog.Builder(context)
+                ad.setTitle("삭제")
+                ad.setMessage("정말로 삭제하시겠습니까?")
+                ad.setPositiveButton("확인"){dialog,_ ->
+                    MyPageSkilItemManager.removeItem(language)
+                    skiladapter.changeDataset(MyPageSkilItemManager.getAllItem())
+                }
+                ad.setNegativeButton("취소"){dialog,_ ->
+                    dialog.dismiss()
+                }
+                ad.show()
             }
         }
 
@@ -93,75 +109,6 @@ class MyPageFragment : Fragment() {
         binding.reMypageProject.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
     }
 
-
-    private fun editClick(){
-        binding.ivMypageEdit.setOnClickListener {
-            val mDialogView = LayoutInflater.from(context).inflate(R.layout.mypage_edit_dialog, null)
-            val mBuilder = AlertDialog.Builder(context)
-                .setView(mDialogView)
-
-            val mAlertDialog = mBuilder.show()
-
-
-            val profileCilck = mDialogView.findViewById<ImageView>(R.id.iv_mypage_edit)
-            val okButton = mDialogView.findViewById<Button>(R.id.btn_mypage_ok)
-            val mypageEdit = mDialogView.findViewById<EditText>(R.id.et_mypage_edit)
-            val cancelButton = mDialogView.findViewById<Button>(R.id.btn_mypage_cancel)
-
-            profileCilck.setOnClickListener {
-                //갤러리 권한...ㅠㅠ
-                if (imageUri != null) { //이미 프로필 사진이 있는 경우, 프로필 삭제
-                    imageUri = null
-
-                    _binding.ivMypageEdit.clipToOutline = true
-
-                    return@setOnClickListener
-                }
-                //갤러리에서 프로필 사진 가져오기
-                val imageIntent = Intent(
-                    Intent.ACTION_GET_CONTENT,
-                    MediaStore.Images.Media.INTERNAL_CONTENT_URI
-                )
-
-                imageIntentLauncher.launch(imageIntent)
-
-//                imageIntent = binding.ivMypageProfile.setImageResource()
-
-            }
-
-            okButton.setOnClickListener {
-                binding.tvMypageName.text = mypageEdit.text
-                mAlertDialog.dismiss()
-
-            }
-            cancelButton.setOnClickListener {
-                mAlertDialog.dismiss()
-            }
-
-        }
-    }
-
-    private val imageIntentLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) {
-        if (it.resultCode == Activity.RESULT_OK) {
-            imageUri = it.data?.data
-            activity?.grantUriPermission(
-                "com.seven.colink.ui.mypage",
-                imageUri,
-                Intent.FLAG_GRANT_READ_URI_PERMISSION
-            )
-
-            _binding.ivMypageEdit.setImageURI(imageUri)
-            _binding.ivMypageEdit.clipToOutline = true
-        }
-    }
-
-    private fun editTextClick(){
-        binding.tvMypageItemEdit.setOnClickListener {
-            //회원가입때 받았던 정보입력 페이지 재활용?
-        }
-    }
 
     private fun mypageBlogClick(){
         binding.ivMypageBlog.setOnClickListener {
