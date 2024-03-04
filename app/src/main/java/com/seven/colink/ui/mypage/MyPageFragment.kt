@@ -16,13 +16,17 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.findFragment
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentMyPageBinding
 import com.seven.colink.databinding.ItemSignUpSkillBinding
 import com.seven.colink.databinding.MypageEditDialogBinding
+import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.ui.mypage.adapter.MyPagePostAdapter
 import com.seven.colink.ui.mypage.adapter.MyPageSkilAdapter
+import com.seven.colink.ui.userdetail.UserDetailFragment
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.skillCategory
 
@@ -33,6 +37,7 @@ class MyPageFragment : Fragment() {
     private lateinit var _binding: MypageEditDialogBinding
     private lateinit var skiladapter: MyPageSkilAdapter
     private lateinit var postadapter: MyPagePostAdapter
+
 
 
     var imageUri: Uri? = null
@@ -50,11 +55,13 @@ class MyPageFragment : Fragment() {
         binding = FragmentMyPageBinding.inflate(layoutInflater)
         _binding = MypageEditDialogBinding.inflate(layoutInflater)
 
+        viewModel = ViewModelProvider(this).get(MyPageViewModel::class.java)
 
         SkilRecyclerView()
         mypageBlogClick()
         mypagegitClick()
         PostRecyclerView()
+        settingClick()
 
         //스킬 추가
         skiladapter.plusClick = object : MyPageSkilAdapter.PlusClick{
@@ -91,11 +98,24 @@ class MyPageFragment : Fragment() {
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(MyPageViewModel::class.java)
-        // TODO: Use the ViewModel
+
+
+
+    private fun settingClick(){
+        binding.ivMypageSetting.setOnClickListener {
+            val myPageEditDetailFragment = LayoutInflater.from(context).inflate(R.layout.fragment_my_page_edit_detail, null)
+            val myBuilder = AlertDialog.Builder(context)
+                .setView(myPageEditDetailFragment)
+            val mAlertDialog = myBuilder.show()
+
+            val mypageBackButton = myPageEditDetailFragment.findViewById<ImageView>(R.id.iv_mypage_detail_back)
+
+            mypageBackButton.setOnClickListener {
+                mAlertDialog.dismiss()
+            }
+        }
     }
+
 
     private fun SkilRecyclerView(){
         skiladapter = MyPageSkilAdapter(MyPageSkilItemManager.getAllItem())

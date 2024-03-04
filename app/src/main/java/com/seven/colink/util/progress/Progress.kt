@@ -4,6 +4,7 @@ import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.seven.colink.R
 
 fun Activity.showProgressOverlay() {
@@ -19,6 +20,27 @@ fun Activity.showProgressOverlay() {
 
 fun Activity.hideProgressOverlay() {
     val container = findViewById<ViewGroup>(android.R.id.content)
+    val layout = container.findViewById<View>(R.id.progress_bar)
+    if (layout != null) {
+        container.removeView(layout)
+    }
+}
+
+fun Fragment.showProgressOverlay() {
+    val context = context ?: return
+    val activity = activity ?: return
+    val extra = activity.findViewById<View>(R.id.progress_bar)
+    if (extra != null) return
+
+    val container = activity.findViewById<ViewGroup>(android.R.id.content)
+    val layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+    val layout = LayoutInflater.from(context).inflate(R.layout.progress_bar, container, false).apply { id = R.id.progress_bar }
+    container.addView(layout, layoutParams)
+}
+
+fun Fragment.hideProgressOverlay() {
+    val activity = activity ?: return
+    val container = activity.findViewById<ViewGroup>(android.R.id.content)
     val layout = container.findViewById<View>(R.id.progress_bar)
     if (layout != null) {
         container.removeView(layout)
