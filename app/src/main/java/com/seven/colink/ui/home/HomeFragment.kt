@@ -45,10 +45,15 @@ class HomeFragment : Fragment() {
         initViews()
     }
 
+    override fun onResume() {
+        super.onResume()
+        setTopItems()
+    }
+
     private fun initViews() {
         initViewAdapter()
         setObserve()
-        setTopItems()
+
     }
 
     private fun initViewAdapter() {
@@ -78,8 +83,8 @@ class HomeFragment : Fragment() {
     private fun setObserve() {
         homeViewModel.topItems.observe(viewLifecycleOwner){
             Log.d("Home","#bbb null이니? = ${it}")
-            val newItems = it.toMutableList()
-            topAdapter.submitList(newItems)
+            val newItems = ArrayList(it)
+            topAdapter.submitList(newItems){Log.d("Home","#bbb submitList")}
         }
     }
 
