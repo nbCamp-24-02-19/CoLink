@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.seven.colink.ui.Group.GroupFragment"
+        android:name="com.seven.colink.ui.group.GroupFragment"
         android:label="@string/title_member"
         tools:layout="@layout/fragment_group" />
 

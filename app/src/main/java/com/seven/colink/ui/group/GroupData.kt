@@ -1,6 +1,4 @@
-package com.seven.colink.ui.Group
-
-import android.widget.LinearLayout
+package com.seven.colink.ui.group
 
 sealed class GroupData {
     data class GroupTitle(val title: String) : GroupData()
