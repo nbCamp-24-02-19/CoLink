@@ -29,7 +29,7 @@ class TopViewPagerAdapter : ListAdapter<TopItems, TopViewPagerAdapter.TopViewHol
     }
 
     interface ItemClick {
-        fun onClick(view: View, position: Int)
+        fun onClick(view: View, position: Int, item:TopItems)
     }
 
     var itemClick : ItemClick? = null
@@ -64,7 +64,9 @@ class TopViewPagerAdapter : ListAdapter<TopItems, TopViewPagerAdapter.TopViewHol
 
 //        holder.onBind(getItem(position % currentList.size))
         holder.itemView.setOnClickListener {
-            itemClick?.onClick(it, position)
+            Log.d("AdapterClick","#ccc Click되냐?")
+            itemClick?.onClick(it, position, currentList[position % currentList.size])
+            Log.d("AdapterClick","#ccc position = ${currentList[position % currentList.size]}")
         }
     }
 }
