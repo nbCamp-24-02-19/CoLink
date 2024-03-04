@@ -1,5 +1,6 @@
 package com.seven.colink.ui.mypage
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seven.colink.domain.entity.UserEntity
@@ -18,9 +19,11 @@ class MyPageViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            userRepository.getUserDetails(authRepository.getCurrentUser().message)
+            val user = userRepository.getUserDetails(authRepository.getCurrentUser().message)
+            Log.d("tag", "ViewModel user = ${user}")
         }
     }
+    // TODO: Implement the ViewModel
 
     private fun MyPageUserModel.convertUserEntity() = UserEntity(
         name = name,
@@ -35,4 +38,5 @@ class MyPageViewModel @Inject constructor(
         blog = blog,
         link = link,
     )
+
 }

@@ -89,8 +89,7 @@ class PostRepositoryImpl @Inject constructor(
             } else {
                 jsonArray?.getJSONArray("hits")?.let { hits ->
                     CoroutineScope(Dispatchers.IO).launch {
-                        val results = fetchAllPosts(hits)
-                        continuation.resume(results)
+                        continuation.resume(fetchAllPosts(hits))
                     }
                 }
             }
