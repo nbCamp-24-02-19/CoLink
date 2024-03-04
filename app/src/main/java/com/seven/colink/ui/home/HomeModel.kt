@@ -14,16 +14,12 @@ data class TopItems (
 )
 
 data class BottomItems (
-//    val typeId : Int?,
     val typeId : GroupType?,
     val title : String?,
     val des : String?,
-//    val kind : String?,
     val kind : List<String>?,
     val img : String?,
-    val key : String?,
-//    val blind : Boolean,
-//    val complete : Boolean
+    val key : String? = "POST_" + UUID.randomUUID().toString(),
     val blind : ProjectStatus?,
     val complete : ProjectStatus?,
     val lv : String? = "0"
