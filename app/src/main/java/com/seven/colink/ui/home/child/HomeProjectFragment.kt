@@ -1,6 +1,5 @@
 package com.seven.colink.ui.home.child
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -13,12 +12,9 @@ import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.seven.colink.databinding.FragmentHomeProjectBinding
 import com.seven.colink.ui.home.HomeViewModel
-import com.seven.colink.ui.home.adapter.BottomHomeProjectAdapter
 import com.seven.colink.ui.post.content.PostContentActivity
-import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
 import kotlinx.coroutines.launch
-import okhttp3.internal.notifyAll
 
 class HomeProjectFragment : Fragment() {
 
@@ -82,12 +78,10 @@ class HomeProjectFragment : Fragment() {
                     layBottom.setOnClickListener {
                         lifecycleScope.launch {
                             val key = bottom.key
-                            val entity = key?.let { homeViewModel.getPost(it) }
-                            if (entity != null) {
-                                val intent = PostContentActivity.newIntentForUpdate(
+                            if (key != null) {
+                                val intent = PostContentActivity.newIntent(
                                     requireContext(),
-                                    index,
-                                    entity
+                                    key
                                 )
                                 startActivity(intent)
                             } else {
