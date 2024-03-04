@@ -14,7 +14,7 @@ class RecruitListAdapter(
     object : DiffUtil.ItemCallback<RecruitInfo>() {
 
         override fun areItemsTheSame(oldItem: RecruitInfo, newItem: RecruitInfo): Boolean =
-            oldItem.key == newItem.key
+            oldItem.type == newItem.type
 
         override fun areContentsTheSame(
             oldItem: RecruitInfo,

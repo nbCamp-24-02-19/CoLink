@@ -35,9 +35,6 @@ import com.seven.colink.ui.mypage.adapter.MyPageSkilAdapter
 import com.seven.colink.ui.userdetail.UserDetailFragment
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.skillCategory
-import com.seven.colink.util.status.GroupType
-import com.seven.colink.util.status.ProjectStatus
-import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MyPageFragment : Fragment() {

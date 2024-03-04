@@ -10,9 +10,9 @@ class RegisterUserUseCase @Inject constructor(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
 ) {
-    suspend operator fun invoke(user: UserEntity): DataResultStatus =
-        if (user.email != null && user.password != null) {
-            var result = authRepository.register(user.email, user.password)
+    suspend operator fun invoke(user: UserEntity, password: String): DataResultStatus =
+        if (user.email != null) {
+            var result = authRepository.register(user.email, password)
             if (result == DataResultStatus.SUCCESS) {
                 result = userRepository.registerUser(user)
             }
