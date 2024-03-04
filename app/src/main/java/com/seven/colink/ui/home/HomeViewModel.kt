@@ -18,9 +18,9 @@ class HomeViewModel @Inject constructor(
 //    private val mContext: Context
 ) : ViewModel() {
     private val _topItems: MutableLiveData<List<TopItems>> = MutableLiveData(mutableListOf())
-    private val _bottomItems: MutableLiveData<List<BottomItems>> = MutableLiveData(mutableListOf())
+    var _bottomItems: MutableLiveData<List<BottomItems>> = MutableLiveData(mutableListOf())
     val topItems: LiveData<List<TopItems>> get() = _topItems
-    val bottomItems: LiveData<List<BottomItems>> get() = _bottomItems
+//    val bottomItems: LiveData<List<BottomItems>> get() = _bottomItems
 
     fun getTopItems(num : Int) {
         var getTopItemList: MutableList<TopItems> = mutableListOf()
@@ -35,7 +35,6 @@ class HomeViewModel @Inject constructor(
                         it.title,it.key)
 
                     getTopItemList.add(topRecentItem)
-
                 }
                 _topItems.value = getTopItemList
 
@@ -52,14 +51,14 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             getBottomItemList.clear()
             val repository = postRepository.getRecentPost(num)
-            Log.d("ViewModel","#aaa 여긴 null 아니고$repository")
+            Log.d("ViewModel","#ddd 여긴 null 아니고$repository")
             kotlin.runCatching {
                 repository.forEach {
                     var bottomRecentItem = BottomItems(it.groupType,it.title,it.description
                     ,it.tags,it.imageUrl,it.key,it.status,it.status)
-                    Log.d("ViewModel","#aaa 데이터 가져온거 변환$bottomRecentItem")
+                    Log.d("ViewModel","#ddd 데이터 가져온거 변환$bottomRecentItem")
                     getBottomItemList.add(bottomRecentItem)
-                    Log.d("ViewModel","#aaa 데이터 가져온거 집어넣기${getBottomItemList[0]}")
+                    Log.d("ViewModel","#ddd 데이터 가져온거 집어넣기${getBottomItemList[0]}")
                 }
                 _bottomItems.value = getBottomItemList
             }.onFailure { exception ->

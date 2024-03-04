@@ -54,19 +54,19 @@ class TopViewPagerAdapter : ListAdapter<TopItems, TopViewPagerAdapter.TopViewHol
         return TopViewHolder(binding)
     }
 
-    override fun getItemCount(): Int = Int.MAX_VALUE
+    override fun getItemCount(): Int = currentList.size
 
     override fun onBindViewHolder(holder: TopViewHolder, position: Int) {
         Log.d("Adpater","#bbb onBindViewHolder ${currentList.size}")
-        if (currentList.size > 0) {
-            holder.onBind(currentList[position % currentList.size])
-        }
-
-//        holder.onBind(getItem(position % currentList.size))
+//        if (currentList.size > 0) {
+//            holder.onBind(currentList[position % currentList.size])
+//        }
+        holder.onBind(currentList[position])
         holder.itemView.setOnClickListener {
             Log.d("AdapterClick","#ccc Click되냐?")
-            itemClick?.onClick(it, position, currentList[position % currentList.size])
-            Log.d("AdapterClick","#ccc position = ${currentList[position % currentList.size]}")
+//            itemClick?.onClick(it, position, currentList[position % currentList.size])
+            itemClick?.onClick(it, position, currentList[position])
+            Log.d("AdapterClick","#ccc position = ${currentList[position]}")
         }
     }
 }

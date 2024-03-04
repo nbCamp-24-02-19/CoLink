@@ -1,6 +1,7 @@
 package com.seven.colink.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -80,8 +81,10 @@ class HomeFragment : Fragment() {
 
     private fun setObserve() {
         homeViewModel.topItems.observe(viewLifecycleOwner){
-            val newItems = ArrayList(it)
-            topAdapter.submitList(newItems)
+//            val newItems = ArrayList(it)
+//            topAdapter.submitList(newItems)
+            topAdapter.submitList(it)
+            Log.d("Home","#ddd it = $it")
         }
     }
 
