@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="@id/vp_home_top"
         app:layout_constraintBottom_toBottomOf="@id/vp_home_top"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="28dp"/>
+        android:layout_marginStart="24dp"/>
 
     <ImageView
         android:id="@+id/btn_home_front"
@@ -28,7 +28,7 @@
         app:layout_constraintTop_toTopOf="@id/vp_home_top"
         app:layout_constraintBottom_toBottomOf="@id/vp_home_top"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="28dp"/>
+        android:layout_marginEnd="24dp"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="39dp"

@@ -1,4 +1,4 @@
-package com.seven.colink.ui.post.adapter
+package com.seven.colink.ui.post.content.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -18,9 +18,10 @@ import com.seven.colink.databinding.ItemPostRecruitBinding
 import com.seven.colink.databinding.ItemPostSubTitleBinding
 import com.seven.colink.databinding.ItemPostTitleBinding
 import com.seven.colink.databinding.ItemUnknownBinding
-import com.seven.colink.ui.post.TagListItem
-import com.seven.colink.ui.post.content.PostContentButtonUiState
-import com.seven.colink.ui.post.content.PostContentItem
+import com.seven.colink.ui.post.register.adapter.TagListAdapter
+import com.seven.colink.ui.post.register.model.TagListItem
+import com.seven.colink.ui.post.content.model.PostContentButtonUiState
+import com.seven.colink.ui.post.content.model.PostContentItem
 import com.seven.colink.util.setLevelIcon
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.PostContentViewType
@@ -107,7 +108,6 @@ class PostContentListAdapter(
             )
 
             PostContentViewType.MEMBER -> PostMemberInfoViewHolder(
-                context,
                 ItemPostMemberInfoBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
@@ -150,7 +150,6 @@ class PostContentListAdapter(
     }
 
     class PostMemberInfoViewHolder(
-        private val context: Context,
         private val binding: ItemPostMemberInfoBinding,
         onClickItem: (Int, PostContentItem) -> Unit
     ) : PostViewHolder(binding.root) {
@@ -178,7 +177,9 @@ class PostContentListAdapter(
                 binding.tvNowPersonnel.text = "${item.recruit.nowPersonnel}"
                 binding.tvMaxPersonnel.text = "${item.recruit.maxPersonnel}"
 
-                binding.btRecruit.isEnabled = item.recruit.nowPersonnel < (item.recruit.maxPersonnel?: 9)
+                binding.btRecruit.isEnabled = item.recruit.nowPersonnel < item.recruit.maxPersonnel
+                binding.btRecruit.alpha = if (binding.btRecruit.isEnabled) 1.0f else 0.5f
+
                 binding.btRecruit.text = context.getString(
                     if (item.buttonUiState == PostContentButtonUiState.Writer) R.string.util_dialog_button_confirm
                     else R.string.project_support

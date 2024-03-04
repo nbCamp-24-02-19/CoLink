@@ -5,13 +5,30 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import com.seven.colink.R
+import com.seven.colink.databinding.FragmentUserDetailBinding
 
 class UserDetailFragment : Fragment() {
+    private lateinit var binding: FragmentUserDetailBinding
+    private lateinit var viewModel: UserDetailViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_user_detail, container, false)
+
+        binding = FragmentUserDetailBinding.inflate(layoutInflater)
+
+
+        viewModel.userDetails.observe(viewLifecycleOwner) {userDetails ->
+            updateUI(userDetails)
+
+        }
+
+
+        return binding.root
+    }
+
+    private fun updateUI(user: UserDetailModel){
+        binding.tvUserdetailName.text = user.userName
     }
 
 }

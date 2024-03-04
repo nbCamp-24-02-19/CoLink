@@ -49,15 +49,53 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+
             <ImageView
                 android:id="@+id/iv_mypage_level"
                 android:layout_width="18dp"
                 android:layout_height="24dp"
                 android:layout_marginStart="13dp"
                 android:layout_marginTop="39dp"
-                android:src="@drawable/ic_level_1"
+                android:src="@drawable/ic_level_insignia_1"
                 app:layout_constraintStart_toEndOf="@+id/iv_mypage_profile"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="#F47171"/>
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="5.77dp"
+                android:src="@drawable/ic_level_insignia_2"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_mypage_level"
+                app:layout_constraintEnd_toEndOf="@+id/iv_mypage_level"
+                app:layout_constraintStart_toStartOf="@+id/iv_mypage_level"
+                app:layout_constraintTop_toTopOf="@+id/iv_mypage_level"
+                app:layout_constraintVertical_bias="0.9" />
+
+            <TextView
+                android:id="@+id/tv_mypage_level"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/inter_bold"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_mypage_level"
+                app:layout_constraintEnd_toEndOf="@+id/iv_mypage_level"
+                app:layout_constraintStart_toStartOf="@+id/iv_mypage_level"
+                app:layout_constraintTop_toTopOf="@+id/iv_mypage_level"
+                app:layout_constraintVertical_bias="0.2"
+                tools:ignore="SmallSp" />
+
+<!--            <ImageView-->
+<!--                android:id="@+id/iv_mypage_level"-->
+<!--                android:layout_width="18dp"-->
+<!--                android:layout_height="24dp"-->
+<!--                android:layout_marginStart="13dp"-->
+<!--                android:layout_marginTop="39dp"-->
+<!--                android:src="@drawable/ic_level_1"-->
+<!--                app:layout_constraintStart_toEndOf="@+id/iv_mypage_profile"-->
+<!--                app:layout_constraintTop_toTopOf="parent" />-->
 
             <TextView
                 android:id="@+id/tv_mypage_name"

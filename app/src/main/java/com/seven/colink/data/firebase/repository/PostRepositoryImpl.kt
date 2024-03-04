@@ -3,6 +3,7 @@ package com.seven.colink.data.firebase.repository
 import android.util.Log
 import com.algolia.search.saas.Index
 import com.algolia.search.saas.Query
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.seven.colink.data.firebase.type.DataBaseType
 import com.seven.colink.domain.entity.PostEntity
@@ -139,5 +140,18 @@ class PostRepositoryImpl @Inject constructor(
                     })
                 }
         }
+
+    override suspend fun incrementPostViews(key: String): DataResultStatus {
+        return try {
+            firebaseFirestore.collection(DataBaseType.POST.title).document(key)
+                .update("views", FieldValue.increment(1))
+                .await()
+            DataResultStatus.SUCCESS
+        } catch (e: Exception) {
+            DataResultStatus.FAIL.apply {
+                message = e.message ?: "Failed to increment views"
+            }
+        }
+    }
 }
 

@@ -3,7 +3,6 @@ package com.seven.colink.ui.search
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.util.Log
-import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
