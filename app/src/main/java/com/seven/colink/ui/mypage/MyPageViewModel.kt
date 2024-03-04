@@ -1,6 +1,8 @@
 package com.seven.colink.ui.mypage
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seven.colink.domain.entity.UserEntity
@@ -17,10 +19,19 @@ class MyPageViewModel @Inject constructor(
     private val userRepository: UserRepository,
 ): ViewModel() {
 
+    private val _userDetails = MutableLiveData<UserEntity>()
+    val userDetails: LiveData<UserEntity> = _userDetails
     init {
+        loadUserDetails()
+    }
+    private fun loadUserDetails() {
         viewModelScope.launch {
-            val user = userRepository.getUserDetails(authRepository.getCurrentUser().message)
-            Log.d("tag", "ViewModel user = ${user}")
+            val result = userRepository.getUserDetails(authRepository.getCurrentUser().message)
+            result.onSuccess { user ->
+                _userDetails.postValue(user)
+            }.onFailure { exception ->
+                Log.e("ViewModel", "“Error fetching user details”", exception)
+            }
         }
     }
     // TODO: Implement the ViewModel

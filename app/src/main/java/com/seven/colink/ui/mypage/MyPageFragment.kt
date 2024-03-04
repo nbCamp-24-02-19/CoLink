@@ -17,6 +17,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.findFragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.seven.colink.R
@@ -47,7 +48,7 @@ class MyPageFragment : Fragment() {
         fun newInstance() = MyPageFragment()
     }
 
-    private lateinit var viewModel: MyPageViewModel
+    private val viewModel: MyPageViewModel by viewModels()
 
 
 
@@ -55,7 +56,6 @@ class MyPageFragment : Fragment() {
         binding = FragmentMyPageBinding.inflate(layoutInflater)
         _binding = MypageEditDialogBinding.inflate(layoutInflater)
 
-        viewModel = ViewModelProvider(this).get(MyPageViewModel::class.java)
 
         SkilRecyclerView()
         mypageBlogClick()
@@ -95,9 +95,20 @@ class MyPageFragment : Fragment() {
             }
         }
 
+
+        viewModel.userDetails.observe(viewLifecycleOwner) { userDetails ->
+            // Update UI with user details
+            updateUI(userDetails)
+        }
+
         return binding.root
     }
 
+
+    private fun updateUI(user: UserEntity) {
+        // Update your views with user information
+        Log.d("Tag","user = ${user}")
+    }
 
 
 
