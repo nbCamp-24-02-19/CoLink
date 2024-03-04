@@ -1,6 +1,8 @@
 package com.seven.colink.ui.home.child
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +14,7 @@ import coil.load
 import com.seven.colink.databinding.FragmentHomeStudyBinding
 import com.seven.colink.ui.home.HomeViewModel
 import com.seven.colink.ui.post.content.PostContentActivity
+import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
 import kotlinx.coroutines.launch
 
@@ -34,6 +37,7 @@ class HomeStudyFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        homeViewModel.getBottomItems(5)
         initViews()
         setObserve()
     }
@@ -43,10 +47,10 @@ class HomeStudyFragment : Fragment() {
     }
 
     private fun bottomViewsData() {
-        homeViewModel.getBottomItems(5)
+//        homeViewModel.getBottomItems(5)
 //        mAdapter.submitList(homeViewModel.bottomItems.value)
 
-        homeViewModel.bottomItems.value?.forEachIndexed { index, bottom ->
+        homeViewModel._bottomItems.value?.forEachIndexed { index, bottom ->
             val bottomLayout = when (index) {
                 0 -> binding.layStudyBottom1
                 1 -> binding.layStudyBottom2
@@ -56,37 +60,52 @@ class HomeStudyFragment : Fragment() {
             }
 
             bottomLayout.apply {
-                tvHomeBottomStudy.visibility = View.VISIBLE
-                tvHomeBottomProject.visibility = View.INVISIBLE
-                tvHomeBottomTitle.text = bottom.title
-                tvHomeBottomDes.text = bottom.des
-                tvHomeBottomKind.text = bottom.kind?.toString()
-                viewHomeBottomDivider.visibility = View.INVISIBLE
-                tvHomeBottomLv.visibility = View.INVISIBLE
-                ivHomeBottomThumubnail.load(bottom.img)
-                if (bottom.blind == ProjectStatus.END) {
-                    viewHomeBottomBlind.visibility = View.VISIBLE
-                    tvHomeBottomBlind.visibility = View.VISIBLE
-                } else {
-                    viewHomeBottomBlind.visibility = View.INVISIBLE
-                    tvHomeBottomBlind.visibility = View.INVISIBLE
-                }
-                layBottom.setOnClickListener {
-                    lifecycleScope.launch {
-                        val key = bottom.key
-                        val entity = key?.let { homeViewModel.getPost(it) }
-                        if (entity != null) {
-                            val intent = PostContentActivity.newIntentForUpdate(
-                                requireContext(),
-                                index,
-                                entity
-                            )
-                            startActivity(intent)
+//                if (bottom.typeId == GroupType.STUDY) {
+//                    if (homeViewModel._bottomItems.value?.size!! < 5){
+//                        homeViewModel.getBottomItems(5)
+//                        if (homeViewModel._bottomItems.value?.size!! > 5){
+//                            val currentList = homeViewModel._bottomItems.value?.toMutableList()
+//                            currentList?.let {
+//                                if (it.isNotEmpty()) {
+//                                    it.removeAt(it.size -1)
+//                                    homeViewModel._bottomItems.value = it
+//                                }
+//                            }
+//                        }
+//                    }else if (homeViewModel._bottomItems.value?.size!! == 5) {
+                        tvHomeBottomStudy.visibility = View.VISIBLE
+                        tvHomeBottomProject.visibility = View.INVISIBLE
+                        tvHomeBottomTitle.text = bottom.title
+                        tvHomeBottomDes.text = bottom.des
+                        tvHomeBottomKind.text = bottom.kind?.toString()
+                        viewHomeBottomDivider.visibility = View.INVISIBLE
+                        tvHomeBottomLv.visibility = View.INVISIBLE
+                        ivHomeBottomThumubnail.load(bottom.img)
+                        if (bottom.blind == ProjectStatus.END) {
+                            viewHomeBottomBlind.visibility = View.VISIBLE
+                            tvHomeBottomBlind.visibility = View.VISIBLE
                         } else {
-                            Toast.makeText(requireContext(), "다음에 다시 시도해주세요.", Toast.LENGTH_SHORT)
-                                .show()
+                            viewHomeBottomBlind.visibility = View.INVISIBLE
+                            tvHomeBottomBlind.visibility = View.INVISIBLE
                         }
-                    }
+                        layBottom.setOnClickListener {
+                            lifecycleScope.launch {
+                                val key = bottom.key
+                                val entity = key?.let { homeViewModel.getPost(it) }
+                                if (entity != null) {
+                                    val intent = PostContentActivity.newIntentForUpdate(
+                                        requireContext(),
+                                        index,
+                                        entity
+                                    )
+                                    startActivity(intent)
+                                } else {
+                                    Toast.makeText(requireContext(), "다음에 다시 시도해주세요.", Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+                            }
+//                        }
+//                    }
                 }
             }
         }
@@ -95,6 +114,12 @@ class HomeStudyFragment : Fragment() {
     private fun setObserve() {
         homeViewModel.topItems.observe(viewLifecycleOwner) {
 //            mAdapter.submitList(homeViewModel.bottomItems.value)
+            bottomViewsData()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
