@@ -6,13 +6,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.seven.colink.R
 import com.seven.colink.databinding.FragmentGroupBinding
 import com.seven.colink.ui.post.PostActivity
-import com.seven.colink.ui.search.SearchFragment
+import com.seven.colink.ui.post.content.PostContentActivity
+import com.seven.colink.util.backendCategory
+import com.seven.colink.util.showToast
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class GroupFragment : Fragment() {
 
     private var _binding: FragmentGroupBinding? = null
@@ -20,15 +25,23 @@ class GroupFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    private lateinit var groupAdapter: GroupAdapter
+    private val groupAdapter by lazy {
+        GroupAdapter(
+            requireContext(),
+            onClickItem = { _, item -> handleItemClick(item)},
+            onClickAddButton = {_, item -> handleItemClick(item)},
+//            onClickWantItem = {_, item -> handleItemClick(item)}
+        )
+    }
+
+    private val groupViewModel: GroupViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val groupViewModel =
-            ViewModelProvider(this).get(GroupViewModel::class.java)
+//        groupViewModel = ViewModelProvider(this).get(GroupViewModel::class.java)
 
         _binding = FragmentGroupBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -40,41 +53,52 @@ class GroupFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initView()
-        goDetail()
-        goSearch()
+        setObserve()
+//        goDetail()
+//        goSearch()
+
     }
 
-    private fun initView() {
+    private fun initView() = with(binding) {
 
-        val dataList = mutableListOf(
-            GroupData.GroupTitle("참여중인 그룹"),
-            GroupData.GroupList("CoLink",142,"히히..","# 안드로이드"),
-            GroupData.GroupAdd("새그룹 추가하기", "지원한 그룹"),
-            GroupData.GroupWant("Project","타이틀입니다","설명입니다","작성자","Lv4", R.mipmap.ic_launcher)
-        )
-
-        groupAdapter = GroupAdapter(dataList)
-        binding.rvGroupRecyclerView.adapter = groupAdapter
-        binding.rvGroupRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        rvGroupRecyclerView.adapter = groupAdapter
+        rvGroupRecyclerView.layoutManager = LinearLayoutManager(requireContext())
     }
 
-    private fun goDetail(){
-        groupAdapter.joinItemClick = object : GroupAdapter.JoinItemClick {
-            override fun onClick(item: GroupData.GroupList, position: Int) {
-                // PostActivity -> 상세 페이지로 바꿔야 함
-                val intent = Intent(requireContext(), PostActivity::class.java)
-//                intent.putExtra("DetailPage", item())
-                startActivity(intent)
-            }
+    private fun setObserve() {
+        groupViewModel.groupData.observe(viewLifecycleOwner){
+            groupAdapter.submitList(it)
+        }
+        groupViewModel.joinGroup.observe(viewLifecycleOwner){
+
         }
     }
 
-    private fun goSearch(){
-        groupAdapter.addItemClick = object : GroupAdapter.AddItemClick {
-            override fun onClick(view: View, position: Int) {
-                val intent = Intent(requireContext(), SearchFragment::class.java)
+    private fun handleItemClick(item: GroupData){
+        when(item){
+            is GroupData.GroupList -> {
+                lifecycleScope.launch {
+//                    val entity = groupViewModel.getInPost()
+                    if (item.key != null){
+                        val intent = PostContentActivity.newIntentForUpdate(
+                            requireContext(),
+                            item.key
+                        )
+                        startActivity(intent)
+                    } else {
+                        requireContext().showToast("알 수 없는 오류")
+                    }
+                }
+            }
+            is GroupData.GroupAdd -> {
+                val intent = Intent(requireContext(), PostActivity::class.java)
                 startActivity(intent)
             }
+            is GroupData.GroupWant -> {
+                val intent = Intent(requireContext(), PostContentActivity::class.java)
+                startActivity(intent)
+            }
+            else -> throw UnsupportedOperationException("Unhandled type: $item")
         }
     }
 
