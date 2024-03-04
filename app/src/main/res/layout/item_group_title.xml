@@ -11,7 +11,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="12dp"
-        android:text="@string/member_title"
+        android:text="@string/group_title"
         android:textSize="24sp"
         android:textColor="@color/black"
         android:fontFamily="@font/inter_bold"
