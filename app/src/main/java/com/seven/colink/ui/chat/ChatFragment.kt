@@ -1,5 +1,6 @@
 package com.seven.colink.ui.chat
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.seven.colink.databinding.FragmentChatBinding
 import com.seven.colink.ui.chat.type.ChatTabType
 import com.seven.colink.ui.chat.viewmodel.ChatViewModel
+import com.seven.colink.ui.sign.signin.SignInActivity
 import com.seven.colink.util.progress.showProgressOverlay
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -66,4 +68,6 @@ class ChatFragment : Fragment() {
         _binding = null
         super.onDestroy()
     }
+
+
 }
