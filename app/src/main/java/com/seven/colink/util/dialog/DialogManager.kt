@@ -16,7 +16,7 @@ import com.seven.colink.databinding.UtilCustomLevelDialogBinding
 import com.seven.colink.databinding.UtilCustomListDialogBinding
 import com.seven.colink.databinding.UtilMemberInfoDialogBinding
 import com.seven.colink.domain.entity.UserEntity
-import com.seven.colink.ui.post.adapter.MemberListAdapter
+import com.seven.colink.util.dialog.adapter.MemberListAdapter
 import com.seven.colink.util.dialog.adapter.DialogAdapter
 import com.seven.colink.util.dialog.adapter.LevelDialogAdapter
 import com.seven.colink.util.dialog.enum.LevelEnum

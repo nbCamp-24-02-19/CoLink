@@ -17,14 +17,27 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Spinner
-        android:id="@+id/spinner_recruit"
-        android:layout_width="match_parent"
+        android:id="@+id/spinner_recruit_major_category"
+        android:layout_width="0dp"
         android:layout_height="40dp"
-        android:layout_margin="12dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="12dp"
         android:background="@drawable/bg_spinner"
-        app:layout_constraintEnd_toEndOf="@id/tv_dialog_title"
-        app:layout_constraintStart_toStartOf="@id/tv_dialog_title"
+        app:layout_constraintEnd_toStartOf="@id/spinner_recruit_sub_category"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_dialog_title" />
+
+    <Spinner
+        android:id="@+id/spinner_recruit_sub_category"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="12dp"
+        android:background="@drawable/bg_spinner"
+        app:layout_constraintBottom_toBottomOf="@id/spinner_recruit_major_category"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/spinner_recruit_major_category"
+        app:layout_constraintTop_toTopOf="@id/spinner_recruit_major_category" />
 
     <include
         android:id="@+id/include_stepper_personnel"
@@ -33,7 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="12dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/spinner_recruit" />
+        app:layout_constraintTop_toBottomOf="@id/spinner_recruit_sub_category" />
 
     <TextView
         android:id="@+id/tv_selected_personnel"
