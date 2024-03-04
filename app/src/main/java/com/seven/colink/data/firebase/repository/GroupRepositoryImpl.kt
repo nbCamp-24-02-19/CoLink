@@ -3,6 +3,7 @@ package com.seven.colink.data.firebase.repository
 import com.google.firebase.firestore.FirebaseFirestore
 import com.seven.colink.data.firebase.type.DataBaseType
 import com.seven.colink.domain.entity.GroupEntity
+import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.util.status.DataResultStatus
 import kotlinx.coroutines.tasks.await

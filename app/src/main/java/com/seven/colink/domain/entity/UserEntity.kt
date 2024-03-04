@@ -7,7 +7,6 @@ import java.time.LocalDateTime
 data class UserEntity(
     val uid: String? = "",
     val email: String? = "",
-    val password: String? = "",
     val name: String? = "",
     val photoUrl: String = "https://firebasestorage.googleapis.com/v0/b/colink-a7c3a.appspot.com/o/img%2Fic_profile.png?alt=media&token=64207054-6439-4275-b7be-cd13c626f081",
     val phoneNumber: String? = null,

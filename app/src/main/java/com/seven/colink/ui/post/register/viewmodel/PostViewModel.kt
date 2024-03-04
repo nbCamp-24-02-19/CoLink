@@ -151,7 +151,7 @@ class PostViewModel @Inject constructor(
         updateTotalPersonnelCount()
     }
 
-    fun removeRecruitInfo(key: String) {
+    fun removeRecruitInfo(type: String?) {
         _postUiState.value = _postUiState.value?.let { state ->
             state.copy(recruitList = state.recruitList?.filterNot { it.key == key })
         }
@@ -159,7 +159,7 @@ class PostViewModel @Inject constructor(
     }
 
     private fun updateTotalPersonnelCount() {
-        val totalPersonnelCount = _postUiState.value?.recruitList?.sumOf { it.maxPersonnel } ?: 0
+        val totalPersonnelCount = _postUiState.value?.recruitList?.sumOf { it.maxPersonnel ?: 0 } ?: 0
         _postUiState.value = _postUiState.value?.copy(totalPersonnelCount = totalPersonnelCount)
     }
 
