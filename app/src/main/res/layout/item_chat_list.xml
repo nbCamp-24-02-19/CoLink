@@ -69,6 +69,7 @@
             android:layout_marginTop="4dp"
             android:text="300+"
             android:textSize="12sp"
+            android:layout_gravity="end"
             android:textColor="@color/white"
             android:fontFamily="@font/inter_bold"
             android:background="@drawable/bg_tag"

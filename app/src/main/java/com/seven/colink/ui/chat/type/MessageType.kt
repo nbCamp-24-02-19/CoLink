@@ -17,3 +17,7 @@ sealed interface MessageType{
         val registerTime: String,
     )
 }
+
+enum class MessageState {
+    DEFAULT, FIRST, MIDDLE, LAST
+}

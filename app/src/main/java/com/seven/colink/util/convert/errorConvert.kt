@@ -56,6 +56,8 @@ fun String.convertError() = when (this) {
     "ERROR_UID_ALREADY_EXISTS" -> "제공된 UID를 이미 사용 중인 사용자가 있습니다. 다른 UID를 사용해 주세요."
     "ERROR_UNAUTHORIZED_CONTINUE_URI" -> "계속하기 위한 URL이 승인되지 않았습니다. URL을 확인하거나 승인해 주세요."
     "ERROR_USER_NOT_FOUND" -> "사용자를 찾을 수 없습니다. 정보를 확인하고 다시 시도해 주세요."
-    else -> "알 수 없는 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."
+    else -> this
+
+//        "알 수 없는 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."
 }
 
