@@ -1,5 +1,6 @@
 package com.seven.colink.data.firebase.repository
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.seven.colink.data.firebase.type.DataBaseType
@@ -32,6 +33,8 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun getUserDetails(uid: String) = runCatching {
         firestore.collection(DataBaseType.USER.title).document(uid).get().await()
             .toObject(UserEntity::class.java)
+    }.onFailure {
+        Log.e("getUserDetails", "Exception while getting UserDetails: $it")
     }
 
     override suspend fun deleteUser(uid: String) = suspendCoroutine { continuation ->

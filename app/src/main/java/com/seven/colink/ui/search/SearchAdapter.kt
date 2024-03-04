@@ -20,8 +20,6 @@ import java.time.OffsetDateTime
 class SearchAdapter(val mItems: MutableList<SearchModel>) :
     RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
 
-//    var mItemsCopy: MutableList<SearchModel> = mItems.map { it.copy() }.toMutableList()
-
     interface ItemClick {
         fun onClick(item: SearchModel, position: Int)
     }
@@ -83,35 +81,4 @@ class SearchAdapter(val mItems: MutableList<SearchModel>) :
     override fun getItemCount(): Int {
         return mItems.size
     }
-
-//    fun filterType(items: MutableList<SearchModel>) {
-//        if (items.isEmpty()) {
-//            mItems.clear()
-//            mItems.addAll(mItemsCopy)
-//        } else {
-//            val filtered = mItems.filter { it.groupType == GroupType.PROJECT }
-//            mItems.clear()
-//            mItems.addAll(filtered)
-//        }
-//        notifyDataSetChanged()
-//    }
-//
-//    fun filterTypeClear() {
-//        mItemsCopy.clear()
-//        mItemsCopy.addAll(mItems)
-//        notifyDataSetChanged()
-//    }
-//
-//    fun filterStatus(items: MutableList<SearchModel>) {
-//        if (items.isEmpty()) {
-//            mItems.clear()
-//            mItems.addAll(mItemsCopy)
-//        } else {
-//            val filtered = mItems.filter { it.status == ProjectStatus.RECRUIT }
-//            mItems.clear()
-//            mItems.addAll(filtered)
-//        }
-//        notifyDataSetChanged()
-//    }
-
 }

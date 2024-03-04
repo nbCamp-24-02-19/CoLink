@@ -4,18 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/iv_member_group_type"
-        android:layout_width="36dp"
-        android:layout_height="56dp"
-        android:layout_marginStart="24dp"
-        android:elevation="10dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_level_insignia"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <LinearLayout
+        android:id="@+id/ll_group_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
@@ -28,21 +18,21 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_memeber_thumbnail"
+            android:id="@+id/cl_group_thumbnail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/iv_member_thumbnail"
+                android:id="@+id/iv_group_thumbnail"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                app:layout_constraintDimensionRatio="16:9"
                 android:layout_marginTop="4dp"
                 android:background="@drawable/bg_round_top_corner_20dp"
                 android:clipToOutline="true"
                 android:scaleType="centerCrop"
                 android:src="@drawable/img_dialog_study"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="16:9"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -59,19 +49,19 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/tv_member_project_title"
+                android:id="@+id/tv_group_project_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:fontFamily="@font/inter_bold"
                 android:maxLines="1"
-                android:text="@string/member_proejct_title"
+                android:text="@string/group_proejct_title"
                 android:textColor="@color/black"
                 android:textSize="18sp" />
 
             <TextView
-                android:id="@+id/tv_member_plus"
+                android:id="@+id/tv_group_plus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -80,12 +70,12 @@
                 android:fontFamily="@font/inter_regular"
                 android:gravity="end"
                 android:maxLines="1"
-                android:text="@string/member_plus"
+                android:text="@string/group_plus"
                 android:textColor="@color/typo_color"
                 android:textSize="12sp" />
 
             <TextView
-                android:id="@+id/tv_member_days"
+                android:id="@+id/tv_group_days"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -93,7 +83,7 @@
                 android:fontFamily="@font/inter_regular"
                 android:gravity="end"
                 android:maxLines="1"
-                android:text="@string/member_days"
+                android:text="@string/group_days"
                 android:textColor="@color/typo_color"
                 android:textSize="12sp" />
 
@@ -109,12 +99,12 @@
             android:ellipsize="end"
             android:fontFamily="@font/inter_regular"
             android:maxLines="3"
-            android:text="@string/member_description"
+            android:text="@string/group_description"
             android:textColor="@color/typo_color"
             android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/tv_member_tags"
+            android:id="@+id/tv_group_tags"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
@@ -125,10 +115,25 @@
             android:gravity="end|center_vertical"
             android:maxLines="1"
             android:paddingBottom="24dp"
-            android:text="@string/member_tag"
+            android:text="@string/group_tag"
             android:textColor="@color/forth_color"
             android:textSize="12sp" />
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_group_type"
+        android:layout_width="35dp"
+        android:layout_height="53dp"
+        android:layout_marginStart="36dp"
+        android:background="@drawable/ic_level_insignia"
+        android:fontFamily="@font/roboto_bold"
+        android:gravity="center"
+        android:text="@string/group_insignia_type_project"
+        android:paddingBottom="12dp"
+        android:textColor="@color/white"
+        android:textSize="23sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
