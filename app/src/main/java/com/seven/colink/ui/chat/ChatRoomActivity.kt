@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
@@ -14,6 +15,7 @@ import com.seven.colink.ui.chat.adapter.ChatRoomAdapter
 import com.seven.colink.ui.chat.viewmodel.ChatRoomViewModel
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
+import com.seven.colink.util.status.UiState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -60,9 +62,15 @@ class ChatRoomActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-            messageList.collect{
-                adapter.submitList(it)
-                hideProgressOverlay()
+            messageList.collect{ state ->
+                when(state) {
+                    is UiState.Loading -> showProgressOverlay()
+                    is UiState.Success -> {
+                        adapter.submitList(state.data)
+                        hideProgressOverlay()
+                    }
+                    is UiState.Error -> Toast.makeText(this@ChatRoomActivity, "${state.exception}", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

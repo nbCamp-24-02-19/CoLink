@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -17,6 +18,7 @@ import com.seven.colink.ui.chat.viewmodel.ChatTabViewModel
 import com.seven.colink.ui.sign.signup.SignUpActivity
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
+import com.seven.colink.util.status.UiState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.drop
@@ -70,11 +72,15 @@ class ChatTabFragment: Fragment() {
         }
 
         lifecycleScope.launch {
-            chatList
-                .drop(1)
-                .collect{
-                adapter.submitList(it)
-                hideProgressOverlay()
+            chatList.collect{ state ->
+                when(state) {
+                    is UiState.Loading -> showProgressOverlay()
+                    is UiState.Success -> {
+                        adapter.submitList(state.data)
+                        hideProgressOverlay()
+                    }
+                    is UiState.Error -> Toast.makeText(context, "${state.exception}", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
@@ -82,8 +88,6 @@ class ChatTabFragment: Fragment() {
 
     private fun initView() {
         setList()
-
-        showProgressOverlay()
     }
 
     private fun setList() = with(binding){
@@ -93,6 +97,7 @@ class ChatTabFragment: Fragment() {
 
     override fun onDestroy() {
         _binding = null
+        hideProgressOverlay()
         super.onDestroy()
     }
 }
