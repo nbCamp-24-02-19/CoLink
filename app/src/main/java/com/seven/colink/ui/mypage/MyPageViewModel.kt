@@ -36,7 +36,7 @@ class MyPageViewModel @Inject constructor(
     }
     // TODO: Implement the ViewModel
 
-    private fun MyPageUserModel.convertUserEntity() = UserEntity(
+    private fun UserEntity.convertUserEntity() = MyPageUserModel(
         name = name,
         email = email,
         mainSpecialty = mainSpecialty,
