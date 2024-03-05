@@ -15,14 +15,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentSearchBinding
-import com.seven.colink.ui.post.PostActivity
-import dagger.hilt.android.AndroidEntryPoint
-import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.ui.post.content.PostContentActivity
-import com.seven.colink.util.showToast
-import dagger.hilt.android.AndroidEntryPoint
+import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.status.GroupType
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint

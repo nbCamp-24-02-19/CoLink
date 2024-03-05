@@ -103,12 +103,12 @@ class PostViewModel @Inject constructor(
             _postUiState.value = _postUiState.value?.copy(
                 tagList = entity.tags?.map { TagEntity(name = it) } ?: emptyList(),
                 recruitList = entity.recruit ?: emptyList(),
-                totalPersonnelCount = entity.recruit?.sumOf { info -> info.maxPersonnel } ?: 0
+                totalPersonnelCount = entity.recruit?.sumOf { info -> info.maxPersonnel?: 0 } ?: 0
             )
 
             _selectedImage.value =
                 _selectedImage.value?.copy(originImage = Uri.parse(entity.imageUrl))
-            _selectedPersonnelCount.value = entity.recruit?.sumOf { info -> info.maxPersonnel } ?: 0
+            _selectedPersonnelCount.value = entity.recruit?.sumOf { info -> info.maxPersonnel?: 0 } ?: 0
 
             val isProjectSelected = entity.groupType == GroupType.PROJECT
             val projectButtonTextColor =
@@ -153,7 +153,7 @@ class PostViewModel @Inject constructor(
 
     fun removeRecruitInfo(type: String?) {
         _postUiState.value = _postUiState.value?.let { state ->
-            state.copy(recruitList = state.recruitList?.filterNot { it.key == key })
+            state.copy(recruitList = state.recruitList?.filterNot { it.type == type })
         }
         updateTotalPersonnelCount()
     }

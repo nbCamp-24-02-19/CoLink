@@ -147,7 +147,7 @@ class PostContentViewModel @Inject constructor(
 
     private suspend fun isAlreadySupported(recruitItem: PostContentItem.RecruitItem): Boolean {
         return uiState.value?.recruit?.any { recruitInfo ->
-            recruitInfo.key == recruitItem.recruit.key &&
+            recruitInfo.type == recruitItem.recruit.type &&
                     recruitInfo.applicationInfos?.any { it.userId == getCurrentUser() } == true
         } == true
     }
@@ -157,7 +157,7 @@ class PostContentViewModel @Inject constructor(
         newApplicationInfo: ApplicationInfo
     ): List<RecruitInfo>? {
         return uiState.value?.recruit?.map { recruitInfo ->
-            if (recruitInfo.key == recruitItem.recruit.key) {
+            if (recruitInfo.type == recruitItem.recruit.type) {
                 recruitInfo.copy(applicationInfos = (recruitInfo.applicationInfos.orEmpty() + newApplicationInfo).toList())
             } else {
                 recruitInfo
@@ -227,7 +227,7 @@ class PostContentViewModel @Inject constructor(
         item: PostContentItem.RecruitItem
     ): List<RecruitInfo>? {
         return uiState.value?.recruit?.map { recruitInfo ->
-            if (recruitInfo.key == item.recruit.key) {
+            if (recruitInfo.type == item.recruit.type) {
                 recruitInfo.copy(
                     applicationInfos = recruitInfo.applicationInfos?.map { applicationInfo ->
                         if (applicationInfo.userId == userEntity.uid) {
