@@ -7,12 +7,19 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="red">#FF0000</color>
     <color name="main_color">#17B397</color>
+    <color name="disabled_color">#AAD4D4</color>
     <color name="bottom_enable_color">#c8c8c8</color>
     <color name="sub_color">#354B45</color>
     <color name="third_color">#98B0A9</color>
     <color name="forth_color">#2DB7FF</color>
     <color name="typo_color">#717171</color>
+    <color name="mypage_bg_color">#F3FDFC</color>
+    <color name="hint_color">#808080</color>
+    <color name="purple">#7C5DA5</color>
+    <color name="ing_color">#E7F7FF</color>
+    <color name="study_color">#EB8447</color>
 
     <!--Level Dialog-->
     <color name="level1">#F47171</color>
@@ -26,5 +33,20 @@
     <!--selected Dialog-->
     <color name="selected_bg">#CFFFF6</color>
     <color name="enable_stroke">#c8c8c8</color>
+
+    <!--post-->
+    <color name="bg">#F5F5F5</color>
+    <color name="picture_small_bg">#F1F1F1</color>
+    <color name="limit_color">#EC0000</color>
+    <color name="sharp">#787878</color>
+    <color name="edit_hint_color">#B6B6B6</color>
+    <color name="tag_bg">#CEFFF6</color>
+    <color name="user_color">#CDCDCD</color>
+    <color name="date_color">#818181</color>
+    <color name="content_tag_color">#F6F6F6</color>
+
+    <!-- chat -->
+    <color name="chat_notice">#ED2478</color>
+
 
 </resources>

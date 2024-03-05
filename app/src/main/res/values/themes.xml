@@ -13,4 +13,24 @@
         <item name="android:statusBarColor">@color/main_color</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <!--    Post   -->
+    <style name="PostButtonStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="PostEditTextStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:layout_marginTop">17dp</item>
+        <item name="android:textColorHint">@color/edit_hint_color</item>
+    </style>
+
+    <style name="PostSpinnerStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">40dp</item>
+    </style>
 </resources>

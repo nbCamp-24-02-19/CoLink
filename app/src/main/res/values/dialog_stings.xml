@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- level dialog -->
     <string name="util_dialog_level1">입문자</string>
     <string name="util_dialog_level2">초보자</string>
     <string name="util_dialog_level3">경험자</string>
@@ -14,4 +15,26 @@
     <string name="util_dialog_level5_info">코드에 대한 깊은 이해와 함께 복잡한 문제를\n효과적으로 해결할 수 있는 전략을 개발할 수 있는 상태</string>
     <string name="util_dialog_level6_info">코드에 대한 폭넓고 깊은 지식을 가지고 있으며,\n고도의 문제 해결 능력을 가지고 있는 상태</string>
     <string name="util_dialog_level7_info">코드에 대한 광범위한 지식과 능력을 가지고 있으며,\n새로운 문제나 상황에 대해\n독창적인 해결책을 제공할 수 있는 상태</string>
+
+    <string name="unknown">알수없음.</string>
+
+    <string name="util_dialog_button_cancel">취소</string>
+    <string name="util_dialog_button_confirm">확인</string>
+
+    <string-array name="recruit_dialog_items">
+        <item>모바일 운영체제/안드로이드</item>
+        <item>모바일 운영체제/iOS</item>
+        <item>웹 개발/HTML</item>
+        <item>웹 개발/CSS</item>
+        <item>웹 개발/JavaScript</item>
+        <item>웹 개발/Node.js</item>
+        <item>웹 개발/Django</item>
+        <item>웹 개발/Ruby on Rails</item>
+    </string-array>
+    <string name="recruit_dialog_message">모집 인원을 선택해주세요.</string>
+    <string name="recruit_dialog_type_already_exists">이미 추가된 모집 타입입니다.</string>
+
+    <string name="approval">승인</string>
+    <string name="refuse">거절</string>
+
 </resources>

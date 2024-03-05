@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:padding="24dp">
+
+    <ImageView
+        android:id="@+id/iv_user"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:src="@drawable/ic_user_24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/tv_user_introduction"
+        app:layout_constraintStart_toEndOf="@id/iv_user"
+        app:layout_constraintTop_toTopOf="@id/iv_user" />
+
+    <TextView
+        android:id="@+id/tv_user_introduction"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@id/iv_user"
+        app:layout_constraintEnd_toStartOf="@id/iv_user_grade"
+        app:layout_constraintStart_toStartOf="@id/tv_user_name"
+        app:layout_constraintTop_toBottomOf="@id/tv_user_name" />
+
+    <ImageView
+        android:id="@+id/iv_user_grade"
+        android:layout_width="28dp"
+        android:layout_height="34dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/img_user_grade"
+        app:layout_constraintBottom_toBottomOf="@id/iv_user"
+        app:layout_constraintEnd_toStartOf="@id/tv_user_grade"
+        app:layout_constraintTop_toTopOf="@id/iv_user" />
+
+    <TextView
+        android:id="@+id/tv_user_grade"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/iv_user"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/iv_user" />
+
+    <ImageView
+        android:id="@+id/iv_level_dia_icon"
+        android:layout_width="18dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="8dp"
+        android:src="@drawable/ic_level_insignia_1"
+        app:layout_constraintBottom_toBottomOf="@id/tv_user_name"
+        app:layout_constraintStart_toEndOf="@id/tv_user_name"
+        app:layout_constraintTop_toTopOf="@id/tv_user_name"
+        app:tint="#F47171" />
+
+    <ImageView
+        android:layout_width="18dp"
+        android:layout_height="5.77dp"
+        android:src="@drawable/ic_level_insignia_2"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_level_dia_icon"
+        app:layout_constraintEnd_toEndOf="@+id/iv_level_dia_icon"
+        app:layout_constraintStart_toStartOf="@+id/iv_level_dia_icon"
+        app:layout_constraintTop_toTopOf="@+id/iv_level_dia_icon"
+        app:layout_constraintVertical_bias="0.9" />
+
+    <TextView
+        android:id="@+id/tv_level_dia_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_bold"
+        android:textColor="@color/white"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_level_dia_icon"
+        app:layout_constraintEnd_toEndOf="@+id/iv_level_dia_icon"
+        app:layout_constraintStart_toStartOf="@+id/iv_level_dia_icon"
+        app:layout_constraintTop_toTopOf="@+id/iv_level_dia_icon"
+        app:layout_constraintVertical_bias="0.2" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

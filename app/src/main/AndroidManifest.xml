@@ -3,10 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
     <application
         android:name=".MyApplication"
@@ -19,6 +23,26 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CoLink"
         tools:targetApi="31">
+        <activity
+            android:name=".ui.chat.ChatRoomActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.post.content.PostContentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.evaluation.EvaluationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.post.register.PostActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.sign.signup.SignUpActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ui.sign.signin.SignInActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.main.MainActivity"
             android:exported="true"
