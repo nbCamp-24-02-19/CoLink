@@ -7,9 +7,11 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.seven.colink.databinding.ItemSignUpSkillBinding
 import com.seven.colink.databinding.MypageRecyclerviewItemSkilitemBinding
 import com.seven.colink.ui.mypage.MyPageItem
+import com.seven.colink.ui.mypage.MyPageSkilItemManager
 import com.seven.colink.ui.mypage.MyPostItem
 import com.seven.colink.ui.sign.signup.adater.SignUpProfileAdapter
 import com.seven.colink.ui.sign.signup.type.SignUpProfileViewType
+import okhttp3.internal.notify
 
 class MyPageSkilAdapter(var mItems: List<MyPageItem>): RecyclerView.Adapter<ViewHolder>() {
 
@@ -52,6 +54,11 @@ class MyPageSkilAdapter(var mItems: List<MyPageItem>): RecyclerView.Adapter<View
 
     fun changeDataset(newDataSet: List<MyPageItem>){
         mItems = newDataSet
+        notifyDataSetChanged()
+    }
+
+    fun addItem(myPageItem: MyPageItem.skilItems){
+        mItems + MyPageSkilItemManager.addItem2(myPageItem.language)
         notifyDataSetChanged()
     }
 
