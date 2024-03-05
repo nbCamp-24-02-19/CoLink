@@ -78,10 +78,11 @@ class HomeProjectFragment : Fragment() {
                     layBottom.setOnClickListener {
                         lifecycleScope.launch {
                             val key = bottom.key
-                            if (key != null) {
+                            val entity = key?.let { homeViewModel.getPost(it) }
+                            if (entity != null) {
                                 val intent = PostContentActivity.newIntent(
                                     requireContext(),
-                                    key
+                                    entity.key
                                 )
                                 startActivity(intent)
                             } else {
