@@ -72,23 +72,21 @@ class MyPageViewModel @Inject constructor(
     }
 
     fun removeSkill(skill: String){
-//        viewModelScope.launch {
-//            val result = userRepository.getUserDetails(authRepository.getCurrentUser().message)
-//            val db = FirebaseFirestore.getInstance()
-//            val docRef: DocumentReference = db.collection("users").document(result.toString())
-//            val updates =  hashMapOf< String , Any>(skill to FieldValue.delete())
-//            docRef.update(updates).addOnCompleteListener {  }
-//            loadUserDetails()
-//        }
 
-
-//        viewModelScope.launch{
-//            val result = userRepository.getUserDetails(authRepository.getCurrentUser().message)
-//            val db = FirebaseFirestore.getInstance()
-//            result.onSuccess {
-//                db.collection("users").document(result.toString()).delete()//???이러면 스킬이 지워지는게 아닌게 아닌지??..?
-//            }
-//        }
+        viewModelScope.launch {
+            val currentUser = authRepository.getCurrentUser().message
+            val userDetailsResult = userRepository.getUserDetails(currentUser)
+            userDetailsResult.onSuccess { user ->
+                val updatedSkills = user?.skill?.filter { it != skill }
+                val updatedUser = user?.copy(skill = updatedSkills)
+                updatedUser?.let {
+                    userRepository.registerUser(it)
+                    loadUserDetails()
+                }
+            }.onFailure { exception ->
+                Log.e("ViewModel", "Error fetching user details", exception)
+            }
+        }
 
 
     }
