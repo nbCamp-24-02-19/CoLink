@@ -220,7 +220,7 @@ class RecommendDialog: DialogFragment() {
     }
 
     private val adapter by lazy {
-        RecommendAdapter()
+//        RecommendAdapter()
     }
     override fun onCreateView(
         inflater: LayoutInflater,
