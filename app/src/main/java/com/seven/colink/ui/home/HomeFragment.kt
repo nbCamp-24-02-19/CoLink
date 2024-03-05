@@ -10,6 +10,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager2.widget.CompositePageTransformer
+import androidx.viewpager2.widget.MarginPageTransformer
+import androidx.viewpager2.widget.ViewPager2
+import com.seven.colink.R
 import com.seven.colink.databinding.FragmentHomeBinding
 import com.seven.colink.ui.home.adapter.BottomViewPagerAdapter
 import com.seven.colink.ui.home.adapter.HomeMainAdapter
@@ -26,11 +30,12 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
     private val mainAdapter by lazy { HomeMainAdapter() }
     private lateinit var bottomAdapter : BottomViewPagerAdapter
-//    private val topAdapter by lazy { TopViewPagerAdapter() }
     private lateinit var topAdapter : TopViewPagerAdapter
-//    private val homeViewModel by viewModels<HomeViewModel>()
     private val homeViewModel : HomeViewModel by activityViewModels()
-    private lateinit var homeItem : MutableList<HomeAdapterItems>
+    private var homeItem = mutableListOf<HomeAdapterItems>(
+        HomeAdapterItems.TopView(TopViewPagerAdapter()),
+        HomeAdapterItems.Header("그룹 추천")
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,12 +48,8 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViews()
-    }
-
-    override fun onResume() {
-        super.onResume()
         setTopItems()
+        initViews()
     }
 
     private fun initViews() {
@@ -60,20 +61,26 @@ class HomeFragment : Fragment() {
         topAdapter = TopViewPagerAdapter()
         topAdapter.itemClick = topClickItem()
 
-        homeItem = mutableListOf(
-            HomeAdapterItems.TopView(topAdapter),
-            HomeAdapterItems.Header("그룹 추천")
-        )
-
         with(binding.rvHome) {
             adapter = mainAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
-        mainAdapter.submitList(homeItem)
 
         bottomAdapter = BottomViewPagerAdapter(this)
-        binding.vpHome.adapter = bottomAdapter
+        previewViewPager()
+    }
 
+    private fun previewViewPager(){
+        binding.vpHome.adapter = bottomAdapter
+        binding.vpHome.offscreenPageLimit = 2
+        val pageMargin = resources.getDimensionPixelOffset(R.dimen.page_home_margin)
+        val pagerOffset = resources.getDimensionPixelOffset(R.dimen.offset_home_between_pages)
+        val screenWidth = resources.displayMetrics.widthPixels
+        val offsetPx = screenWidth - 4*(pageMargin + pagerOffset) + (pagerOffset/4)
+
+        binding.vpHome.setPageTransformer { page, position ->
+            page.translationX = position * (-offsetPx )
+        }
     }
 
     private fun setTopItems() {
@@ -82,10 +89,12 @@ class HomeFragment : Fragment() {
 
     private fun setObserve() {
         homeViewModel.topItems.observe(viewLifecycleOwner){
-//            val newItems = ArrayList(it)
-//            topAdapter.submitList(newItems)
             topAdapter.submitList(it)
-            Log.d("Home","#ddd it = $it")
+            homeItem = mutableListOf(
+                HomeAdapterItems.TopView(topAdapter),
+                HomeAdapterItems.Header("그룹 추천")
+            )
+            mainAdapter.submitList(homeItem)
         }
     }
 
@@ -111,5 +120,4 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
 }
