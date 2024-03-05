@@ -60,4 +60,12 @@ class GroupRepositoryImpl @Inject constructor(
                 }
         }
 
+    override suspend fun getGroupByContainUserId(userId: String) = runCatching {
+        firestore.collection(DataBaseType.GROUP.title)
+            .whereArrayContains("memberIds", userId)
+            .get().await()
+            .documents.mapNotNull {
+                it.toObject(GroupEntity::class.java)
+            }
+    }
 }

@@ -1,21 +1,46 @@
 package com.seven.colink.ui.group
 
-sealed class GroupData {
-    data class GroupTitle(val title: String) : GroupData()
-    data class GroupList(
-        var projectName: String,
-        var days: Int,
-        var description: String,
-        var tags: String
-    ) : GroupData()
+import com.seven.colink.domain.entity.GroupEntity
+import com.seven.colink.util.status.GroupType
+import java.util.UUID
 
-    data class GroupAdd(val addGroup: String , val appliedGroup: String) : GroupData()
+sealed interface GroupData {
+    data class GroupTitle(
+        val title: String
+    ) : GroupData
+
+    data class GroupList(
+        val key: String?,
+        val groupType: GroupType?,
+        val thumbnail: String?,
+        val projectName: String?,
+        val days: String?,
+        val description: String?,
+        val tags: List<String>? = emptyList(),
+        val memberIds: List<String> = emptyList()
+    ) : GroupData
+
+    data class GroupItem(
+        val group: GroupEntity?
+    ) : GroupData
+
+    data class GroupAdd(
+        val addGroupImage: Int,
+        val addGroupText: String,
+        val appliedGroup: String
+    ) : GroupData
+
     data class GroupWant(
-        var groupType: String,
-        var title: String,
-        var description: String,
-        var kind: String,
-        var lv: String,
-        var img: Int
-    ) : GroupData()
+        val key: String?,
+        val groupType: GroupType?,
+        val title: String?,
+        val description: String?,
+        val kind: String?,
+        val img: String?
+    ) : GroupData
+
+    data class GroupEmpty(
+        var img: Int?,
+        var text: String?
+    ) : GroupData
 }
