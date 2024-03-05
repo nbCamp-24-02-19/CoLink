@@ -21,13 +21,6 @@ class ChatViewModel @Inject constructor(
 
     private val _a = MutableLiveData<String?>(null)
     val a: LiveData<String?> = _a
-    fun createChat() {
-        viewModelScope.launch {
-            _a.value = withContext(Dispatchers.IO) {
-                getChatRoomUsecase("dh6BeQHBj7QNrbnm5Y4gM224Kqm2").key
-            }
-        }
-    }
 
     fun logout() {
         viewModelScope.launch {

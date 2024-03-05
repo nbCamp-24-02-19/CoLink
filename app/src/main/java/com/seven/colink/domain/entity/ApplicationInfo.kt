@@ -10,5 +10,5 @@ import java.time.LocalDateTime
 data class ApplicationInfo(
     val userId: String? = "", // 지원한 사용자 아이디
     val applicationStatus: ApplicationStatus? = ApplicationStatus.PENDING, // 지원 상태
-    val applicationDate: String = LocalDateTime.now().convertLocalDateTime(), // 지원한 날짜
+    val applicationDate: String? = LocalDateTime.now().convertLocalDateTime(), // 지원한 날짜
 ) : Parcelable
