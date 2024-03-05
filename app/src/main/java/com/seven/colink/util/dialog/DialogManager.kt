@@ -14,6 +14,9 @@ import com.seven.colink.R
 import com.seven.colink.databinding.UtilCustomBasicDialogBinding
 import com.seven.colink.databinding.UtilCustomLevelDialogBinding
 import com.seven.colink.databinding.UtilCustomListDialogBinding
+import com.seven.colink.databinding.UtilMemberInfoDialogBinding
+import com.seven.colink.domain.entity.UserEntity
+import com.seven.colink.util.dialog.adapter.MemberListAdapter
 import com.seven.colink.util.dialog.adapter.DialogAdapter
 import com.seven.colink.util.dialog.adapter.LevelDialogAdapter
 import com.seven.colink.util.dialog.enum.LevelEnum
@@ -97,7 +100,8 @@ fun List<String>.setDialog(
         .create()
 
     val adapter = DialogAdapter(
-        onClick = action
+        onClick = action,
+        dialog = dialog
     )
 
     adapter.submitList(this)
@@ -110,12 +114,12 @@ fun List<String>.setDialog(
 
 fun Context.setLevelDialog(
     nowLevel: Int = 1,
-    action: (Int) -> Unit
+    action: (LevelEnum) -> Unit,
 ):AlertDialog {
     val binding = UtilCustomLevelDialogBinding.inflate(LayoutInflater.from(this))
     val dialog = AlertDialog.Builder(this)
         .setView(binding.root)
-        .show()  // 다이얼로그 표시
+        .show()
 
     dialog.window?.setLayout(
         ViewGroup.LayoutParams.MATCH_PARENT,
@@ -125,6 +129,7 @@ fun Context.setLevelDialog(
     val adapter = LevelDialogAdapter(
         selected = nowLevel,
         onClick = action,
+        dialog = dialog
     )
 
     adapter.submitList(
@@ -140,5 +145,30 @@ fun Context.setLevelDialog(
     )
     binding.rcLevelDia.adapter = adapter
     binding.rcLevelDia.layoutManager = LinearLayoutManager(this)
+    return dialog
+}
+
+fun List<UserEntity>.setUserInfoDialog(
+    context: Context,
+    action: (UserEntity, isRefuseButton: Boolean) -> Unit,
+): AlertDialog {
+    val binding = UtilMemberInfoDialogBinding.inflate(LayoutInflater.from(context))
+    val dialog = AlertDialog.Builder(context)
+        .setView(binding.root)
+        .show()
+
+    dialog.window?.setLayout(
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        ViewGroup.LayoutParams.MATCH_PARENT
+    )
+
+    val adapter = MemberListAdapter { position, user, isRefuseButton ->
+        action(user, isRefuseButton)
+        dialog.dismiss()
+    }
+
+    binding.recyclerViewMember.adapter = adapter
+    adapter.submitList(this)
+
     return dialog
 }

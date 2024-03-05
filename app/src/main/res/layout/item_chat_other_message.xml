@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="4dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/tv_chat_auth_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="꼬링크"
+        android:textSize="10sp"
+        android:visibility="gone"
+        android:textColor="@color/typo_color"
+        android:fontFamily="@font/inter_thin"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/tv_chat_message"/>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cv_chat_profile_view"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        app:cardCornerRadius="32dp"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_chat_profile"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/bg_stepper_circle"
+            android:clipToOutline="true"
+            android:src="@drawable/dummy"/>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:id="@+id/tv_chat_view_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:textSize="10sp"
+        android:visibility="invisible"
+        android:textColor="@color/study_color"
+        app:layout_constraintBottom_toTopOf="@id/tv_chat_register_time"
+        app:layout_constraintStart_toStartOf="@id/tv_chat_register_time"/>
+
+    <TextView
+        android:id="@+id/tv_chat_register_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:text="오후 1:04"
+        android:textSize="10sp"
+        android:visibility="invisible"
+        android:textColor="@color/typo_color"
+        app:layout_constraintStart_toEndOf="@+id/tv_chat_message"
+        app:layout_constraintBottom_toBottomOf="@id/tv_chat_message"/>
+    <TextView
+        android:id="@+id/tv_chat_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingVertical="8dp"
+        android:paddingHorizontal="12dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:maxWidth="300dp"
+        android:background="@drawable/chat_bubble_other"
+        android:backgroundTint="@color/user_color"
+        android:text="안녕하세요"
+        android:textSize="14sp"
+        android:fontFamily="@font/roboto_regular"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@+id/tv_chat_auth_name"
+        app:layout_constraintStart_toEndOf="@+id/cv_chat_profile_view"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
