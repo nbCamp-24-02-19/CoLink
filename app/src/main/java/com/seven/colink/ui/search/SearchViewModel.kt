@@ -40,13 +40,19 @@ class SearchViewModel @Inject constructor(
             "ALL" -> null
             "PROJECT" -> GroupType.PROJECT
             "STUDY" -> GroupType.STUDY
-            else -> return
+            else -> {
+                _searchModel.value = emptyList()
+                return
+            }
         }
         val recruitType: ProjectStatus? = when (searchRecruitState.value) {
             "ALL" -> null
             "RECRUIT" -> ProjectStatus.RECRUIT
             "END" -> ProjectStatus.END
-            else -> return
+            else -> {
+                _searchModel.value = emptyList()
+                return
+            }
         }
 
         viewModelScope.launch {
