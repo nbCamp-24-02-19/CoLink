@@ -92,10 +92,11 @@ class HomeFragment : Fragment() {
         override fun onClick(view: View, position: Int, item: TopItems) {
             lifecycleScope.launch {
                 val key = item.key
-                if (key != null) {
+                val entity = key?.let { homeViewModel.getPost(it) }
+                if (entity != null) {
                     val intent = PostContentActivity.newIntent(
                         requireContext(),
-                        key
+                        entity.key
                     )
                     startActivity(intent)
                 }else {
