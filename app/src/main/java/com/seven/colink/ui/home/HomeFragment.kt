@@ -92,15 +92,13 @@ class HomeFragment : Fragment() {
 
 //        val offsetPx = screenWidth - 4*(pageMargin + pagerOffset) + (pagerOffset/4)
 
-        val pageMarginRatio = 4
-        val pagerOffsetRatio = 1
+        val pageMarginR = 4
+        val pagerOffsetR = 1
 
-// 화면 크기에 따라 동적으로 비율 조정
         val adjustedPageMargin = pageMargin * (deviceWidth / screenWidth)
         val adjustedPagerOffset = pagerOffset * (deviceWidth / screenWidth)
 
-// 간격을 계산할 때 비율 적용
-        val offsetPx = deviceWidth - pageMarginRatio * (adjustedPageMargin + adjustedPagerOffset) + (adjustedPagerOffset / pagerOffsetRatio)
+        val offsetPx = deviceWidth - pageMarginR * (adjustedPageMargin + adjustedPagerOffset) + (adjustedPagerOffset / pagerOffsetR)
 
         binding.vpHome.setPageTransformer { page, position ->
             page.translationX = position * (-offsetPx )
