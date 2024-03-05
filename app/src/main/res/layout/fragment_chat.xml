@@ -8,6 +8,7 @@
     android:orientation="vertical"
     tools:context=".ui.chat.ChatFragment">
 
+
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tl_chat_tab"
         android:background="@color/white"

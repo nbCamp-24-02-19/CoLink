@@ -8,49 +8,7 @@
     tools:context=".ui.mypage.MyPageFragment">
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
-        android:layout_width="match_parent"
-        android:layout_height="57dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/iv_mypage_back_arrow"
-            android:layout_width="18dp"
-            android:layout_height="12dp"
-            android:layout_marginStart="22dp"
-            android:layout_marginTop="23dp"
-            android:src="@drawable/ic_arrow_left"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="11dp"
-            android:text="마이 페이지"
-            android:textColor="@color/black"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_mypage_back_arrow"
-            app:layout_constraintStart_toEndOf="@+id/iv_mypage_back_arrow"
-            app:layout_constraintTop_toTopOf="@+id/iv_mypage_back_arrow" />
-
-        <ImageView
-            android:id="@+id/iv_mypage_edit"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="23dp"
-            android:src="@drawable/ic_edit"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/main_color" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -58,7 +16,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_scrollFlags="scroll">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -71,24 +29,73 @@
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
 
             <ImageView
+                android:id="@+id/iv_mypage_setting"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginEnd="27dp"
+                android:src="@drawable/ic_mypage_edit"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <ImageView
                 android:id="@+id/iv_mypage_profile"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
                 android:layout_marginStart="22dp"
-                android:layout_marginTop="23dp"
+                android:layout_marginTop="33dp"
                 android:src="@drawable/ic_profile"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
 
             <ImageView
                 android:id="@+id/iv_mypage_level"
                 android:layout_width="18dp"
                 android:layout_height="24dp"
                 android:layout_marginStart="13dp"
-                android:layout_marginTop="27dp"
-                android:src="@drawable/ic_level_1"
+                android:layout_marginTop="39dp"
+                android:src="@drawable/ic_level_insignia_1"
                 app:layout_constraintStart_toEndOf="@+id/iv_mypage_profile"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="#F47171"/>
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="5.77dp"
+                android:src="@drawable/ic_level_insignia_2"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_mypage_level"
+                app:layout_constraintEnd_toEndOf="@+id/iv_mypage_level"
+                app:layout_constraintStart_toStartOf="@+id/iv_mypage_level"
+                app:layout_constraintTop_toTopOf="@+id/iv_mypage_level"
+                app:layout_constraintVertical_bias="0.9" />
+
+            <TextView
+                android:id="@+id/tv_mypage_level"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/inter_bold"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_mypage_level"
+                app:layout_constraintEnd_toEndOf="@+id/iv_mypage_level"
+                app:layout_constraintStart_toStartOf="@+id/iv_mypage_level"
+                app:layout_constraintTop_toTopOf="@+id/iv_mypage_level"
+                app:layout_constraintVertical_bias="0.2"
+                tools:ignore="SmallSp" />
+
+<!--            <ImageView-->
+<!--                android:id="@+id/iv_mypage_level"-->
+<!--                android:layout_width="18dp"-->
+<!--                android:layout_height="24dp"-->
+<!--                android:layout_marginStart="13dp"-->
+<!--                android:layout_marginTop="39dp"-->
+<!--                android:src="@drawable/ic_level_1"-->
+<!--                app:layout_constraintStart_toEndOf="@+id/iv_mypage_profile"-->
+<!--                app:layout_constraintTop_toTopOf="parent" />-->
 
             <TextView
                 android:id="@+id/tv_mypage_name"
@@ -130,8 +137,8 @@
                 android:id="@+id/tv_mypage_score"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="39dp"
-                android:layout_marginEnd="25dp"
+                android:layout_marginTop="132dp"
+                android:layout_marginEnd="48dp"
                 android:text="9.0"
                 android:textColor="@color/black"
                 android:textSize="24sp"
@@ -153,7 +160,7 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_marginStart="25dp"
-                android:layout_marginTop="118dp"
+                android:layout_marginTop="132dp"
                 android:src="@drawable/ic_blog"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -163,29 +170,18 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_marginStart="38dp"
-                android:layout_marginTop="118dp"
+                android:layout_marginTop="132dp"
                 android:src="@drawable/ic_github"
                 app:layout_constraintStart_toEndOf="@+id/iv_mypage_blog"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/tv_mypage_item_edit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="84dp"
-                android:layout_marginEnd="30dp"
-                android:text="편집"
-                android:textColor="@color/forth_color"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_mypage_score" />
 
             <LinearLayout
                 android:id="@+id/ly_mypage1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="24dp"
                 android:layout_marginEnd="16dp"
                 android:padding="10dp"
                 android:background="@drawable/mypage_shape"
@@ -193,7 +189,7 @@
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_mypage_item_edit">
+                app:layout_constraintTop_toBottomOf="@+id/iv_mypage_git">
 
                 <TextView
                     android:id="@+id/tv_mypage_text"
