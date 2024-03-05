@@ -1,129 +1,183 @@
 package com.seven.colink.ui.group
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import com.seven.colink.R
 import com.seven.colink.databinding.ItemGroupGroupAddBinding
 import com.seven.colink.databinding.ItemGroupGroupListBinding
 import com.seven.colink.databinding.ItemGroupTitleBinding
 import com.seven.colink.databinding.ItemHomeBottomBinding
+import com.seven.colink.databinding.ItemUnknownBinding
+import com.seven.colink.util.status.GroupType
+import com.seven.colink.util.status.GroupViewType
+import com.seven.colink.ui.group.GroupData
+import com.seven.colink.util.convert.convertToDaysAgo
 
-class GroupAdapter(private val mItems: MutableList<GroupData>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class GroupAdapter(
+    private val context: Context,
+    private val onClickItem: (Int, GroupData) -> Unit,
+    private val onClickAddButton: (Int, GroupData) -> Unit,
+) : ListAdapter<GroupData, GroupAdapter.GroupViewHolder>(
+    object : DiffUtil.ItemCallback<GroupData>() {
 
-    interface JoinItemClick {
-        fun onClick(item: GroupData.GroupList, position: Int)
-    }
-    var joinItemClick: JoinItemClick? = null
-
-    interface AddItemClick {
-        fun onClick(view: View, position: Int)
-    }
-    var addItemClick: AddItemClick? = null
-
-    interface WantItemClick {
-        fun onClick(item: GroupData.GroupWant, position: Int)
-    }
-    var wantItemClick: WantItemClick? = null
-
-    companion object{
-        private const val VIEW_TYPE_TITLE = 1
-        private const val VIEW_TYPE_LIST = 2
-        private const val VIEW_TYPE_ADD = 3
-        private const val VIEW_TYPE_WANT = 4
-    }
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when(viewType){
-            VIEW_TYPE_TITLE -> {
-                val binding = ItemGroupTitleBinding.inflate(LayoutInflater.from(parent.context),parent,false)
-                TitleViewHolder(binding)
-            } VIEW_TYPE_LIST -> {
-                val binding = ItemGroupGroupListBinding.inflate(LayoutInflater.from(parent.context),parent,false)
-                ListViewHolder(binding)
-            }
-             VIEW_TYPE_WANT -> {
-                 val binding = ItemHomeBottomBinding.inflate(LayoutInflater.from(parent.context),parent,false)
-                 WantViewHolder(binding)
-             }
-            else -> {
-                val binding = ItemGroupGroupAddBinding.inflate(LayoutInflater.from(parent.context),parent,false)
-                AddViewHolder(binding)
-            }
-        }
-    }
-
-    override fun getItemCount(): Int {
-        return mItems.size
-    }
-
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when(val item = mItems[position]){
-            is GroupData.GroupTitle -> {
-                (holder as TitleViewHolder).title.visibility = View.VISIBLE
-            }
-            is GroupData.GroupList -> {
-                (holder as ListViewHolder).projectName.text = item.projectName
-                holder.itemBox.setOnClickListener {
-                    joinItemClick?.onClick(item, position)
+        override fun areItemsTheSame(oldItem: GroupData, newItem: GroupData): Boolean =
+            when {
+                oldItem is GroupData.GroupTitle && newItem is GroupData.GroupTitle -> {
+                    oldItem.title == newItem.title
                 }
-                holder.days.text = item.days.toString() + "일째"
-                holder.description.text = item.description
-                holder.tags.text = item.tags
+
+                oldItem is GroupData.GroupList && newItem is GroupData.GroupList -> {
+                    oldItem.projectName == newItem.projectName
+                }
+
+                oldItem is GroupData.GroupAdd && newItem is GroupData.GroupAdd -> {
+                    oldItem.addGroupText == newItem.addGroupText
+                }
+
+                oldItem is GroupData.GroupWant && newItem is GroupData.GroupWant -> {
+                    oldItem.description == newItem.description
+                }
+
+                else -> oldItem == newItem
             }
-            is GroupData.GroupAdd -> {
-                (holder as AddViewHolder).appliedGroup.text = item.appliedGroup
-                holder.addGroup.setOnClickListener {
-                    addItemClick?.onClick(it, position)
+
+        override fun areContentsTheSame(
+            oldItem: GroupData,
+            newItem: GroupData
+        ): Boolean = oldItem == newItem
+    }
+) {
+
+    abstract class GroupViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        abstract fun onBind(item: GroupData)
+    }
+
+    override fun getItemViewType(position: Int): Int = when (getItem(position)) {
+        is GroupData.GroupTitle -> GroupViewType.TITLE
+        is GroupData.GroupList -> GroupViewType.LIST
+        is GroupData.GroupAdd -> GroupViewType.ADD
+        is GroupData.GroupWant -> GroupViewType.WANT
+        else -> GroupViewType.UNKNOWN
+    }.ordinal
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupViewHolder =
+        when (GroupViewType.from(viewType)) {
+            GroupViewType.TITLE -> TitleViewHolder(
+                context,
+                ItemGroupTitleBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            )
+
+            GroupViewType.LIST -> ListViewHolder(
+                context,
+                ItemGroupGroupListBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                onClickItem
+            )
+
+            GroupViewType.ADD -> AddViewHolder(
+                context,
+                ItemGroupGroupAddBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                onClickAddButton
+            )
+
+            GroupViewType.WANT -> WantViewHolder(
+                context,
+                ItemHomeBottomBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                onClickItem
+            )
+
+            else -> GroupUnknownViewHolder(
+                ItemUnknownBinding.inflate(LayoutInflater.from(parent.context),parent,false)
+            )
+        }
+
+    override fun onBindViewHolder(holder: GroupViewHolder, position: Int) {
+        holder.onBind(getItem(position))
+    }
+
+    class TitleViewHolder(
+        context: Context,
+        private val binding: ItemGroupTitleBinding
+    ) : GroupViewHolder(binding.root) {
+        override fun onBind(item: GroupData) {
+            if (item is GroupData.GroupTitle) {
+                binding.tvGroupTopTitle.text = item.title
+            }
+        }
+    }
+
+    class ListViewHolder(
+        context: Context,
+        private val binding: ItemGroupGroupListBinding,
+        private val onClickItem: (Int, GroupData) -> Unit
+    ) : GroupViewHolder(binding.root) {
+        override fun onBind(item: GroupData) {
+            if (item is GroupData.GroupList){
+                binding.tvGroupType.text = if (item.groupType==GroupType.PROJECT)"P" else "S"
+                if (item.groupType==GroupType.PROJECT){
+                    binding.tvGroupType.text = "P"
+                } else {
+                    binding.tvGroupType.setBackgroundResource(R.drawable.ic_level_insignia_study)
+                    binding.tvGroupType.text = "S"
+                }
+                binding.ivGroupThumbnail.load(item.thumbnail)
+                binding.llGroupItem.setOnClickListener {
+                    onClickItem(adapterPosition, item)
+                }
+                binding.tvGroupProjectTitle.text = item.projectName
+                binding.tvGroupDescription.text = item.description
+                binding.tvGroupDays.text = item.days.toString()
+                binding.tvGroupTags.text = "# " +item.tags?.joinToString("   ","","")
+            }
+        }
+    }
+
+    class AddViewHolder(
+        context: Context,
+        private val binding: ItemGroupGroupAddBinding,
+        private val onClickAddButton: (Int, GroupData) -> Unit
+    ) : GroupViewHolder(binding.root) {
+        override fun onBind(item: GroupData) {
+            if (item is GroupData.GroupAdd){
+                binding.ivGroupAdd.load(item.addGroupImage)
+                binding.ivGroupAdd.setOnClickListener {
+                    onClickAddButton(adapterPosition, item)
+                }
+                binding.tvGroupAdd.setOnClickListener {
+                    onClickAddButton(adapterPosition, item)
+                }
+                binding.tvGroupAdd.text = item.addGroupText
+                binding.tvGroupAppliedGroup.text = item.appliedGroup
+            }
+        }
+    }
+
+    class WantViewHolder(
+        context: Context,
+        private val binding: ItemHomeBottomBinding,
+        private val onClickItem: (Int, GroupData) -> Unit
+    ) : GroupViewHolder(binding.root) {
+        override fun onBind(item: GroupData) {
+            if (item is GroupData.GroupWant){
+                binding.ivHomeBottomThumubnail.load(item.img)
+                binding.tvHomeBottomTitle.text = item.title
+                binding.tvHomeBottomDes.text = item.description
+                binding.tvHomeBottomKind.text = item.kind
+                binding.tvHomeBottomLv.text = item.lv
+                binding.layBottom.setOnClickListener {
+                    onClickItem(adapterPosition, item)
                 }
             }
-            is GroupData.GroupWant -> {
-                (holder as WantViewHolder).groupType.text = item.groupType
-                holder.title.text = item.title
-                holder.description.text = item.description
-                holder.kind.text = item.kind
-                holder.lv.text = item.lv
-                holder.img.setImageResource(R.mipmap.ic_launcher)
-            }
         }
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return when(mItems[position]){
-            is GroupData.GroupTitle -> VIEW_TYPE_TITLE
-            is GroupData.GroupList -> VIEW_TYPE_LIST
-            is GroupData.GroupAdd -> VIEW_TYPE_ADD
-            is GroupData.GroupWant -> VIEW_TYPE_WANT
-        }
+    class GroupUnknownViewHolder(binding: ItemUnknownBinding) :
+        GroupViewHolder(binding.root) {
+        override fun onBind(item: GroupData) = Unit
     }
-
-    inner class TitleViewHolder(binding: ItemGroupTitleBinding) : RecyclerView.ViewHolder(binding.root){
-        val title = binding.root
-    }
-
-    inner class ListViewHolder(binding: ItemGroupGroupListBinding) : RecyclerView.ViewHolder(binding.root){
-        val itemBox = binding.llGroupItem
-        val groupType = binding.tvGroupType
-        val thumbnail = binding.ivGroupThumbnail
-        val projectName = binding.tvGroupProjectTitle
-        val days = binding.tvGroupDays
-        val description = binding.tvMemberDescription
-        val tags = binding.tvGroupTags
-    }
-
-    inner class AddViewHolder(binding: ItemGroupGroupAddBinding) : RecyclerView.ViewHolder(binding.root){
-        val addBtn = binding.ivGroupAdd
-        var addGroup = binding.tvGroupAdd
-        val appliedGroup = binding.tvGroupAppliedGroup
-    }
-
-    inner class WantViewHolder(binding: ItemHomeBottomBinding) : RecyclerView.ViewHolder(binding.root){
-        val groupType = binding.tvHomeBottomProject
-        val title = binding.tvHomeBottomTitle
-        val description = binding.tvHomeBottomDes
-        val kind = binding.tvHomeBottomKind
-        val lv = binding.tvHomeBottomLv
-        val img = binding.ivHomeBottomThumubnail
-    }
-
 }
