@@ -42,6 +42,7 @@
         android:layout_gravity="center_vertical"
         android:text="메세지입니다~~~"
         android:textSize="14sp"
+        android:maxLines="2"
         android:textColor="@color/typo_color"
         android:fontFamily="@font/inter_thin"/>
     </androidx.appcompat.widget.LinearLayoutCompat>

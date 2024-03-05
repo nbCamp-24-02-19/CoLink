@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.seven.colink.R
 import com.seven.colink.databinding.MypageRecyclerviewItemPostBinding
+import com.seven.colink.ui.mypage.MyPageItem
 import com.seven.colink.ui.mypage.MyPostItem
 
 class MyPagePostAdapter(var mItems: List<MyPostItem>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -57,6 +58,11 @@ class MyPagePostAdapter(var mItems: List<MyPostItem>) : RecyclerView.Adapter<Rec
                 holder.studytime.text = item.studyTime
             }
         }
+    }
+
+    fun changeDataset(newDataSet: List<MyPostItem>){
+        mItems = newDataSet
+        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int {

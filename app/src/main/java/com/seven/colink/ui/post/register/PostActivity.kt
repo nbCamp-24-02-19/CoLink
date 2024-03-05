@@ -1,4 +1,4 @@
-package com.seven.colink.ui.post
+package com.seven.colink.ui.post.register
 
 import android.app.Activity
 import android.content.Context
@@ -19,16 +19,20 @@ import com.seven.colink.R
 import com.seven.colink.databinding.ActivityPostBinding
 import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.entity.TagEntity
-import com.seven.colink.ui.post.adapter.RecruitListAdapter
-import com.seven.colink.ui.post.adapter.TagListAdapter
+import com.seven.colink.ui.post.register.adapter.RecruitListAdapter
+import com.seven.colink.ui.post.register.adapter.TagListAdapter
+import com.seven.colink.ui.post.register.model.AddTagResult
+import com.seven.colink.ui.post.register.model.TagListItem
+import com.seven.colink.ui.post.register.viewmodel.PostViewModel
 import com.seven.colink.util.Constants.Companion.EXTRA_ENTRY_TYPE
 import com.seven.colink.util.Constants.Companion.EXTRA_GROUP_TYPE
-import com.seven.colink.util.Constants.Companion.EXTRA_POSITION_ENTITY
 import com.seven.colink.util.Constants.Companion.EXTRA_POST_ENTITY
 import com.seven.colink.util.Constants.Companion.LIMITED_PEOPLE
 import com.seven.colink.util.Constants.Companion.LIMITED_TAG_COUNT
 import com.seven.colink.util.dialog.RecruitDialog
 import com.seven.colink.util.openGallery
+import com.seven.colink.util.progress.hideProgressOverlay
+import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.showToast
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.PostEntryType
@@ -55,13 +59,9 @@ class PostActivity : AppCompatActivity() {
 
         fun newIntentForUpdate(
             context: Context,
-            groupType: GroupType,
-            position: Int,
             entity: PostEntity
         ) = Intent(context, PostActivity::class.java).apply {
             putExtra(EXTRA_ENTRY_TYPE, PostEntryType.UPDATE)
-            putExtra(EXTRA_GROUP_TYPE, groupType)
-            putExtra(EXTRA_POSITION_ENTITY, position)
             putExtra(EXTRA_POST_ENTITY, entity)
         }
     }
@@ -79,11 +79,10 @@ class PostActivity : AppCompatActivity() {
         )
     }
 
-
     private val recruitListAdapter: RecruitListAdapter by lazy {
         RecruitListAdapter(
             onClickItem = { _, entity ->
-                viewModel.removeRecruitInfo(entity.key)
+                viewModel.removeRecruitInfo(entity.type)
             }
         )
     }
@@ -132,14 +131,17 @@ class PostActivity : AppCompatActivity() {
         }
 
         btComplete.setOnClickListener {
+            showProgressOverlay()
             viewModel.registerPost(
                 binding.etTitle.text.toString(),
                 binding.etContent.text.toString(),
-                onSuccess = {
-                    showToast(getString(R.string.post_register_success))
+                onSuccess = { message ->
+                    hideProgressOverlay()
+                    showToast(getString(message))
                     finish()
                 },
                 onError = { exception ->
+                    hideProgressOverlay()
                     showToast(exception.message ?: getString(R.string.post_register_fail))
                 }
             )
@@ -197,7 +199,13 @@ class PostActivity : AppCompatActivity() {
     private fun initViewModel() = with(viewModel) {
         uiState.observe(this@PostActivity) { state ->
             with(binding) {
-                etContent.hint = state.editTextContent?.let { getString(it) }
+                if (state.isUpdated == true) {
+                    etContent.setText(state.editTextContent)
+                } else {
+                    etContent.hint = state.editTextContent
+                }
+
+                etTitle.setText(state.editTextTitle)
 
                 state.isProjectSelected?.let {
                     setTextViewProperties(
@@ -220,10 +228,12 @@ class PostActivity : AppCompatActivity() {
             recruitListAdapter.submitList(state.recruitList)
             binding.tvTotalRecruit.text =
                 getString(R.string.total_personnel, state.totalPersonnelCount)
-            totalPersonnelCount = state.totalPersonnelCount
-            recruitTypes = state.recruitList.map { it.type }
+            totalPersonnelCount = state.totalPersonnelCount ?: 0
+            state.recruitList?.let {
+                recruitTypes = it.map { recruitInfo -> recruitInfo.type.orEmpty() }
+            }
 
-            tagListAdapter.submitList(state.tagList.map { TagListItem.Item(tagEntity = it) })
+            tagListAdapter.submitList(state.tagList?.map { TagListItem.Item(tagEntity = it) })
         }
 
         selectedPersonnelCount.observe(this@PostActivity) { count ->
@@ -231,10 +241,11 @@ class PostActivity : AppCompatActivity() {
         }
 
         selectedImage.observe(this@PostActivity) { selected ->
-            selected?.let {
-                binding.ivAddImage.load(selected)
-                binding.ivImageBackground.load(selected)
-                selectedImageUri = selected
+            val imageUrl = selected?.newImage ?: selected?.originImage
+            if (imageUrl != null) {
+                binding.ivAddImage.load(imageUrl)
+                binding.ivImageBackground.load(imageUrl)
+                selectedImageUri = imageUrl
             }
         }
     }

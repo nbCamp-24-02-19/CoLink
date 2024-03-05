@@ -18,6 +18,7 @@ import com.seven.colink.ui.post.content.PostContentActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
 
@@ -95,12 +96,10 @@ class HomeFragment : Fragment() {
         override fun onClick(view: View, position: Int, item: TopItems) {
             lifecycleScope.launch {
                 val key = item.key
-                val entity = key?.let { homeViewModel.getPost(it) }
-                if (entity != null) {
-                    val intent = PostContentActivity.newIntentForUpdate(
+                if (key != null) {
+                    val intent = PostContentActivity.newIntent(
                         requireContext(),
-                        position,
-                        entity
+                        key
                     )
                     startActivity(intent)
                 }else {
@@ -114,4 +113,5 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
 }
