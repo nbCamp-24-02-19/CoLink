@@ -10,7 +10,7 @@ data class SearchModel(
     val key: String = "POST_" + UUID.randomUUID().toString(),
     val authId: String? = "",
     val title: String? = "",
-    val status: ProjectStatus,
+    val status: ProjectStatus? = ProjectStatus.RECRUIT,
     val groupType: GroupType?,
     val description: String? = "",
     val tags: List<String>? = emptyList(),

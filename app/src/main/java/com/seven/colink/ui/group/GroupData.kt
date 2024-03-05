@@ -36,7 +36,11 @@ sealed interface GroupData {
         val title: String?,
         val description: String?,
         val kind: String?,
-        val lv: String?,
-        val img: Int?
+        val img: String?
+    ) : GroupData
+
+    data class GroupEmpty(
+        var img: Int?,
+        var text: String?
     ) : GroupData
 }

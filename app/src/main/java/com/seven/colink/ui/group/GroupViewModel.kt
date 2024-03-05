@@ -28,11 +28,15 @@ class GroupViewModel @Inject constructor(
     private val groupRepository: GroupRepository
 ) : ViewModel() {
 
-    private var entity: GroupData.GroupList? = null
-    private var entityList: List<GroupData.GroupList>? = emptyList()
-
     private val _groupData = MutableLiveData<List<GroupData>?>()
+
     val groupData: LiveData<List<GroupData>?> get() = _groupData
+
+    private val _joinList = MutableLiveData<List<GroupData.GroupList>?>()
+    val joinList: LiveData<List<GroupData.GroupList>?> get() = _joinList
+
+    private val _wantList = MutableLiveData<List<GroupData.GroupWant>?>()
+    val wantList : LiveData<List<GroupData.GroupWant>?> get() = _wantList
 
     init {
         viewModelScope.launch {
@@ -41,14 +45,20 @@ class GroupViewModel @Inject constructor(
         }
     }
 
-    fun itemUpdate() {
+    private fun itemUpdate() {
         viewModelScope.launch {
             val items = mutableListOf<GroupData>()
 
             items.add(getTitle())
-            entityList?.map { items.add(it) }
+            if (joinList.value.isNullOrEmpty()){
+//                items.add(getEmptyJoinList())
+                _joinList.value
+            } else {
+                joinList.value?.map { items.add(it) }
+            }
             items.add(getAdd())
             items.add(getWant())
+            items.add(getEmptyWantList())
 
             _groupData.value = items
             Log.d("Group", "GroupData.value = ${_groupData.value}")
@@ -61,7 +71,7 @@ class GroupViewModel @Inject constructor(
             it.convertGroupList()
         }
         Log.d("Group", "result1 = ${result}")
-        entityList = result
+        _joinList.value = result
     }
 
     private fun GroupEntity.convertGroupList() =
@@ -76,19 +86,19 @@ class GroupViewModel @Inject constructor(
             memberIds = memberIds
         )
 
+    private fun GroupEntity.convertGroupWant() =
+        GroupData.GroupWant(
+            key = key,
+            groupType = groupType,
+            title = title,
+            description = description,
+            kind = authId,
+            img = imageUrl
+        )
+
     private fun getTitle() = GroupData.GroupTitle(
         title = "참여 중인 그룹"
     )
-
-//    private fun getList() = GroupData.GroupList(
-//        key = entity?.key,
-//        groupType = entity?.groupType,
-//        thumbnail = entity?.imageUrl,
-//        projectName = entity?.title,
-//        days = entity?.registeredDate,
-//        description = entity?.description,
-//        tags = entity?.tags
-//    )
 
     private fun getAdd() = GroupData.GroupAdd(
         addGroupImage = R.drawable.ic_add,
@@ -102,7 +112,16 @@ class GroupViewModel @Inject constructor(
         title = "영화 커뮤니티 서비스 프로젝트 모집합니다",
         description = "영화 커뮤니티 서비스 프로젝트를 함께하실 안드로이드 개발자를 모십니다.",
         kind = "나는뉴비",
-        lv = "4이상",
-        img = R.drawable.img_dialog_study
+        img = ""
+    )
+
+    fun getEmptyJoinList() = GroupData.GroupEmpty(
+        img = R.drawable.img_dialog_project,
+        text = "참여 중인 그룹이 없습니다."
+    )
+
+    fun getEmptyWantList() = GroupData.GroupEmpty(
+        img = R.drawable.img_dialog_study,
+        text = "지원한 그룹이 없습니다."
     )
 }
