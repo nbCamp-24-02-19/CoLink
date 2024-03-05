@@ -18,6 +18,8 @@ import com.seven.colink.databinding.FragmentSearchBinding
 import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.ui.post.content.PostContentActivity
 import com.seven.colink.util.dialog.setDialog
+import com.seven.colink.util.progress.hideProgressOverlay
+import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.status.GroupType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -175,6 +177,7 @@ class SearchFragment : Fragment() {
             }
         }
 
+        showProgressOverlay()
         initRecyclerView()
         setObserve()
         goDetail()
@@ -195,6 +198,7 @@ class SearchFragment : Fragment() {
             searchAdapter.mItems.clear()
             searchAdapter.mItems.addAll(it)
             searchAdapter.notifyDataSetChanged()
+            hideProgressOverlay()
         }
     }
 
