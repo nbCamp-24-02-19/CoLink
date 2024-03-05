@@ -28,18 +28,16 @@ class GroupViewModel @Inject constructor(
     private val groupRepository: GroupRepository
 ) : ViewModel() {
 
-    private var entity: PostEntity? = null
-    private var entityList: List<PostEntity> = emptyList()
+    private var entity: GroupData.GroupList? = null
+    private var entityList: List<GroupData.GroupList>? = emptyList()
 
-    private val _groupData = MutableLiveData<List<GroupData>>()
-    val groupData: LiveData<List<GroupData>> get() = _groupData
-
-    private val _joinGroup = MutableLiveData<List<PostEntity>?>()
-    val joinGroup: LiveData<List<PostEntity>?> get() = _joinGroup
+    private val _groupData = MutableLiveData<List<GroupData>?>()
+    val groupData: LiveData<List<GroupData>?> get() = _groupData
 
     init {
         viewModelScope.launch {
             getInPost()
+            itemUpdate()
         }
     }
 
@@ -48,7 +46,7 @@ class GroupViewModel @Inject constructor(
             val items = mutableListOf<GroupData>()
 
             items.add(getTitle())
-            items.add(getList())
+            entityList?.map { items.add(it) }
             items.add(getAdd())
             items.add(getWant())
 
@@ -57,38 +55,13 @@ class GroupViewModel @Inject constructor(
         }
     }
 
-    fun createGroup(groupList: List<GroupEntity>?) =
-        groupList?.map {
-            GroupData.GroupItem(
-                group = it
-            )
-        } ?: emptyList()
-
-    suspend fun getInPost() {
-//        var result: PostEntity? = null
+    private suspend fun getInPost() {
         val currentUser = authRepository.getCurrentUser()
-        val result = groupRepository.getGroupByContainUserId(currentUser.message).getOrNull()
-        _groupData.value = result?.map {
+        val result = groupRepository.getGroupByContainUserId(currentUser.message).getOrNull()?.map {
             it.convertGroupList()
         }
-        Log.d("Group", "result = ${result}")
-
-
-//            if (currentUser == DataResultStatus.SUCCESS) {
-//            val userKey = postRepository.getPostByContainUserId(currentUser.message)
-//                .getOrNull()
-
-//            result = userKey?.firstOrNull()!!
-//            _joinGroup.value = userKey
-//
-//            Log.d("Group", "userkey = ${userKey}")
-//            Log.d("Group", "result = ${result}")
-//            Log.d("Group", "currentUser = ${currentUser.message}")
-//        } else {
-//            Log.d("Group", "Failed")
-//        }
-//        Log.d("Group", "result2 = ${result}")
-//        Log.d("Group", "_joinGroup.value = ${_joinGroup.value}")
+        Log.d("Group", "result1 = ${result}")
+        entityList = result
     }
 
     private fun GroupEntity.convertGroupList() =
@@ -97,24 +70,25 @@ class GroupViewModel @Inject constructor(
             groupType = groupType,
             thumbnail = imageUrl,
             projectName = title,
-            days = 123,
+            days = registeredDate,
             description = description,
-            tags = tags
+            tags = tags,
+            memberIds = memberIds
         )
 
     private fun getTitle() = GroupData.GroupTitle(
         title = "참여 중인 그룹"
     )
 
-    private fun getList() = GroupData.GroupList(
-        key = entity?.key,
-        groupType = entity?.groupType,
-        thumbnail = entity?.imageUrl,
-        projectName = entity?.title,
-        days = 123,
-        description = entity?.description,
-        tags = entity?.tags
-    )
+//    private fun getList() = GroupData.GroupList(
+//        key = entity?.key,
+//        groupType = entity?.groupType,
+//        thumbnail = entity?.imageUrl,
+//        projectName = entity?.title,
+//        days = entity?.registeredDate,
+//        description = entity?.description,
+//        tags = entity?.tags
+//    )
 
     private fun getAdd() = GroupData.GroupAdd(
         addGroupImage = R.drawable.ic_add,
@@ -123,6 +97,7 @@ class GroupViewModel @Inject constructor(
     )
 
     private fun getWant() = GroupData.GroupWant(
+        key = "",
         groupType = GroupType.PROJECT,
         title = "영화 커뮤니티 서비스 프로젝트 모집합니다",
         description = "영화 커뮤니티 서비스 프로젝트를 함께하실 안드로이드 개발자를 모십니다.",

@@ -2,4 +2,6 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="offset_home_between_pages">40dp</dimen>
+    <dimen name="page_home_margin">50dp</dimen>
 </resources>

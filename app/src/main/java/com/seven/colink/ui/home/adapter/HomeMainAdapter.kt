@@ -1,16 +1,16 @@
-package com.seven.colink.ui.home
+package com.seven.colink.ui.home.adapter
 
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.viewpager2.widget.ViewPager2
-import com.seven.colink.R
 import com.seven.colink.databinding.ItemHomeHeaderBinding
 import com.seven.colink.databinding.ItemHomeTopViewpagerBinding
+import com.seven.colink.ui.home.HomeAdapterItems
+import com.seven.colink.ui.home.TopItems
 import kotlin.math.ceil
 
 class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUtil) {
@@ -48,6 +48,8 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
         }
     }
 
+    override fun getItemCount(): Int = currentList.size
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = currentList[position]
 
@@ -79,8 +81,9 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
 
         init {
             pager.post {
-                bannerPosition = Int.MAX_VALUE / 2 - ceil(TopViewPagerAdapter().currentList.size.toDouble() / 2).toInt()
-                pager.setCurrentItem(bannerPosition, false)
+//                bannerPosition = Int.MAX_VALUE / 2 - ceil(TopViewPagerAdapter().currentList.size.toDouble() / 2).toInt()
+//                pager.setCurrentItem(bannerPosition, false)
+
 
                 left.setOnClickListener {
                     val current = pager.currentItem
@@ -90,7 +93,6 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
                 right.setOnClickListener {
                     val current = pager.currentItem
                     pager.setCurrentItem(current + 1, false)
-
                 }
 
                 pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -99,6 +101,7 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
                     }
                 })
             }
+
         }
     }
 

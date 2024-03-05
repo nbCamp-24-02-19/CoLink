@@ -33,7 +33,7 @@
             android:name=".ui.evaluation.EvaluationActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.post.PostActivity"
+            android:name=".ui.post.register.PostActivity"
             android:exported="false" />
         <activity
             android:name=".ui.sign.signup.SignUpActivity"

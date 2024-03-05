@@ -14,9 +14,10 @@ sealed interface GroupData {
         val groupType: GroupType?,
         val thumbnail: String?,
         val projectName: String?,
-        val days: Int?,
+        val days: String?,
         val description: String?,
-        val tags: List<String>? = emptyList()
+        val tags: List<String>? = emptyList(),
+        val memberIds: List<String> = emptyList()
     ) : GroupData
 
     data class GroupItem(
@@ -30,6 +31,7 @@ sealed interface GroupData {
     ) : GroupData
 
     data class GroupWant(
+        val key: String?,
         val groupType: GroupType?,
         val title: String?,
         val description: String?,

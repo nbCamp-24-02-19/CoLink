@@ -17,6 +17,7 @@ import com.seven.colink.databinding.ItemUnknownBinding
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.GroupViewType
 import com.seven.colink.ui.group.GroupData
+import com.seven.colink.util.convert.convertToDaysAgo
 
 class GroupAdapter(
     private val context: Context,
@@ -130,7 +131,7 @@ class GroupAdapter(
                 }
                 binding.tvGroupProjectTitle.text = item.projectName
                 binding.tvGroupDescription.text = item.description
-                binding.tvGroupDays.text = item.days.toString() + "일째"
+                binding.tvGroupDays.text = item.days.toString()
                 binding.tvGroupTags.text = "# " +item.tags?.joinToString("   ","","")
             }
         }

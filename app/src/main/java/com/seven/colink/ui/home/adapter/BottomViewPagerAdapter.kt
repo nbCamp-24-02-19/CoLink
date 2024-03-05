@@ -1,4 +1,4 @@
-package com.seven.colink.ui.home
+package com.seven.colink.ui.home.adapter
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
