@@ -132,6 +132,7 @@ class MyPageFragment : Fragment() {
     }
 
 
+
     private fun updateUI(user: MyPageUserModel) {
         // Update your views with user information
         binding.tvMypageName.text = user.name
@@ -195,6 +196,7 @@ class MyPageFragment : Fragment() {
                 ContextCompat.getColor(requireContext(),R.color.level7)
             )
         }
+        binding.tvMypageScore.text = user.score.toString()
 
         Log.d("Tag","user = ${user}")
     }

@@ -2,6 +2,8 @@ package com.seven.colink.ui.mypage
 
 import com.seven.colink.R
 import com.seven.colink.domain.entity.UserEntity
+import com.seven.colink.ui.mypage.adapter.MyPageSkilAdapter
+import com.seven.colink.util.skillCategory
 
 object MyPageSkilItemManager {
 
@@ -10,10 +12,16 @@ object MyPageSkilItemManager {
 
 
 
+    private lateinit var skiladapter: MyPageSkilAdapter
     private var skilMyPageItem = listOf(
         MyPageItem.skilItems(1,"코틀린",R.drawable.ic_kotlin)
     )
     private val pulsMyPageItem = MyPageItem.plusItems(skilMyPageItem.size +1, R.drawable.ic_add_24)
+
+    private fun updateSkill(user: MyPageUserModel) {
+        skiladapter.changeDataset(user.skill?.map { MyPageItem.skilItems(skillCategory.indexOf(it),it,MyPageSkilItemManager.addItem(it))  }
+            ?.plus(MyPageItem.plusItems(99,R.drawable.ic_add_24)) ?: emptyList())
+    }
 
     fun getAllItem(): List<MyPageItem> = skilMyPageItem + pulsMyPageItem
 

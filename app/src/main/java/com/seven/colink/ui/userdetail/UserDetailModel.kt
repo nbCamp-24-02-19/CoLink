@@ -5,6 +5,7 @@ data class UserDetailModel (
     val userProfile: String? = null,
     val userLevel: Int? = 0,
     val userMainSpecialty: String? = null,
+    val userscore: Double? = null,
     val userBlog: String? = null,
     val userGit: String? = null,
     val userSkill: List<String>? = emptyList(),
