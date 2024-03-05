@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:paddingTop="20dp"
+    android:paddingBottom="28dp"
+    android:paddingHorizontal="20dp"
+    android:background="@drawable/bg_member_card">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+    <ImageView
+        android:id="@+id/iv_member_profile"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="20dp"
+        android:src="@drawable/ic_profile"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_member_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="스파르타"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/roboto_bold"
+        app:layout_constraintStart_toEndOf="@+id/iv_member_profile"
+        app:layout_constraintTop_toTopOf="@id/iv_member_profile"
+        app:layout_constraintBottom_toBottomOf="@id/iv_member_profile"/>
+
+
+    <ImageView
+        android:id="@+id/iv_member_level_icon"
+        android:layout_width="18dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="8dp"
+        android:src="@drawable/ic_level_insignia_1"
+        app:layout_constraintStart_toEndOf="@+id/tv_member_name"
+        app:layout_constraintTop_toTopOf="@id/tv_member_name"
+        app:layout_constraintBottom_toBottomOf="@id/tv_member_name"
+        app:tint="#F47171" />
+
+    <ImageView
+        android:layout_width="18dp"
+        android:layout_height="5.77dp"
+        android:src="@drawable/ic_level_insignia_2"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_member_level_icon"
+        app:layout_constraintEnd_toEndOf="@+id/iv_member_level_icon"
+        app:layout_constraintStart_toStartOf="@+id/iv_member_level_icon"
+        app:layout_constraintTop_toTopOf="@+id/iv_member_level_icon"
+        app:layout_constraintVertical_bias="0.9" />
+
+    <TextView
+        android:id="@+id/tv_member_level_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:textColor="@color/white"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/inter_bold"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_member_level_icon"
+        app:layout_constraintEnd_toEndOf="@+id/iv_member_level_icon"
+        app:layout_constraintStart_toStartOf="@+id/iv_member_level_icon"
+        app:layout_constraintTop_toTopOf="@+id/iv_member_level_icon"
+        app:layout_constraintVertical_bias="0.2"
+        tools:ignore="SmallSp" />
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_star"
+        app:layout_constraintEnd_toStartOf="@+id/tv_member_grade"
+        app:layout_constraintTop_toTopOf="@id/tv_member_grade"
+        app:layout_constraintBottom_toBottomOf="@id/tv_member_grade"/>
+
+    <TextView
+        android:id="@+id/tv_member_grade"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="9.0"
+        android:textSize="28sp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/roboto_bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/iv_member_profile"
+        app:layout_constraintBottom_toBottomOf="@id/iv_member_profile"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/tv_member_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="소개) 안드로이드 모바일 앱 개발 초심자"
+        android:textSize="14sp"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:textColor="@color/black"
+        android:fontFamily="@font/inter_regular"
+        app:layout_constraintTop_toBottomOf="@+id/cl_1"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_member_recruit_project"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/recruit_project"
+        android:textSize="12sp"
+        android:textColor="@color/typo_color"
+        app:layout_constraintTop_toBottomOf="@id/tv_member_info"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/bt_member_invite_group"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="27:8"
+        app:layout_constraintWidth_percent="0.4"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_round_corner_8dp_stroke"
+        android:text="@string/member_invite_group"
+        android:textSize="14sp"
+        android:textColor="@color/main_color"
+        android:fontFamily="@font/inter_bold"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_member_recruit_project"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/bt_member_chat"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="27:8"
+        app:layout_constraintWidth_percent="0.4"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_round_corner_8dp"
+        android:backgroundTint="@color/main_color"
+        android:text="@string/member_1on1_chat"
+        android:textSize="14sp"
+        android:textColor="@color/white"
+        android:fontFamily="@font/inter_bold"
+        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_member_recruit_project"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
