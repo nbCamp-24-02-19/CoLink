@@ -31,18 +31,28 @@ class SearchViewModel @Inject constructor(
     private val _searchRecruitState = MutableLiveData("ALL")
     val searchRecruitState: LiveData<String> get() = _searchRecruitState
 
+    init {
+        doSearch("")
+    }
+
     fun doSearch(query: String) {
         val groupType: GroupType? = when (searchGroupState.value) {
             "ALL" -> null
             "PROJECT" -> GroupType.PROJECT
             "STUDY" -> GroupType.STUDY
-            else -> return
+            else -> {
+                _searchModel.value = emptyList()
+                return
+            }
         }
         val recruitType: ProjectStatus? = when (searchRecruitState.value) {
             "ALL" -> null
             "RECRUIT" -> ProjectStatus.RECRUIT
             "END" -> ProjectStatus.END
-            else -> return
+            else -> {
+                _searchModel.value = emptyList()
+                return
+            }
         }
 
         viewModelScope.launch {

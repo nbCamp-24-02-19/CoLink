@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.seven.colink.R
+import com.seven.colink.databinding.ItemGroupEmptyListBinding
 import com.seven.colink.databinding.ItemGroupGroupAddBinding
 import com.seven.colink.databinding.ItemGroupGroupListBinding
 import com.seven.colink.databinding.ItemGroupTitleBinding
@@ -44,6 +45,9 @@ class GroupAdapter(
                     oldItem.description == newItem.description
                 }
 
+                oldItem is GroupData.GroupEmpty && newItem is GroupData.GroupEmpty -> {
+                    oldItem.text == newItem.text
+                }
                 else -> oldItem == newItem
             }
 
@@ -63,6 +67,7 @@ class GroupAdapter(
         is GroupData.GroupList -> GroupViewType.LIST
         is GroupData.GroupAdd -> GroupViewType.ADD
         is GroupData.GroupWant -> GroupViewType.WANT
+        is GroupData.GroupEmpty -> GroupViewType.EMPTY
         else -> GroupViewType.UNKNOWN
     }.ordinal
 
@@ -75,13 +80,21 @@ class GroupAdapter(
 
             GroupViewType.LIST -> ListViewHolder(
                 context,
-                ItemGroupGroupListBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                ItemGroupGroupListBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                ),
                 onClickItem
             )
 
             GroupViewType.ADD -> AddViewHolder(
                 context,
-                ItemGroupGroupAddBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                ItemGroupGroupAddBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                ),
                 onClickAddButton
             )
 
@@ -91,8 +104,13 @@ class GroupAdapter(
                 onClickItem
             )
 
+            GroupViewType.EMPTY -> EmptyViewHolder(
+                context,
+                ItemGroupEmptyListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            )
+
             else -> GroupUnknownViewHolder(
-                ItemUnknownBinding.inflate(LayoutInflater.from(parent.context),parent,false)
+                ItemUnknownBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             )
         }
 
@@ -117,9 +135,9 @@ class GroupAdapter(
         private val onClickItem: (Int, GroupData) -> Unit
     ) : GroupViewHolder(binding.root) {
         override fun onBind(item: GroupData) {
-            if (item is GroupData.GroupList){
-                binding.tvGroupType.text = if (item.groupType==GroupType.PROJECT)"P" else "S"
-                if (item.groupType==GroupType.PROJECT){
+            if (item is GroupData.GroupList) {
+//                binding.tvGroupType.text = if (item.groupType==GroupType.PROJECT)"P" else "S"
+                if (item.groupType == GroupType.PROJECT) {
                     binding.tvGroupType.text = "P"
                 } else {
                     binding.tvGroupType.setBackgroundResource(R.drawable.ic_level_insignia_study)
@@ -132,7 +150,7 @@ class GroupAdapter(
                 binding.tvGroupProjectTitle.text = item.projectName
                 binding.tvGroupDescription.text = item.description
                 binding.tvGroupDays.text = item.days.toString()
-                binding.tvGroupTags.text = "# " +item.tags?.joinToString("   ","","")
+                binding.tvGroupTags.text = item.tags?.map { "# " + it }?.joinToString("   ", "", "")
             }
         }
     }
@@ -143,7 +161,7 @@ class GroupAdapter(
         private val onClickAddButton: (Int, GroupData) -> Unit
     ) : GroupViewHolder(binding.root) {
         override fun onBind(item: GroupData) {
-            if (item is GroupData.GroupAdd){
+            if (item is GroupData.GroupAdd) {
                 binding.ivGroupAdd.load(item.addGroupImage)
                 binding.ivGroupAdd.setOnClickListener {
                     onClickAddButton(adapterPosition, item)
@@ -163,15 +181,26 @@ class GroupAdapter(
         private val onClickItem: (Int, GroupData) -> Unit
     ) : GroupViewHolder(binding.root) {
         override fun onBind(item: GroupData) {
-            if (item is GroupData.GroupWant){
+            if (item is GroupData.GroupWant) {
                 binding.ivHomeBottomThumubnail.load(item.img)
                 binding.tvHomeBottomTitle.text = item.title
                 binding.tvHomeBottomDes.text = item.description
                 binding.tvHomeBottomKind.text = item.kind
-                binding.tvHomeBottomLv.text = item.lv
                 binding.layBottom.setOnClickListener {
                     onClickItem(adapterPosition, item)
                 }
+            }
+        }
+    }
+
+    class EmptyViewHolder(
+        context: Context,
+        private val binding: ItemGroupEmptyListBinding
+    ) : GroupViewHolder(binding.root) {
+        override fun onBind(item: GroupData) {
+            if (item is GroupData.GroupEmpty){
+                binding.ivGroupEmptyListThumbnail.load(item.img)
+                binding.tvGroupEmptyList.text = item.text
             }
         }
     }

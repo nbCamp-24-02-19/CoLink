@@ -7,7 +7,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.KeyEvent
-import android.view.KeyEvent.KEYCODE_ENTER
+import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,9 +19,11 @@ import com.seven.colink.R
 import com.seven.colink.databinding.ActivityPostBinding
 import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.entity.TagEntity
+import com.seven.colink.ui.group.register.GroupContentActivity
 import com.seven.colink.ui.post.register.adapter.RecruitListAdapter
 import com.seven.colink.ui.post.register.adapter.TagListAdapter
 import com.seven.colink.ui.post.register.model.AddTagResult
+import com.seven.colink.ui.post.register.model.DialogEvent
 import com.seven.colink.ui.post.register.model.TagListItem
 import com.seven.colink.ui.post.register.viewmodel.PostViewModel
 import com.seven.colink.util.Constants.Companion.EXTRA_ENTRY_TYPE
@@ -30,6 +32,7 @@ import com.seven.colink.util.Constants.Companion.EXTRA_POST_ENTITY
 import com.seven.colink.util.Constants.Companion.LIMITED_PEOPLE
 import com.seven.colink.util.Constants.Companion.LIMITED_TAG_COUNT
 import com.seven.colink.util.dialog.RecruitDialog
+import com.seven.colink.util.dialog.setUpGroupDialog
 import com.seven.colink.util.openGallery
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
@@ -113,18 +116,18 @@ class PostActivity : AppCompatActivity() {
         recyclerViewTags.adapter = tagListAdapter
         recyclerViewRecruit.adapter = recruitListAdapter
 
-        etRegisterTag.setOnKeyListener { _, keyCode, event ->
-            if (event.action == KeyEvent.ACTION_UP && keyCode == KEYCODE_ENTER) {
-                val tagText = etRegisterTag.text.toString().trim()
-                if (tagText.isNotBlank()) {
-                    val result = viewModel.addTagItem(TagEntity(name = tagText))
-                    handleTagAddResult(result)
-                    etRegisterTag.text.clear()
-                }
-                return@setOnKeyListener true
+        etRegisterTag.setOnEditorActionListener { _, actionId, event ->
+            if ((actionId == EditorInfo.IME_ACTION_DONE || (event?.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER))
+                && etRegisterTag.text.toString().trim().isNotBlank()
+            ) {
+                handleTagAddResult(viewModel.addTagItem(TagEntity(name = etRegisterTag.text.toString().trim())))
+                etRegisterTag.text.clear()
+                etRegisterTag.clearFocus()
+                return@setOnEditorActionListener true
             }
             false
         }
+
 
         ivAddImage.setOnClickListener {
             openGallery(galleryResultLauncher)
@@ -135,9 +138,8 @@ class PostActivity : AppCompatActivity() {
             viewModel.registerPost(
                 binding.etTitle.text.toString(),
                 binding.etContent.text.toString(),
-                onSuccess = { message ->
+                onSuccess = {
                     hideProgressOverlay()
-                    showToast(getString(message))
                     finish()
                 },
                 onError = { exception ->
@@ -248,6 +250,31 @@ class PostActivity : AppCompatActivity() {
                 selectedImageUri = imageUrl
             }
         }
+
+        showDialog.observe(this@PostActivity) { event ->
+            when (event) {
+                is DialogEvent.Show -> handleShowDialog(event)
+                DialogEvent.Dismiss -> Unit
+            }
+        }
+
+    }
+
+    private fun handleShowDialog(showEvent: DialogEvent.Show) {
+        val dialog = setUpGroupDialog(
+            this@PostActivity,
+            showEvent.groupType,
+            { alertDialog ->
+                startActivity(GroupContentActivity.newIntentForUpdate(this@PostActivity, showEvent.key))
+                alertDialog.dismiss()
+                finish()
+            },
+            { alertDialog ->
+                alertDialog.dismiss()
+                finish()
+            }
+        )
+        dialog.show()
     }
 
     private fun setTextViewProperties(textView: TextView, isSelected: Boolean, textColorRes: Int?) {

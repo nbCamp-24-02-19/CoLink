@@ -2,6 +2,7 @@ package com.seven.colink.ui.group
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -70,6 +71,13 @@ class GroupFragment : Fragment() {
     private fun setObserve() {
         groupViewModel.groupData.observe(viewLifecycleOwner) {
             groupAdapter.submitList(it)
+        }
+        groupViewModel.joinList.observe(viewLifecycleOwner){
+            if (groupViewModel.joinList.value.isNullOrEmpty()){
+                groupAdapter.submitList(it)
+            } else {
+                groupAdapter.submitList(it)
+            }
         }
     }
 

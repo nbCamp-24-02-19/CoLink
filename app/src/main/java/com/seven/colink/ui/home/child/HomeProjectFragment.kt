@@ -13,15 +13,15 @@ import coil.load
 import com.seven.colink.databinding.FragmentHomeProjectBinding
 import com.seven.colink.ui.home.HomeViewModel
 import com.seven.colink.ui.post.content.PostContentActivity
+import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 class HomeProjectFragment : Fragment() {
 
     private var _binding: FragmentHomeProjectBinding? = null
     private val binding get() = _binding!!
-
-    //    private val homeViewModel : HomeViewModel by viewModels()
     private val homeViewModel: HomeViewModel by activityViewModels()
 //    private val mAdapter by lazy { BottomHomeProjectAdapter() }
 
@@ -35,7 +35,7 @@ class HomeProjectFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        homeViewModel.getBottomItems(5)
+        homeViewModel.getBottomItems(5,GroupType.PROJECT)
         initViews()
         setObserve()
     }
@@ -45,9 +45,6 @@ class HomeProjectFragment : Fragment() {
     }
 
     private fun bottomViewsData() {
-        Log.d("Child","#ddd 들어가기 전에 ${homeViewModel._bottomItems.value?.size}")
-//        mAdapter.submitList(homeViewModel.bottomItems.value)
-
         homeViewModel._bottomItems.value?.forEachIndexed { index, bottom ->
             val bottomLayout = when (index) {
                 0 -> binding.layProjectBottom1
@@ -58,8 +55,6 @@ class HomeProjectFragment : Fragment() {
             }
 
             bottomLayout.apply {
-//                if (bottom.typeId == GroupType.PROJECT) {
-
                     tvHomeBottomStudy.visibility = View.INVISIBLE
                     tvHomeBottomProject.visibility = View.VISIBLE
                     tvHomeBottomTitle.text = bottom.title
@@ -91,15 +86,12 @@ class HomeProjectFragment : Fragment() {
                             }
                         }
                     }
-//                }
-
             }
         }
     }
 
     private fun setObserve() {
         homeViewModel._bottomItems.observe(viewLifecycleOwner) {
-//            mAdapter.submitList(homeViewModel.bottomItems.value)
             bottomViewsData()
         }
     }

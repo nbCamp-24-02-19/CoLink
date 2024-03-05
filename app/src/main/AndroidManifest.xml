@@ -26,6 +26,12 @@
             android:name=".ui.recommend.RecommendUserActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.group.board.GroupBoardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.group.register.GroupContentActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.chat.ChatRoomActivity"
             android:exported="false" />
         <activity
