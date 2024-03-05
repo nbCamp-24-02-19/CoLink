@@ -3,6 +3,7 @@ package com.seven.colink.ui.post.register.model
 import android.net.Uri
 import com.seven.colink.domain.entity.RecruitInfo
 import com.seven.colink.domain.entity.TagEntity
+import com.seven.colink.util.status.GroupType
 
 data class PostUiState(
     val tagList: List<TagEntity>?,
@@ -41,4 +42,13 @@ data class ImageUiState(
             newImage = null
         )
     }
+}
+
+sealed interface DialogEvent {
+    data class Show(
+        val groupType: GroupType,
+        val key: String
+    ) : DialogEvent
+
+    data object Dismiss : DialogEvent
 }

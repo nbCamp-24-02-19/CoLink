@@ -40,7 +40,7 @@
                 android:ellipsize="end"
                 android:fontFamily="@font/inter_bold"
                 android:maxLines="2"
-                android:text="스터디를 함께 진행한 ㅇㅇㅇ님을 평가해주세요."
+                android:text="@string/eval_study_name_title"
                 android:textColor="@color/black"
                 android:textSize="24sp" />
 
@@ -60,7 +60,7 @@
                     android:backgroundTint="@color/main_color"
                     android:fontFamily="@font/inter_regular"
                     android:gravity="center"
-                    android:text="1"
+                    android:text="@string/eval_project_question_1"
                     android:textColor="@color/white"
                     android:textSize="12sp" />
 
@@ -70,7 +70,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:fontFamily="@font/inter_regular"
-                    android:text="스터디에 적극적으로 참여하고 학습활동에 집중했나요?"
+                    android:text="@string/eval_study_active"
                     android:textColor="@color/black"
                     android:textSize="16sp" />
 
@@ -103,7 +103,7 @@
                     android:backgroundTint="@color/main_color"
                     android:fontFamily="@font/inter_regular"
                     android:gravity="center"
-                    android:text="2"
+                    android:text="@string/eval_project_question_2"
                     android:textColor="@color/white"
                     android:textSize="12sp" />
 
@@ -113,7 +113,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:fontFamily="@font/inter_regular"
-                    android:text="스터디 내에서 정보를 주고받고 의견을 나누며 \n원활한 소통을 했나요?"
+                    android:text="@string/eval_study_name_communicate"
                     android:textColor="@color/black"
                     android:textSize="16sp" />
 
@@ -146,7 +146,7 @@
                     android:backgroundTint="@color/main_color"
                     android:fontFamily="@font/inter_regular"
                     android:gravity="center"
-                    android:text="3"
+                    android:text="@string/eval_project_question_3"
                     android:textColor="@color/white"
                     android:textSize="12sp" />
 
@@ -156,7 +156,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:fontFamily="@font/inter_regular"
-                    android:text="팀원을 존중하고 협력적으로 스터디에 임했나요?"
+                    android:text="@string/eval_study_name_respect"
                     android:textColor="@color/black"
                     android:textSize="16sp" />
 
@@ -185,7 +185,7 @@
                     android:layout_marginStart="12dp"
                     android:fontFamily="@font/inter_regular"
                     android:padding="4dp"
-                    android:text="이전"
+                    android:text="@string/eval_project_prev"
                     android:textColor="@color/main_color"
                     android:textSize="12sp" />
 
@@ -201,7 +201,7 @@
                     android:layout_marginEnd="12dp"
                     android:fontFamily="@font/inter_regular"
                     android:padding="4dp"
-                    android:text="다음"
+                    android:text="@string/eval_project_next"
                     android:textColor="@color/main_color"
                     android:textSize="12sp" />
 
@@ -216,7 +216,7 @@
                 android:background="@drawable/bg_round_corner_4dp"
                 android:backgroundTint="@color/main_color"
                 android:fontFamily="@font/inter_bold"
-                android:text="다음"
+                android:text="@string/eval_project_next"
                 android:textColor="@color/white"
                 android:textSize="14sp" />
 
