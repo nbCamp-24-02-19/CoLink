@@ -31,6 +31,8 @@ import com.seven.colink.util.Constants.Companion.LIMITED_PEOPLE
 import com.seven.colink.util.Constants.Companion.LIMITED_TAG_COUNT
 import com.seven.colink.util.dialog.RecruitDialog
 import com.seven.colink.util.openGallery
+import com.seven.colink.util.progress.hideProgressOverlay
+import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.showToast
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.PostEntryType
@@ -80,7 +82,7 @@ class PostActivity : AppCompatActivity() {
     private val recruitListAdapter: RecruitListAdapter by lazy {
         RecruitListAdapter(
             onClickItem = { _, entity ->
-                viewModel.removeRecruitInfo(entity.key)
+                viewModel.removeRecruitInfo(entity.type)
             }
         )
     }
@@ -129,14 +131,17 @@ class PostActivity : AppCompatActivity() {
         }
 
         btComplete.setOnClickListener {
+            showProgressOverlay()
             viewModel.registerPost(
                 binding.etTitle.text.toString(),
                 binding.etContent.text.toString(),
-                onSuccess = {message ->
+                onSuccess = { message ->
+                    hideProgressOverlay()
                     showToast(getString(message))
                     finish()
                 },
                 onError = { exception ->
+                    hideProgressOverlay()
                     showToast(exception.message ?: getString(R.string.post_register_fail))
                 }
             )
@@ -225,7 +230,7 @@ class PostActivity : AppCompatActivity() {
                 getString(R.string.total_personnel, state.totalPersonnelCount)
             totalPersonnelCount = state.totalPersonnelCount ?: 0
             state.recruitList?.let {
-                recruitTypes = it.map { recruitInfo -> recruitInfo.type }
+                recruitTypes = it.map { recruitInfo -> recruitInfo.type.orEmpty() }
             }
 
             tagListAdapter.submitList(state.tagList?.map { TagListItem.Item(tagEntity = it) })
@@ -236,7 +241,8 @@ class PostActivity : AppCompatActivity() {
         }
 
         selectedImage.observe(this@PostActivity) { selected ->
-            selected?.newImage ?: selected?.originImage.let { imageUrl ->
+            val imageUrl = selected?.newImage ?: selected?.originImage
+            if (imageUrl != null) {
                 binding.ivAddImage.load(imageUrl)
                 binding.ivImageBackground.load(imageUrl)
                 selectedImageUri = imageUrl

@@ -40,7 +40,7 @@ class PostContentListAdapter(
                 }
 
                 oldItem is PostContentItem.RecruitItem && newItem is PostContentItem.RecruitItem -> {
-                    oldItem.recruit.key == newItem.recruit.key
+                    oldItem.recruit.type == newItem.recruit.type
                 }
 
                 oldItem is PostContentItem.MemberItem && newItem is PostContentItem.MemberItem -> {
@@ -172,13 +172,16 @@ class PostContentListAdapter(
         override fun onBind(item: PostContentItem) {
             if (item is PostContentItem.RecruitItem) {
                 binding.tvRecruitType.text = item.recruit.type
-                binding.tvRecruitType.isVisible = item.recruit.type.isNotEmpty()
+                binding.tvRecruitType.isVisible = item.recruit.type?.isNotEmpty() ?: false
 
                 binding.tvNowPersonnel.text = "${item.recruit.nowPersonnel}"
                 binding.tvMaxPersonnel.text = "${item.recruit.maxPersonnel}"
 
-                binding.btRecruit.isEnabled = item.recruit.nowPersonnel < item.recruit.maxPersonnel
-                binding.btRecruit.alpha = if (binding.btRecruit.isEnabled) 1.0f else 0.5f
+                if (item.buttonUiState == PostContentButtonUiState.Supporter) {
+                    binding.btRecruit.isEnabled =
+                        item.recruit.nowPersonnel < (item.recruit.maxPersonnel ?: -1)
+                    binding.btRecruit.alpha = if (binding.btRecruit.isEnabled) 1.0f else 0.5f
+                }
 
                 binding.btRecruit.text = context.getString(
                     if (item.buttonUiState == PostContentButtonUiState.Writer) R.string.util_dialog_button_confirm
