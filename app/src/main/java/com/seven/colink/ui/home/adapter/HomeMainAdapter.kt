@@ -110,14 +110,6 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
 
                     }
 
-                    override fun onPageScrolled(
-                        position: Int,
-                        positionOffset: Float,
-                        positionOffsetPixels: Int
-                    ) {
-                        super.onPageScrolled(position, positionOffset, positionOffsetPixels)
-                    }
-
                     override fun onPageScrollStateChanged(state: Int) {
                         handleScrollState(state)
                         currentState = state

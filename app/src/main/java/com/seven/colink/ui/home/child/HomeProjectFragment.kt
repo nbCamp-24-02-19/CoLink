@@ -45,9 +45,6 @@ class HomeProjectFragment : Fragment() {
     }
 
     private fun bottomViewsData() {
-        Log.d("Child","#ddd 들어가기 전에 ${homeViewModel._bottomItems.value?.size}")
-//        mAdapter.submitList(homeViewModel.bottomItems.value)
-
         homeViewModel._bottomItems.value?.forEachIndexed { index, bottom ->
             val bottomLayout = when (index) {
                 0 -> binding.layProjectBottom1
@@ -99,7 +96,6 @@ class HomeProjectFragment : Fragment() {
 
     private fun setObserve() {
         homeViewModel._bottomItems.observe(viewLifecycleOwner) {
-//            mAdapter.submitList(homeViewModel.bottomItems.value)
             bottomViewsData()
         }
     }

@@ -30,11 +30,8 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
     private val mainAdapter by lazy { HomeMainAdapter() }
     private lateinit var bottomAdapter : BottomViewPagerAdapter
-//    private val topAdapter by lazy { TopViewPagerAdapter() }
     private lateinit var topAdapter : TopViewPagerAdapter
-//    private val homeViewModel by viewModels<HomeViewModel>()
     private val homeViewModel : HomeViewModel by activityViewModels()
-//    private lateinit var homeItem : MutableList<HomeAdapterItems>
     private var homeItem = mutableListOf<HomeAdapterItems>(
         HomeAdapterItems.TopView(TopViewPagerAdapter()),
         HomeAdapterItems.Header("그룹 추천")
@@ -62,7 +59,6 @@ class HomeFragment : Fragment() {
 
     private fun initViewAdapter() {
         topAdapter = TopViewPagerAdapter()
-
         topAdapter.itemClick = topClickItem()
 
         with(binding.rvHome) {
@@ -75,7 +71,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun previewViewPager(){
-//        binding.vpHome.getChildAt(0).overScrollMode=View.OVER_SCROLL_NEVER
         binding.vpHome.adapter = bottomAdapter
         binding.vpHome.offscreenPageLimit = 2
         val pageMargin = resources.getDimensionPixelOffset(R.dimen.page_home_margin)
