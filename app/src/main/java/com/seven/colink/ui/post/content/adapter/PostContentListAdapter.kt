@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.seven.colink.R
 import com.seven.colink.databinding.ItemPostContentBinding
+import com.seven.colink.databinding.ItemPostGroupTypeBinding
 import com.seven.colink.databinding.ItemPostImageBinding
 import com.seven.colink.databinding.ItemPostMemberInfoBinding
 import com.seven.colink.databinding.ItemPostRecruitBinding
@@ -37,6 +38,10 @@ class PostContentListAdapter(
             when {
                 oldItem is PostContentItem.Item && newItem is PostContentItem.Item -> {
                     oldItem.key == newItem.key
+                }
+
+                oldItem is PostContentItem.GroupTypeItem && newItem is PostContentItem.GroupTypeItem -> {
+                    oldItem.groupType == newItem.groupType
                 }
 
                 oldItem is PostContentItem.RecruitItem && newItem is PostContentItem.RecruitItem -> {
@@ -77,6 +82,7 @@ class PostContentListAdapter(
 
     override fun getItemViewType(position: Int): Int = when (getItem(position)) {
         is PostContentItem.Item -> PostContentViewType.ITEM
+        is PostContentItem.GroupTypeItem -> PostContentViewType.GROUP_TYPE
         is PostContentItem.RecruitItem -> PostContentViewType.RECRUIT
         is PostContentItem.MemberItem -> PostContentViewType.MEMBER
         is PostContentItem.ImageItem -> PostContentViewType.IMAGE
@@ -90,6 +96,11 @@ class PostContentListAdapter(
             PostContentViewType.ITEM -> PostItemViewHolder(
                 context,
                 ItemPostContentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            )
+
+            PostContentViewType.GROUP_TYPE -> PostGroupTypeItemViewHolder(
+                context,
+                ItemPostGroupTypeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             )
 
             PostContentViewType.RECRUIT -> PostRecruitItemViewHolder(
@@ -206,6 +217,25 @@ class PostContentListAdapter(
 
         override fun onBind(item: PostContentItem) {
             if (item is PostContentItem.Item) {
+                binding.tvTitle.text = item.title
+                binding.tvRegisterDatetime.text = item.registeredDate
+                binding.tvHits.text = item.views.toString()
+                binding.tvContent.text = item.description
+
+                val tagListItems = mutableListOf<TagListItem>()
+                tagListItems.addAll(item.tags?.map { TagListItem.ContentItem(tagName = it) }
+                    ?: emptyList())
+                tagAdapter.submitList(tagListItems)
+            }
+        }
+    }
+
+    class PostGroupTypeItemViewHolder(
+        private val context: Context,
+        private val binding: ItemPostGroupTypeBinding
+    ) : PostViewHolder(binding.root) {
+        override fun onBind(item: PostContentItem) {
+            if (item is PostContentItem.GroupTypeItem) {
                 val textColorResId = when (item.groupType) {
                     GroupType.PROJECT -> {
                         binding.tvGroupType.setText(R.string.bt_project)
@@ -220,16 +250,6 @@ class PostContentListAdapter(
 
                 binding.tvGroupType.backgroundTintList =
                     ContextCompat.getColorStateList(context, textColorResId)
-
-                binding.tvTitle.text = item.title
-                binding.tvRegisterDatetime.text = item.registeredDate
-                binding.tvHits.text = item.views.toString()
-                binding.tvContent.text = item.description
-
-                val tagListItems = mutableListOf<TagListItem>()
-                tagListItems.addAll(item.tags?.map { TagListItem.ContentItem(tagName = it) }
-                    ?: emptyList())
-                tagAdapter.submitList(tagListItems)
             }
         }
     }
