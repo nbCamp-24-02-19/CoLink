@@ -10,4 +10,6 @@
     <string name="group_applied_group">지원한 그룹</string>
     <string name="group_insignia_type_project">P</string>
     <string name="group_insignia_type_study">S</string>
+    <string name="group_no_join_list">참여 중인 그룹이 없습니다.</string>
+    <string name="group_no_want_list">지원한 그룹이 없습니다.</string>
 </resources>
