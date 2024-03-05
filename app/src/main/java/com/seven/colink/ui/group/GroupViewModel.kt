@@ -51,7 +51,7 @@ class GroupViewModel @Inject constructor(
 
             items.add(getTitle())
             if (joinList.value.isNullOrEmpty()){
-//                items.add(getEmptyJoinList())
+                items.add(getEmptyJoinList())
                 _joinList.value
             } else {
                 joinList.value?.map { items.add(it) }
@@ -102,7 +102,7 @@ class GroupViewModel @Inject constructor(
 
     private fun getAdd() = GroupData.GroupAdd(
         addGroupImage = R.drawable.ic_add,
-        addGroupText = "새 그룹 추가하기",
+        addGroupText = "모집 글 작성하기",
         appliedGroup = "지원한 그룹"
     )
 
