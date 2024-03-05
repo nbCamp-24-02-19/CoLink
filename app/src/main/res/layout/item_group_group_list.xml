@@ -2,7 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/white">
 
     <LinearLayout
         android:id="@+id/ll_group_item"
@@ -90,7 +91,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/tv_member_description"
+            android:id="@+id/tv_group_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
@@ -129,8 +130,8 @@
         android:background="@drawable/ic_level_insignia"
         android:fontFamily="@font/roboto_bold"
         android:gravity="center"
-        android:text="@string/group_insignia_type_project"
         android:paddingBottom="12dp"
+        android:text="@string/group_insignia_type_project"
         android:textColor="@color/white"
         android:textSize="23sp"
         app:layout_constraintStart_toStartOf="parent"
