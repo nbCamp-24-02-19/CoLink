@@ -10,6 +10,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager2.widget.CompositePageTransformer
+import androidx.viewpager2.widget.MarginPageTransformer
+import androidx.viewpager2.widget.ViewPager2
+import com.seven.colink.R
 import com.seven.colink.databinding.FragmentHomeBinding
 import com.seven.colink.ui.home.adapter.BottomViewPagerAdapter
 import com.seven.colink.ui.home.adapter.HomeMainAdapter
@@ -67,8 +71,21 @@ class HomeFragment : Fragment() {
         }
 
         bottomAdapter = BottomViewPagerAdapter(this)
-        binding.vpHome.adapter = bottomAdapter
+        previewViewPager()
+    }
 
+    private fun previewViewPager(){
+//        binding.vpHome.getChildAt(0).overScrollMode=View.OVER_SCROLL_NEVER
+        binding.vpHome.adapter = bottomAdapter
+        binding.vpHome.offscreenPageLimit = 2
+        val pageMargin = resources.getDimensionPixelOffset(R.dimen.page_home_margin)
+        val pagerOffset = resources.getDimensionPixelOffset(R.dimen.offset_home_between_pages)
+        val screenWidth = resources.displayMetrics.widthPixels
+        val offsetPx = screenWidth - 4*(pageMargin + pagerOffset) + (pagerOffset/4)
+
+        binding.vpHome.setPageTransformer { page, position ->
+            page.translationX = position * (-offsetPx )
+        }
     }
 
     private fun setTopItems() {
@@ -77,8 +94,6 @@ class HomeFragment : Fragment() {
 
     private fun setObserve() {
         homeViewModel.topItems.observe(viewLifecycleOwner){
-//            val newItems = ArrayList(it)
-//            topAdapter.submitList(newItems)
             topAdapter.submitList(it)
             homeItem = mutableListOf(
                 HomeAdapterItems.TopView(topAdapter),
@@ -110,5 +125,4 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
 }

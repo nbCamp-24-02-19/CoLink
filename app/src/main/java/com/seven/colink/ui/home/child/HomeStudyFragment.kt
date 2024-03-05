@@ -75,7 +75,7 @@ class HomeStudyFragment : Fragment() {
 //                        }
 //                    }
 
-                     if (homeViewModel._bottomItems.value?.size!! == 5) {
+//                     if (homeViewModel._bottomItems.value?.size!! == 5) {
                             tvHomeBottomStudy.visibility = View.VISIBLE
                             tvHomeBottomProject.visibility = View.INVISIBLE
                             tvHomeBottomTitle.text = bottom.title
@@ -108,7 +108,7 @@ class HomeStudyFragment : Fragment() {
                                     }
                                 }
                             }
-                     }
+//                     }
 //                }
             }
         }
