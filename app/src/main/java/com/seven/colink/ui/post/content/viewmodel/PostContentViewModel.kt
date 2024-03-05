@@ -33,7 +33,6 @@ class PostContentViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val postRepository: PostRepository
 ) : ViewModel() {
-
     private val entity: String = savedStateHandle.get<String>(Constants.EXTRA_POST_ENTITY)
         ?: throw IllegalStateException("Entity cannot be null")
 
@@ -53,10 +52,11 @@ class PostContentViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            _uiState.value = getPost(entity)
+            getPostByKey()
             uiState.value?.let { postEntity ->
                 determineUserButtonUiState(postEntity)
                 updatePostContentItems(postEntity.recruit)
+                incrementPostViews()
             }
         }
     }
@@ -277,12 +277,12 @@ class PostContentViewModel @Inject constructor(
         }
     }
 
-    suspend fun getPost(key: String = entity): PostEntity? =
-        postRepository.getPost(key).getOrNull()
-
-    suspend fun incrementPostViews(): DataResultStatus {
-        return postRepository.incrementPostViews(entity)
+    private suspend fun getPostByKey() {
+        _uiState.value = postRepository.getPost(entity).getOrNull()
     }
+
+    private suspend fun incrementPostViews(): DataResultStatus =
+        postRepository.incrementPostViews(entity)
 
 
 }
