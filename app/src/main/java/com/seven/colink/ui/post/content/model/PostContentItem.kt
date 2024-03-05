@@ -11,11 +11,14 @@ sealed interface PostContentItem {
         val authId: String?,
         val title: String?,
         val status: ProjectStatus?,
-        val groupType: GroupType?,
         val description: String?,
         val tags: List<String>?,
         val registeredDate: String?,
         val views: Int?
+    ) : PostContentItem
+
+    data class GroupTypeItem(
+        val groupType: GroupType?,
     ) : PostContentItem
 
     data class RecruitItem(

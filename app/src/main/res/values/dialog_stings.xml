@@ -36,5 +36,9 @@
 
     <string name="approval">승인</string>
     <string name="refuse">거절</string>
+    <string name="group_dialog_title">게시물이 작성되었습니다!\n그룹을 꾸며주세요!</string>
+    <string name="group_dialog_description">다음의 %1$s 대시보드를 사용하여 %1$s를 더욱 원활하게 이끌어가보세요\n\n 팀원 관리로 협업을, %1$s 관리로 핵심 작업을 효과적으로 관리해보세요 🚀</string>
+    <string name="group_dialog_bt_move_group">그룹 페이지로 이동</string>
+    <string name="group_dialog_bt_finish">다음에 하기</string>
 
 </resources>

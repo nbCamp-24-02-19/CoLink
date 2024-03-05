@@ -10,4 +10,5 @@
     <string name="group_applied_group">지원한 그룹</string>
     <string name="group_insignia_type_project">P</string>
     <string name="group_insignia_type_study">S</string>
+    <string name="group_content_description">프로젝트를 소개해보세요 !\n팀원과 일정, 팀의 목표 등을 작성해보세요.</string>
 </resources>
