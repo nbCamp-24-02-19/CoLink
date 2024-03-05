@@ -21,7 +21,6 @@ import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.dialog.setUserInfoDialog
 import com.seven.colink.util.showToast
 import com.seven.colink.util.status.ApplicationStatus
-import com.seven.colink.util.status.DataResultStatus
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -80,8 +79,6 @@ class PostContentActivity : AppCompatActivity() {
     }
 
     private fun initView() = with(binding) {
-        incrementPostViews()
-
         recyclerViewPostContent.adapter = postContentListAdapter
 
         binding.ivFinish.setOnClickListener {
@@ -93,7 +90,7 @@ class PostContentActivity : AppCompatActivity() {
                 startActivity(
                     PostActivity.newIntentForUpdate(
                         this@PostContentActivity,
-                        viewModel.getPost() ?: return@launch
+                        viewModel.uiState.value ?: return@launch
                     )
                 )
                 if (isFinishing.not()) {
@@ -180,12 +177,6 @@ class PostContentActivity : AppCompatActivity() {
                 }
             }
         }.show()
-    }
-
-    private fun incrementPostViews() {
-        lifecycleScope.launch {
-            viewModel.incrementPostViews()
-        }
     }
 
 }
