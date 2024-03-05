@@ -1,14 +1,19 @@
 package com.seven.colink.util.dialog
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
+import android.os.Bundle
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
+import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.seven.colink.R
 import com.seven.colink.databinding.UtilCustomBasicDialogBinding
@@ -16,10 +21,12 @@ import com.seven.colink.databinding.UtilCustomGroupDialogBinding
 import com.seven.colink.databinding.UtilCustomLevelDialogBinding
 import com.seven.colink.databinding.UtilCustomListDialogBinding
 import com.seven.colink.databinding.UtilMemberInfoDialogBinding
+import com.seven.colink.databinding.UtilRecommendDialogBinding
 import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.util.dialog.adapter.MemberListAdapter
 import com.seven.colink.util.dialog.adapter.DialogAdapter
 import com.seven.colink.util.dialog.adapter.LevelDialogAdapter
+import com.seven.colink.util.dialog.adapter.RecommendAdapter
 import com.seven.colink.util.dialog.enum.LevelEnum
 import com.seven.colink.util.status.GroupType
 
@@ -204,4 +211,30 @@ fun setUpGroupDialog(
     binding.btFinish.setOnClickListener { cancelAction(dialog) }
 
     return dialog
+}
+
+class RecommendDialog: DialogFragment() {
+
+    private val binding by lazy {
+        UtilRecommendDialogBinding.inflate(layoutInflater)
+    }
+
+    private val adapter by lazy {
+//        RecommendAdapter()
+    }
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        return binding.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+        dialog?.window?.apply {
+            setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        }
+    }
 }
