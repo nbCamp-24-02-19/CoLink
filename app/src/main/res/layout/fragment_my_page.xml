@@ -87,15 +87,6 @@
                 app:layout_constraintVertical_bias="0.2"
                 tools:ignore="SmallSp" />
 
-<!--            <ImageView-->
-<!--                android:id="@+id/iv_mypage_level"-->
-<!--                android:layout_width="18dp"-->
-<!--                android:layout_height="24dp"-->
-<!--                android:layout_marginStart="13dp"-->
-<!--                android:layout_marginTop="39dp"-->
-<!--                android:src="@drawable/ic_level_1"-->
-<!--                app:layout_constraintStart_toEndOf="@+id/iv_mypage_profile"-->
-<!--                app:layout_constraintTop_toTopOf="parent" />-->
 
             <TextView
                 android:id="@+id/tv_mypage_name"
