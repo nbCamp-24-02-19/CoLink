@@ -1,8 +1,17 @@
 package com.seven.colink.ui.userdetail
 
 import com.seven.colink.R
+import com.seven.colink.ui.mypage.MyPageItem
 
 object UserSkillItemManager {
+
+
+    private var skilUserItem = listOf(
+        UserSkillItem("코틀린",R.drawable.ic_kotlin)
+    )
+
+    fun getItem(): List<UserSkillItem> = skilUserItem
+
     fun addItem(language: String) =
         when (language) {
             "Adobe Photoshop" -> {
