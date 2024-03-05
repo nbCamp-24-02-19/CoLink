@@ -80,17 +80,6 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
 
         init {
             pager.post {
-
-                left.setOnClickListener {
-                    val current = pager.currentItem
-                    pager.setCurrentItem(current - 1, false)
-                }
-
-                right.setOnClickListener {
-                    val current = pager.currentItem
-                    pager.setCurrentItem(current + 1, false)
-                }
-
                 pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                     var currentState = 0
                     var currentPos = 0
@@ -99,6 +88,23 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
                         currentPos = position
                         pos.text = (currentPos + 1).toString()
                         super.onPageSelected(position)
+
+                        left.setOnClickListener {
+                            if (currentPos == 0) {
+                                pager.setCurrentItem(6,false)
+                            }else{
+                                pager.setCurrentItem(currentPos -1,false)
+                            }
+                        }
+
+                        right.setOnClickListener {
+                            if (currentPos == 6) {
+                                pager.setCurrentItem(0,false)
+                            }else{
+                                pager.setCurrentItem(currentPos +1, false)
+                            }
+                        }
+
                     }
 
                     override fun onPageScrolled(
