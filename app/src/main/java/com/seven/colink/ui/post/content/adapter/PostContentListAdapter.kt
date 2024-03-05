@@ -177,7 +177,7 @@ class PostContentListAdapter(
                 binding.tvNowPersonnel.text = "${item.recruit.nowPersonnel}"
                 binding.tvMaxPersonnel.text = "${item.recruit.maxPersonnel}"
 
-                binding.btRecruit.isEnabled = item.recruit.nowPersonnel < item.recruit.maxPersonnel
+                binding.btRecruit.isEnabled = item.recruit.nowPersonnel < item.recruit.maxPersonnel?: 0
                 binding.btRecruit.alpha = if (binding.btRecruit.isEnabled) 1.0f else 0.5f
 
                 binding.btRecruit.text = context.getString(

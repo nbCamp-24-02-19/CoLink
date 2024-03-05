@@ -84,10 +84,9 @@ class HomeProjectFragment : Fragment() {
                             val key = bottom.key
                             val entity = key?.let { homeViewModel.getPost(it) }
                             if (entity != null) {
-                                val intent = PostContentActivity.newIntentForUpdate(
+                                val intent = PostContentActivity.newIntent(
                                     requireContext(),
-                                    index,
-                                    entity
+                                    entity.key
                                 )
                                 startActivity(intent)
                             } else {
