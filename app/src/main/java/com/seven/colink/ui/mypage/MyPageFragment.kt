@@ -19,6 +19,7 @@ import com.seven.colink.R
 import com.seven.colink.databinding.FragmentMyPageBinding
 import com.seven.colink.databinding.ItemSignUpSkillBinding
 import com.seven.colink.databinding.MypageEditDialogBinding
+import com.seven.colink.ui.mypage.MyPageItem.skilItems
 import com.seven.colink.ui.mypage.adapter.MyPagePostAdapter
 import com.seven.colink.ui.mypage.adapter.MyPageSkilAdapter
 import com.seven.colink.util.dialog.setDialog
@@ -65,13 +66,11 @@ class MyPageFragment : Fragment() {
                 val binding_ = ItemSignUpSkillBinding.inflate(layoutInflater)
                 skillCategory.setDialog(binding_.root.context, "사용 가능한 언어/툴을 선택해주세요"){
                     binding_.btSignUpSubCategoryBtn.text = it
-                    MyPageSkilItemManager.addItem(it)
-                    skiladapter.changeDataset(MyPageSkilItemManager.getAllItem())
-                    skiladapter.notifyDataSetChanged()
-
+                    viewModel.updateSkill(it)
                     Log.d("tag", "skil = $it")
                 }.show()
             }
+
         }
         //스킬 삭제
         skiladapter.skilLongClick = object : MyPageSkilAdapter.SkilLongClick{
@@ -80,8 +79,7 @@ class MyPageFragment : Fragment() {
                 ad.setTitle("삭제")
                 ad.setMessage("정말로 삭제하시겠습니까?")
                 ad.setPositiveButton("확인"){dialog,_ ->
-                    MyPageSkilItemManager.removeItem(language)
-                    skiladapter.changeDataset(MyPageSkilItemManager.getAllItem())
+                    viewModel.removeSkill(language)
                 }
                 ad.setNegativeButton("취소"){dialog,_ ->
                     dialog.dismiss()
@@ -94,7 +92,7 @@ class MyPageFragment : Fragment() {
         viewModel.userDetails.observe(viewLifecycleOwner) { userDetails ->
             // Update UI with user details
             updateUI(userDetails)
-            skiladapter.changeDataset(userDetails.skill?.map { MyPageItem.skilItems(skillCategory.indexOf(it),it,MyPageSkilItemManager.addItem(it))  }
+            skiladapter.changeDataset(userDetails.skill?.map { skilItems(skillCategory.indexOf(it),it,MyPageSkilItemManager.addItem(it)) }
                 ?.plus(MyPageItem.plusItems(99,R.drawable.ic_add_24)) ?: emptyList())
 
             Log.d("Tag", "${userDetails.skill}")
@@ -118,6 +116,7 @@ class MyPageFragment : Fragment() {
 
         return binding.root
     }
+
 
 
     private fun updateUI(user: MyPageUserModel) {
@@ -183,6 +182,7 @@ class MyPageFragment : Fragment() {
                 ContextCompat.getColor(requireContext(),R.color.level7)
             )
         }
+        binding.tvMypageScore.text = user.score.toString()
 
         Log.d("Tag","user = ${user}")
     }
