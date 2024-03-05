@@ -1,10 +1,16 @@
 package com.seven.colink.ui.mypage
 
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.storage
 import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.domain.repository.AuthRepository
@@ -13,6 +19,9 @@ import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.ui.sign.signup.model.SignUpUserModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.HashMap
 import javax.inject.Inject
 
 @HiltViewModel
@@ -45,7 +54,31 @@ class MyPageViewModel @Inject constructor(
         viewModelScope.launch {
             val result = postRepository.getPostByAuthId(authRepository.getCurrentUser().message)
             result.onSuccess { post ->
-                _userPosts.postValue(post?.map { it.convertPostEntity() })
+                _userPosts.postValue(post.map { it.convertPostEntity() })
+            }
+        }
+    }
+
+    fun updateSkill(skill: String){
+       viewModelScope.launch {
+           val result = userRepository.getUserDetails(authRepository.getCurrentUser().message)
+           result.onSuccess {
+               it?.copy(skill = it.skill?.plus(skill)?.distinct())
+                   ?.let { it1 -> userRepository.registerUser(it1) }
+               loadUserDetails()
+           }
+       }
+    }
+
+    fun removeSkill(skill: String){
+        viewModelScope.launch {
+            val result = userRepository.getUserDetails(authRepository.getCurrentUser().message)
+            result.onSuccess {
+                val db = FirebaseFirestore.getInstance()
+                val docRef: DocumentReference = db.collection("users").document(skill)
+                val updates =  hashMapOf< String , Any>("skill" to FieldValue.delete())
+                docRef.update(updates).addOnCompleteListener{}
+                loadUserDetails()
             }
         }
     }
