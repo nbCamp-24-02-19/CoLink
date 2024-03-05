@@ -73,6 +73,7 @@ class PostContentViewModel @Inject constructor(
 
             uiState.value?.let { currentUiState ->
                 items.add(createImageItem(currentUiState))
+                items.add(createGroupTypeItem(currentUiState))
                 items.add(createPostContentItem(currentUiState))
                 items.add(createTitleItem(R.string.recruitment_status))
                 items.addAll(createPostRecruit(updatedRecruitList))
@@ -85,13 +86,15 @@ class PostContentViewModel @Inject constructor(
             }
         }
 
+    private fun createGroupTypeItem(uiState: PostEntity) = PostContentItem.GroupTypeItem(
+        groupType = uiState.groupType,
+    )
 
     private fun createPostContentItem(uiState: PostEntity) = PostContentItem.Item(
         key = uiState.key,
         authId = uiState.authId,
         title = uiState.title,
         status = uiState.status,
-        groupType = uiState.groupType,
         description = uiState.description,
         tags = uiState.tags,
         registeredDate = uiState.registeredDate,

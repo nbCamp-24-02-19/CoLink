@@ -42,7 +42,8 @@ class UserDetailViewModel @Inject constructor(
         userBlog = blog,
         userGit = git,
         userSkill = skill,
-        userInfo = info
+        userInfo = info,
+        userscore = grade
     )
 
 }

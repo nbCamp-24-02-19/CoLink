@@ -11,13 +11,16 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seven.colink.R
+import com.seven.colink.domain.entity.GroupEntity
 import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.entity.TagEntity
 import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.entity.RecruitInfo
 import com.seven.colink.domain.repository.AuthRepository
+import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.domain.repository.ImageRepository
 import com.seven.colink.ui.post.register.model.AddTagResult
+import com.seven.colink.ui.post.register.model.DialogEvent
 import com.seven.colink.ui.post.register.model.ImageUiState
 import com.seven.colink.ui.post.register.model.PostUiState
 import com.seven.colink.ui.post.register.model.PostViewState
@@ -39,7 +42,8 @@ class PostViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val postRepository: PostRepository,
     private val imageRepository: ImageRepository,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val groupRepository: GroupRepository
 ) : ViewModel() {
     private val entryType: PostEntryType? by lazy {
         savedStateHandle.get<PostEntryType>(EXTRA_ENTRY_TYPE)
@@ -61,6 +65,10 @@ class PostViewModel @Inject constructor(
 
     private val _selectedPersonnelCount: MutableLiveData<Int> = MutableLiveData(0)
     val selectedPersonnelCount: LiveData<Int> get() = _selectedPersonnelCount
+
+    private val showDialogEvent = MutableLiveData<DialogEvent>()
+    val showDialog: LiveData<DialogEvent> get() = showDialogEvent
+
 
     init {
         try {
@@ -175,7 +183,7 @@ class PostViewModel @Inject constructor(
     fun registerPost(
         title: String,
         description: String,
-        onSuccess: (Int) -> Unit,
+        onSuccess: (String) -> Unit,
         onError: (Exception) -> Unit
     ) = viewModelScope.launch {
         try {
@@ -186,19 +194,22 @@ class PostViewModel @Inject constructor(
                 updatePostEntity(title, description, imageUrl)
             }
 
-            handlePostRegistration(entity)
-            onSuccess(if (entryType == PostEntryType.CREATE) R.string.post_register_success else R.string.post_update_success)
+            if (entryType == PostEntryType.CREATE) {
+                postRepository.registerPost(entity)
+                try {
+                    val data = entity.convertGroupEntity()
+                    groupRepository.registerGroup(data)
+                    onSuccess(app.getString(R.string.post_register_success))
+                    showGroupDialog(data.key)
+                } catch (groupException: Exception) {
+                    onError(groupException)
+                }
+            } else {
+                postRepository.updatePost(entity.key, entity)
+                onSuccess(app.getString(R.string.post_update_success))
+            }
         } catch (e: Exception) {
             onError(e)
-        }
-    }
-
-
-    private suspend fun handlePostRegistration(entity: PostEntity) {
-        if (entryType == PostEntryType.CREATE) {
-            postRepository.registerPost(entity)
-        } else {
-            postRepository.updatePost(entity.key, entity)
         }
     }
 
@@ -288,5 +299,31 @@ class PostViewModel @Inject constructor(
     }
 
     private suspend fun getCurrentUser(): String = authRepository.getCurrentUser().message
+
+    private fun PostEntity.convertGroupEntity() = GroupEntity(
+        postKey = key,
+        authId = authId,
+        title = title,
+        imageUrl = imageUrl,
+        status = status,
+        groupType = groupType ?: GroupType.UNKNOWN,
+        description = description,
+        tags = tags,
+        memberIds = memberIds,
+        registeredDate = registeredDate,
+        startDate = "",
+        endDate = "",
+    )
+
+    private fun showGroupDialog(key: String) {
+        showDialogEvent.value = DialogEvent.Show(
+            groupType ?: GroupType.UNKNOWN,
+            key
+            )
+    }
+
+    fun dismissGroupDialog() {
+        showDialogEvent.value = DialogEvent.Dismiss
+    }
 
 }
