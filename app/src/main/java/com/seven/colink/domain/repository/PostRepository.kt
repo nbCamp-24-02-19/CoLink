@@ -17,8 +17,7 @@ interface PostRepository {
         projectStatus: ProjectStatus? = null
     ): List<PostEntity>
 
-    suspend fun getRecentPost(count: Int): List<PostEntity>
     suspend fun updatePost(key: String, updatedPost: PostEntity): DataResultStatus
     suspend fun incrementPostViews(key: String): DataResultStatus
-
+    suspend fun getRecentPost(count: Int, groupType: GroupType?= null): List<PostEntity>
 }
