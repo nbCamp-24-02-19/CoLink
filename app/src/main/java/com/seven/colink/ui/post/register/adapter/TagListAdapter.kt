@@ -1,4 +1,4 @@
-package com.seven.colink.ui.post.adapter
+package com.seven.colink.ui.post.register.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.seven.colink.databinding.ItemListPostContentTagBinding
 import com.seven.colink.databinding.ItemListPostTagBinding
 import com.seven.colink.databinding.ItemUnknownBinding
-import com.seven.colink.ui.post.TagListItem
-import com.seven.colink.ui.post.TagListViewType
+import com.seven.colink.ui.post.register.model.TagListItem
+import com.seven.colink.ui.post.register.model.TagListViewType
 
 class TagListAdapter(
     private val onClickItem: (Int, TagListItem) -> Unit
