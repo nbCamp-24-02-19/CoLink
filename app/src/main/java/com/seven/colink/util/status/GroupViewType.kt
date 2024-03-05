@@ -5,6 +5,7 @@ enum class GroupViewType {
     LIST,
     ADD,
     WANT,
+    EMPTY,
     UNKNOWN;
 
     companion object {

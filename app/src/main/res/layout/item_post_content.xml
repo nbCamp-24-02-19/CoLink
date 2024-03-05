@@ -5,22 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:padding="24dp">
-
-    <TextView
-        android:id="@+id/tv_group_type"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_round_corner_12dp"
-        android:backgroundTint="@color/forth_color"
-        android:fontFamily="@font/inter_bold"
-        android:paddingHorizontal="8dp"
-        android:paddingVertical="4dp"
-        android:text="@string/search_filter_project"
-        android:textColor="@color/white"
-        android:textSize="11sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    android:paddingHorizontal="24dp"
+    android:paddingBottom="24dp">
 
     <TextView
         android:id="@+id/tv_title"
@@ -32,7 +18,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_group_type" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_tag"

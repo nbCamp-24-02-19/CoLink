@@ -2,6 +2,7 @@ package com.seven.colink.util.status
 
 enum class PostContentViewType {
     ITEM,
+    GROUP_TYPE,
     RECRUIT,
     MEMBER,
     IMAGE,
