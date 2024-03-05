@@ -9,11 +9,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.seven.colink.R
 import com.seven.colink.databinding.FragmentGroupBinding
-import com.seven.colink.ui.post.PostActivity
 import com.seven.colink.ui.post.content.PostContentActivity
-import com.seven.colink.util.backendCategory
+import com.seven.colink.ui.post.register.PostActivity
+import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.showToast
+import com.seven.colink.util.status.GroupType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -28,21 +30,24 @@ class GroupFragment : Fragment() {
     private val groupAdapter by lazy {
         GroupAdapter(
             requireContext(),
-            onClickItem = { _, item -> handleItemClick(item)},
-            onClickAddButton = {_, item -> handleItemClick(item)},
-//            onClickWantItem = {_, item -> handleItemClick(item)}
+            onClickItem = { _, item -> handleItemClick(item) },
+            onClickAddButton = { _, item -> handleItemClick(item) },
         )
     }
 
     private val groupViewModel: GroupViewModel by viewModels()
+
+    private val groupTypeOptions: List<String>
+        get() = listOf(
+            getString(R.string.project_kor),
+            getString(R.string.study_kor)
+        )
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-//        groupViewModel = ViewModelProvider(this).get(GroupViewModel::class.java)
-
         _binding = FragmentGroupBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
@@ -54,33 +59,26 @@ class GroupFragment : Fragment() {
 
         initView()
         setObserve()
-//        goDetail()
-//        goSearch()
 
     }
 
     private fun initView() = with(binding) {
-
         rvGroupRecyclerView.adapter = groupAdapter
         rvGroupRecyclerView.layoutManager = LinearLayoutManager(requireContext())
     }
 
     private fun setObserve() {
-        groupViewModel.groupData.observe(viewLifecycleOwner){
+        groupViewModel.groupData.observe(viewLifecycleOwner) {
             groupAdapter.submitList(it)
-        }
-        groupViewModel.joinGroup.observe(viewLifecycleOwner){
-
         }
     }
 
-    private fun handleItemClick(item: GroupData){
-        when(item){
+    private fun handleItemClick(item: GroupData) {
+        when (item) {
             is GroupData.GroupList -> {
                 lifecycleScope.launch {
-//                    val entity = groupViewModel.getInPost()
-                    if (item.key != null){
-                        val intent = PostContentActivity.newIntentForUpdate(
+                    if (item.key != null) {
+                        val intent = PostContentActivity.newIntent(
                             requireContext(),
                             item.key
                         )
@@ -90,14 +88,50 @@ class GroupFragment : Fragment() {
                     }
                 }
             }
+
             is GroupData.GroupAdd -> {
-                val intent = Intent(requireContext(), PostActivity::class.java)
-                startActivity(intent)
+                groupTypeOptions.setDialog(
+                    requireContext(),
+                    getString(R.string.group_type_options)
+                ) { selectedOption ->
+                    when (selectedOption) {
+                        getString(R.string.project_kor) -> {
+                            startActivity(
+                                PostActivity.newIntentForCreate(
+                                    requireContext(),
+                                    GroupType.PROJECT
+                                )
+                            )
+                        }
+
+                        getString(R.string.study_kor) -> {
+                            startActivity(
+                                PostActivity.newIntentForCreate(
+                                    requireContext(),
+                                    GroupType.STUDY
+                                )
+                            )
+                        }
+
+                        else -> Unit
+                    }
+                }.show()
             }
+
             is GroupData.GroupWant -> {
-                val intent = Intent(requireContext(), PostContentActivity::class.java)
-                startActivity(intent)
+                lifecycleScope.launch {
+                    if (item.key != null) {
+                        val intent = PostContentActivity.newIntent(
+                            requireContext(),
+                            item.key
+                        )
+                        startActivity(intent)
+                    } else {
+                        requireContext().showToast("알 수 없는 오류")
+                    }
+                }
             }
+
             else -> throw UnsupportedOperationException("Unhandled type: $item")
         }
     }
