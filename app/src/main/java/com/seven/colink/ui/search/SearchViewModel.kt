@@ -31,6 +31,10 @@ class SearchViewModel @Inject constructor(
     private val _searchRecruitState = MutableLiveData("ALL")
     val searchRecruitState: LiveData<String> get() = _searchRecruitState
 
+    init {
+        doSearch("")
+    }
+
     fun doSearch(query: String) {
         val groupType: GroupType? = when (searchGroupState.value) {
             "ALL" -> null

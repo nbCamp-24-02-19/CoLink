@@ -103,7 +103,7 @@ class SearchFragment : Fragment() {
                 }
             } else {
                 project = true
-                getGroupColor(binding.tvSearchProject)
+                getProjectColor(binding.tvSearchProject)
                 if (project && !study) {
                     searchViewModel.setProjectFilter(query)
                 } else {
@@ -124,7 +124,7 @@ class SearchFragment : Fragment() {
                 }
             } else {
                 study = true
-                getGroupColor(binding.tvSearchStudy)
+                getStudyColor(binding.tvSearchStudy)
                 if (study && !project) {
                     searchViewModel.setStudyFilter(query)
                 } else {
@@ -145,7 +145,7 @@ class SearchFragment : Fragment() {
                 }
             } else {
                 recruitEnd = true
-                getRecruitColor(binding.tvSearchRecruitEnd)
+                getRecruitEndColor(binding.tvSearchRecruitEnd)
                 if (recruitEnd && !recruit) {
                     searchViewModel.setRecruitEndFilter(query)
                 } else {
@@ -227,12 +227,20 @@ class SearchFragment : Fragment() {
         text.setTextColor(Color.parseColor("#717171"))
     }
 
-    private fun getGroupColor(text: TextView) {
+    private fun getProjectColor(text: TextView) {
         text.setTextColor(Color.parseColor("#64B5F6"))
+    }
+
+    private fun getStudyColor(text: TextView) {
+        text.setTextColor(Color.parseColor("#EB8447"))
     }
 
     private fun getRecruitColor(text: TextView) {
         text.setTextColor(Color.parseColor("#17B397"))
+    }
+
+    private fun getRecruitEndColor(text: TextView) {
+        text.setTextColor(Color.parseColor("#2F4858"))
     }
 
 
