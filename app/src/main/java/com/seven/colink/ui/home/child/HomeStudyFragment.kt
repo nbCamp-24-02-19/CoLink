@@ -21,8 +21,6 @@ class HomeStudyFragment : Fragment() {
 
     private var _binding: FragmentHomeStudyBinding? = null
     private val binding get() = _binding!!
-
-    //    private val homeViewModel : HomeViewModel by viewModels()
     private val homeViewModel: HomeViewModel by activityViewModels()
 //    private val mAdapter by lazy { BottomHomeStudyAdapter() }
 
@@ -46,9 +44,6 @@ class HomeStudyFragment : Fragment() {
     }
 
     private fun bottomViewsData() {
-//        homeViewModel.getBottomItems(5)
-//        mAdapter.submitList(homeViewModel.bottomItems.value)
-
         homeViewModel._bottomItems.value?.forEachIndexed { index, bottom ->
             val bottomLayout = when (index) {
                 0 -> binding.layStudyBottom1
@@ -116,7 +111,6 @@ class HomeStudyFragment : Fragment() {
 
     private fun setObserve() {
         homeViewModel.topItems.observe(viewLifecycleOwner) {
-//            mAdapter.submitList(homeViewModel.bottomItems.value)
             bottomViewsData()
         }
     }
