@@ -30,7 +30,6 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
 
     private val TOP_TYPE = 0
     private val HEADER_TYPE = 1
-    private var bannerPosition = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -56,7 +55,7 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
         if (item is HomeAdapterItems.TopView) {
             with(holder as TopViewHolder) {
                 pager.adapter = item.adapter
-                sum.text = item.adapter.currentList.size.toString()
+                sum.text = "7"
             }
         }
         if (item is HomeAdapterItems.Header) {
@@ -81,9 +80,6 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
 
         init {
             pager.post {
-//                bannerPosition = Int.MAX_VALUE / 2 - ceil(TopViewPagerAdapter().currentList.size.toDouble() / 2).toInt()
-//                pager.setCurrentItem(bannerPosition, false)
-
 
                 left.setOnClickListener {
                     val current = pager.currentItem
@@ -96,12 +92,54 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
                 }
 
                 pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                    var currentState = 0
+                    var currentPos = 0
+
                     override fun onPageSelected(position: Int) {
-                        pos.text = ((position % 7) + 1).toString()
+                        currentPos = position
+                        pos.text = (currentPos + 1).toString()
+                        super.onPageSelected(position)
+                    }
+
+                    override fun onPageScrolled(
+                        position: Int,
+                        positionOffset: Float,
+                        positionOffsetPixels: Int
+                    ) {
+                        super.onPageScrolled(position, positionOffset, positionOffsetPixels)
+                    }
+
+                    override fun onPageScrollStateChanged(state: Int) {
+                        handleScrollState(state)
+                        currentState = state
+                        super.onPageScrollStateChanged(state)
+                    }
+
+                    fun handleScrollState(state: Int) {
+                        if (state == ViewPager2.SCROLL_STATE_IDLE && currentState == ViewPager2.SCROLL_STATE_DRAGGING) {
+                            setNextItemIfNeeded()
+                        }
+                    }
+
+                    fun setNextItemIfNeeded() {
+                        if (currentState != ViewPager2.SCROLL_STATE_SETTLING){
+                            handleSetNextItem()
+                        }
+                    }
+
+                    fun handleSetNextItem() {
+                        val lastPosition = pager.adapter?.itemCount?.minus(1)
+
+                        if (currentPos == 0) {
+                            if (lastPosition != null) {
+                                pager.setCurrentItem(lastPosition, false)
+                            }
+                        } else if (currentPos == lastPosition) {
+                            pager.setCurrentItem(0, false)
+                        }
                     }
                 })
             }
-
         }
     }
 

@@ -30,7 +30,11 @@ class HomeFragment : Fragment() {
     private lateinit var topAdapter : TopViewPagerAdapter
 //    private val homeViewModel by viewModels<HomeViewModel>()
     private val homeViewModel : HomeViewModel by activityViewModels()
-    private lateinit var homeItem : MutableList<HomeAdapterItems>
+//    private lateinit var homeItem : MutableList<HomeAdapterItems>
+    private var homeItem = mutableListOf<HomeAdapterItems>(
+        HomeAdapterItems.TopView(TopViewPagerAdapter()),
+        HomeAdapterItems.Header("그룹 추천")
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,18 +58,13 @@ class HomeFragment : Fragment() {
 
     private fun initViewAdapter() {
         topAdapter = TopViewPagerAdapter()
-        topAdapter.itemClick = topClickItem()
 
-        homeItem = mutableListOf(
-            HomeAdapterItems.TopView(topAdapter),
-            HomeAdapterItems.Header("그룹 추천")
-        )
+        topAdapter.itemClick = topClickItem()
 
         with(binding.rvHome) {
             adapter = mainAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
-
 
         bottomAdapter = BottomViewPagerAdapter(this)
         binding.vpHome.adapter = bottomAdapter
@@ -81,14 +80,11 @@ class HomeFragment : Fragment() {
 //            val newItems = ArrayList(it)
 //            topAdapter.submitList(newItems)
             topAdapter.submitList(it)
-
             homeItem = mutableListOf(
                 HomeAdapterItems.TopView(topAdapter),
                 HomeAdapterItems.Header("그룹 추천")
             )
-
             mainAdapter.submitList(homeItem)
-            Log.d("Home","#ddd it = $it")
         }
     }
 
