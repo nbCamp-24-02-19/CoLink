@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".ui.evaluation.EvaluationProjectFragment">
 
     <ScrollView
@@ -211,8 +212,8 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="12dp"
                 android:numStars="5"
-                android:rating="3"
                 android:progressTint="@color/level3"
+                android:rating="3"
                 android:stepSize="1" />
 
             <LinearLayout
@@ -254,8 +255,8 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="12dp"
                 android:numStars="5"
-                android:rating="3"
                 android:progressTint="@color/level3"
+                android:rating="3"
                 android:stepSize="1" />
 
             <LinearLayout
@@ -297,13 +298,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"
                 android:background="@drawable/bg_round_corner_4dp"
                 android:backgroundTint="@color/main_color"
                 android:fontFamily="@font/inter_bold"
                 android:text="다음"
                 android:textColor="@color/white"
-                android:textSize="14sp"
-                android:layout_marginBottom="24dp"/>
+                android:textSize="14sp" />
 
         </LinearLayout>
 
