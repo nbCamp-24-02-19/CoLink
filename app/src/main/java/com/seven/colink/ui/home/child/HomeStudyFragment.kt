@@ -59,21 +59,21 @@ class HomeStudyFragment : Fragment() {
             }
 
             bottomLayout.apply {
-                if (bottom.typeId == GroupType.STUDY) {
-                    while (true){
-                        if (homeViewModel._bottomItems.value?.size!! < 5){
-                            homeViewModel.getBottomItems(5)
-                            if (homeViewModel._bottomItems.value?.size!! > 5){
-                                val currentList = homeViewModel._bottomItems.value?.toMutableList()
-                                currentList?.let {
-                                    it.removeAt(it.size -1)
-                                    homeViewModel._bottomItems.value = it
-                                }
-                            }
-                        }else if (homeViewModel._bottomItems.value?.size!! == 5) {
-                            break
-                        }
-                    }
+//                if (bottom.typeId == GroupType.STUDY) {
+//                    while (true){
+//                        if (homeViewModel._bottomItems.value?.size!! < 5){
+//                            homeViewModel.getBottomItems(5)
+//                            if (homeViewModel._bottomItems.value?.size!! > 5){
+//                                val currentList = homeViewModel._bottomItems.value?.toMutableList()
+//                                currentList?.let {
+//                                    it.removeAt(it.size -1)
+//                                    homeViewModel._bottomItems.value = it
+//                                }
+//                            }
+//                        }else if (homeViewModel._bottomItems.value?.size!! == 5) {
+//                            break
+//                        }
+//                    }
 
                      if (homeViewModel._bottomItems.value?.size!! == 5) {
                             tvHomeBottomStudy.visibility = View.VISIBLE
@@ -109,7 +109,7 @@ class HomeStudyFragment : Fragment() {
                                 }
                             }
                      }
-                }
+//                }
             }
         }
     }
