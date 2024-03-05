@@ -12,6 +12,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.seven.colink.R
 import com.seven.colink.databinding.UtilCustomBasicDialogBinding
+import com.seven.colink.databinding.UtilCustomGroupDialogBinding
 import com.seven.colink.databinding.UtilCustomLevelDialogBinding
 import com.seven.colink.databinding.UtilCustomListDialogBinding
 import com.seven.colink.databinding.UtilMemberInfoDialogBinding
@@ -20,6 +21,7 @@ import com.seven.colink.util.dialog.adapter.MemberListAdapter
 import com.seven.colink.util.dialog.adapter.DialogAdapter
 import com.seven.colink.util.dialog.adapter.LevelDialogAdapter
 import com.seven.colink.util.dialog.enum.LevelEnum
+import com.seven.colink.util.status.GroupType
 
 fun Context.setDialog(
     title: String,
@@ -115,7 +117,7 @@ fun List<String>.setDialog(
 fun Context.setLevelDialog(
     nowLevel: Int = 1,
     action: (LevelEnum) -> Unit,
-):AlertDialog {
+): AlertDialog {
     val binding = UtilCustomLevelDialogBinding.inflate(LayoutInflater.from(this))
     val dialog = AlertDialog.Builder(this)
         .setView(binding.root)
@@ -169,6 +171,37 @@ fun List<UserEntity>.setUserInfoDialog(
 
     binding.recyclerViewMember.adapter = adapter
     adapter.submitList(this)
+
+    return dialog
+}
+
+
+fun setUpGroupDialog(
+    context: Context,
+    groupType: GroupType,
+    confirmAction: (AlertDialog) -> Unit,
+    cancelAction: (AlertDialog) -> Unit
+): AlertDialog {
+    val binding = UtilCustomGroupDialogBinding.inflate(LayoutInflater.from(context))
+    val dialog = AlertDialog.Builder(context)
+        .setView(binding.root)
+        .show()
+
+    dialog.window?.setLayout(
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        ViewGroup.LayoutParams.MATCH_PARENT
+    )
+
+    binding.tvDialogDescription.text = context.getString(
+        R.string.group_dialog_description, context.getString(
+            if (
+                groupType == GroupType.PROJECT
+            ) R.string.project_kor else R.string.study_kor
+        )
+    )
+
+    binding.btMoveGroupPage.setOnClickListener { confirmAction(dialog) }
+    binding.btFinish.setOnClickListener { cancelAction(dialog) }
 
     return dialog
 }

@@ -1,5 +1,7 @@
 package com.seven.colink.ui.post.content.model
 
+import com.seven.colink.ui.post.register.model.DialogEvent
+
 data class PostContentUiState(
     val list: List<PostContentItem>
 ) {
@@ -25,6 +27,22 @@ data class DialogUiState(
             title = null,
             message = null,
             recruitItem = null
+        )
+    }
+}
+
+sealed interface DialogViewState {
+    data class Show(
+        val uiState: DialogUiState,
+        val event: DialogEvent
+    ) : DialogViewState
+
+    object Dismiss : DialogViewState
+
+    companion object {
+        fun init() = Show(
+            uiState = DialogUiState.init(),
+            event = DialogEvent.Dismiss
         )
     }
 }
