@@ -12,6 +12,7 @@
         android:clipToOutline="true"
         android:scaleType="centerCrop"
         android:src="@drawable/img_dialog_project"
+        android:background="@drawable/bg_round_top_corner_20dp"
         app:layout_constraintDimensionRatio="16:9"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
