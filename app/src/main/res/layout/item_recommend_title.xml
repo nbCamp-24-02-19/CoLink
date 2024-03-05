@@ -15,6 +15,7 @@
         android:fontFamily="@font/inter_bold"/>
 
     <TextView
+        android:id="@+id/tv_recommend_title_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginVertical="32dp"
