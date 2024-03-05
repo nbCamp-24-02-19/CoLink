@@ -1,5 +1,6 @@
 package com.seven.colink.data.firebase.repository
 
+import android.content.ContentValues.TAG
 import android.util.Log
 import com.algolia.search.saas.Index
 import com.algolia.search.saas.Query
@@ -20,6 +21,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
+import org.json.JSONObject
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -32,6 +34,7 @@ class PostRepositoryImpl @Inject constructor(
     override suspend fun registerPost(post: PostEntity) = suspendCoroutine { continuation ->
         firebaseFirestore.collection(DataBaseType.POST.title).document(post.key).set(post)
             .addOnSuccessListener {
+                addPostToAlgolia(post)
                 continuation.resume(DataResultStatus.SUCCESS)
             }
             .addOnFailureListener { e ->
@@ -80,10 +83,10 @@ class PostRepositoryImpl @Inject constructor(
         val algoliaQuery = Query(query)
         val filters = mutableListOf<String>()
         groupType?.let {
-            filters.add("groupType:${it}")
+            filters.add("groupType:\"${it}\"")
         }
         projectStatus?.let {
-            filters.add("projectStatus:${it}")
+            filters.add("status:\"${it}\"")
         }
         if (filters.isNotEmpty()) {
             algoliaQuery.filters = filters.joinToString(" AND ")
@@ -118,20 +121,26 @@ class PostRepositoryImpl @Inject constructor(
 
     private suspend fun fetchPostEntity(key: String): PostEntity? = getPost(key).getOrNull()
 
-    override suspend fun getRecentPost(count: Int) =
-        firebaseFirestore.collection(DataBaseType.POST.title)
+    override suspend fun getRecentPost(count: Int, groupType: GroupType?): List<PostEntity> {
+        var query = firebaseFirestore.collection(DataBaseType.POST.title)
             .orderBy("registeredDate", com.google.firebase.firestore.Query.Direction.DESCENDING)
             .limit(count.toLong())
-            .get().await()
-            .documents.mapNotNull {
-                it.toObject(PostEntity::class.java)
-            }
+
+        if (groupType != null) {
+            query = query.whereEqualTo("groupType", groupType.name)
+        }
+
+        return query.get().await().documents.mapNotNull { snapshot ->
+            snapshot.toObject(PostEntity::class.java)
+        }
+    }
 
     override suspend fun updatePost(key: String, updatedPost: PostEntity) =
         suspendCoroutine { continuation ->
             firebaseFirestore.collection(DataBaseType.POST.title).document(key)
                 .set(updatedPost, com.google.firebase.firestore.SetOptions.merge())
                 .addOnSuccessListener {
+                    addPostToAlgolia(updatedPost)
                     continuation.resume(DataResultStatus.SUCCESS)
                 }
                 .addOnFailureListener { e ->
@@ -151,6 +160,25 @@ class PostRepositoryImpl @Inject constructor(
             DataResultStatus.FAIL.apply {
                 message = e.message ?: "Failed to increment views"
             }
+        }
+    }
+
+    private fun addPostToAlgolia(post: PostEntity) = CoroutineScope(Dispatchers.IO).launch {
+        try {
+            val postJson = JSONObject().apply {
+                put("objectID", post.key)
+                put("description", post.description)
+                put("title", post.title)
+                put("tags", JSONArray(post.tags))
+                put("groupType", post.groupType)
+                put("status", post.status)
+            }
+            algolia.addObjectAsync(postJson) { _, exception ->
+                if (exception != null) {
+                }
+            }
+        } catch (e: Exception){
+            Log.e(TAG, "$e")
         }
     }
 }
