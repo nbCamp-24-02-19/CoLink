@@ -103,12 +103,13 @@ class PostViewModel @Inject constructor(
             _postUiState.value = _postUiState.value?.copy(
                 tagList = entity.tags?.map { TagEntity(name = it) } ?: emptyList(),
                 recruitList = entity.recruit ?: emptyList(),
-                totalPersonnelCount = entity.recruit?.sumOf { info -> info.maxPersonnel } ?: 0
+                totalPersonnelCount = entity.recruit?.sumOf { info -> info.maxPersonnel ?: 0 } ?: 0
             )
 
             _selectedImage.value =
                 _selectedImage.value?.copy(originImage = Uri.parse(entity.imageUrl))
-            _selectedPersonnelCount.value = entity.recruit?.sumOf { info -> info.maxPersonnel } ?: 0
+            _selectedPersonnelCount.value =
+                entity.recruit?.sumOf { info -> info.maxPersonnel ?: 0 } ?: 0
 
             val isProjectSelected = entity.groupType == GroupType.PROJECT
             val projectButtonTextColor =
@@ -151,15 +152,16 @@ class PostViewModel @Inject constructor(
         updateTotalPersonnelCount()
     }
 
-    fun removeRecruitInfo(key: String) {
+    fun removeRecruitInfo(type: String?) {
         _postUiState.value = _postUiState.value?.let { state ->
-            state.copy(recruitList = state.recruitList?.filterNot { it.key == key })
+            state.copy(recruitList = state.recruitList?.filterNot { it.type == type })
         }
         updateTotalPersonnelCount()
     }
 
     private fun updateTotalPersonnelCount() {
-        val totalPersonnelCount = _postUiState.value?.recruitList?.sumOf { it.maxPersonnel } ?: 0
+        val totalPersonnelCount =
+            _postUiState.value?.recruitList?.sumOf { it.maxPersonnel ?: 0 } ?: 0
         _postUiState.value = _postUiState.value?.copy(totalPersonnelCount = totalPersonnelCount)
     }
 
@@ -192,7 +194,6 @@ class PostViewModel @Inject constructor(
     }
 
 
-
     private suspend fun handlePostRegistration(entity: PostEntity) {
         if (entryType == PostEntryType.CREATE) {
             postRepository.registerPost(entity)
@@ -206,15 +207,16 @@ class PostViewModel @Inject constructor(
         description: String,
         imageUrl: String?
     ): PostEntity {
+        val currentState = postUiState.value
+
         return PostEntity(
             authId = getCurrentUser(),
             title = title,
             imageUrl = imageUrl.orEmpty(),
             groupType = groupType,
             description = description,
-            tags = postUiState.value?.tagList?.map { it.name },
-            recruit = if (groupType == GroupType.PROJECT) postUiState.value?.recruitList
-            else postUiState.value?.singleRecruitInfo?.let { listOf(it) },
+            tags = currentState?.tagList?.map { it.name },
+            recruit = currentState?.recruitList,
             memberIds = listOf(getCurrentUser())
         )
     }
@@ -224,13 +226,15 @@ class PostViewModel @Inject constructor(
         description: String,
         imageUrl: String
     ): PostEntity {
+        val currentState = postUiState.value
+
         return entity.copy(
             title = title,
             imageUrl = imageUrl.ifEmpty { entity.imageUrl },
             description = description,
-            tags = postUiState.value?.tagList?.map { it.name },
-            recruit = if (entity.groupType == GroupType.PROJECT) postUiState.value?.recruitList
-            else postUiState.value?.singleRecruitInfo?.let { listOf(it) },
+            tags = currentState?.tagList?.map { it.name },
+            recruit = if (groupType == GroupType.PROJECT) postUiState.value?.recruitList
+            else currentState?.recruitList,
             memberIds = entity.memberIds
         )
     }
@@ -240,19 +244,33 @@ class PostViewModel @Inject constructor(
 
 
     private fun performCountOperation(operation: (Int, Int, Int) -> Pair<Int, Int>) {
-        val (updateSelectedCount, updateTotalCount) = operation(
-            _selectedPersonnelCount.value ?: 0,
-            _postUiState.value?.totalPersonnelCount ?: 0,
-            LIMITED_PEOPLE
-        )
-        _selectedPersonnelCount.value = updateSelectedCount
+        val currentState = _postUiState.value
+        if (currentState != null) {
+            val (updateSelectedCount, updateTotalCount) = operation(
+                _selectedPersonnelCount.value ?: 0,
+                currentState.totalPersonnelCount ?: 0,
+                LIMITED_PEOPLE
+            )
+            _selectedPersonnelCount.value = updateSelectedCount
 
-        _postUiState.value = _postUiState.value?.let { currentState ->
-            val updatedRecruitInfo =
-                currentState.singleRecruitInfo?.copy(maxPersonnel = updateTotalCount)
-            currentState.copy(
+            val updatedRecruitList = currentState.recruitList?.toMutableList() ?: mutableListOf()
+            val studyIndex = updatedRecruitList.indexOfFirst { it.type == "" }
+
+            if (studyIndex != -1) {
+                updatedRecruitList[studyIndex] =
+                    updatedRecruitList[studyIndex].copy(maxPersonnel = updateSelectedCount)
+            } else {
+                updatedRecruitList.add(
+                    RecruitInfo(
+                        type = "",
+                        maxPersonnel = updateSelectedCount
+                    )
+                )
+            }
+
+            _postUiState.value = currentState.copy(
                 totalPersonnelCount = updateTotalCount,
-                singleRecruitInfo = updatedRecruitInfo
+                recruitList = updatedRecruitList
             )
         }
     }

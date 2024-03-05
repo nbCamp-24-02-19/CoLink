@@ -7,14 +7,12 @@ import com.seven.colink.domain.entity.TagEntity
 data class PostUiState(
     val tagList: List<TagEntity>?,
     val recruitList: List<RecruitInfo>?,
-    val singleRecruitInfo: RecruitInfo?,
     val totalPersonnelCount: Int?
 ) {
     companion object {
         fun init() = PostUiState(
             tagList = emptyList(),
             recruitList = emptyList(),
-            singleRecruitInfo = null,
             totalPersonnelCount = 0
         )
     }

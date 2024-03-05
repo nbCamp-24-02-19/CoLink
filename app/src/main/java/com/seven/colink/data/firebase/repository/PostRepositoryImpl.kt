@@ -1,5 +1,6 @@
 package com.seven.colink.data.firebase.repository
 
+import android.util.Log
 import com.algolia.search.saas.Index
 import com.algolia.search.saas.Query
 import com.google.firebase.firestore.FieldValue
@@ -12,9 +13,12 @@ import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -90,36 +94,29 @@ class PostRepositoryImpl @Inject constructor(
             } else {
                 jsonArray?.getJSONArray("hits")?.let { hits ->
                     CoroutineScope(Dispatchers.IO).launch {
-                        continuation.resume(fetchAllPosts(hits))
+                        try {
+                            val posts = fetchAllPosts(hits)
+                            continuation.resume(posts)
+                        } catch (e: Exception) {
+                            continuation.resumeWithException(e)
+                        }
                     }
-                }
+                } ?: continuation.resumeWithException(RuntimeException("No hits found"))
             }
         }
     }
 
-    private suspend fun fetchAllPosts(hits: JSONArray): List<PostEntity> {
-        val results = mutableListOf<PostEntity>()
-        for (i in 0 until hits.length()) {
-            val hit = hits.getJSONObject(i)
-            val key = hit.optString("key", "null")
-            if (key != "null") {
-                fetchPostEntity(key, results)
+    private suspend fun fetchAllPosts(hits: JSONArray): List<PostEntity> = withContext(Dispatchers.IO) {
+        val hitSequence = (0 until hits.length()).asSequence().map { hits.getJSONObject(it) }
+        hitSequence.mapNotNull { hit ->
+            hit.optString("objectID", null)?.let { key ->
+                Log.d("SearchDebug", "Processing post with key: $key")
+                async { fetchPostEntity(key) }
             }
-        }
-        return results
+        }.toList().awaitAll().filterNotNull()
     }
 
-    private suspend fun fetchPostEntity(key: String, results: MutableList<PostEntity>) {
-        val job = CoroutineScope(Dispatchers.IO).launch {
-            val post = getPost(key)
-            if (post.isSuccess) {
-                synchronized(results) {
-                    post.getOrNull()?.let { results.add(it) }
-                }
-            }
-        }
-        job.join()
-    }
+    private suspend fun fetchPostEntity(key: String): PostEntity? = getPost(key).getOrNull()
 
     override suspend fun getRecentPost(count: Int) =
         firebaseFirestore.collection(DataBaseType.POST.title)

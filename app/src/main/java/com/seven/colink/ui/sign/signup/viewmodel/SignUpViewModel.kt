@@ -148,12 +148,12 @@ class SignUpViewModel @Inject constructor(
         }
         if (_errorMessage.value == SignUpErrorMessage.DUMMY) {
             _errorMessage.value = SignUpErrorMessage.PASS
-            registerUser()
+            userModel.value.password?.let { registerUser(it) }
         }
     }
 
-    private fun registerUser() = viewModelScope.launch {
-        when (registerUserUseCase(userModel.value.convertUserEntity())){
+    private fun registerUser(password: String) = viewModelScope.launch {
+        when (registerUserUseCase(userModel.value.convertUserEntity(), password)){
             DataResultStatus.SUCCESS -> _registrationResult.emit("등록 성공")
             DataResultStatus.FAIL -> _registrationResult.emit("등록 실패")
         }
@@ -162,7 +162,6 @@ class SignUpViewModel @Inject constructor(
     private fun SignUpUserModel.convertUserEntity() = UserEntity(
         name = name,
         email = email,
-        password = password,
         mainSpecialty = mainSpecialty,
         specialty = specialty,
         skill = skill,

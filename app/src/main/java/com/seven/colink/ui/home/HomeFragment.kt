@@ -18,6 +18,7 @@ import com.seven.colink.ui.post.content.PostContentActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
 
@@ -110,4 +111,5 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
 }
