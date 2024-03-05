@@ -13,12 +13,15 @@ import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.util.Constants
+import com.seven.colink.util.convert.convertCalculateDays
 import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,7 +39,7 @@ class GroupViewModel @Inject constructor(
     val joinList: LiveData<List<GroupData.GroupList>?> get() = _joinList
 
     private val _wantList = MutableLiveData<List<GroupData.GroupWant>?>()
-    val wantList : LiveData<List<GroupData.GroupWant>?> get() = _wantList
+    val wantList: LiveData<List<GroupData.GroupWant>?> get() = _wantList
 
     init {
         viewModelScope.launch {
@@ -50,15 +53,17 @@ class GroupViewModel @Inject constructor(
             val items = mutableListOf<GroupData>()
 
             items.add(getTitle())
-            if (joinList.value.isNullOrEmpty()){
+            if (joinList.value.isNullOrEmpty()) {
                 items.add(getEmptyJoinList())
-                _joinList.value
             } else {
                 joinList.value?.map { items.add(it) }
             }
             items.add(getAdd())
-            items.add(getWant())
-            items.add(getEmptyWantList())
+            if (wantList.value.isNullOrEmpty()) {
+                items.add(getEmptyWantList())
+            } else {
+                wantList.value?.map { items.add(it) }
+            }
 
             _groupData.value = items
             Log.d("Group", "GroupData.value = ${_groupData.value}")
@@ -80,13 +85,13 @@ class GroupViewModel @Inject constructor(
             groupType = groupType,
             thumbnail = imageUrl,
             projectName = title,
-            days = registeredDate,
+            days = startDate?.convertCalculateDays()?: "0일째",
             description = description,
             tags = tags,
             memberIds = memberIds
         )
 
-    private fun GroupEntity.convertGroupWant() =
+    private fun PostEntity.convertGroupWant() =
         GroupData.GroupWant(
             key = key,
             groupType = groupType,
@@ -115,12 +120,12 @@ class GroupViewModel @Inject constructor(
         img = ""
     )
 
-    fun getEmptyJoinList() = GroupData.GroupEmpty(
-        img = R.drawable.img_dialog_project,
+    private fun getEmptyJoinList() = GroupData.GroupEmpty(
+        img = R.drawable.img_temporary,
         text = "참여 중인 그룹이 없습니다."
     )
 
-    fun getEmptyWantList() = GroupData.GroupEmpty(
+    private fun getEmptyWantList() = GroupData.GroupEmpty(
         img = R.drawable.img_dialog_study,
         text = "지원한 그룹이 없습니다."
     )

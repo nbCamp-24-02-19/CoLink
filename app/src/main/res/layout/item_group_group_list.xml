@@ -66,7 +66,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginStart="18dp"
+                android:layout_marginEnd="4dp"
                 android:ellipsize="end"
                 android:fontFamily="@font/inter_regular"
                 android:gravity="end"

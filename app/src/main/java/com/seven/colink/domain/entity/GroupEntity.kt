@@ -18,6 +18,6 @@ data class GroupEntity (
     val tags: List<String>? = emptyList(),
     val memberIds: List<String> = emptyList(),
     val registeredDate: String? = LocalDateTime.now().convertLocalDateTime(),
-    val startDate: String? = "",
+    val startDate: String? = null,
     val endDate: String? = "",
 )

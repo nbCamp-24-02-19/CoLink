@@ -1,11 +1,14 @@
 package com.seven.colink.util.convert
 
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+import java.util.Date
+import java.util.Locale
 
 fun LocalDateTime.convertLocalDateTime(): String = run {
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
@@ -38,4 +41,13 @@ fun String.convertToDaysAgo(): String {
         days < 7 -> localDateTime.format(DateTimeFormatter.ofPattern("M월 d일"))
         else -> localDateTime.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
     }
+}
+
+fun String.convertCalculateDays(): String {
+    val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+    val date = format.parse(this)
+    val now = Date()
+    val diff = now.time - date.time
+    val days = diff / (24 * 60 * 60 * 1000)
+    return "${days}일째"
 }
