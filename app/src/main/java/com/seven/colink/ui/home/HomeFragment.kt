@@ -42,12 +42,8 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViews()
-    }
-
-    override fun onResume() {
-        super.onResume()
         setTopItems()
+        initViews()
     }
 
     private fun initViews() {
@@ -68,7 +64,7 @@ class HomeFragment : Fragment() {
             adapter = mainAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
-        mainAdapter.submitList(homeItem)
+
 
         bottomAdapter = BottomViewPagerAdapter(this)
         binding.vpHome.adapter = bottomAdapter
@@ -84,6 +80,13 @@ class HomeFragment : Fragment() {
 //            val newItems = ArrayList(it)
 //            topAdapter.submitList(newItems)
             topAdapter.submitList(it)
+
+            homeItem = mutableListOf(
+                HomeAdapterItems.TopView(topAdapter),
+                HomeAdapterItems.Header("그룹 추천")
+            )
+
+            mainAdapter.submitList(homeItem)
             Log.d("Home","#ddd it = $it")
         }
     }
