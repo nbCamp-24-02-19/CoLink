@@ -1,6 +1,7 @@
 package com.seven.colink.ui.search
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -15,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentSearchBinding
+import com.seven.colink.ui.evaluation.EvaluationActivity
 import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.ui.post.content.PostContentActivity
 import com.seven.colink.util.dialog.setDialog
@@ -205,6 +207,7 @@ class SearchFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        hideProgressOverlay()
     }
 
     private fun goDetail() {

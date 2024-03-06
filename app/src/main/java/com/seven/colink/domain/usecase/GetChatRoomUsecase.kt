@@ -76,12 +76,13 @@ class GetChatRoomUsecase @Inject constructor(
             thumbnail = thumbnail,
             type = type
         )
-        val chatRoom = chatRepository.getChatRoom(newChat.key)
         CoroutineScope(Dispatchers.IO).launch {
             uids.forEach {
                 launch {
                     userRepository.getUserDetails(it).getOrNull().let {
-                        if (it != null && it.participantsChatRoomIds?.contains(newChat.key)?.not() != false)
+                        if (it != null && it.participantsChatRoomIds?.contains(newChat.key)
+                                ?.not() != false
+                        )
                             it.copy(
                                 participantsChatRoomIds = it.participantsChatRoomIds?.plus(key)
                             )
@@ -90,12 +91,8 @@ class GetChatRoomUsecase @Inject constructor(
 
                 }
             }
-        }
-        return if (chatRoom == null) {
             chatRepository.createChatRoom(newChat)
-            newChat
-        } else {
-            chatRoom
         }
+        return chatRepository.getChatRoom(newChat.key) ?: newChat
     }
 }
