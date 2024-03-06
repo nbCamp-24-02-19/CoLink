@@ -4,12 +4,13 @@
     android:layout_height="wrap_content">
 
     <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/bt_item_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="48dp"
         android:background="@drawable/bg_round_corner_8dp"
         android:backgroundTint="@color/main_color"
-        android:text="닫기"
+        android:text="@string/recommend_next"
         android:textSize="18sp"
         android:textColor="@color/white"
         android:fontFamily="@font/inter_bold"/>

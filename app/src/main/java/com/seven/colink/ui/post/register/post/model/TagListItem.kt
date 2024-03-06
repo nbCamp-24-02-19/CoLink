@@ -1,4 +1,4 @@
-package com.seven.colink.ui.post.register.model
+package com.seven.colink.ui.post.register.post.model
 
 import com.seven.colink.domain.entity.TagEntity
 

@@ -1,10 +1,10 @@
-package com.seven.colink.ui.userdetail
+package com.seven.colink.ui.userdetail.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.seven.colink.databinding.MypageRecyclerviewItemSkilitemBinding
-import com.seven.colink.ui.mypage.MyPageItem
+import com.seven.colink.ui.userdetail.UserSkillItem
 
 class UserSkillAdapter(var mItems: List<UserSkillItem>): RecyclerView.Adapter<UserSkillAdapter.SkillViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SkillViewHolder {
