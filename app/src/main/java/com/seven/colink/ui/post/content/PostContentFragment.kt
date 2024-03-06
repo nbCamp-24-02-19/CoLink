@@ -1,105 +1,109 @@
 package com.seven.colink.ui.post.content
 
-import android.content.Context
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
 import android.view.View
-import androidx.activity.viewModels
+import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.seven.colink.R
-import com.seven.colink.databinding.ActivityPostContentBinding
+import com.seven.colink.databinding.FragmentPostContentBinding
 import com.seven.colink.domain.entity.UserEntity
-import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.ui.post.content.adapter.PostContentListAdapter
+import com.seven.colink.ui.post.content.model.ContentOwnerButtonUiState
 import com.seven.colink.ui.post.content.model.DialogUiState
-import com.seven.colink.ui.post.content.model.PostContentButtonUiState
 import com.seven.colink.ui.post.content.model.PostContentItem
 import com.seven.colink.ui.post.content.viewmodel.PostContentViewModel
-import com.seven.colink.util.Constants
+import com.seven.colink.ui.post.register.post.PostFragment
+import com.seven.colink.ui.post.register.viewmodel.PostSharedViewModel
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.dialog.setUserInfoDialog
-import com.seven.colink.util.showToast
 import com.seven.colink.util.status.ApplicationStatus
 import com.seven.colink.util.status.PostEntryType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+
 @AndroidEntryPoint
-class PostContentActivity : AppCompatActivity() {
-    companion object {
-        fun newIntent(
-            context: Context,
-            entityKey: String
-        ) = Intent(context, PostContentActivity::class.java).apply {
-            putExtra(Constants.EXTRA_POST_ENTITY, entityKey)
-        }
-    }
+class PostContentFragment : Fragment() {
+    private var _binding: FragmentPostContentBinding? = null
+    private val binding: FragmentPostContentBinding get() = _binding!!
+
+    private val viewModel: PostContentViewModel by viewModels()
+    private val sharedViewModel: PostSharedViewModel by activityViewModels()
 
     private val postContentListAdapter by lazy {
         PostContentListAdapter(
-            this@PostContentActivity,
+            requireContext(),
             onClickItem = { _, item -> handleItemClick(item) },
             onClickButton = { _, item, buttonUiState -> handleButtonClick(item, buttonUiState) }
         )
     }
 
-    private val binding: ActivityPostContentBinding by lazy {
-        ActivityPostContentBinding.inflate(layoutInflater)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentPostContentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    private val viewModel: PostContentViewModel by viewModels()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         initView()
         initViewModel()
-    }
-
-    private fun initViewModel() = with(viewModel) {
-        postContentItems.observe(this@PostContentActivity) { items ->
-            postContentListAdapter.submitList(items)
-        }
-
-        updateButtonUiState.observe(this@PostContentActivity) {
-            binding.tvEdit.visibility =
-                if (it == PostContentButtonUiState.Writer) View.VISIBLE else View.GONE
-        }
-
-        dialogUiState.observe(this@PostContentActivity) { state ->
-            showDialog(state)
-        }
-
-        uiState.observe(this@PostContentActivity) {
-            if (it == null) {
-                showToast(getString(R.string.failed_error))
-                finish()
-            }
-        }
+        initSharedViewModel()
     }
 
     private fun initView() = with(binding) {
         recyclerViewPostContent.adapter = postContentListAdapter
 
         binding.ivFinish.setOnClickListener {
-            finish()
+            activity?.finish()
         }
 
         binding.tvEdit.setOnClickListener {
             lifecycleScope.launch {
-                startActivity(
-                    PostActivity.newIntent(
-                        this@PostContentActivity,
-                        key = viewModel.uiState.value?.key ?: return@launch,
-                        entryType = PostEntryType.UPDATE,
-                    )
-                )
-                if (isFinishing.not()) {
-                    finish()
+                sharedViewModel.setEntryType(PostEntryType.UPDATE)
+                parentFragmentManager.beginTransaction().apply {
+                    replace(R.id.fg_activity_post, PostFragment())
+                    commit()
                 }
             }
         }
+    }
+
+    private fun initViewModel() = with(viewModel) {
+        uiState.observe(requireActivity()) { items ->
+            postContentListAdapter.submitList(items)
+        }
+
+        updateButtonUiState.observe(requireActivity()) {
+            binding.tvEdit.visibility =
+                if (it == ContentOwnerButtonUiState.Owner) View.VISIBLE else View.GONE
+        }
+
+        dialogUiState.observe(requireActivity()) { state ->
+            showDialog(state)
+        }
+    }
+
+    private fun initSharedViewModel() = with(sharedViewModel) {
+        lifecycleScope.launch {
+            key.collect {
+                if (it != null) {
+                    viewModel.setEntity(it)
+                    viewModel.initViewStateByEntity()
+                }
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 
     private fun handleItemClick(item: PostContentItem) {
@@ -109,7 +113,7 @@ class PostContentActivity : AppCompatActivity() {
         }
     }
 
-    private fun handleButtonClick(item: PostContentItem, buttonUiState: PostContentButtonUiState) {
+    private fun handleButtonClick(item: PostContentItem, buttonUiState: ContentOwnerButtonUiState) {
         when (item) {
             is PostContentItem.RecruitItem -> handleRecruitItemClick(item, buttonUiState)
             else -> throw UnsupportedOperationException("Unhandled type: $item")
@@ -118,20 +122,18 @@ class PostContentActivity : AppCompatActivity() {
 
     private fun handleRecruitItemClick(
         item: PostContentItem.RecruitItem,
-        buttonUiState: PostContentButtonUiState
+        buttonUiState: ContentOwnerButtonUiState
     ) {
         when (buttonUiState) {
-            PostContentButtonUiState.Supporter -> {
+            ContentOwnerButtonUiState.User -> {
                 viewModel.createDialog(item)
             }
 
-            PostContentButtonUiState.Writer -> {
+            ContentOwnerButtonUiState.Owner -> {
                 lifecycleScope.launch {
                     val userEntities = viewModel.getUserEntitiesFromRecruit(item)
                     if (userEntities.isNotEmpty()) {
                         showUserEntitiesDialog(userEntities, item)
-                    } else {
-                        showToast(getString(R.string.no_support_list))
                     }
                 }
             }
@@ -140,7 +142,7 @@ class PostContentActivity : AppCompatActivity() {
 
     private fun showDialog(state: DialogUiState?) {
         state?.recruitItem?.let {
-            setDialog(
+            requireContext().setDialog(
                 title = getString(R.string.support_dialog_title, state.title),
                 message = getString(R.string.support_dialog_message, state.message, state.title),
                 R.drawable.img_dialog_study,
@@ -149,7 +151,7 @@ class PostContentActivity : AppCompatActivity() {
                         val result = viewModel.applyForProject(
                             recruitItem = state.recruitItem
                         )
-                        showToast(result.message)
+                        // TODO 결과 메세지
                         it.dismiss()
                     }
                 },
@@ -162,7 +164,7 @@ class PostContentActivity : AppCompatActivity() {
         userEntities: List<UserEntity>,
         item: PostContentItem.RecruitItem
     ) {
-        userEntities.setUserInfoDialog(this) { userEntity, isRefuseButton ->
+        userEntities.setUserInfoDialog(requireContext()) { userEntity, isRefuseButton ->
             lifecycleScope.launch {
                 if (isRefuseButton) {
                     viewModel.updateApplicationStatus(
@@ -180,5 +182,4 @@ class PostContentActivity : AppCompatActivity() {
             }
         }.show()
     }
-
 }

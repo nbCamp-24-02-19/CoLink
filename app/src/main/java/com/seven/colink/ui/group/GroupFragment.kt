@@ -10,7 +10,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentGroupBinding
-import com.seven.colink.ui.post.content.PostContentActivity
 import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.showToast
@@ -77,9 +76,9 @@ class GroupFragment : Fragment() {
             is GroupData.GroupList -> {
                 lifecycleScope.launch {
                     if (item.key != null) {
-                        val intent = PostContentActivity.newIntent(
-                            requireContext(),
-                            item.key
+                        val intent = GroupActivity.newIntent(
+                            context = requireContext(),
+                            key = item.key
                         )
                         startActivity(intent)
                     } else {
@@ -120,9 +119,9 @@ class GroupFragment : Fragment() {
             is GroupData.GroupWant -> {
                 lifecycleScope.launch {
                     if (item.key != null) {
-                        val intent = PostContentActivity.newIntent(
-                            requireContext(),
-                            item.key
+                        val intent = GroupActivity.newIntent(
+                            context = requireContext(),
+                            key = item.key
                         )
                         startActivity(intent)
                     } else {

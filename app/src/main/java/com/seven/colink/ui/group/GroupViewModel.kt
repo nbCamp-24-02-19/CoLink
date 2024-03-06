@@ -1,10 +1,8 @@
 package com.seven.colink.ui.group
 
 import android.util.Log
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seven.colink.R
@@ -13,16 +11,9 @@ import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.domain.repository.PostRepository
-import com.seven.colink.util.Constants
-import com.seven.colink.util.convert.convertCalculateDays
-import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.GroupType
-import com.seven.colink.util.status.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -86,7 +77,7 @@ class GroupViewModel @Inject constructor(
             groupType = groupType,
             thumbnail = imageUrl,
             projectName = title,
-            days = startDate?.convertCalculateDays()?: "모집중",
+            days = "모집중",
             description = description,
             tags = tags,
             memberIds = memberIds

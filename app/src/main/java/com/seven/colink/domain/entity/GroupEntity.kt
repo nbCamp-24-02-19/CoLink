@@ -20,4 +20,5 @@ data class GroupEntity (
     val registeredDate: String? = LocalDateTime.now().convertLocalDateTime(),
     val startDate: String? = null,
     val endDate: String? = "",
+    val teamName: String? = null
 )

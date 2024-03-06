@@ -1,7 +1,6 @@
 package com.seven.colink.ui.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,15 +9,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.viewpager2.widget.CompositePageTransformer
-import androidx.viewpager2.widget.MarginPageTransformer
-import androidx.viewpager2.widget.ViewPager2
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentHomeBinding
 import com.seven.colink.ui.home.adapter.BottomViewPagerAdapter
 import com.seven.colink.ui.home.adapter.HomeMainAdapter
 import com.seven.colink.ui.home.adapter.TopViewPagerAdapter
-import com.seven.colink.ui.post.content.PostContentActivity
+import com.seven.colink.ui.post.register.PostActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -104,11 +100,12 @@ class HomeFragment : Fragment() {
                 val key = item.key
                 val entity = key?.let { homeViewModel.getPost(it) }
                 if (entity != null) {
-                    val intent = PostContentActivity.newIntent(
-                        requireContext(),
-                        entity.key
+                    startActivity(
+                        PostActivity.newIntent(
+                            context = requireActivity(),
+                            key = item.key
+                        )
                     )
-                    startActivity(intent)
                 }else {
                     Toast.makeText(requireContext(), "다음에 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
                 }
