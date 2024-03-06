@@ -9,7 +9,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
@@ -57,7 +56,7 @@ class MyPageFragment : Fragment() {
         privacypolicy()
         SkilRecyclerView()
         PostRecyclerView()
-        settingClick()
+//        settingClick()
 
         //스킬 추가
         skiladapter.plusClick = object : MyPageSkilAdapter.PlusClick{
@@ -74,7 +73,7 @@ class MyPageFragment : Fragment() {
         }
         //스킬 삭제
         skiladapter.skilLongClick = object : MyPageSkilAdapter.SkilLongClick{
-            override fun onLongClick(language: String, position: Int) {
+            override fun onLongClick(language: Any, position: Int) {
                 val ad = AlertDialog.Builder(context)
                 ad.setTitle("삭제")
                 ad.setMessage("정말로 삭제하시겠습니까?")
@@ -89,6 +88,7 @@ class MyPageFragment : Fragment() {
         }
 
 
+        //파이어베이스 유저 정보 연결 & 스킬 연결
         viewModel.userDetails.observe(viewLifecycleOwner) { userDetails ->
             // Update UI with user details
             updateUI(userDetails)
@@ -98,6 +98,7 @@ class MyPageFragment : Fragment() {
             Log.d("Tag", "${userDetails.skill}")
         }
 
+        //파이어베이스 유저 등록글
         viewModel.userPost.observe(viewLifecycleOwner) { it ->
             it?.map{post ->
                 if (post.grouptype == GroupType.PROJECT){
@@ -132,6 +133,9 @@ class MyPageFragment : Fragment() {
             startActivity(intent)
         }
         binding.tvMypageAboutMe.text = user.info
+
+        val uri = Uri.parse(user.profile.toString())
+        binding.ivMypageProfile.setImageURI(uri)
 
         val level = user.level
         val levelicon: Drawable = DrawableCompat.wrap(binding.ivMypageLevel.drawable)
@@ -196,20 +200,20 @@ class MyPageFragment : Fragment() {
 
 
 
-    private fun settingClick(){
-        binding.ivMypageSetting.setOnClickListener {
-            val myPageEditDetailFragment = LayoutInflater.from(context).inflate(R.layout.fragment_my_page_edit_detail, null)
-            val myBuilder = AlertDialog.Builder(context)
-                .setView(myPageEditDetailFragment)
-            val mAlertDialog = myBuilder.show()
-
-            val mypageBackButton = myPageEditDetailFragment.findViewById<ImageView>(R.id.iv_mypage_detail_back)
-
-            mypageBackButton.setOnClickListener {
-                mAlertDialog.dismiss()
-            }
-        }
-    }
+//    private fun settingClick(){
+//        binding.ivMypageSetting.setOnClickListener {
+//            val myPageEditDetailFragment = LayoutInflater.from(context).inflate(R.layout.fragment_my_page_edit_detail, null)
+//            val myBuilder = AlertDialog.Builder(context)
+//                .setView(myPageEditDetailFragment)
+//            val mAlertDialog = myBuilder.show()
+//
+//            val mypageBackButton = myPageEditDetailFragment.findViewById<ImageView>(R.id.iv_mypage_detail_back)
+//
+//            mypageBackButton.setOnClickListener {
+//                mAlertDialog.dismiss()
+//            }
+//        }
+//    }
 
 
     private fun SkilRecyclerView(){
@@ -223,6 +227,7 @@ class MyPageFragment : Fragment() {
         binding.reMypageProject.adapter = postadapter
         binding.reMypageProject.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
     }
+
 
 
 }
