@@ -1,7 +1,6 @@
 package com.seven.colink.ui.mypage
 
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -71,13 +70,14 @@ class MyPageViewModel @Inject constructor(
        }
     }
 
-    fun removeSkill(skill: String){
+    fun removeSkill(skill: Any){
 
         viewModelScope.launch {
             val currentUser = authRepository.getCurrentUser().message
             val userDetailsResult = userRepository.getUserDetails(currentUser)
             userDetailsResult.onSuccess { user ->
                 val updatedSkills = user?.skill?.filter { it != skill }
+                Log.d("Tag", "updateSkills = ${updatedSkills}")
                 val updatedUser = user?.copy(skill = updatedSkills)
                 updatedUser?.let {
                     userRepository.registerUser(it)

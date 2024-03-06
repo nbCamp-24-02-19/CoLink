@@ -1,17 +1,13 @@
-package com.seven.colink.ui.mypage.adapter
+package com.seven.colink.ui.userdetail.adapter
 
-import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.seven.colink.R
 import com.seven.colink.databinding.MypageRecyclerviewItemPostBinding
-import com.seven.colink.ui.mypage.MyPageItem
-import com.seven.colink.ui.mypage.MyPostItem
+import com.seven.colink.ui.userdetail.UserPostItem
 
-class MyPagePostAdapter(var mItems: List<MyPostItem>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class UserDetailPostAdapter (var mItems: List<UserPostItem>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
     companion object{
@@ -35,8 +31,8 @@ class MyPagePostAdapter(var mItems: List<MyPostItem>) : RecyclerView.Adapter<Rec
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when(val item = mItems[position]){
-            is MyPostItem.MyPagePostItem ->{
-                (holder as ProjectViewHolder).holderProjecting.text = item.projecting
+            is UserPostItem.UserDetailPostItem ->{
+                (holder as ProjectViewHolder).holderProjecting.text = item.userprojecting
                 //여기서 if문으로 컬러 바꾸기
                 if (holder.holderProjecting.text == "참여중"){
 //                    holder.holderProjecting.setBackgroundColor(Color.parseColor("#2DB7FF"))
@@ -46,21 +42,21 @@ class MyPagePostAdapter(var mItems: List<MyPostItem>) : RecyclerView.Adapter<Rec
                 } else if(holder.holderProjecting.text =="완료"){
                     holder.holderProjecting.setBackgroundResource(R.drawable.bg_mypage_ing_purple)
                 }
-                holder.projectname.text = item.projectName
-                holder.projecttime.text = item.projectTime
+                holder.projectname.text = item.userprojectName
+                holder.projecttime.text = item.userprojectTime
             }
-            is MyPostItem.MyPageStudyItem ->{
-                (holder as StudyViewHolder).holderStudying.text = item.studying
+            is UserPostItem.UserDetailStudyItem ->{
+                (holder as StudyViewHolder).holderStudying.text = item.userstudying
                 if (holder.holderStudying.text == "참여중"){
-                    holder.holderStudying.setBackgroundResource(R.drawable.bg_mypage_ing_blue)
+                    holder.holderStudying.setBackgroundResource(R.drawable.bg_mypage_ing_study)
                 }
-                holder.studyname.text = item.studyName
-                holder.studytime.text = item.studyTime
+                holder.studyname.text = item.userstudyName
+                holder.studytime.text = item.userstudyTime
             }
         }
     }
 
-    fun changeDataset(newDataSet: List<MyPostItem>){
+    fun changeDataset(newDataSet: List<UserPostItem>){
         mItems = newDataSet
         notifyDataSetChanged()
     }
@@ -71,8 +67,8 @@ class MyPagePostAdapter(var mItems: List<MyPostItem>) : RecyclerView.Adapter<Rec
 
     override fun getItemViewType(position: Int): Int {
         return when(mItems[position]){
-            is MyPostItem.MyPagePostItem -> VIEW_TYPE_PROJECT
-            is MyPostItem.MyPageStudyItem -> VIEW_TYPE_STUDY
+            is UserPostItem.UserDetailPostItem -> VIEW_TYPE_PROJECT
+            is UserPostItem.UserDetailStudyItem -> VIEW_TYPE_STUDY
         }
     }
 

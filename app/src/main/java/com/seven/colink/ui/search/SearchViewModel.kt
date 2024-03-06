@@ -57,10 +57,13 @@ class SearchViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
-                val result = postRepository.searchQuery(query, groupType, recruitType).map {
-                    Log.d("qweew", "$it")
-                    it.convertSearchModel()
-                }
+                val result =
+                    postRepository.searchQuery(query, groupType, recruitType).sortedByDescending {
+                        it.registeredDate
+                    }.map {
+                        Log.d("qweew", "$it")
+                        it.convertSearchModel()
+                    }
                 _searchModel.postValue(result)
             } catch (e: Exception) {
                 Log.e("doSearch", "Error during search", e)
@@ -71,47 +74,48 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    suspend fun getPost(key: String) : PostEntity?{
+    suspend fun getPost(key: String): PostEntity? {
         val post = postRepository.getPost(key).getOrNull()
         Log.d("getPost", "post = ${post}")
         return post
     }
 
-    fun setGroupBoth(query: String){
+    fun setGroupBoth(query: String) {
         _searchGroupState.value = "ALL"
         doSearch(query)
     }
+
     fun setProjectFilter(query: String) {
         _searchGroupState.value = "PROJECT"
         doSearch(query)
     }
 
-    fun setStudyFilter(query: String){
+    fun setStudyFilter(query: String) {
         _searchGroupState.value = "STUDY"
         doSearch(query)
     }
 
-    fun setGroupNone(query: String){
+    fun setGroupNone(query: String) {
         _searchGroupState.value = "NONE"
         doSearch(query)
     }
 
-    fun setRecruitBoth(query: String){
+    fun setRecruitBoth(query: String) {
         _searchRecruitState.value = "ALL"
         doSearch(query)
     }
 
-    fun setRecruitFilter(query: String){
+    fun setRecruitFilter(query: String) {
         _searchRecruitState.value = "RECRUIT"
         doSearch(query)
     }
 
-    fun setRecruitEndFilter(query: String){
+    fun setRecruitEndFilter(query: String) {
         _searchRecruitState.value = "END"
         doSearch(query)
     }
 
-    fun setRecruitNone(query: String){
+    fun setRecruitNone(query: String) {
         _searchRecruitState.value = "NONE"
         doSearch(query)
     }
@@ -119,7 +123,7 @@ class SearchViewModel @Inject constructor(
     private suspend fun PostEntity.convertSearchModel() =
         SearchModel(
             key = key,
-            authId = withContext(Dispatchers.IO){
+            authId = withContext(Dispatchers.IO) {
                 userRepository.getUserDetails(authId.toString()).getOrNull()?.name.toString()
             },
             title = title,

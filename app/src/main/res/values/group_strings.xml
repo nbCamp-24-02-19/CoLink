@@ -6,7 +6,7 @@
     <string name="group_days">142일째</string>
     <string name="group_description">자율작성: 프로젝트 목적, 프로젝트 목적, 프로젝트 목적 \n프로젝트 목적 프로젝트 목적 \n팀 규칙 등등</string>
     <string name="group_tag"># 안드로이드</string>
-    <string name="group_add_group">새 그룹 추가하기</string>
+    <string name="group_add_group">모집 글 작성하기</string>
     <string name="group_applied_group">지원한 그룹</string>
     <string name="group_insignia_type_project">P</string>
     <string name="group_insignia_type_study">S</string>

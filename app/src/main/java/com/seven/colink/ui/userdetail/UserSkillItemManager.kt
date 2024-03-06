@@ -10,7 +10,11 @@ object UserSkillItemManager {
         UserSkillItem("코틀린",R.drawable.ic_kotlin)
     )
 
-    fun getItem(): List<UserSkillItem> = skilUserItem
+    private val plusItems = listOf(
+        UserSkillItem("코틀린", R.drawable.ic_plus)
+    )
+
+    fun getItem(): List<UserSkillItem> = skilUserItem + plusItems
 
     fun addItem(language: String) =
         when (language) {
