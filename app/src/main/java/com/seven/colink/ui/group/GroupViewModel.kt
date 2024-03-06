@@ -1,6 +1,7 @@
 package com.seven.colink.ui.group
 
 import android.util.Log
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -85,7 +86,7 @@ class GroupViewModel @Inject constructor(
             groupType = groupType,
             thumbnail = imageUrl,
             projectName = title,
-            days = startDate?.convertCalculateDays()?: "0일째",
+            days = startDate?.convertCalculateDays()?: "모집중",
             description = description,
             tags = tags,
             memberIds = memberIds
