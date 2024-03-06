@@ -9,5 +9,6 @@ data class UserDetailModel (
     val userBlog: String? = null,
     val userGit: String? = null,
     val userSkill: List<String>? = emptyList(),
-    val userInfo: String? = null
+    val userInfo: String? = null,
+    val userLink: String? = null
 )
