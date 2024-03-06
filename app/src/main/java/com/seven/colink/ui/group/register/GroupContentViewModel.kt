@@ -12,7 +12,7 @@ import com.seven.colink.domain.entity.GroupEntity
 import com.seven.colink.domain.entity.TagEntity
 import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.domain.repository.ImageRepository
-import com.seven.colink.ui.post.register.model.AddTagResult
+import com.seven.colink.ui.post.register.post.model.AddTagResult
 import com.seven.colink.util.Constants
 import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.GroupType
