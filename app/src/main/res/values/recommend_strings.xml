@@ -6,4 +6,5 @@
     <string name="member_invite_group">그룹으로 초대</string>
     <string name="member_1on1_chat">1:1 채팅</string>
     <string name="recommend_send_message">님 에게 메세지를 보내보세요!</string>
+    <string name="recommend_other_member">님 외 추천 멤버</string>
 </resources>

@@ -2,13 +2,13 @@
 <resources>
     <string name="eval_project_name_title">프로젝트를 함께 진행한 ㅇㅇㅇ님을 평가해주세요.</string>
     <string name="eval_project_question_1">1</string>
-    <string name="eval_project_question_coop">팀원들과 잘 소통해서 협력했나요?</string>
+    <string name="eval_project_question_communication">팀원들과 잘 소통해서 협력했나요?</string>
     <string name="eval_project_question_2">2</string>
-    <string name="eval_project_question_tech">주어진 업무를 수행하기 위해 필요한 \n기술적 지식과 전문성을 보유했나요?</string>
+    <string name="eval_project_question_tech">주어진 업무를 수행하기 위해 필요한 기술적 지식과 전문성을 보유했나요?</string>
     <string name="eval_project_question_3">3</string>
-    <string name="eval_project_question_faith">프로젝트에 성실히 참여하고 업무를 수행했나요?</string>
+    <string name="eval_project_question_diligence">프로젝트에 성실히 참여하고 업무를 수행했나요?</string>
     <string name="eval_project_question_4">4</string>
-    <string name="eval_project_question_handle">예상치 못한 상황에서 유연하게 대처했나요?</string>
+    <string name="eval_project_question_flexible">예상치 못한 상황에서 유연하게 대처했나요?</string>
     <string name="eval_project_question_5">5</string>
     <string name="eval_project_question_creative">창의적인 해결책을 제시하여 문제를 해결했나요?</string>
     <string name="eval_project_prev">이전</string>
@@ -16,6 +16,6 @@
     <string name="eval_project_done">완료</string>
     <string name="eval_study_name_title">스터디를 함께 진행한 ㅇㅇㅇ님을 평가해주세요.</string>
     <string name="eval_study_active">스터디에 적극적으로 참여하고 학습활동에 집중했나요?</string>
-    <string name="eval_study_name_communicate">스터디 내에서 정보를 주고받고 의견을 나누며 \n원활한 소통을 했나요?</string>
+    <string name="eval_study_name_communication">스터디 내에서 정보를 주고받고 의견을 나누며 \n원활한 소통을 했나요?</string>
     <string name="eval_study_name_respect">팀원을 존중하고 협력적으로 스터디에 임했나요?</string>
 </resources>

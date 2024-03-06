@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
@@ -21,6 +22,7 @@ import com.seven.colink.databinding.MypageEditDialogBinding
 import com.seven.colink.ui.mypage.MyPageItem.skilItems
 import com.seven.colink.ui.mypage.adapter.MyPagePostAdapter
 import com.seven.colink.ui.mypage.adapter.MyPageSkilAdapter
+import com.seven.colink.ui.sign.signin.SignInActivity
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.skillCategory
 import com.seven.colink.util.status.GroupType
@@ -56,7 +58,8 @@ class MyPageFragment : Fragment() {
         privacypolicy()
         SkilRecyclerView()
         PostRecyclerView()
-//        settingClick()
+        //settingClick()
+        setLogout()
 
         //스킬 추가
         skiladapter.plusClick = object : MyPageSkilAdapter.PlusClick{
@@ -90,11 +93,20 @@ class MyPageFragment : Fragment() {
 
         //파이어베이스 유저 정보 연결 & 스킬 연결
         viewModel.userDetails.observe(viewLifecycleOwner) { userDetails ->
-            // Update UI with user details
-            updateUI(userDetails)
-            skiladapter.changeDataset(userDetails.skill?.map { skilItems(skillCategory.indexOf(it),it,MyPageSkilItemManager.addItem(it)) }
-                ?.plus(MyPageItem.plusItems(99,R.drawable.ic_add_24)) ?: emptyList())
-
+            if (userDetails!= null) {
+                // Update UI with user details
+                updateUI(userDetails)
+                skiladapter.changeDataset(userDetails.skill?.map {
+                    skilItems(
+                        skillCategory.indexOf(
+                            it
+                        ), it, MyPageSkilItemManager.addItem(it)
+                    )
+                }
+                    ?.plus(MyPageItem.plusItems(99, R.drawable.ic_add_24)) ?: emptyList())
+            }else{
+                startActivity(Intent(requireContext(), SignInActivity::class.java))
+            }
             Log.d("Tag", "${userDetails.skill}")
         }
 
@@ -191,6 +203,7 @@ class MyPageFragment : Fragment() {
         Log.d("Tag","user = ${user}")
     }
 
+
     private fun privacypolicy(){
         binding.ctMypage2.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://guri999.github.io/"))
@@ -216,11 +229,13 @@ class MyPageFragment : Fragment() {
 //    }
 
 
+
     private fun SkilRecyclerView(){
         skiladapter = MyPageSkilAdapter(MyPageSkilItemManager.getAllItem())
         binding.reMypageItem.adapter = skiladapter
         binding.reMypageItem.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
     }
+
 
     private fun PostRecyclerView(){
         postadapter = MyPagePostAdapter(MyPagePostItemManager.getItemAll())
@@ -228,6 +243,10 @@ class MyPageFragment : Fragment() {
         binding.reMypageProject.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
     }
 
-
-
+    private fun setLogout() = with(viewModel){
+        binding.tvLogout.setOnClickListener {
+            startActivity(Intent(requireContext(),SignInActivity::class.java))
+            logout()
+        }
+    }
 }

@@ -65,7 +65,7 @@ class PostActivity : AppCompatActivity() {
             entity: PostEntity
         ) = Intent(context, PostActivity::class.java).apply {
             putExtra(EXTRA_ENTRY_TYPE, PostEntryType.UPDATE)
-            putExtra(EXTRA_POST_ENTITY, entity)
+            putExtra(EXTRA_POST_ENTITY, entity.key)
         }
     }
 

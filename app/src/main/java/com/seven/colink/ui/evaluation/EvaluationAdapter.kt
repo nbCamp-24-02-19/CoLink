@@ -1,70 +1,109 @@
 package com.seven.colink.ui.evaluation
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.seven.colink.databinding.FragmentEvaluationProjectBinding
 import com.seven.colink.databinding.FragmentEvaluationStudyBinding
 import com.seven.colink.databinding.ItemSearchPostBinding
+import com.seven.colink.databinding.ItemUnknownBinding
+import com.seven.colink.util.status.GroupType
+import com.seven.colink.util.status.GroupViewType
 
-class EvaluationAdapter(private val mItems: MutableList<EvaluationData>) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class EvaluationAdapter(
+    private val context: Context,
+    private val onClickButton: (Int, EvaluationData) -> Unit,
+) : ListAdapter<EvaluationData, EvaluationAdapter.EvalViewHolder>(
+    object : DiffUtil.ItemCallback<EvaluationData>() {
 
-    companion object {
-        private const val VIEW_TYPE_PROJECT = 1
-        private const val VIEW_TYPE_STUDY = 2
-    }
+        override fun areItemsTheSame(oldItem: EvaluationData, newItem: EvaluationData): Boolean =
+            when {
+                oldItem is EvaluationData.EvalProject && newItem is EvaluationData.EvalProject -> {
+                    oldItem.name == newItem.name
+                }
 
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): RecyclerView.ViewHolder {
-        return if (viewType == VIEW_TYPE_PROJECT) {
-            val binding = FragmentEvaluationProjectBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
-            ProjectViewHolder(binding)
-        } else {
-            val binding = FragmentEvaluationStudyBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
-            StudyViewHolder(binding)
-        }
+                oldItem is EvaluationData.EvalStudy && newItem is EvaluationData.EvalStudy -> {
+                    oldItem.name == newItem.name
+                }
 
-    }
-
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when(val item = mItems[position]) {
-            is EvaluationData.EvalProject -> {
-                (holder as ProjectViewHolder).name.text = item.name
+                else -> oldItem == newItem
             }
-            is EvaluationData.EvalStudy -> {
-                (holder as StudyViewHolder).name.text = item.name
+
+
+        override fun areContentsTheSame(
+            oldItem: EvaluationData,
+            newItem: EvaluationData
+        ): Boolean = oldItem == newItem
+    }
+) {
+
+    abstract class EvalViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        abstract fun onBind(item: EvaluationData)
+    }
+
+    override fun getItemViewType(position: Int): Int = when (getItem(position)) {
+        is EvaluationData.EvalProject -> GroupType.PROJECT
+        is EvaluationData.EvalStudy -> GroupType.STUDY
+        else -> GroupType.UNKNOWN
+    }.ordinal
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EvalViewHolder =
+        when (GroupType.from(viewType)) {
+            GroupType.PROJECT -> EvalProjectViewHolder(
+                context,
+                FragmentEvaluationProjectBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+            )
+
+            GroupType.STUDY -> EvalStudyViewHolder(
+                context,
+                FragmentEvaluationStudyBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+            )
+
+            else -> EvalUnknownViewHolder(
+                ItemUnknownBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            )
+        }
+
+    override fun onBindViewHolder(holder: EvalViewHolder, position: Int) {
+        holder.onBind(getItem(position))
+    }
+
+    class EvalProjectViewHolder(
+        context: Context,
+        private val binding: FragmentEvaluationProjectBinding
+    ) : EvalViewHolder(binding.root) {
+        override fun onBind(item: EvaluationData) {
+            if (item is EvaluationData.EvalProject) {
+                binding.tvEvalTitle.text = item.name
             }
         }
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return when(mItems[position]){
-            is EvaluationData.EvalProject -> VIEW_TYPE_PROJECT
-            is EvaluationData.EvalStudy -> VIEW_TYPE_STUDY
+    class EvalStudyViewHolder(
+        context: Context,
+        private val binding: FragmentEvaluationStudyBinding
+    ) : EvalViewHolder(binding.root) {
+        override fun onBind(item: EvaluationData) {
+            if (item is EvaluationData.EvalStudy) {
+                binding.tvEvalTitle.text = item.name
+            }
         }
     }
 
-    override fun getItemCount(): Int = mItems.size
-
-    inner class ProjectViewHolder(binding: FragmentEvaluationProjectBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-        val name = binding.tvEvalTitle
-    }
-
-    inner class StudyViewHolder(binding: FragmentEvaluationStudyBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-        val name = binding.tvEvalTitle
+    class EvalUnknownViewHolder(binding: ItemUnknownBinding) :
+        EvalViewHolder(binding.root) {
+        override fun onBind(item: EvaluationData) = Unit
     }
 }

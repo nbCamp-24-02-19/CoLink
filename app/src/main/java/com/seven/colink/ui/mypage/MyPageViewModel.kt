@@ -91,6 +91,11 @@ class MyPageViewModel @Inject constructor(
 
     }
 
+    fun logout(){
+        viewModelScope.launch {
+            authRepository.signOut()
+        }
+    }
     private fun PostEntity.convertPostEntity() = MyPagePostModel(
         key = key,
         title = title,
