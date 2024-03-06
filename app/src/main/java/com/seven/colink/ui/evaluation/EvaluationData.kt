@@ -7,11 +7,11 @@ sealed interface EvaluationData {
         val name: String? = "",
         val photoUrl: String? = "",
         val grade : Double? = 5.0,
-        val communication: Int? = null,
-        val technic: Int? = null,
-        val diligence: Int? = null,
-        val flexibility: Int? = null,
-        val creativity: Int? = null,
+        val communication: Int,
+        val technic: Int,
+        val diligence: Int,
+        val flexibility: Int,
+        val creativity: Int,
         val evalCount: Int = 0
     ) : EvaluationData
     data class EvalStudy(
@@ -20,9 +20,9 @@ sealed interface EvaluationData {
         val name: String? = "",
         val photoUrl: String? = "",
         val grade : Double? = 5.0,
-        val diligence: Int? = null,
-        val communication: Int? = null,
-        val flexibility: Int? = null,
+        val diligence: Int,
+        val communication: Int,
+        val flexibility: Int,
         val evalCount: Int = 0
     ) : EvaluationData
 }

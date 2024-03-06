@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import com.seven.colink.databinding.FragmentEvaluationProjectBinding
 import com.seven.colink.databinding.FragmentEvaluationStudyBinding
 import com.seven.colink.databinding.ItemSearchPostBinding
@@ -23,11 +24,11 @@ class EvaluationAdapter(
         override fun areItemsTheSame(oldItem: EvaluationData, newItem: EvaluationData): Boolean =
             when {
                 oldItem is EvaluationData.EvalProject && newItem is EvaluationData.EvalProject -> {
-                    oldItem.name == newItem.name
+                    oldItem.key == newItem.key
                 }
 
                 oldItem is EvaluationData.EvalStudy && newItem is EvaluationData.EvalStudy -> {
-                    oldItem.name == newItem.name
+                    oldItem.key == newItem.key
                 }
 
                 else -> oldItem == newItem
@@ -86,7 +87,13 @@ class EvaluationAdapter(
     ) : EvalViewHolder(binding.root) {
         override fun onBind(item: EvaluationData) {
             if (item is EvaluationData.EvalProject) {
+                binding.ivEvalProfileImage.load(item.photoUrl)
                 binding.tvEvalTitle.text = item.name
+                binding.rbEvalQuestion1.rating = item.communication.toFloat()
+                binding.rbEvalQuestion2.rating = item.technic.toFloat()
+                binding.rbEvalQuestion3.rating = item.diligence.toFloat()
+                binding.rbEvalQuestion4.rating = item.flexibility.toFloat()
+                binding.rbEvalQuestion5.rating = item.creativity.toFloat()
             }
         }
     }
@@ -97,7 +104,11 @@ class EvaluationAdapter(
     ) : EvalViewHolder(binding.root) {
         override fun onBind(item: EvaluationData) {
             if (item is EvaluationData.EvalStudy) {
+                binding.ivEvalProfileImage.load(item.photoUrl)
                 binding.tvEvalTitle.text = item.name
+                binding.rbEvalQuestion1.rating = item.diligence.toFloat()
+                binding.rbEvalQuestion2.rating = item.communication.toFloat()
+                binding.rbEvalQuestion3.rating = item.flexibility.toFloat()
             }
         }
     }
