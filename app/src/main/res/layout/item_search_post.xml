@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:layout_marginBottom="1dp">
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -34,7 +35,7 @@
                 android:backgroundTint="@color/forth_color"
                 android:fontFamily="@font/inter_bold"
                 android:paddingHorizontal="8dp"
-                android:paddingVertical="4dp"
+                android:paddingVertical="2dp"
                 android:text="@string/search_filter_project"
                 android:textColor="@color/white"
                 android:textSize="10sp"
@@ -49,7 +50,7 @@
                 android:backgroundTint="@color/study_color"
                 android:fontFamily="@font/inter_bold"
                 android:paddingHorizontal="8dp"
-                android:paddingVertical="4dp"
+                android:paddingVertical="2dp"
                 android:text="@string/search_filter_study"
                 android:textColor="@color/white"
                 android:textSize="10sp"
@@ -64,7 +65,7 @@
                 android:backgroundTint="@color/recruit_end"
                 android:fontFamily="@font/inter_bold"
                 android:paddingHorizontal="8dp"
-                android:paddingVertical="4dp"
+                android:paddingVertical="2dp"
                 android:text="@string/search_filter_end"
                 android:textColor="@color/white"
                 android:textSize="10sp"
@@ -79,7 +80,7 @@
                 android:backgroundTint="@color/main_color"
                 android:fontFamily="@font/inter_bold"
                 android:paddingHorizontal="8dp"
-                android:paddingVertical="4dp"
+                android:paddingVertical="2dp"
                 android:text="@string/search_filter_recruit"
                 android:textColor="@color/white"
                 android:textSize="10sp"

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white">
+    android:background="@color/bg">
 
     <ImageView
         android:id="@+id/iv_group_add"
@@ -19,7 +19,8 @@
         app:layout_constraintEnd_toStartOf="@id/tv_group_add"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <TextView
         android:id="@+id/tv_group_add"
@@ -34,6 +35,15 @@
         app:layout_constraintStart_toEndOf="@id/iv_group_add"
         app:layout_constraintTop_toTopOf="@id/iv_group_add" />
 
+    <View
+        android:layout_width="2000dp"
+        android:layout_height="8dp"
+        android:paddingStart="-24dp"
+        android:layout_marginTop="24dp"
+        android:background="@color/border_line"
+        app:layout_constraintTop_toBottomOf="@id/tv_group_add"
+        app:layout_constraintStart_toStartOf="parent"/>
+
     <TextView
         android:id="@+id/tv_group_applied_group"
         android:layout_width="match_parent"
@@ -44,6 +54,7 @@
         android:text="@string/group_applied_group"
         android:textColor="@color/black"
         android:textSize="24sp"
+        android:layout_marginStart="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_group_add" />
