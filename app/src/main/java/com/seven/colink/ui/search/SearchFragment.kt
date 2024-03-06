@@ -1,7 +1,6 @@
 package com.seven.colink.ui.search
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -210,6 +209,7 @@ class SearchFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        hideProgressOverlay()
     }
 
     private fun goDetail() {

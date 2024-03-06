@@ -70,13 +70,6 @@ class GroupFragment : Fragment() {
         groupViewModel.groupData.observe(viewLifecycleOwner) {
             groupAdapter.submitList(it)
         }
-        groupViewModel.joinList.observe(viewLifecycleOwner){
-            if (groupViewModel.joinList.value.isNullOrEmpty()){
-                groupAdapter.submitList(it)
-            } else {
-                groupAdapter.submitList(it)
-            }
-        }
     }
 
     private fun handleItemClick(item: GroupData) {

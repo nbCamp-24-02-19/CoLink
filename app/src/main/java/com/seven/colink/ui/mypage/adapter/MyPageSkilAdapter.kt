@@ -4,14 +4,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.seven.colink.databinding.ItemSignUpSkillBinding
 import com.seven.colink.databinding.MypageRecyclerviewItemSkilitemBinding
 import com.seven.colink.ui.mypage.MyPageItem
 import com.seven.colink.ui.mypage.MyPageSkilItemManager
-import com.seven.colink.ui.mypage.MyPostItem
-import com.seven.colink.ui.sign.signup.adater.SignUpProfileAdapter
-import com.seven.colink.ui.sign.signup.type.SignUpProfileViewType
-import okhttp3.internal.notify
 
 class MyPageSkilAdapter(var mItems: List<MyPageItem>): RecyclerView.Adapter<ViewHolder>() {
 
@@ -21,7 +16,7 @@ class MyPageSkilAdapter(var mItems: List<MyPageItem>): RecyclerView.Adapter<View
     }
 
     interface SkilLongClick{
-            fun onLongClick(language: String, position: Int)
+            fun onLongClick(language: Any, position: Int)
     }
 
     interface PlusClick{
@@ -57,10 +52,10 @@ class MyPageSkilAdapter(var mItems: List<MyPageItem>): RecyclerView.Adapter<View
         notifyDataSetChanged()
     }
 
-    fun addItem(myPageItem: MyPageItem.skilItems){
-        mItems + MyPageSkilItemManager.addItem2(myPageItem.language)
-        notifyDataSetChanged()
-    }
+//    fun addItem(myPageItem: MyPageItem.skilItems){
+//        mItems + MyPageSkilItemManager.addItem2(myPageItem.language)
+//        notifyDataSetChanged()
+//    }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mItems[position]
