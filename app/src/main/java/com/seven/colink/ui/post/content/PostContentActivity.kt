@@ -21,6 +21,7 @@ import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.dialog.setUserInfoDialog
 import com.seven.colink.util.showToast
 import com.seven.colink.util.status.ApplicationStatus
+import com.seven.colink.util.status.PostEntryType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -88,9 +89,10 @@ class PostContentActivity : AppCompatActivity() {
         binding.tvEdit.setOnClickListener {
             lifecycleScope.launch {
                 startActivity(
-                    PostActivity.newIntentForUpdate(
+                    PostActivity.newIntent(
                         this@PostContentActivity,
-                        viewModel.uiState.value ?: return@launch
+                        key = viewModel.uiState.value?.key ?: return@launch,
+                        entryType = PostEntryType.UPDATE,
                     )
                 )
                 if (isFinishing.not()) {

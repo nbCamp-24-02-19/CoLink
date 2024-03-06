@@ -1,4 +1,4 @@
-package com.seven.colink.ui.post.register.adapter
+package com.seven.colink.ui.post.register.post.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
