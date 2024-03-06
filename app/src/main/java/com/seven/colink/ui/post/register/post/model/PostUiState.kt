@@ -1,4 +1,4 @@
-package com.seven.colink.ui.post.register.model
+package com.seven.colink.ui.post.register.post.model
 
 import android.net.Uri
 import com.seven.colink.domain.entity.RecruitInfo

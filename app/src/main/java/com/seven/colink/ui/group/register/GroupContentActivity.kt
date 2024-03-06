@@ -15,9 +15,9 @@ import coil.load
 import com.seven.colink.R
 import com.seven.colink.databinding.ActivityGroupContentBinding
 import com.seven.colink.domain.entity.TagEntity
-import com.seven.colink.ui.post.register.adapter.TagListAdapter
-import com.seven.colink.ui.post.register.model.AddTagResult
-import com.seven.colink.ui.post.register.model.TagListItem
+import com.seven.colink.ui.post.register.post.adapter.TagListAdapter
+import com.seven.colink.ui.post.register.post.model.AddTagResult
+import com.seven.colink.ui.post.register.post.model.TagListItem
 import com.seven.colink.util.Constants
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay

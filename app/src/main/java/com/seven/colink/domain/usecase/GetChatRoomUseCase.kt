@@ -11,7 +11,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class GetChatRoomUsecase @Inject constructor(
+class GetChatRoomUseCase @Inject constructor(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
     private val chatRepository: ChatRepository,
