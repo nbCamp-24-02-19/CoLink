@@ -1,5 +1,6 @@
 package com.seven.colink.util.convert
 
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -47,7 +48,7 @@ fun String.convertCalculateDays(): String {
     val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
     val date = format.parse(this)
     val now = Date()
-    val diff = now.time - date.time
+    val diff = now.time - (date?.time ?: 0)
     val days = diff / (24 * 60 * 60 * 1000)
-    return "${days}일째"
+    return "+ ${days}일째"
 }
