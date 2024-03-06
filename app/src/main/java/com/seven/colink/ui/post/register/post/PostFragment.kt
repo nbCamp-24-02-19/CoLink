@@ -25,22 +25,20 @@ import com.seven.colink.domain.entity.TagEntity
 import com.seven.colink.ui.post.register.post.adapter.RecruitListAdapter
 import com.seven.colink.ui.post.register.post.adapter.TagListAdapter
 import com.seven.colink.ui.post.register.post.model.AddTagResult
-import com.seven.colink.ui.post.register.post.model.DialogEvent
-import com.seven.colink.ui.post.register.post.model.PostViewState
 import com.seven.colink.ui.post.register.post.model.TagListItem
 import com.seven.colink.ui.post.register.post.viewmodel.PostViewModel
 import com.seven.colink.ui.post.register.recommend.RecommendFragment
 import com.seven.colink.ui.post.register.viewmodel.PostSharedViewModel
 import com.seven.colink.util.Constants
 import com.seven.colink.util.Constants.Companion.LIMITED_PEOPLE
+import com.seven.colink.util.applyDarkFilter
 import com.seven.colink.util.dialog.RecruitDialog
+import com.seven.colink.util.highlightNumbers
 import com.seven.colink.util.openGallery
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.showToast
-import com.seven.colink.util.status.PostEntryType
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -91,7 +89,7 @@ class PostFragment : Fragment() {
 
         lifecycleScope.launch {
             groupType.collect {
-                with(viewModel){
+                with(viewModel) {
                     if (it != null) {
                         setGroupType(it)
                     }
@@ -148,7 +146,6 @@ class PostFragment : Fragment() {
                     )
                 )
                 etRegisterTag.text.clear()
-                etRegisterTag.clearFocus()
                 return@setOnEditorActionListener true
             }
             false
@@ -168,7 +165,9 @@ class PostFragment : Fragment() {
                 },
                 onError = { exception ->
                     hideProgressOverlay()
-                    requireContext().showToast(exception.message ?: getString(R.string.post_register_fail))
+                    requireContext().showToast(
+                        exception.message ?: getString(R.string.post_register_fail)
+                    )
                 })
         }
 
@@ -226,33 +225,29 @@ class PostFragment : Fragment() {
 
                 etTitle.setText(state.editTextTitle)
 
-                state.isProjectSelected?.let {
-                    setTextViewProperties(
-                        tvProject, it, state.projectButtonTextColor
-                    )
-                }
-                state.isProjectSelected?.let {
-                    setTextViewProperties(
-                        tvStudy, it.not(), state.studyButtonTextColor
-                    )
-                }
+                state.isProjectSelected?.let { viewByGroupType(it) }
+                state.isProjectSelected?.let { viewByGroupType(!it) }
             }
         }
 
-        postUiState.observe(viewLifecycleOwner) { state ->
-            recruitListAdapter.submitList(state.recruitList)
-            binding.tvTotalRecruit.text =
-                getString(R.string.total_personnel, state.totalPersonnelCount)
-            totalPersonnelCount = state.totalPersonnelCount ?: 0
-            state.recruitList?.let {
-                recruitTypes = it.map { recruitInfo -> recruitInfo.type.orEmpty() }
-            }
 
-            tagListAdapter.submitList(state.tagList?.map {
-                com.seven.colink.ui.post.register.post.model.TagListItem.Item(
-                    tagEntity = it
+        postUiState.observe(viewLifecycleOwner) { state ->
+            with(binding) {
+                recruitListAdapter.submitList(state.recruitList)
+                tvTotalRecruit.text = getString(R.string.total_personnel, state.totalPersonnelCount)
+
+                val mainColor = ContextCompat.getColor(requireContext(), R.color.main_color)
+                val coloredText = highlightNumbers(
+                    getString(R.string.total_personnel, state.totalPersonnelCount),
+                    mainColor
                 )
-            })
+                tvTotalRecruit.setText(coloredText, TextView.BufferType.SPANNABLE)
+
+                totalPersonnelCount = state.totalPersonnelCount ?: 0
+                recruitTypes = state.recruitList?.map { it.type.orEmpty() } ?: emptyList()
+
+                tagListAdapter.submitList(state.tagList?.map { TagListItem.Item(tagEntity = it) })
+            }
         }
 
         selectedPersonnelCount.observe(viewLifecycleOwner) { count ->
@@ -264,6 +259,8 @@ class PostFragment : Fragment() {
             if (imageUrl != null) {
                 binding.ivAddImage.load(imageUrl)
                 binding.ivImageBackground.load(imageUrl)
+                binding.ivImageBackground.applyDarkFilter()
+
                 selectedImageUri = imageUrl
             }
         }
@@ -280,10 +277,10 @@ class PostFragment : Fragment() {
 
     }
 
-    private fun setTextViewProperties(textView: TextView, isSelected: Boolean, textColorRes: Int?) {
-        textView.isSelected = isSelected
-        textColorRes?.let { textView.setTextColor(ContextCompat.getColor(requireContext(), it)) }
-        binding.constraintLayoutProject.isVisible = isSelected.not()
-        binding.constraintLayoutStudy.isVisible = isSelected
+    private fun viewByGroupType(isSelected: Boolean) {
+        with(binding) {
+            constraintLayoutProject.isVisible = !isSelected
+            constraintLayoutStudy.isVisible = isSelected
+        }
     }
 }
