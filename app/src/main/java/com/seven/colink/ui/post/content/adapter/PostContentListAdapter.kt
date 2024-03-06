@@ -19,8 +19,8 @@ import com.seven.colink.databinding.ItemPostRecruitBinding
 import com.seven.colink.databinding.ItemPostSubTitleBinding
 import com.seven.colink.databinding.ItemPostTitleBinding
 import com.seven.colink.databinding.ItemUnknownBinding
-import com.seven.colink.ui.post.register.adapter.TagListAdapter
-import com.seven.colink.ui.post.register.model.TagListItem
+import com.seven.colink.ui.post.register.post.adapter.TagListAdapter
+import com.seven.colink.ui.post.register.post.model.TagListItem
 import com.seven.colink.ui.post.content.model.PostContentButtonUiState
 import com.seven.colink.ui.post.content.model.PostContentItem
 import com.seven.colink.util.setLevelIcon

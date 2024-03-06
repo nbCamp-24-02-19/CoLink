@@ -1,8 +1,6 @@
 package com.seven.colink.ui.group
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -98,7 +96,7 @@ class GroupFragment : Fragment() {
                     when (selectedOption) {
                         getString(R.string.project_kor) -> {
                             startActivity(
-                                PostActivity.newIntentForCreate(
+                                PostActivity.newIntent(
                                     requireContext(),
                                     GroupType.PROJECT
                                 )
@@ -107,7 +105,7 @@ class GroupFragment : Fragment() {
 
                         getString(R.string.study_kor) -> {
                             startActivity(
-                                PostActivity.newIntentForCreate(
+                                PostActivity.newIntent(
                                     requireContext(),
                                     GroupType.STUDY
                                 )

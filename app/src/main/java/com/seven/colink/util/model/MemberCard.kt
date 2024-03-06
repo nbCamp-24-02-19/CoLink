@@ -6,6 +6,6 @@ data class MemberCard(
     val profileUrl: String,
     val level: Int,
     val grade: Double,
-    val info: String,
+    val info: String?,
     val recruits: Int,
 )

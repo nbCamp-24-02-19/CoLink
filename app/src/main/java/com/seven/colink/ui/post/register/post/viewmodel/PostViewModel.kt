@@ -1,4 +1,4 @@
-package com.seven.colink.ui.post.register.viewmodel
+package com.seven.colink.ui.post.register.post.viewmodel
 
 import android.app.Activity
 import android.app.Application
@@ -19,11 +19,11 @@ import com.seven.colink.domain.entity.RecruitInfo
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.domain.repository.ImageRepository
-import com.seven.colink.ui.post.register.model.AddTagResult
-import com.seven.colink.ui.post.register.model.DialogEvent
-import com.seven.colink.ui.post.register.model.ImageUiState
-import com.seven.colink.ui.post.register.model.PostUiState
-import com.seven.colink.ui.post.register.model.PostViewState
+import com.seven.colink.ui.post.register.post.model.AddTagResult
+import com.seven.colink.ui.post.register.post.model.DialogEvent
+import com.seven.colink.ui.post.register.post.model.ImageUiState
+import com.seven.colink.ui.post.register.post.model.PostUiState
+import com.seven.colink.ui.post.register.post.model.PostViewState
 import com.seven.colink.util.Constants.Companion.EXTRA_ENTRY_TYPE
 import com.seven.colink.util.Constants.Companion.EXTRA_GROUP_TYPE
 import com.seven.colink.util.Constants.Companion.EXTRA_POST_ENTITY
@@ -33,26 +33,22 @@ import com.seven.colink.util.PersonnelUtils
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.PostEntryType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class PostViewModel @Inject constructor(
     private val app: Application,
-    private val savedStateHandle: SavedStateHandle,
     private val postRepository: PostRepository,
     private val imageRepository: ImageRepository,
     private val authRepository: AuthRepository,
     private val groupRepository: GroupRepository
 ) : ViewModel() {
-    private val entryType: PostEntryType? by lazy {
-        savedStateHandle.get<PostEntryType>(EXTRA_ENTRY_TYPE)
-    }
+    private lateinit var entryType: PostEntryType
     private lateinit var entity: PostEntity
-
-    private val groupType: GroupType? by lazy {
-        savedStateHandle.get<GroupType>(EXTRA_GROUP_TYPE)
-    }
+    private lateinit var groupType: GroupType
 
     private val _uiState: MutableLiveData<PostViewState> = MutableLiveData(PostViewState.init())
     val uiState: LiveData<PostViewState> get() = _uiState
@@ -69,25 +65,29 @@ class PostViewModel @Inject constructor(
     private val showDialogEvent = MutableLiveData<DialogEvent>()
     val showDialog: LiveData<DialogEvent> get() = showDialogEvent
 
+    private val _complete = MutableSharedFlow<String>()
+    val complete: SharedFlow<String> = _complete
 
-    init {
-        try {
-            entity = savedStateHandle.get<PostEntity>(EXTRA_POST_ENTITY)
-                ?: throw IllegalStateException("Entity cannot be null")
-        } catch (e: Exception) {
-            Log.d("TAG", "${e.message}")
-        }
-        initViewStateByEntryType()
+
+    fun setEntryType(type: PostEntryType) {
+        entryType = type
     }
 
-    private fun initViewStateByEntryType() {
+    fun setGroupType(type: GroupType) {
+        groupType = type
+    }
+
+    suspend fun setEntity(key: String) {
+        entity = postRepository.getPost(key).getOrNull()?: return
+    }
+
+    fun initViewStateByEntryType() {
         _uiState.value = when (entryType) {
             PostEntryType.CREATE -> initCreateViewState()
             PostEntryType.UPDATE -> initUpdateViewState()
             else -> PostViewState.init()
         }
     }
-
     private fun initCreateViewState(): PostViewState {
         val isProjectSelected = groupType == GroupType.PROJECT
         val projectButtonTextColor = if (isProjectSelected) R.color.white else R.color.main_color
@@ -148,15 +148,15 @@ class PostViewModel @Inject constructor(
     }
 
     fun removeTagItem(entityKey: String?) {
-        _postUiState.value = _postUiState.value?.let { state ->
+        _postUiState.value = postUiState.value?.let { state ->
             state.copy(tagList = state.tagList?.filterNot { it.key == entityKey })
         }
     }
 
     fun addRecruitInfo(recruitInfo: RecruitInfo) {
-        val currentList = _postUiState.value?.recruitList.orEmpty().toMutableList()
+        val currentList = postUiState.value?.recruitList.orEmpty().toMutableList()
         currentList.add(recruitInfo)
-        _postUiState.value = _postUiState.value?.copy(recruitList = currentList)
+        _postUiState.value = postUiState.value?.copy(recruitList = currentList)
         updateTotalPersonnelCount()
     }
 
@@ -200,7 +200,7 @@ class PostViewModel @Inject constructor(
                     val data = entity.convertGroupEntity()
                     groupRepository.registerGroup(data)
                     onSuccess(app.getString(R.string.post_register_success))
-                    showGroupDialog(data.key)
+                    _complete.emit(entity.key)
                 } catch (groupException: Exception) {
                     onError(groupException)
                 }

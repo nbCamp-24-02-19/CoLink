@@ -1,6 +1,6 @@
 package com.seven.colink.ui.post.content.model
 
-import com.seven.colink.ui.post.register.model.DialogEvent
+import com.seven.colink.ui.post.register.post.model.DialogEvent
 
 data class PostContentUiState(
     val list: List<PostContentItem>
