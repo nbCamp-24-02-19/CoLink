@@ -28,15 +28,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
 
-            <ImageView
-                android:id="@+id/iv_mypage_setting"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_marginTop="40dp"
-                android:layout_marginEnd="27dp"
-                android:src="@drawable/ic_mypage_edit"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+<!--            <ImageView-->
+<!--                android:id="@+id/iv_mypage_setting"-->
+<!--                android:layout_width="25dp"-->
+<!--                android:layout_height="25dp"-->
+<!--                android:layout_marginTop="40dp"-->
+<!--                android:layout_marginEnd="27dp"-->
+<!--                android:src="@drawable/ic_mypage_edit"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintTop_toTopOf="parent" />-->
 
 
             <ImageView
@@ -128,7 +128,7 @@
                 android:id="@+id/tv_mypage_score"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="132dp"
+                android:layout_marginTop="69dp"
                 android:layout_marginEnd="48dp"
                 android:text="9.0"
                 android:textColor="@color/black"
@@ -160,7 +160,7 @@
                 android:id="@+id/iv_mypage_git"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:layout_marginStart="38dp"
+                android:layout_marginStart="11dp"
                 android:layout_marginTop="132dp"
                 android:src="@drawable/ic_github"
                 app:layout_constraintStart_toEndOf="@+id/iv_mypage_blog"
@@ -175,7 +175,7 @@
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="16dp"
                 android:padding="10dp"
-                android:background="@drawable/mypage_shape"
+                android:background="@drawable/mypage_re_shape"
                 android:backgroundTint="@color/white"
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -218,7 +218,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
-                android:background="@drawable/mypage_shape"
+                android:background="@drawable/mypage_re_shape"
                 android:orientation="vertical"
                 android:padding="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -262,8 +262,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
-                android:background="@drawable/mypage_shape"
-                android:padding="16dp"
+                android:background="@drawable/mypage_re_shape"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
@@ -273,6 +272,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="14dp"
+                    android:layout_marginTop="16dp"
                     android:text="등록글"
                     android:textColor="@color/main_color"
                     android:textSize="14sp"
@@ -298,7 +298,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                android:layout_marginTop="49dp"
+                android:layout_marginTop="50dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/constraintLayout3">
