@@ -4,12 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginStart="24dp"
+    android:layout_marginEnd="24dp"
     android:background="@color/bg"
     tools:context=".ui.evaluation.EvaluationProjectFragment">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -25,6 +28,7 @@
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 android:layout_gravity="center"
+                android:layout_marginTop="24dp"
                 android:background="@drawable/bg_stepper_circle"
                 android:clipToOutline="true"
                 android:scaleType="centerCrop"
@@ -38,24 +42,25 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="20dp"
                 android:ellipsize="end"
+                android:textAlignment="center"
                 android:fontFamily="@font/inter_bold"
                 android:maxLines="2"
                 android:text="@string/eval_project_name_title"
                 android:textColor="@color/black"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:gravity="center_horizontal"
+                android:gravity="start"
                 android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/tv_eval_question_num1"
                     android:layout_width="16sp"
                     android:layout_height="16sp"
-                    android:layout_gravity="center"
+                    android:layout_gravity="center|top"
                     android:background="@drawable/bg_stepper_circle"
                     android:backgroundTint="@color/main_color"
                     android:fontFamily="@font/inter_regular"
@@ -70,7 +75,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:fontFamily="@font/inter_regular"
-                    android:text="@string/eval_project_question_coop"
+                    android:text="@string/eval_project_question_communication"
                     android:textColor="@color/black"
                     android:textSize="16sp" />
 
@@ -83,7 +88,9 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="12dp"
                 android:numStars="5"
-                android:progressTint="@color/level3"
+                android:isIndicator="false"
+                android:secondaryProgressTint="@android:color/transparent"
+                android:progressTint="@color/star_color"
                 android:rating="3"
                 android:stepSize="1" />
 
@@ -91,14 +98,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:gravity="center_horizontal"
+                android:gravity="start"
                 android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/tv_eval_question_num2"
                     android:layout_width="16sp"
                     android:layout_height="16sp"
-                    android:layout_gravity="center"
+                    android:layout_gravity="center|top"
                     android:background="@drawable/bg_stepper_circle"
                     android:backgroundTint="@color/main_color"
                     android:fontFamily="@font/inter_regular"
@@ -126,7 +133,8 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="12dp"
                 android:numStars="5"
-                android:progressTint="@color/level3"
+                android:secondaryProgressTint="@android:color/transparent"
+                android:progressTint="@color/star_color"
                 android:rating="3"
                 android:stepSize="1" />
 
@@ -134,14 +142,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:gravity="center_horizontal"
+                android:gravity="start"
                 android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/tv_eval_question_num3"
                     android:layout_width="16sp"
                     android:layout_height="16sp"
-                    android:layout_gravity="center"
+                    android:layout_gravity="center|top"
                     android:background="@drawable/bg_stepper_circle"
                     android:backgroundTint="@color/main_color"
                     android:fontFamily="@font/inter_regular"
@@ -156,7 +164,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:fontFamily="@font/inter_regular"
-                    android:text="@string/eval_project_question_faith"
+                    android:text="@string/eval_project_question_diligence"
                     android:textColor="@color/black"
                     android:textSize="16sp" />
 
@@ -169,7 +177,8 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="12dp"
                 android:numStars="5"
-                android:progressTint="@color/level3"
+                android:secondaryProgressTint="@android:color/transparent"
+                android:progressTint="@color/star_color"
                 android:rating="3"
                 android:stepSize="1" />
 
@@ -177,7 +186,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:gravity="center_horizontal"
+                android:gravity="start|top"
                 android:orientation="horizontal">
 
                 <TextView
@@ -199,7 +208,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:fontFamily="@font/inter_regular"
-                    android:text="@string/eval_project_question_handle"
+                    android:text="@string/eval_project_question_flexible"
                     android:textColor="@color/black"
                     android:textSize="16sp" />
 
@@ -212,7 +221,8 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="12dp"
                 android:numStars="5"
-                android:progressTint="@color/level3"
+                android:secondaryProgressTint="@android:color/transparent"
+                android:progressTint="@color/star_color"
                 android:rating="3"
                 android:stepSize="1" />
 
@@ -220,14 +230,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:gravity="center_horizontal"
+                android:gravity="start"
                 android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/tv_eval_question_num5"
                     android:layout_width="16sp"
                     android:layout_height="16sp"
-                    android:layout_gravity="center"
+                    android:layout_gravity="center|top"
                     android:background="@drawable/bg_stepper_circle"
                     android:backgroundTint="@color/main_color"
                     android:fontFamily="@font/inter_regular"
@@ -255,7 +265,8 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="12dp"
                 android:numStars="5"
-                android:progressTint="@color/level3"
+                android:secondaryProgressTint="@android:color/transparent"
+                android:progressTint="@color/star_color"
                 android:rating="3"
                 android:stepSize="1" />
 
