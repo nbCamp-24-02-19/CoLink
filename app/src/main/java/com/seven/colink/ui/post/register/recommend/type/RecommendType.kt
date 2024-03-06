@@ -1,4 +1,4 @@
-package com.seven.colink.util.dialog.type
+package com.seven.colink.ui.post.register.recommend.type
 
 import com.seven.colink.util.model.MemberCard
 import com.seven.colink.util.model.MemberInfo

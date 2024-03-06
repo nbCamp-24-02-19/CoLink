@@ -23,7 +23,7 @@ class CustomTypefaceSpan(private val newType: Typeface) : TypefaceSpan("") {
 }
 
 fun String.setFontType(
-    text: String,
+    text: String? = null,
     fontType: Typeface,
 ) = SpannableString(plus(text)).apply {
     setSpan(

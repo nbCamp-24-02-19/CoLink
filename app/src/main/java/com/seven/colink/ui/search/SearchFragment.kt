@@ -1,6 +1,7 @@
 package com.seven.colink.ui.search
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -9,14 +10,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentSearchBinding
-import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.ui.post.content.PostContentActivity
+import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
@@ -46,6 +48,9 @@ class SearchFragment : Fragment() {
             getString(R.string.study_kor)
         )
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -64,8 +69,8 @@ class SearchFragment : Fragment() {
                 when (selectedOption) {
                     getString(R.string.project_kor) -> {
                         startActivity(
-                            PostActivity.newIntentForCreate(
-                                requireContext(),
+                            PostActivity.newIntent(
+                                requireActivity(),
                                 GroupType.PROJECT
                             )
                         )
@@ -73,8 +78,8 @@ class SearchFragment : Fragment() {
 
                     getString(R.string.study_kor) -> {
                         startActivity(
-                            PostActivity.newIntentForCreate(
-                                requireContext(),
+                            PostActivity.newIntent(
+                                requireActivity(),
                                 GroupType.STUDY
                             )
                         )
