@@ -75,10 +75,4 @@ class EvaluationActivity : AppCompatActivity() {
             else -> throw UnsupportedOperationException("Unhandled type : $item")
         }
     }
-
-    private fun setFragment(frag: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.vp_eval_viewpager, frag)
-            .commit()
-    }
 }
