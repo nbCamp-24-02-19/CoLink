@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.seven.colink.databinding.FragmentHomeStudyBinding
@@ -14,13 +15,16 @@ import com.seven.colink.ui.home.HomeViewModel
 import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class HomeStudyFragment : Fragment() {
 
     private var _binding: FragmentHomeStudyBinding? = null
     private val binding get() = _binding!!
-    private val homeViewModel: HomeViewModel by activityViewModels()
+//    private val homeViewModel: HomeViewModel by activityViewModels()
+    private val homeViewModel: HomeChildViewModel by viewModels()
 //    private val mAdapter by lazy { BottomHomeStudyAdapter() }
 
     override fun onCreateView(
@@ -87,7 +91,7 @@ class HomeStudyFragment : Fragment() {
     }
 
     private fun setObserve() {
-        homeViewModel.topItems.observe(viewLifecycleOwner) {
+        homeViewModel._bottomItems.observe(viewLifecycleOwner) {
             bottomViewsData()
         }
     }
