@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_round_corner_20dp"
-    android:clipToOutline="true"
-    android:paddingHorizontal="24dp">
+    android:clipToOutline="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/lay_bottom"
@@ -18,11 +17,15 @@
         <TextView
             android:id="@+id/tv_home_bottom_project"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="20dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="15dp"
+            android:paddingHorizontal="8dp"
+            android:background="@drawable/bg_round_corner_12dp"
+            android:backgroundTint="@color/forth_color"
+            android:fontFamily="@font/inter_bold"
             android:text="@string/home_bottom_project"
-            android:textColor="@color/forth_color"
+            android:textColor="@color/white"
             android:textSize="12sp"
             android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
@@ -31,11 +34,15 @@
         <TextView
             android:id="@+id/tv_home_bottom_study"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="20dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="15dp"
+            android:paddingHorizontal="8dp"
+            android:background="@drawable/bg_round_corner_12dp"
+            android:backgroundTint="@color/study_color"
+            android:fontFamily="@font/inter_bold"
             android:text="@string/home_bottom_study"
-            android:textColor="@color/main_color"
+            android:textColor="@color/white"
             android:textSize="12sp"
             android:visibility="invisible"
             app:layout_constraintStart_toStartOf="parent"
