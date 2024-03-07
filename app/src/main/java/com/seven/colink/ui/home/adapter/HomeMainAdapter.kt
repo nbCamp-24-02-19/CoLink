@@ -72,8 +72,8 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
     }
 
     companion object {
-        private const val AUTO_SCROLL_DELAY = 3000L
-        private const val PAGE_SCROLL_DELAY = 3000L
+        private const val AUTO_SCROLL_DELAY = 2000L
+        private const val PAGE_SCROLL_DELAY = 2000L
     }
 
     inner class TopViewHolder(binding: ItemHomeTopViewpagerBinding) : ViewHolder(binding.root) {
@@ -104,7 +104,8 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
                     }
 
                     private fun startAutoScroll() {
-                        handler.postDelayed(autoScrollRunnable, AUTO_SCROLL_DELAY)
+                        handler.removeCallbacks(autoScrollRunnable)
+                        handler.postDelayed(autoScrollRunnable, AUTO_SCROLL_DELAY + PAGE_SCROLL_DELAY)
                     }
 
                     @RequiresApi(Build.VERSION_CODES.Q)
@@ -114,25 +115,25 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
                         super.onPageSelected(position)
 
                         left.setOnClickListener {
+                            handler.removeCallbacks(autoScrollRunnable)
                             if (currentPos == 0) {
                                 pager.setCurrentItem(6,true)
                             }else{
                                 pager.setCurrentItem(currentPos -1,true)
                             }
+                            handler.postDelayed(autoScrollRunnable, AUTO_SCROLL_DELAY + PAGE_SCROLL_DELAY)
                         }
 
                         right.setOnClickListener {
+                            handler.removeCallbacks(autoScrollRunnable)
                             if (currentPos == 6) {
                                 pager.setCurrentItem(0,true)
                             }else{
                                 pager.setCurrentItem(currentPos +1, true)
                             }
+                            handler.postDelayed(autoScrollRunnable, AUTO_SCROLL_DELAY + PAGE_SCROLL_DELAY)
                         }
-
-                        if (!handler.hasCallbacks(autoScrollRunnable)) {
-                            startAutoScroll()
-                        }
-
+                        startAutoScroll()
                     }
 
                     override fun onPageScrollStateChanged(state: Int) {
