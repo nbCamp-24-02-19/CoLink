@@ -4,10 +4,8 @@ import android.app.Activity
 import android.app.Application
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seven.colink.R
@@ -20,13 +18,9 @@ import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.domain.repository.ImageRepository
 import com.seven.colink.ui.post.register.post.model.AddTagResult
-import com.seven.colink.ui.post.register.post.model.DialogEvent
 import com.seven.colink.ui.post.register.post.model.ImageUiState
 import com.seven.colink.ui.post.register.post.model.PostUiState
 import com.seven.colink.ui.post.register.post.model.PostViewState
-import com.seven.colink.util.Constants.Companion.EXTRA_ENTRY_TYPE
-import com.seven.colink.util.Constants.Companion.EXTRA_GROUP_TYPE
-import com.seven.colink.util.Constants.Companion.EXTRA_POST_ENTITY
 import com.seven.colink.util.Constants.Companion.LIMITED_PEOPLE
 import com.seven.colink.util.Constants.Companion.LIMITED_TAG_COUNT
 import com.seven.colink.util.PersonnelUtils
@@ -62,9 +56,6 @@ class PostViewModel @Inject constructor(
     private val _selectedPersonnelCount: MutableLiveData<Int> = MutableLiveData(0)
     val selectedPersonnelCount: LiveData<Int> get() = _selectedPersonnelCount
 
-    private val showDialogEvent = MutableLiveData<DialogEvent>()
-    val showDialog: LiveData<DialogEvent> get() = showDialogEvent
-
     private val _complete = MutableSharedFlow<String>()
     val complete: SharedFlow<String> = _complete
 
@@ -78,14 +69,13 @@ class PostViewModel @Inject constructor(
     }
 
     suspend fun setEntity(key: String) {
-        entity = postRepository.getPost(key).getOrNull()?: return
+        entity = postRepository.getPost(key).getOrNull() ?: PostEntity()
     }
 
     fun initViewStateByEntryType() {
         _uiState.value = when (entryType) {
             PostEntryType.CREATE -> initCreateViewState()
             PostEntryType.UPDATE -> initUpdateViewState()
-            else -> PostViewState.init()
         }
     }
     private fun initCreateViewState(): PostViewState {
@@ -107,6 +97,9 @@ class PostViewModel @Inject constructor(
     }
 
     private fun initUpdateViewState(): PostViewState {
+        if (!::entity.isInitialized) {
+            return PostViewState.init()
+        }
         entity.let { entity ->
             _postUiState.value = _postUiState.value?.copy(
                 tagList = entity.tags?.map { TagEntity(name = it) } ?: emptyList(),
@@ -314,16 +307,5 @@ class PostViewModel @Inject constructor(
         startDate = "",
         endDate = "",
     )
-
-    private fun showGroupDialog(key: String) {
-        showDialogEvent.value = DialogEvent.Show(
-            groupType ?: GroupType.UNKNOWN,
-            key
-            )
-    }
-
-    fun dismissGroupDialog() {
-        showDialogEvent.value = DialogEvent.Dismiss
-    }
 
 }
