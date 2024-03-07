@@ -52,7 +52,7 @@ class MyPagePostAdapter(var mItems: List<MyPostItem>) : RecyclerView.Adapter<Rec
             is MyPostItem.MyPageStudyItem ->{
                 (holder as StudyViewHolder).holderStudying.text = item.studying
                 if (holder.holderStudying.text == "참여중"){
-                    holder.holderStudying.setBackgroundResource(R.drawable.bg_mypage_ing_study)
+                    holder.holderStudying.setBackgroundResource(R.drawable.bg_mypage_ing_blue)
                 }
                 holder.studyname.text = item.studyName
                 holder.studytime.text = item.studyTime

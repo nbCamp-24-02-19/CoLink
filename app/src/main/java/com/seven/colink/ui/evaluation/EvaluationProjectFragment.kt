@@ -10,6 +10,7 @@ import com.seven.colink.databinding.FragmentEvaluationProjectBinding
 class EvaluationProjectFragment : Fragment() {
     private var _binding: FragmentEvaluationProjectBinding? = null
     private val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

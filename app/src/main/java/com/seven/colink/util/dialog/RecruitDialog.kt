@@ -1,7 +1,6 @@
 package com.seven.colink.util.dialog
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,7 +37,7 @@ class RecruitDialog(
         1 to designCategory,
         2 to frontCategory,
         3 to backendCategory,
-        4 to  gameCategory
+        4 to gameCategory
     )
 
     override fun onCreateView(
@@ -74,7 +73,7 @@ class RecruitDialog(
         setupSpinner()
         setupButtons()
 
-        tvTotalPersonnel.text = getString(R.string.total_personnel, personnel)
+        tvTotalPersonnel.text = getString(R.string.personnel, personnel)
         includeStepperPersonnel.tvRecruitPersonnel.text = selectedPersonnelCount.toString()
         tvSelectedPersonnel.text = getString(R.string.personnel, selectedPersonnelCount)
 
@@ -89,7 +88,7 @@ class RecruitDialog(
     private fun updateCountTextView() = with(binding) {
         tvSelectedPersonnel.text = getString(R.string.personnel, selectedPersonnelCount)
         includeStepperPersonnel.tvRecruitPersonnel.text = "$selectedPersonnelCount"
-        tvTotalPersonnel.text = getString(R.string.total_personnel, totalPersonnelCount)
+        tvTotalPersonnel.text = getString(R.string.personnel, totalPersonnelCount)
     }
 
     private fun performCountOperation(operation: (Int, Int) -> Pair<Int, Int>) {
@@ -124,28 +123,26 @@ class RecruitDialog(
         majorCategoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerRecruitMajorCategory.adapter = majorCategoryAdapter
 
-        binding.spinnerRecruitMajorCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                val subCategoryAdapter = ArrayAdapter(
-                    requireContext(),
-                    android.R.layout.simple_spinner_item,
-                    subCategoryMap[position] ?: emptyList()
-                )
+        binding.spinnerRecruitMajorCategory.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    val subCategoryAdapter = ArrayAdapter(
+                        requireContext(),
+                        android.R.layout.simple_spinner_item,
+                        subCategoryMap[position] ?: emptyList()
+                    )
 
-                Log.d("TAG", "${subCategoryMap[position]}")
+                    subCategoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    binding.spinnerRecruitSubCategory.adapter = subCategoryAdapter
+                }
 
-
-                subCategoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                binding.spinnerRecruitSubCategory.adapter = subCategoryAdapter
+                override fun onNothingSelected(parent: AdapterView<*>?) = Unit
             }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
-        }
     }
 
     private fun setupButtons() = with(binding) {
