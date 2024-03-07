@@ -7,6 +7,7 @@
     android:paddingTop="20dp"
     android:paddingBottom="28dp"
     android:paddingHorizontal="20dp"
+    android:layout_marginHorizontal="24dp"
     android:background="@drawable/bg_member_card">
 
     <androidx.constraintlayout.widget.ConstraintLayout

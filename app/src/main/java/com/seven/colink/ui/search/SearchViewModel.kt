@@ -131,7 +131,12 @@ class SearchViewModel @Inject constructor(
             groupType = groupType,
             description = description,
             tags = tags,
-            registeredDate = registeredDate?.convertToDaysAgo(),
+            registeredDate =
+            if (startDate.isNullOrEmpty()) {
+                "모집중"
+            } else {
+                startDate.convertToDaysAgo()
+            },
             views = views
         )
 }

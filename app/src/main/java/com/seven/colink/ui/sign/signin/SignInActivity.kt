@@ -38,7 +38,10 @@ class SignInActivity : AppCompatActivity() {
     private fun initViewModel() = with(viewModel) {
         lifecycleScope.launch {
             entryType.collect {
-                if (it) finish()
+                if (it) {
+                    startActivity(Intent(this@SignInActivity, MainActivity::class.java))
+                    finish()
+                }
             }
         }
 

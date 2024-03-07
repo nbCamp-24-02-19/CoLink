@@ -21,15 +21,14 @@ data class PostEntity(
     val recruitInfo: String? = "",
     val recruit: List<RecruitInfo>? = emptyList(),
     val registeredDate: String? = LocalDateTime.now().convertLocalDateTime(),
-    val editDate: String? = null,
+    val editDate: String? = "",
     val views: Int? = 0,
     val startDate: String? = "",
     val endDate: String? = "",
     val memberIds: List<String> = emptyList(),
 )
 
-
-data class RecruitEntity (
+data class RecruitEntity(
     val key: String,
     val postId: String?,
     val groupId: String?,

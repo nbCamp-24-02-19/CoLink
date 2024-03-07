@@ -15,6 +15,7 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import coil.load
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentMyPageBinding
 import com.seven.colink.databinding.ItemSignUpSkillBinding
@@ -146,8 +147,7 @@ class MyPageFragment : Fragment() {
         }
         binding.tvMypageAboutMe.text = user.info
 
-        val uri = Uri.parse(user.profile.toString())
-        binding.ivMypageProfile.setImageURI(uri)
+        binding.ivMypageProfile.load(user.profile)
 
         val level = user.level
         val levelicon: Drawable = DrawableCompat.wrap(binding.ivMypageLevel.drawable)
@@ -247,6 +247,7 @@ class MyPageFragment : Fragment() {
         binding.tvLogout.setOnClickListener {
             startActivity(Intent(requireContext(),SignInActivity::class.java))
             logout()
+            requireActivity().finish()
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.seven.colink.ui.post.register.setgroup
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -51,7 +52,10 @@ class SetGroupFragment : Fragment() {
 
     private fun initView() = with(binding) {
 
-        btMoveGroupPage.setOnClickListener { requireActivity().finish() }
+        btMoveGroupPage.setOnClickListener {
+            /*startActivity(Intent(requireContext(), Group))*/
+            requireActivity().finish()
+        }
         btFinish.setOnClickListener { requireActivity().finish() }
     }
 

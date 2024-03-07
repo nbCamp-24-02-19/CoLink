@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/bg_round_bottom_corner_12dp"
         android:paddingTop="36dp"
+        android:paddingHorizontal="24dp"
         android:paddingBottom="12dp"
         android:clipToOutline="true">
 
@@ -28,6 +29,7 @@
         android:id="@+id/tv_recommend_other"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingHorizontal="24dp"
         android:text="@string/recommend_other_member"
         android:paddingTop="24dp"
         android:paddingBottom="12dp"

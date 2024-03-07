@@ -96,21 +96,21 @@ class RecommendViewModel @Inject constructor(
     }
 
     private fun UserEntity.convertCard() = MemberCard(
-        key = uid!!,
-        name = name!!,
-        profileUrl = photoUrl!!,
-        level = level!!,
-        grade = grade!!,
+        key = uid?: "",
+        name = name?: "",
+        profileUrl = photoUrl?:"",
+        level = level?: 0,
+        grade = grade?: 0.0,
         info = info,
         recruits = 1,
     )
 
     private fun UserEntity.convertUser() = MemberInfo(
-        key = uid!!,
-        name = name!!,
-        profileUrl = photoUrl!!,
+        key = uid?: "",
+        name = name?: "",
+        profileUrl = photoUrl?:"",
         info = info,
-        grade = grade!!,
-        level = level!!,
+        level = level?: 0,
+        grade = grade?: 0.0,
     )
 }

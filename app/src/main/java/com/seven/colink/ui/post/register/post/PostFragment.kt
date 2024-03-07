@@ -249,7 +249,7 @@ class PostFragment : Fragment() {
             }
 
             tagListAdapter.submitList(state.tagList?.map {
-                com.seven.colink.ui.post.register.post.model.TagListItem.Item(
+                TagListItem.Item(
                     tagEntity = it
                 )
             })

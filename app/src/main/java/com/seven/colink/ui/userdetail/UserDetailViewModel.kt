@@ -2,6 +2,7 @@ package com.seven.colink.ui.userdetail
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seven.colink.domain.entity.PostEntity
@@ -10,6 +11,7 @@ import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.ui.mypage.MyPagePostModel
+import com.seven.colink.ui.userdetail.UserDetailActivity.Companion.DETAIL_USER_KEY
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,8 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class UserDetailViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val authRepository: AuthRepository,
-    private val postRepository: PostRepository
+    private val postRepository: PostRepository,
+    private val handle: SavedStateHandle,
 ): ViewModel() {
 
     private val _userDetails = MutableLiveData<UserDetailModel>()
@@ -33,7 +35,7 @@ class UserDetailViewModel @Inject constructor(
 
     private fun loadUserDetails(){
         viewModelScope.launch {
-            val result = userRepository.getUserDetails(authRepository.getCurrentUser().message)
+            val result = userRepository.getUserDetails(handle.get<String>(DETAIL_USER_KEY))
             result.onSuccess { user->
                 _userDetails.postValue(user?.convertUserEntity())
             }
@@ -42,8 +44,9 @@ class UserDetailViewModel @Inject constructor(
 
     private fun loadUserPost() {
         viewModelScope.launch {
-            val result = postRepository.getPostByAuthId(authRepository.getCurrentUser().message)
-            result.onSuccess { post ->
+            val result = handle.get<String>(DETAIL_USER_KEY)
+                ?.let { postRepository.getPostByAuthId(it) }
+            result?.onSuccess { post ->
                 _userDetailPosts.postValue(post.map { it.convertPostEntity() })
             }
         }

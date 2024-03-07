@@ -7,6 +7,8 @@ import android.text.Spanned
 import android.text.TextPaint
 import android.text.style.TypefaceSpan
 import android.view.View
+import androidx.core.content.res.ResourcesCompat
+import com.seven.colink.R
 
 class CustomTypefaceSpan(private val newType: Typeface) : TypefaceSpan("") {
     override fun updateDrawState(ds: TextPaint) {
@@ -34,4 +36,4 @@ fun String.setFontType(
     )
 }
 
-fun View.interBold(): Typeface = Typeface.createFromAsset(context.assets,"fonts/inter_bold.ttf")
+fun View.interBold(): Typeface? =  ResourcesCompat.getFont(context, R.font.inter_bold)

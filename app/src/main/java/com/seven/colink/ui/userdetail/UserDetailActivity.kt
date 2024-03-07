@@ -1,5 +1,6 @@
 package com.seven.colink.ui.userdetail
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -18,6 +19,15 @@ import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
 
 class UserDetailActivity : AppCompatActivity() {
+    companion object {
+        const val DETAIL_USER_KEY = "detailUserKey"
+        fun newInstance(
+            context: Context,
+            key: String
+        ) = Intent(context, UserDetailActivity::class.java).apply {
+            putExtra(DETAIL_USER_KEY, key)
+        }
+    }
     private lateinit var binding:ActivityUserDetailBinding
     private lateinit var viewModel: UserDetailViewModel
     private lateinit var adapter: UserSkillAdapter
@@ -135,7 +145,7 @@ class UserDetailActivity : AppCompatActivity() {
                 ContextCompat.getColor(this,R.color.level7)
             )
         }
-        Log.d("Tag","user = ${user}")
+        Log.d("Tag","user = $user")
     }
 
     private fun userSkill(){

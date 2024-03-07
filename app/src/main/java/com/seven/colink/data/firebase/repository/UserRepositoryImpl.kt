@@ -31,7 +31,7 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getUserDetails(uid: String) = runCatching {
+    override suspend fun getUserDetails(uid: String?) = runCatching {
         firestore.collection(DataBaseType.USER.title).document(uid).get().await()
             .toObject(UserEntity::class.java)
     }.onFailure {

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="recommend_title_edit_complete">작성이 완료되었습니다!</string>
-    <string name="recommend_user_recommend_one">님의 추천 멤버는...</string>
+    <string name="recommend_user_recommend_one"> 님의 추천 멤버는...</string>
     <string name="recruit_project">현재 진행중인 프로젝트가 %1$d 개 있습니다.</string>
     <string name="member_invite_group">그룹으로 초대</string>
     <string name="member_1on1_chat">1:1 채팅</string>
-    <string name="recommend_send_message">%1$s 님 에게 메세지를 보내보세요!</string>
-    <string name="recommend_other_member">%1$s님 외 추천 멤버</string>
+    <string name="recommend_send_message"> 님 에게 메세지를 보내보세요!</string>
+    <string name="recommend_other_member"> 님 외 추천 멤버</string>
     <string name="recommend_next">다음</string>
 </resources>

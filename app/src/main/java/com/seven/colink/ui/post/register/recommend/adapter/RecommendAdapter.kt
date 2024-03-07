@@ -29,6 +29,7 @@ class RecommendAdapter(
     private val inviteGroup: (String) -> Unit,
     private val onChat: (String) -> Unit,
     private val onNext: () -> Unit,
+    private val onProfile: (String) -> Unit,
 ) : ListAdapter<RecommendType, RecommendAdapter.RecommendViewHolder>(
     object : DiffUtil.ItemCallback<RecommendType>() {
         override fun areItemsTheSame(
@@ -78,7 +79,8 @@ class RecommendAdapter(
             RecommendViewType.CARD -> CardViewHolder(
                 ItemMemberCardBinding.inflate(LayoutInflater.from(parent.context), parent, false),
                 inviteGroup,
-                onChat
+                onChat,
+                onProfile
             )
 
             RecommendViewType.MIDDLE -> MiddleViewHolder(
@@ -112,7 +114,11 @@ class RecommendAdapter(
     ) : RecommendViewHolder(binding.root) {
         override fun onBind(item: RecommendType) = with(binding) {
             item as RecommendType.Title
-            tvRecommendTitleName.text = item.name.setFontType(root.context.getString(R.string.recommend_title_edit_complete), itemView.interBold())
+            tvRecommendTitleName.text = itemView.interBold()?.let {
+                item.name.setFontType(root.context.getString(R.string.recommend_user_recommend_one),
+                    it
+                )
+            }
         }
     }
 
@@ -120,35 +126,46 @@ class RecommendAdapter(
         private val binding: ItemMemberCardBinding,
         private val inviteGroup: (String) -> Unit,
         private val onChat: (String) -> Unit,
+        private val onProfile: (String) -> Unit,
     ) : RecommendViewHolder(binding.root) {
         override fun onBind(item: RecommendType) = with(binding) {
             item as RecommendType.Card
             ivMemberProfile.load(item.memberCard?.profileUrl)
+            tvMemberName.text = item.memberCard?.name
             ivMemberLevelIcon.setLevelIcon(item.memberCard?.level ?: 0)
             tvMemberGrade.text = item.memberCard?.grade.toString()
             tvMemberLevelIcon.text = item.memberCard?.level.toString()
             tvMemberInfo.text = item.memberCard?.info
 
-            val format = root.context.getString(R.string.recruit_project, item.memberCard?.recruits)
+            val format = root.context.getString(R.string.recruit_project, item.memberCard?.recruits?: 0)
             val spannableString = SpannableString(format)
 
-            val countString = "${item.memberCard?.recruits}개"
-            val startIndex = format.indexOf(countString)
+            val countString = "${item.memberCard?.recruits?: 0}개"
+            val startIndex = format.indexOf(countString).let { if (it < 0) 14 else it }
             val endIndex = startIndex + countString.length
 
-            spannableString.setSpan(
-                ForegroundColorSpan(ContextCompat.getColor(root.context, R.color.main_color)),
-                startIndex,
-                endIndex,
-                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
+            if (startIndex != -1 && endIndex <= spannableString.length) {
+                spannableString.setSpan(
+                    ForegroundColorSpan(ContextCompat.getColor(root.context, R.color.main_color)),
+                    startIndex,
+                    endIndex,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
 
-            spannableString.setSpan(
-                RelativeSizeSpan(1.2f),
-                startIndex,
-                endIndex,
-                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
+                spannableString.setSpan(
+                    RelativeSizeSpan(1.2f),
+                    startIndex,
+                    endIndex,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            } else {
+                // startIndex가 -1이거나 endIndex가 범위를 벗어나는 경우에 대한 처리
+                // 여기에 적절한 로직을 추가하거나, 로그를 남겨 문제를 추적할 수 있습니다.
+            }
+            root.setOnClickListener {
+                item.memberCard?.key?.let(onProfile)
+            }
+
             tvMemberRecruitProject.text = spannableString
             btMemberInviteGroup.setOnClickListener {
                 item.memberCard?.key?.let { key -> inviteGroup(key) }
@@ -164,8 +181,16 @@ class RecommendAdapter(
     ) : RecommendViewHolder(binding.root) {
         override fun onBind(item: RecommendType) = with(binding) {
             item as RecommendType.Middle
-            tvRecommendSend.text = item.memberName.setFontType(root.context.getString(R.string.recommend_send_message), itemView.interBold())
-            tvRecommendOther.text = item.memberName.setFontType(root.context.getString(R.string.recommend_other_member), itemView.interBold())
+            tvRecommendSend.text = itemView.interBold()?.let {
+                item.memberName.setFontType(root.context.getString(R.string.recommend_send_message),
+                    it
+                )
+            }
+            tvRecommendOther.text = itemView.interBold()?.let {
+                item.memberName.setFontType(root.context.getString(R.string.recommend_other_member),
+                    it
+                )
+            }
         }
     }
 
@@ -176,7 +201,7 @@ class RecommendAdapter(
             item as RecommendType.Others
             ivUser.load(item.memberInfo?.profileUrl)
             tvUserName.text = item.memberInfo?.name
-            tvUserIntroduction.text = item.memberInfo?.info
+            tvUserIntroduction.text = item.memberInfo?.info.toString()
             tvUserGrade.text = item.memberInfo?.grade.toString()
             ivLevelDiaIcon.setLevelIcon(item.memberInfo?.level?: 0)
             tvLevelDiaIcon.text = item.memberInfo?.level.toString()

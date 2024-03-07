@@ -311,8 +311,8 @@ class PostViewModel @Inject constructor(
         tags = tags,
         memberIds = memberIds,
         registeredDate = registeredDate,
-        startDate = "",
-        endDate = "",
+        startDate = null,
+        endDate = null,
     )
 
     private fun showGroupDialog(key: String) {
