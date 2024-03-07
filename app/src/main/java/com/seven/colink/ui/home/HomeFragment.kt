@@ -32,7 +32,7 @@ class HomeFragment : Fragment() {
     private val mainAdapter by lazy { HomeMainAdapter() }
     private lateinit var bottomAdapter : BottomViewPagerAdapter
     private lateinit var topAdapter : TopViewPagerAdapter
-    private val homeViewModel : HomeViewModel by viewModels()
+    private val homeViewModel : HomeViewModel by activityViewModels()
     private var homeItem = mutableListOf<HomeAdapterItems>(
         HomeAdapterItems.TopView(TopViewPagerAdapter()),
         HomeAdapterItems.Header("그룹 추천")
@@ -88,7 +88,7 @@ class HomeFragment : Fragment() {
 
 //        val offsetPx = screenWidth - 4*(pageMargin + pagerOffset) + (pagerOffset/4)
 
-        val pageMarginR = 4
+        val pageMarginR = 5
         val pagerOffsetR = 1
 
         val adjustedPageMargin = pageMargin * (deviceWidth / screenWidth)
