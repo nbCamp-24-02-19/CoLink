@@ -86,7 +86,11 @@ class GroupViewModel @Inject constructor(
             groupType = groupType,
             thumbnail = imageUrl,
             projectName = title,
-            days = startDate?.convertCalculateDays()?: "모집중",
+            days = if (startDate.isNullOrEmpty()) {
+                "모집중"
+            } else {
+                startDate.convertCalculateDays()
+            },
             description = description,
             tags = tags,
             memberIds = memberIds
