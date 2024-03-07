@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Point
 import android.os.Build
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +20,7 @@ import com.seven.colink.databinding.FragmentHomeBinding
 import com.seven.colink.ui.home.adapter.BottomViewPagerAdapter
 import com.seven.colink.ui.home.adapter.HomeMainAdapter
 import com.seven.colink.ui.home.adapter.TopViewPagerAdapter
+import com.seven.colink.ui.home.child.HomeProjectFragment
 import com.seven.colink.ui.post.register.PostActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -32,7 +34,7 @@ class HomeFragment : Fragment() {
     private val mainAdapter by lazy { HomeMainAdapter() }
     private lateinit var bottomAdapter : BottomViewPagerAdapter
     private lateinit var topAdapter : TopViewPagerAdapter
-    private val homeViewModel : HomeViewModel by activityViewModels()
+    private val homeViewModel : HomeViewModel by viewModels()
     private var homeItem = mutableListOf<HomeAdapterItems>(
         HomeAdapterItems.TopView(TopViewPagerAdapter()),
         HomeAdapterItems.Header("그룹 추천")
@@ -77,28 +79,16 @@ class HomeFragment : Fragment() {
         val pageMargin = resources.getDimensionPixelOffset(R.dimen.page_home_margin)
         val pagerOffset = resources.getDimensionPixelOffset(R.dimen.offset_home_between_pages)
         val screenWidth = resources.displayMetrics.widthPixels
-        val deviceWidth = if (Build.MODEL.contains("Emulator") || Build.MODEL.contains("Virtual")) {
-            resources.displayMetrics.widthPixels
-        } else {
-            val display = (context?.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
-            val size = Point()
-            display.getSize(size)
-            size.x
-        }
-
-//        val offsetPx = screenWidth - 4*(pageMargin + pagerOffset) + (pagerOffset/4)
-
-        val pageMarginR = 5
-        val pagerOffsetR = 1
-
-        val adjustedPageMargin = pageMargin * (deviceWidth / screenWidth)
-        val adjustedPagerOffset = pagerOffset * (deviceWidth / screenWidth)
-
-        val offsetPx = deviceWidth - pageMarginR * (adjustedPageMargin + adjustedPagerOffset) + (adjustedPagerOffset / pagerOffsetR)
+        val screen = pixelToDp(screenWidth,requireContext())
+        val offsetPx = screen - (pageMargin + pagerOffset) - (pageMargin/2)
 
         binding.vpHome.setPageTransformer { page, position ->
             page.translationX = position * (-offsetPx )
         }
+    }
+
+    private fun pixelToDp(px: Int, context: Context) : Float {
+        return px / ((context.resources.displayMetrics.densityDpi.toFloat()) / DisplayMetrics.DENSITY_DEFAULT)
     }
 
     private fun setTopItems() {

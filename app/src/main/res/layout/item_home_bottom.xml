@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_round_corner_20dp"
-    android:clipToOutline="true"
-    android:paddingHorizontal="24dp">
+    android:clipToOutline="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/lay_bottom"
