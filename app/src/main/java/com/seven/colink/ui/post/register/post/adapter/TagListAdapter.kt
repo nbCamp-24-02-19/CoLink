@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.seven.colink.databinding.ItemListPostContentTagBinding
+import com.seven.colink.databinding.ItemListGroupTagBinding
 import com.seven.colink.databinding.ItemListPostTagBinding
 import com.seven.colink.databinding.ItemUnknownBinding
 import com.seven.colink.ui.post.register.post.model.TagListItem
@@ -59,7 +59,7 @@ class TagListAdapter(
             )
 
             TagListViewType.CONTENT_ITEM -> TagContentItemViewHolder(
-                ItemListPostContentTagBinding.inflate(
+                ItemListGroupTagBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
@@ -90,11 +90,11 @@ class TagListAdapter(
     }
 
     class TagContentItemViewHolder(
-        private val binding: ItemListPostContentTagBinding,
+        private val binding: ItemListGroupTagBinding,
     ) : TagViewHolder(binding.root) {
         override fun onBind(item: TagListItem) {
             if (item is TagListItem.ContentItem) {
-                binding.tvTagName.text = item.tagName
+                binding.tvTagName.text = "# ${item.tagName}"
             }
         }
     }

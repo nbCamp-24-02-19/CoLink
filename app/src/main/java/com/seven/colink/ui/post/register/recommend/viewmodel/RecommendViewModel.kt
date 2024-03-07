@@ -39,7 +39,7 @@ class RecommendViewModel @Inject constructor(
     private val _recommendList = MutableStateFlow<UiState<List<RecommendType>>>(UiState.Loading)
     val recommendList: StateFlow<UiState<List<RecommendType>>> = _recommendList
     fun loadList(key: String) {
-        viewModelScope.launch {
+        /*viewModelScope.launch {
             val titleDeferred = async {
                 try {
                     userRepository.getUserDetails(
@@ -49,7 +49,7 @@ class RecommendViewModel @Inject constructor(
                     e
                 }
             }
-            /*TODO Recruit 분리후 변경해야됨 유저 추천 로직*/
+            *//*TODO Recruit 분리후 변경해야됨 유저 추천 로직*//*
 
             val membersDeferred =
                 key.let { postRepository.getPost(it) }.getOrNull()?.recruit?.map { recruit ->
@@ -60,7 +60,7 @@ class RecommendViewModel @Inject constructor(
                             ?: emptyList()
                     }
                 } ?: emptyList()
-            /*TODO 여기서 진행중인 프로젝트수로 추천 알고리즘 (점수제로 진행중인 프로젝트 하나당 -0.5점 같은 로직)*/
+            *//*TODO 여기서 진행중인 프로젝트수로 추천 알고리즘 (점수제로 진행중인 프로젝트 하나당 -0.5점 같은 로직)*//*
 
             val title = titleDeferred.await()
             val members = membersDeferred.awaitAll().flatten()
@@ -86,7 +86,7 @@ class RecommendViewModel @Inject constructor(
                     UiState.Error(e)
                 }
             }
-        }
+        }*/
     }
 
     fun setChatRoom(uid: String) {

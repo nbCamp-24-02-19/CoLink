@@ -72,34 +72,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/tv_project"
-                    android:layout_width="0dp"
-                    android:layout_height="36dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="12dp"
-                    android:background="@drawable/bg_post_group_project_selector"
-                    android:gravity="center"
-                    android:text="@string/bt_project"
-                    android:textColor="@color/main_color"
-                    app:layout_constraintEnd_toStartOf="@id/tv_study"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/iv_add_image" />
-
-                <TextView
-                    android:id="@+id/tv_study"
-                    android:layout_width="0dp"
-                    android:layout_height="36dp"
-                    android:layout_marginEnd="24dp"
-                    android:background="@drawable/bg_post_group_study_selector"
-                    android:gravity="center"
-                    android:text="@string/bt_study"
-                    android:textColor="@color/main_color"
-                    app:layout_constraintBottom_toBottomOf="@id/tv_project"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/tv_project"
-                    app:layout_constraintTop_toTopOf="@id/tv_project" />
-
                 <EditText
                     android:id="@+id/et_title"
                     style="@style/PostEditTextStyle"
@@ -109,7 +81,7 @@
                     android:textSize="20sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_project" />
+                    app:layout_constraintTop_toBottomOf="@+id/iv_add_image" />
 
                 <View
                     android:id="@+id/view_title_line"
@@ -266,7 +238,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/total_personnel"
                     android:textColor="@color/black"
-                    android:textSize="14sp"
+                    android:textSize="19sp"
+                    android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/iv_add_recruit" />
 

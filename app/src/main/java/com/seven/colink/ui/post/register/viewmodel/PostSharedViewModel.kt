@@ -20,10 +20,14 @@ class PostSharedViewModel @Inject constructor(
     private val _groupType = MutableStateFlow(handle.get<GroupType>(Constants.EXTRA_GROUP_TYPE))
     val groupType: StateFlow<GroupType?> = _groupType
 
-    private val _key = MutableStateFlow(handle.get<String>(Constants.EXTRA_POST_ENTITY))
+    private val _key = MutableStateFlow(handle.get<String>(Constants.EXTRA_ENTITY_KEY))
     val key: StateFlow<String?> = _key
 
     fun setKey(newKey: String) {
         _key.value = newKey
+    }
+
+    fun setEntryType(updateEntryType: PostEntryType) {
+        _entryType.value = updateEntryType
     }
 }
