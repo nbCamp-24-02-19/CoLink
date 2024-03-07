@@ -88,14 +88,18 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
                 pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                     var currentState = 0
                     var currentPos = 0
+                    var ignoreCallback = false
 
                     val handler = Handler()
                     val autoScrollRunnable = object : Runnable {
                         override fun run() {
-                            val nextPos = (currentPos + 1) % 7
+                            val nextPos = (currentPos + 1 ) % 7
                             pos.text = (nextPos + 1).toString()
+                            ignoreCallback = true
                             pager.setCurrentItem(nextPos, true)
-                            handler.postDelayed(this, AUTO_SCROLL_DELAY)
+                            ignoreCallback = false
+                            currentPos = nextPos
+                            handler.postDelayed(this, AUTO_SCROLL_DELAY + PAGE_SCROLL_DELAY)
                         }
                     }
 
@@ -107,7 +111,6 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
                     override fun onPageSelected(position: Int) {
                         currentPos = position
                         pos.text = (currentPos + 1).toString()
-
                         super.onPageSelected(position)
 
                         left.setOnClickListener {
