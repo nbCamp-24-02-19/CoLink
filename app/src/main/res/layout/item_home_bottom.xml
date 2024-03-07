@@ -42,7 +42,7 @@
             android:backgroundTint="@color/study_color"
             android:fontFamily="@font/inter_bold"
             android:text="@string/home_bottom_study"
-            android:textColor="@color/main_color"
+            android:textColor="@color/white"
             android:textSize="12sp"
             android:visibility="invisible"
             app:layout_constraintStart_toStartOf="parent"
