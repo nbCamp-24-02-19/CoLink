@@ -1,12 +1,14 @@
 package com.seven.colink.ui.home.child
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.ui.home.BottomItems
+import com.seven.colink.ui.home.TopItems
 import com.seven.colink.util.status.GroupType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -16,12 +18,14 @@ import javax.inject.Inject
 class HomeChildViewModel @Inject constructor(
     private val postRepository: PostRepository,
 ) : ViewModel() {
-    var _bottomItems: MutableLiveData<List<BottomItems>> = MutableLiveData(mutableListOf())
+    private val _bottomItems: MutableLiveData<List<BottomItems>> = MutableLiveData(mutableListOf())
+    val bottomItems: LiveData<List<BottomItems>> get() = _bottomItems
 
     fun getBottomItems(num: Int,type : GroupType?) {
         var getBottomItemList: MutableList<BottomItems> = mutableListOf()
 
         viewModelScope.launch {
+
             getBottomItemList.clear()
             val repository = postRepository.getRecentPost(num,type)
             kotlin.runCatching {

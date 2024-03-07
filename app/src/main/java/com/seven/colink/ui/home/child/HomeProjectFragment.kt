@@ -47,7 +47,7 @@ class HomeProjectFragment : Fragment() {
     }
 
     private fun bottomViewsData() {
-        homeViewModel._bottomItems.value?.forEachIndexed { index, bottom ->
+        homeViewModel.bottomItems.value?.forEachIndexed { index, bottom ->
             val bottomLayout = when (index) {
                 0 -> binding.layProjectBottom1
                 1 -> binding.layProjectBottom2
@@ -94,7 +94,7 @@ class HomeProjectFragment : Fragment() {
     }
 
     private fun setObserve() {
-        homeViewModel._bottomItems.observe(viewLifecycleOwner) {
+        homeViewModel.bottomItems.observe(viewLifecycleOwner) {
             bottomViewsData()
         }
     }
