@@ -1,28 +1,30 @@
 package com.seven.colink.ui.home.child
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.seven.colink.databinding.FragmentHomeStudyBinding
 import com.seven.colink.ui.home.HomeViewModel
-import com.seven.colink.ui.post.content.PostContentActivity
+import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class HomeStudyFragment : Fragment() {
 
     private var _binding: FragmentHomeStudyBinding? = null
     private val binding get() = _binding!!
-    private val homeViewModel: HomeViewModel by activityViewModels()
+//    private val homeViewModel: HomeViewModel by activityViewModels()
+    private val homeViewModel: HomeChildViewModel by viewModels()
 //    private val mAdapter by lazy { BottomHomeStudyAdapter() }
 
     override fun onCreateView(
@@ -76,7 +78,7 @@ class HomeStudyFragment : Fragment() {
                     lifecycleScope.launch {
                         val key = bottom.key
                         if (key != null) {
-                            val intent = PostContentActivity.newIntent(requireContext(), key)
+                            val intent = PostActivity.newIntent(context = requireContext(), key = key)
                             startActivity(intent)
                         } else {
                             Toast.makeText(requireContext(), "다음에 다시 시도해주세요.", Toast.LENGTH_SHORT)
@@ -89,7 +91,7 @@ class HomeStudyFragment : Fragment() {
     }
 
     private fun setObserve() {
-        homeViewModel.topItems.observe(viewLifecycleOwner) {
+        homeViewModel._bottomItems.observe(viewLifecycleOwner) {
             bottomViewsData()
         }
     }

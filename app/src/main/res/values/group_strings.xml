@@ -13,4 +13,7 @@
     <string name="group_content_description">프로젝트를 소개해보세요 !\n팀원과 일정, 팀의 목표 등을 작성해보세요.</string>
     <string name="group_no_join_list">참여 중인 그룹이 없습니다.</string>
     <string name="group_no_want_list">지원한 그룹이 없습니다.</string>
+    <string name="group_post_title">그룹에서 작성한 게시물</string>
+    <string name="input_team_name">팀명을 설정해주세요</string>
+    <string name="promotion">홍보하기</string>
 </resources>

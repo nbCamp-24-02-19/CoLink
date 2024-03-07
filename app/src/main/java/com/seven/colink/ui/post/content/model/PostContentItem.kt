@@ -23,7 +23,7 @@ sealed interface PostContentItem {
 
     data class RecruitItem(
         val recruit: RecruitInfo,
-        val buttonUiState: PostContentButtonUiState
+        val buttonUiState: ContentOwnerButtonUiState
     ) : PostContentItem
 
     data class MemberItem(

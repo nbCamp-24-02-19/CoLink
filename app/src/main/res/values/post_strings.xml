@@ -37,7 +37,7 @@
     <string name="slash">/</string>
     <string name="project_support">지원</string>
 
-    <string name="edit">수정</string>
+    <string name="edit">편집</string>
 
     <string name="support_dialog_message">선택하신 %1$s %2$s에 지원하시겠습니까?</string>
     <string name="support_dialog_title">%1$s 지원</string>
