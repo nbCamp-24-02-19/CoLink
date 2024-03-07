@@ -21,7 +21,7 @@ import com.seven.colink.databinding.ItemPostTitleBinding
 import com.seven.colink.databinding.ItemUnknownBinding
 import com.seven.colink.ui.post.register.post.adapter.TagListAdapter
 import com.seven.colink.ui.post.register.post.model.TagListItem
-import com.seven.colink.ui.post.content.model.PostContentButtonUiState
+import com.seven.colink.ui.post.content.model.ContentOwnerButtonUiState
 import com.seven.colink.ui.post.content.model.PostContentItem
 import com.seven.colink.util.setLevelIcon
 import com.seven.colink.util.status.GroupType
@@ -30,7 +30,7 @@ import com.seven.colink.util.status.PostContentViewType
 class PostContentListAdapter(
     private val context: Context,
     private val onClickItem: (Int, PostContentItem) -> Unit,
-    private val onClickButton: (Int, PostContentItem, PostContentButtonUiState) -> Unit
+    private val onClickButton: (Int, PostContentItem, ContentOwnerButtonUiState) -> Unit
 ) : ListAdapter<PostContentItem, PostContentListAdapter.PostViewHolder>(
     object : DiffUtil.ItemCallback<PostContentItem>() {
 
@@ -178,7 +178,7 @@ class PostContentListAdapter(
     class PostRecruitItemViewHolder(
         private val context: Context,
         private val binding: ItemPostRecruitBinding,
-        private val onClickButton: (Int, PostContentItem, PostContentButtonUiState) -> Unit
+        private val onClickButton: (Int, PostContentItem, ContentOwnerButtonUiState) -> Unit
     ) : PostViewHolder(binding.root) {
         override fun onBind(item: PostContentItem) {
             if (item is PostContentItem.RecruitItem) {
@@ -188,14 +188,14 @@ class PostContentListAdapter(
                 binding.tvNowPersonnel.text = "${item.recruit.nowPersonnel}"
                 binding.tvMaxPersonnel.text = "${item.recruit.maxPersonnel}"
 
-                if (item.buttonUiState == PostContentButtonUiState.Supporter) {
+                if (item.buttonUiState == ContentOwnerButtonUiState.User) {
                     binding.btRecruit.isEnabled =
                         item.recruit.nowPersonnel < (item.recruit.maxPersonnel ?: -1)
                     binding.btRecruit.alpha = if (binding.btRecruit.isEnabled) 1.0f else 0.5f
                 }
 
                 binding.btRecruit.text = context.getString(
-                    if (item.buttonUiState == PostContentButtonUiState.Writer) R.string.util_dialog_button_confirm
+                    if (item.buttonUiState == ContentOwnerButtonUiState.Owner) R.string.util_dialog_button_confirm
                     else R.string.project_support
                 )
                 binding.btRecruit.setOnClickListener {

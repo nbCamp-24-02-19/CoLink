@@ -23,22 +23,13 @@
         android:theme="@style/Theme.CoLink"
         tools:targetApi="31">
         <activity
+            android:name=".ui.group.GroupActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.userdetail.UserDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.recommend.RecommendUserActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.group.board.GroupBoardActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.group.register.GroupContentActivity"
-            android:exported="false" />
-        <activity
             android:name=".ui.chat.ChatRoomActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.post.content.PostContentActivity"
             android:exported="false" />
         <activity
             android:name=".ui.evaluation.EvaluationActivity"

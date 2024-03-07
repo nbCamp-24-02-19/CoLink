@@ -1,11 +1,8 @@
 package com.seven.colink.util.convert
 
-import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.ZoneOffset
-import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Date
@@ -45,6 +42,9 @@ fun String.convertToDaysAgo(): String {
 }
 
 fun String.convertCalculateDays(): String {
+    if (this.isBlank())
+        return ""
+
     val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
     val date = format.parse(this)
     val now = Date()

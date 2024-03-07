@@ -9,14 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
-import androidx.activity.result.ActivityResultLauncher
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentSearchBinding
-import com.seven.colink.ui.post.content.PostContentActivity
 import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.progress.hideProgressOverlay
@@ -216,11 +214,12 @@ class SearchFragment : Fragment() {
         searchAdapter.itemClick = object : SearchAdapter.ItemClick {
             override fun onClick(item: SearchModel, position: Int) {
                 lifecycleScope.launch {
-                    val intent = PostContentActivity.newIntent(
-                        requireContext(),
-                        item.key
+                    startActivity(
+                        PostActivity.newIntent(
+                            context = requireActivity(),
+                            key = item.key
+                        )
                     )
-                    startActivity(intent)
                 }
             }
         }

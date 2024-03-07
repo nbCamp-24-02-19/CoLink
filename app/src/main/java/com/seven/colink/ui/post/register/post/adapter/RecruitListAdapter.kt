@@ -40,7 +40,7 @@ class RecruitListAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: RecruitInfo) = with(binding) {
             tvRecruitType.text = item.type
-            tvRecruitPersonnel.text = "${item.maxPersonnel}"
+            tvRecruitPersonnel.text = "${item.maxPersonnel}명"
             ivRecruitItemDelete.setOnClickListener {
                 onClickItem(adapterPosition, item)
             }
