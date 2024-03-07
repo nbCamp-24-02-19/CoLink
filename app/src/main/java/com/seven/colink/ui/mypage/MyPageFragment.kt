@@ -22,6 +22,7 @@ import com.seven.colink.databinding.MypageEditDialogBinding
 import com.seven.colink.ui.mypage.MyPageItem.skilItems
 import com.seven.colink.ui.mypage.adapter.MyPagePostAdapter
 import com.seven.colink.ui.mypage.adapter.MyPageSkilAdapter
+import com.seven.colink.ui.sign.signin.SignInActivity
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.skillCategory
 import com.seven.colink.util.status.GroupType
@@ -57,7 +58,8 @@ class MyPageFragment : Fragment() {
         privacypolicy()
         SkilRecyclerView()
         PostRecyclerView()
-        settingClick()
+        //settingClick()
+        setLogout()
 
         //스킬 추가
         skiladapter.plusClick = object : MyPageSkilAdapter.PlusClick{
@@ -74,7 +76,7 @@ class MyPageFragment : Fragment() {
         }
         //스킬 삭제
         skiladapter.skilLongClick = object : MyPageSkilAdapter.SkilLongClick{
-            override fun onLongClick(language: String, position: Int) {
+            override fun onLongClick(language: Any, position: Int) {
                 val ad = AlertDialog.Builder(context)
                 ad.setTitle("삭제")
                 ad.setMessage("정말로 삭제하시겠습니까?")
@@ -89,15 +91,26 @@ class MyPageFragment : Fragment() {
         }
 
 
+        //파이어베이스 유저 정보 연결 & 스킬 연결
         viewModel.userDetails.observe(viewLifecycleOwner) { userDetails ->
-            // Update UI with user details
-            updateUI(userDetails)
-            skiladapter.changeDataset(userDetails.skill?.map { skilItems(skillCategory.indexOf(it),it,MyPageSkilItemManager.addItem(it)) }
-                ?.plus(MyPageItem.plusItems(99,R.drawable.ic_add_24)) ?: emptyList())
-
+            if (userDetails!= null) {
+                // Update UI with user details
+                updateUI(userDetails)
+                skiladapter.changeDataset(userDetails.skill?.map {
+                    skilItems(
+                        skillCategory.indexOf(
+                            it
+                        ), it, MyPageSkilItemManager.addItem(it)
+                    )
+                }
+                    ?.plus(MyPageItem.plusItems(99, R.drawable.ic_add_24)) ?: emptyList())
+            }else{
+                startActivity(Intent(requireContext(), SignInActivity::class.java))
+            }
             Log.d("Tag", "${userDetails.skill}")
         }
 
+        //파이어베이스 유저 등록글
         viewModel.userPost.observe(viewLifecycleOwner) { it ->
             it?.map{post ->
                 if (post.grouptype == GroupType.PROJECT){
@@ -132,6 +145,9 @@ class MyPageFragment : Fragment() {
             startActivity(intent)
         }
         binding.tvMypageAboutMe.text = user.info
+
+        val uri = Uri.parse(user.profile.toString())
+        binding.ivMypageProfile.setImageURI(uri)
 
         val level = user.level
         val levelicon: Drawable = DrawableCompat.wrap(binding.ivMypageLevel.drawable)
@@ -187,6 +203,7 @@ class MyPageFragment : Fragment() {
         Log.d("Tag","user = ${user}")
     }
 
+
     private fun privacypolicy(){
         binding.ctMypage2.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://guri999.github.io/"))
@@ -196,20 +213,21 @@ class MyPageFragment : Fragment() {
 
 
 
-    private fun settingClick(){
-        binding.ivMypageSetting.setOnClickListener {
-            val myPageEditDetailFragment = LayoutInflater.from(context).inflate(R.layout.fragment_my_page_edit_detail, null)
-            val myBuilder = AlertDialog.Builder(context)
-                .setView(myPageEditDetailFragment)
-            val mAlertDialog = myBuilder.show()
+//    private fun settingClick(){
+//        binding.ivMypageSetting.setOnClickListener {
+//            val myPageEditDetailFragment = LayoutInflater.from(context).inflate(R.layout.fragment_my_page_edit_detail, null)
+//            val myBuilder = AlertDialog.Builder(context)
+//                .setView(myPageEditDetailFragment)
+//            val mAlertDialog = myBuilder.show()
+//
+//            val mypageBackButton = myPageEditDetailFragment.findViewById<ImageView>(R.id.iv_mypage_detail_back)
+//
+//            mypageBackButton.setOnClickListener {
+//                mAlertDialog.dismiss()
+//            }
+//        }
+//    }
 
-            val mypageBackButton = myPageEditDetailFragment.findViewById<ImageView>(R.id.iv_mypage_detail_back)
-
-            mypageBackButton.setOnClickListener {
-                mAlertDialog.dismiss()
-            }
-        }
-    }
 
 
     private fun SkilRecyclerView(){
@@ -218,11 +236,17 @@ class MyPageFragment : Fragment() {
         binding.reMypageItem.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
     }
 
+
     private fun PostRecyclerView(){
         postadapter = MyPagePostAdapter(MyPagePostItemManager.getItemAll())
         binding.reMypageProject.adapter = postadapter
         binding.reMypageProject.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
     }
 
-
+    private fun setLogout() = with(viewModel){
+        binding.tvLogout.setOnClickListener {
+            startActivity(Intent(requireContext(),SignInActivity::class.java))
+            logout()
+        }
+    }
 }

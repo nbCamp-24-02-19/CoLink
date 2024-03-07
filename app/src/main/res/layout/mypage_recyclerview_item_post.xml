@@ -14,7 +14,7 @@
         android:background="@drawable/bg_mypage_ing_blue"
         android:gravity="center"
         android:text="참여중"
-        android:textColor="@color/white"
+        android:textColor="@color/forth_color"
         android:textSize="12sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -23,14 +23,16 @@
 
     <TextView
         android:id="@+id/tv_mypage_post_item_project_name"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="9dp"
+        android:layout_marginEnd="10dp"
         android:text=" ㅁㅁ 프로젝트"
-        android:textSize="12sp"
         android:textColor="@color/black"
+        android:textSize="12sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/tv_mypage_post_item_ing_text"
+        app:layout_constraintEnd_toStartOf="@+id/tv_mypage_post_item_time"
         app:layout_constraintStart_toEndOf="@+id/tv_mypage_post_item_ing_text"
         app:layout_constraintTop_toTopOf="@+id/tv_mypage_post_item_ing_text" />
 
@@ -39,7 +41,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="14dp"
-        android:text="현재"
+        android:text="2024/03/06"
         android:textColor="@color/black"
         android:textSize="12sp"
         android:textStyle="bold"

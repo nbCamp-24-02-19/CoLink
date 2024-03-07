@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="57dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_userdetail_back_arrow"
+            android:layout_width="18dp"
+            android:layout_height="12dp"
+            android:layout_marginStart="22dp"
+            android:layout_marginTop="23dp"
+            android:src="@drawable/ic_arrow_left"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="11dp"
+            android:text="회원 정보"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_userdetail_back_arrow"
+            app:layout_constraintStart_toEndOf="@+id/iv_userdetail_back_arrow"
+            app:layout_constraintTop_toTopOf="@+id/iv_userdetail_back_arrow" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+        app:layout_scrollFlags="scroll">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/mypage_bg_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
+
+            <ImageView
+                android:id="@+id/iv_userdetail_profile"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="22dp"
+                android:layout_marginTop="23dp"
+                android:src="@drawable/ic_profile"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/btn_userdetail_group"
+                android:layout_width="150dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="22dp"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/userdetail_shape"
+                android:text="그룹으로 초대"
+                android:textStyle="bold"
+                android:textColor="@color/main_color"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_userdetail_specialization" />
+
+            <Button
+                android:id="@+id/btn_userdetail_chat"
+                android:layout_width="150dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="13dp"
+                android:background="@drawable/userdetail_shape"
+                android:backgroundTint="@color/main_color"
+                android:text="1:1 채팅"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/btn_userdetail_group"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/btn_userdetail_group"
+                app:layout_constraintTop_toTopOf="@+id/btn_userdetail_group" />
+
+            <ImageView
+                android:id="@+id/iv_userdetail_level"
+                android:layout_width="18dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="13dp"
+                android:layout_marginTop="39dp"
+                android:src="@drawable/ic_level_insignia_1"
+                app:layout_constraintStart_toEndOf="@+id/iv_userdetail_profile"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="#F47171"/>
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="5.77dp"
+                android:src="@drawable/ic_level_insignia_2"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_userdetail_level"
+                app:layout_constraintEnd_toEndOf="@+id/iv_userdetail_level"
+                app:layout_constraintStart_toStartOf="@+id/iv_userdetail_level"
+                app:layout_constraintTop_toTopOf="@+id/iv_userdetail_level"
+                app:layout_constraintVertical_bias="0.9" />
+
+            <TextView
+                android:id="@+id/tv_userdetail_level"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/inter_bold"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_userdetail_level"
+                app:layout_constraintEnd_toEndOf="@+id/iv_userdetail_level"
+                app:layout_constraintStart_toStartOf="@+id/iv_userdetail_level"
+                app:layout_constraintTop_toTopOf="@+id/iv_userdetail_level"
+                app:layout_constraintVertical_bias="0.2"
+                tools:ignore="SmallSp" />
+
+
+            <TextView
+                android:id="@+id/tv_userdetail_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="이름"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_userdetail_level"
+                app:layout_constraintStart_toEndOf="@+id/iv_userdetail_level"
+                app:layout_constraintTop_toTopOf="@+id/iv_userdetail_level" />
+
+            <TextView
+                android:id="@+id/tv_userdetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="13dp"
+                android:layout_marginTop="13dp"
+                android:text="전문 분야 : "
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/iv_userdetail_profile"
+                app:layout_constraintTop_toBottomOf="@+id/iv_userdetail_level" />
+
+            <TextView
+                android:id="@+id/tv_userdetail_specialization"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="Android"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_userdetail"
+                app:layout_constraintStart_toEndOf="@+id/tv_userdetail" />
+
+            <TextView
+                android:id="@+id/tv_userdetail_score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="39dp"
+                android:layout_marginEnd="25dp"
+                android:text="9.0"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="40dp"
+                android:layout_height="51dp"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/ic_star"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_userdetail_score"
+                app:layout_constraintEnd_toStartOf="@+id/tv_userdetail_score"
+                app:layout_constraintTop_toTopOf="@+id/tv_userdetail_score" />
+
+            <ImageView
+                android:id="@+id/iv_userdetail_blog"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="25dp"
+                android:src="@drawable/ic_blog"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_userdetail_group" />
+
+            <ImageView
+                android:id="@+id/iv_userdetail_git"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="9dp"
+                android:src="@drawable/ic_git2"
+                app:layout_constraintStart_toEndOf="@+id/iv_userdetail_blog"
+                app:layout_constraintTop_toBottomOf="@+id/btn_userdetail_group" />
+
+            <ImageView
+                android:id="@+id/iv_userdetail_link"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="9dp"
+                android:src="@drawable/ic_link"
+                android:visibility="gone"
+                app:layout_constraintStart_toEndOf="@+id/iv_userdetail_git"
+                app:layout_constraintTop_toBottomOf="@+id/btn_userdetail_group" />
+
+
+            <LinearLayout
+                android:id="@+id/ly_userdetail1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginEnd="16dp"
+                android:padding="10dp"
+                android:background="@drawable/mypage_re_shape"
+                android:backgroundTint="@color/white"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/iv_userdetail_git">
+
+                <TextView
+                    android:id="@+id/tv_userdetail_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginTop="11dp"
+                    android:text="보유 스킬"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/re_userdetail_item"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="13dp"
+                    android:padding="15dp"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_userdetail_text"
+                    app:spanCount="4"
+                    tools:itemCount="4"
+                    tools:listitem="@layout/mypage_recyclerview_item_skilitem" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayout2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/mypage_re_shape"
+                android:orientation="vertical"
+                android:padding="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ly_userdetail1">
+
+
+                <TextView
+                    android:id="@+id/tv_userdetail_about_me_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginTop="11dp"
+                    android:text="자기소개"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_userdetail_about_me"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="14dp"
+                    android:text="헌법재판소 재판관은 탄핵 또는 금고 이상의 형의 선고에 의하지 아니하고는 파면되지 아니한다. 선거운동은 각급 선거관리위원회의 관리하에 법률이 정하는 범위안에서 하되, 균등한 기회가 보장되어야 한다.
+대통령은 헌법과 법률이 정하는 바에 의하여 공무원을 임면한다. 국가는 농업 및 어업을 보호·육성하기 위하여 농·어촌종합개발과 그 지원등 필요한 계획을 수립·시행하여야 한다."
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_userdetail_text" />
+
+            </LinearLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="35dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/mypage_re_shape"
+                android:padding="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+
+                <TextView
+                    android:id="@+id/tv_userdetail_text2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:text="참여 목록"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/re_userdetail_project"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_userdetail_text2"
+                    tools:itemCount="4"
+                    tools:listitem="@layout/mypage_recyclerview_item_post" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+    </androidx.core.widget.NestedScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

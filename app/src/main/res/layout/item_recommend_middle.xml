@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/background_light"
+    android:background="@color/bg"
     android:orientation="vertical">
 
     <FrameLayout
@@ -19,8 +19,20 @@
         android:layout_height="wrap_content"
         android:text="@string/recommend_send_message"
         android:textColor="@color/black"
-        android:textSize="16sp"/>
+        android:textSize="16sp"
+        android:fontFamily="@font/inter_medium"/>
 
     </FrameLayout>
+
+    <TextView
+        android:id="@+id/tv_recommend_other"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/recommend_other_member"
+        android:paddingTop="24dp"
+        android:paddingBottom="12dp"
+        android:textSize="18sp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/inter_medium"/>
 
 </LinearLayout>

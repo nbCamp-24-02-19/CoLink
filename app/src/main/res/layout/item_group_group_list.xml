@@ -3,17 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white">
+    android:layout_marginBottom="12dp"
+    android:layout_marginHorizontal="24dp">
 
     <LinearLayout
         android:id="@+id/ll_group_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         android:background="@drawable/bg_round_corner_20dp"
         android:backgroundTint="@color/white"
         android:clipToOutline="true"
         android:orientation="vertical"
+        android:layout_marginTop="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -27,7 +28,6 @@
                 android:id="@+id/iv_group_thumbnail"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginTop="4dp"
                 android:background="@drawable/bg_round_top_corner_20dp"
                 android:clipToOutline="true"
                 android:scaleType="centerCrop"
@@ -35,8 +35,10 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="16:9"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -60,20 +62,6 @@
                 android:text="@string/group_proejct_title"
                 android:textColor="@color/black"
                 android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/tv_group_plus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="18dp"
-                android:ellipsize="end"
-                android:fontFamily="@font/inter_regular"
-                android:gravity="end"
-                android:maxLines="1"
-                android:text="@string/group_plus"
-                android:textColor="@color/typo_color"
-                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/tv_group_days"
@@ -127,6 +115,7 @@
         android:layout_width="35dp"
         android:layout_height="53dp"
         android:layout_marginStart="36dp"
+        android:layout_marginTop="-4dp"
         android:background="@drawable/ic_level_insignia"
         android:fontFamily="@font/roboto_bold"
         android:gravity="center"

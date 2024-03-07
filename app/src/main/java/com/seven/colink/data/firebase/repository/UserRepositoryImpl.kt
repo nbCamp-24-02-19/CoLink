@@ -3,6 +3,7 @@ package com.seven.colink.data.firebase.repository
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.seven.colink.data.firebase.type.DataBaseType
 import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.domain.repository.UserRepository
@@ -58,5 +59,16 @@ class UserRepositoryImpl @Inject constructor(
         querySnapshot.documents.isNotEmpty()
     } catch (e: Exception) {
         false
+    }
+
+    override suspend fun getUserBySpecialty(specialty: String) = runCatching {
+        firestore.collection(DataBaseType.USER.title).whereEqualTo("specialty",specialty)
+            .orderBy("grade",Query.Direction.DESCENDING)
+            .get().await()
+            .documents.mapNotNull {
+                it.toObject(UserEntity::class.java)
+            }
+    }.onFailure {
+        return@onFailure
     }
 }

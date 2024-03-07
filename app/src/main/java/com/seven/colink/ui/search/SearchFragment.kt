@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentSearchBinding
 import com.seven.colink.ui.post.register.PostActivity
-import com.seven.colink.ui.post.content.PostContentActivity
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
@@ -46,6 +45,9 @@ class SearchFragment : Fragment() {
             getString(R.string.study_kor)
         )
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -64,8 +66,8 @@ class SearchFragment : Fragment() {
                 when (selectedOption) {
                     getString(R.string.project_kor) -> {
                         startActivity(
-                            PostActivity.newIntentForCreate(
-                                requireContext(),
+                            PostActivity.newIntent(
+                                requireActivity(),
                                 GroupType.PROJECT
                             )
                         )
@@ -73,8 +75,8 @@ class SearchFragment : Fragment() {
 
                     getString(R.string.study_kor) -> {
                         startActivity(
-                            PostActivity.newIntentForCreate(
-                                requireContext(),
+                            PostActivity.newIntent(
+                                requireActivity(),
                                 GroupType.STUDY
                             )
                         )
@@ -205,17 +207,19 @@ class SearchFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        hideProgressOverlay()
     }
 
     private fun goDetail() {
         searchAdapter.itemClick = object : SearchAdapter.ItemClick {
             override fun onClick(item: SearchModel, position: Int) {
                 lifecycleScope.launch {
-                    val intent = PostContentActivity.newIntent(
-                        requireContext(),
-                        item.key
+                    startActivity(
+                        PostActivity.newIntent(
+                            context = requireActivity(),
+                            key = item.key
+                        )
                     )
-                    startActivity(intent)
                 }
             }
         }

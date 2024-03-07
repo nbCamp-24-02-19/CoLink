@@ -3,7 +3,6 @@ package com.seven.colink.ui.group
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seven.colink.R
@@ -12,12 +11,8 @@ import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.domain.repository.PostRepository
-import com.seven.colink.util.Constants
-import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.GroupType
-import com.seven.colink.util.status.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -36,7 +31,7 @@ class GroupViewModel @Inject constructor(
     val joinList: LiveData<List<GroupData.GroupList>?> get() = _joinList
 
     private val _wantList = MutableLiveData<List<GroupData.GroupWant>?>()
-    val wantList : LiveData<List<GroupData.GroupWant>?> get() = _wantList
+    val wantList: LiveData<List<GroupData.GroupWant>?> get() = _wantList
 
     init {
         viewModelScope.launch {
@@ -50,15 +45,17 @@ class GroupViewModel @Inject constructor(
             val items = mutableListOf<GroupData>()
 
             items.add(getTitle())
-            if (joinList.value.isNullOrEmpty()){
+            if (joinList.value.isNullOrEmpty()) {
                 items.add(getEmptyJoinList())
-                _joinList.value
             } else {
                 joinList.value?.map { items.add(it) }
             }
             items.add(getAdd())
-            items.add(getWant())
-            items.add(getEmptyWantList())
+            if (wantList.value.isNullOrEmpty()) {
+                items.add(getEmptyWantList())
+            } else {
+                wantList.value?.map { items.add(it) }
+            }
 
             _groupData.value = items
             Log.d("Group", "GroupData.value = ${_groupData.value}")
@@ -80,13 +77,13 @@ class GroupViewModel @Inject constructor(
             groupType = groupType,
             thumbnail = imageUrl,
             projectName = title,
-            days = registeredDate,
+            days = "모집중",
             description = description,
             tags = tags,
             memberIds = memberIds
         )
 
-    private fun GroupEntity.convertGroupWant() =
+    private fun PostEntity.convertGroupWant() =
         GroupData.GroupWant(
             key = key,
             groupType = groupType,
@@ -112,15 +109,15 @@ class GroupViewModel @Inject constructor(
         title = "영화 커뮤니티 서비스 프로젝트 모집합니다",
         description = "영화 커뮤니티 서비스 프로젝트를 함께하실 안드로이드 개발자를 모십니다.",
         kind = "나는뉴비",
-        img = ""
+        img = "https://firebasestorage.googleapis.com/v0/b/colink-a7c3a.appspot.com/o/img%2F2ad7abe5-7945-47ba-b5ca-611278836783.jpg?alt=media&token=a1445ac5-b90f-4af3-b2de-9e07052bb497"
     )
 
-    fun getEmptyJoinList() = GroupData.GroupEmpty(
-        img = R.drawable.img_dialog_project,
+    private fun getEmptyJoinList() = GroupData.GroupEmpty(
+        img = R.drawable.img_temporary,
         text = "참여 중인 그룹이 없습니다."
     )
 
-    fun getEmptyWantList() = GroupData.GroupEmpty(
+    private fun getEmptyWantList() = GroupData.GroupEmpty(
         img = R.drawable.img_dialog_study,
         text = "지원한 그룹이 없습니다."
     )

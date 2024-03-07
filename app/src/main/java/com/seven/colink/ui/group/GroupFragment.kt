@@ -1,8 +1,6 @@
 package com.seven.colink.ui.group
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +10,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentGroupBinding
-import com.seven.colink.ui.post.content.PostContentActivity
 import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.showToast
@@ -72,13 +69,6 @@ class GroupFragment : Fragment() {
         groupViewModel.groupData.observe(viewLifecycleOwner) {
             groupAdapter.submitList(it)
         }
-        groupViewModel.joinList.observe(viewLifecycleOwner){
-            if (groupViewModel.joinList.value.isNullOrEmpty()){
-                groupAdapter.submitList(it)
-            } else {
-                groupAdapter.submitList(it)
-            }
-        }
     }
 
     private fun handleItemClick(item: GroupData) {
@@ -86,9 +76,9 @@ class GroupFragment : Fragment() {
             is GroupData.GroupList -> {
                 lifecycleScope.launch {
                     if (item.key != null) {
-                        val intent = PostContentActivity.newIntent(
-                            requireContext(),
-                            item.key
+                        val intent = GroupActivity.newIntent(
+                            context = requireContext(),
+                            key = item.key
                         )
                         startActivity(intent)
                     } else {
@@ -105,7 +95,7 @@ class GroupFragment : Fragment() {
                     when (selectedOption) {
                         getString(R.string.project_kor) -> {
                             startActivity(
-                                PostActivity.newIntentForCreate(
+                                PostActivity.newIntent(
                                     requireContext(),
                                     GroupType.PROJECT
                                 )
@@ -114,7 +104,7 @@ class GroupFragment : Fragment() {
 
                         getString(R.string.study_kor) -> {
                             startActivity(
-                                PostActivity.newIntentForCreate(
+                                PostActivity.newIntent(
                                     requireContext(),
                                     GroupType.STUDY
                                 )
@@ -129,9 +119,9 @@ class GroupFragment : Fragment() {
             is GroupData.GroupWant -> {
                 lifecycleScope.launch {
                     if (item.key != null) {
-                        val intent = PostContentActivity.newIntent(
-                            requireContext(),
-                            item.key
+                        val intent = GroupActivity.newIntent(
+                            context = requireContext(),
+                            key = item.key
                         )
                         startActivity(intent)
                     } else {
