@@ -1,17 +1,13 @@
 package com.seven.colink.ui.home
 
 import android.content.Context
-import android.graphics.Point
-import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,11 +16,9 @@ import com.seven.colink.databinding.FragmentHomeBinding
 import com.seven.colink.ui.home.adapter.BottomViewPagerAdapter
 import com.seven.colink.ui.home.adapter.HomeMainAdapter
 import com.seven.colink.ui.home.adapter.TopViewPagerAdapter
-import com.seven.colink.ui.home.child.HomeProjectFragment
 import com.seven.colink.ui.post.register.PostActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -83,7 +77,7 @@ class HomeFragment : Fragment() {
         val offsetPx = screen - (pageMargin + pagerOffset) - (pageMargin/2)
 
         binding.vpHome.setPageTransformer { page, position ->
-            page.translationX = position * (-offsetPx )
+            page.translationX = position * (-offsetPx)
         }
     }
 

@@ -1,7 +1,10 @@
 package com.seven.colink.ui.home.adapter
 
+import android.os.Build
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
@@ -68,6 +71,11 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
         }
     }
 
+    companion object {
+        private const val AUTO_SCROLL_DELAY = 3000L
+        private const val PAGE_SCROLL_DELAY = 3000L
+    }
+
     inner class TopViewHolder(binding: ItemHomeTopViewpagerBinding) : ViewHolder(binding.root) {
         val pager = binding.vpHomeTop
         var pos = binding.tvHomeTopCurrent
@@ -81,25 +89,45 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
                     var currentState = 0
                     var currentPos = 0
 
+                    val handler = Handler()
+                    val autoScrollRunnable = object : Runnable {
+                        override fun run() {
+                            val nextPos = (currentPos + 1) % 7
+                            pos.text = (nextPos + 1).toString()
+                            pager.setCurrentItem(nextPos, true)
+                            handler.postDelayed(this, AUTO_SCROLL_DELAY)
+                        }
+                    }
+
+                    private fun startAutoScroll() {
+                        handler.postDelayed(autoScrollRunnable, AUTO_SCROLL_DELAY)
+                    }
+
+                    @RequiresApi(Build.VERSION_CODES.Q)
                     override fun onPageSelected(position: Int) {
                         currentPos = position
                         pos.text = (currentPos + 1).toString()
+
                         super.onPageSelected(position)
 
                         left.setOnClickListener {
                             if (currentPos == 0) {
-                                pager.setCurrentItem(6,false)
+                                pager.setCurrentItem(6,true)
                             }else{
-                                pager.setCurrentItem(currentPos -1,false)
+                                pager.setCurrentItem(currentPos -1,true)
                             }
                         }
 
                         right.setOnClickListener {
                             if (currentPos == 6) {
-                                pager.setCurrentItem(0,false)
+                                pager.setCurrentItem(0,true)
                             }else{
-                                pager.setCurrentItem(currentPos +1, false)
+                                pager.setCurrentItem(currentPos +1, true)
                             }
+                        }
+
+                        if (!handler.hasCallbacks(autoScrollRunnable)) {
+                            startAutoScroll()
                         }
 
                     }
@@ -127,10 +155,10 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
 
                         if (currentPos == 0) {
                             if (lastPosition != null) {
-                                pager.setCurrentItem(lastPosition, false)
+                                pager.setCurrentItem(lastPosition, true)
                             }
                         } else if (currentPos == lastPosition) {
-                            pager.setCurrentItem(0, false)
+                            pager.setCurrentItem(0, true)
                         }
                     }
                 })
