@@ -48,6 +48,7 @@
     <color name="date_color">#818181</color>
     <color name="content_tag_color">#F6F6F6</color>
     <color name="recruit_dash">#CAC9C9</color>
+    <color name="color_content">#F8F8F8</color>
 
     <!-- chat -->
     <color name="chat_notice">#ED2478</color>

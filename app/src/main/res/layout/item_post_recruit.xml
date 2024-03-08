@@ -15,43 +15,35 @@
         android:layout_weight="2"
         android:textColor="@color/black" />
 
-    <LinearLayout
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/tv_now_personnel"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="horizontal">
+        android:layout_marginEnd="2dp"
+        android:textColor="@color/black"
+        android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tv_now_personnel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="2dp"
-            android:textColor="@color/black"
-            android:textStyle="bold" />
+    <TextView
+        android:id="@+id/slash"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="2dp"
+        android:text="@string/slash"
+        android:textColor="@color/black" />
 
-        <TextView
-            android:id="@+id/slash"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="2dp"
-            android:text="@string/slash"
-            android:textColor="@color/black" />
+    <TextView
+        android:id="@+id/tv_max_personnel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="22dp"
+        android:textColor="@color/black" />
 
-        <TextView
-            android:id="@+id/tv_max_personnel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="22dp"
-            android:textColor="@color/black" />
-
-        <Button
-            android:id="@+id/bt_recruit"
-            android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:background="@drawable/bg_button_main_color"
-            android:text="@string/project_support"
-            android:textColor="@color/white" />
-
-    </LinearLayout>
+    <Button
+        android:id="@+id/bt_recruit"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:background="@drawable/bg_button_main_color"
+        android:text="@string/project_support"
+        android:textColor="@color/white" />
 
 </LinearLayout>

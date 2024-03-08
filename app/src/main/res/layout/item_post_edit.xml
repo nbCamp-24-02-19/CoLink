@@ -4,37 +4,41 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
-    tools:ignore="UseSwitchCompatOrMaterialXml">
+    android:background="@color/white">
 
     <ImageView
-        android:id="@+id/iv_group_image"
+        android:id="@+id/iv_post_image_bg"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="167dp"
         android:background="@drawable/bg_post_image_background"
         android:scaleType="centerCrop"
-        app:layout_constraintDimensionRatio="16:9"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView
+        android:id="@+id/iv_post_image"
+        android:layout_width="92dp"
+        android:layout_height="92dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="126dp"
+        android:background="@drawable/bg_post_image_register"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
-        android:id="@+id/tv_group_type"
-        android:layout_width="wrap_content"
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
         android:layout_marginVertical="12dp"
-        android:background="@drawable/bg_round_corner_12dp"
-        android:backgroundTint="@color/forth_color"
-        android:fontFamily="@font/inter_bold"
-        android:paddingHorizontal="8dp"
-        android:paddingVertical="2dp"
-        android:text="@string/search_filter_project"
-        android:textColor="@color/white"
-        android:textSize="11sp"
+        android:text="@string/title_project_name"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/iv_group_image" />
-
+        app:layout_constraintTop_toBottomOf="@id/iv_post_image" />
 
     <EditText
         android:id="@+id/et_title"
@@ -43,12 +47,12 @@
         android:layout_marginHorizontal="24dp"
         android:layout_marginVertical="12dp"
         android:background="@android:color/transparent"
-        android:hint="@string/input_team_name"
+        android:hint="@string/input_title"
         android:textColorHint="@color/edit_hint_color"
-        android:textSize="20sp"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_group_type" />
+        app:layout_constraintTop_toBottomOf="@id/tv_title" />
 
     <View
         android:id="@+id/view_title_line"
@@ -59,74 +63,68 @@
         android:background="@color/bg"
         app:layout_constraintTop_toBottomOf="@id/et_title" />
 
+    <TextView
+        android:id="@+id/tv_project_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginVertical="12dp"
+        android:text="@string/title_project_description"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/view_title_line" />
+
+    <TextView
+        android:id="@+id/tv_project_description_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginVertical="12dp"
+        android:text="@string/input_content_project"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_project_description" />
+
     <EditText
         android:id="@+id/et_description"
         style="@style/PostEditTextStyle"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
         android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_round_corner_4dp"
+        android:backgroundTint="@color/color_content"
         android:gravity="top"
-        android:hint="@string/group_content_description"
         android:minHeight="250dp"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/view_title_line" />
-
-    <View
-        android:id="@+id/view_description_line"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="12dp"
-        android:background="@color/bg"
-        app:layout_constraintTop_toBottomOf="@id/et_description" />
-
-    <TextView
-        android:id="@+id/tv_project_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="12dp"
-        android:text="프로젝트 진행 여부"
-        android:textStyle="bold"
-        android:textColor="@color/main_color"
-        android:textSize="12sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/view_description_line" />
-
-    <Switch
-        android:id="@+id/switch_project_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        app:layout_constraintBottom_toBottomOf="@id/tv_project_status"
-        app:layout_constraintStart_toEndOf="@id/tv_project_status"
-        app:layout_constraintTop_toTopOf="@id/tv_project_status" />
+        app:layout_constraintTop_toBottomOf="@id/tv_project_description_info" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_tags"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginVertical="12dp"
         android:orientation="horizontal"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_project_status"
+        app:layout_constraintTop_toBottomOf="@id/et_description"
         tools:listitem="@layout/item_list_post_tag" />
 
     <TextView
         android:id="@+id/tv_sharp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="4dp"
         android:layout_marginStart="24dp"
+        android:layout_marginTop="12dp"
         android:text="@string/sharp"
         android:textColor="@color/sharp"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/recycler_view_tags" />
 

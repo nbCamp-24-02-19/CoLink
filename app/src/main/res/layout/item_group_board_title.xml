@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="12dp"
     android:background="@color/white"
     android:paddingHorizontal="24dp"
     android:paddingTop="24dp"
@@ -12,20 +13,45 @@
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="프로젝트 멤버"
         android:textColor="@color/black"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView
+        android:id="@+id/iv_apply_request"
+        android:layout_width="16dp"
+        android:layout_height="13dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_apply_request"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@id/tv_apply_request"
+        app:layout_constraintEnd_toStartOf="@id/tv_apply_request"
+        app:layout_constraintTop_toTopOf="@id/tv_apply_request" />
+
     <TextView
-        android:id="@+id/tv_member_personnel"
+        android:id="@+id/tv_apply_request"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:fontFamily="@font/roboto_medium"
+        android:text="@string/title_apply_request"
         android:textColor="@color/typo_color"
-        android:textSize="16sp"
+        android:textSize="14sp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@id/iv_notify"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ImageView
+        android:id="@+id/iv_notify"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:background="@drawable/bg_background_circle"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@id/tv_apply_request" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
