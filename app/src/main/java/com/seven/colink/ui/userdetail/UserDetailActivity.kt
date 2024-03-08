@@ -9,7 +9,9 @@ import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import coil.load
 import com.seven.colink.R
 import com.seven.colink.databinding.ActivityUserDetailBinding
 import com.seven.colink.ui.userdetail.adapter.UserDetailPostAdapter
@@ -87,8 +89,12 @@ class UserDetailActivity : AppCompatActivity() {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(user.userGit))
             startActivity(intent)
         }
-        val uri = Uri.parse(user.userProfile.toString())
-        binding.ivUserdetailProfile.setImageURI(uri)
+
+        if (user.userProfile == null){
+            binding.ivUserdetailProfile
+        } else {
+            binding.ivUserdetailProfile.load(user.userProfile)
+        }
 
         val level = user.userLevel
         val levelicon: Drawable = DrawableCompat.wrap(binding.ivUserdetailLevel.drawable)
@@ -138,11 +144,18 @@ class UserDetailActivity : AppCompatActivity() {
         Log.d("Tag","user = ${user}")
     }
 
+//    private fun userSkill(){
+//        adapter = UserSkillAdapter(UserSkillItemManager.getItem())
+//        binding.reUserdetailItem.adapter = adapter
+//        binding.reUserdetailItem.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+//    }
+
     private fun userSkill(){
         adapter = UserSkillAdapter(UserSkillItemManager.getItem())
         binding.reUserdetailItem.adapter = adapter
-        binding.reUserdetailItem.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        binding.reUserdetailItem.layoutManager = GridLayoutManager(this, 4)
     }
+
 
     private fun PostRecyclerView(){
         postadapter = UserDetailPostAdapter(UserDetailPostItemManager.getItemAll())
