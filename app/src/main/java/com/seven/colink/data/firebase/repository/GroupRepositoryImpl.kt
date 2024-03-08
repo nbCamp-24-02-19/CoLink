@@ -31,7 +31,7 @@ class GroupRepositoryImpl @Inject constructor(
             .toObject(GroupEntity::class.java)
     }
 
-    override suspend fun updateGroup(key: String, updatedGroup: GroupEntity) =
+    override suspend fun updateGroupSomeData(key: String, updatedGroup: GroupEntity) =
         suspendCoroutine { continuation ->
             val updateMap = mutableMapOf<String, Any?>()
 
@@ -47,9 +47,26 @@ class GroupRepositoryImpl @Inject constructor(
             if (updatedGroup.imageUrl != null) {
                 updateMap["imageUrl"] = updatedGroup.imageUrl
             }
+            if (updatedGroup.imageUrl != null) {
+                updateMap["status"] = updatedGroup.status
+            }
 
             firestore.collection(DataBaseType.GROUP.title).document(key)
                 .update(updateMap)
+                .addOnSuccessListener {
+                    continuation.resume(DataResultStatus.SUCCESS)
+                }
+                .addOnFailureListener { e ->
+                    continuation.resume(DataResultStatus.FAIL.apply {
+                        message = e.message ?: "Unknown error"
+                    })
+                }
+        }
+
+    override suspend fun updateGroup(key: String, updatedGroup: GroupEntity) =
+        suspendCoroutine { continuation ->
+            firestore.collection(DataBaseType.GROUP.title).document(key)
+                .set(updatedGroup, com.google.firebase.firestore.SetOptions.merge())
                 .addOnSuccessListener {
                     continuation.resume(DataResultStatus.SUCCESS)
                 }
