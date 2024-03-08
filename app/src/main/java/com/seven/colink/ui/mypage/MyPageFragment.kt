@@ -15,6 +15,7 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import coil.load
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentMyPageBinding
 import com.seven.colink.databinding.ItemSignUpSkillBinding
@@ -135,18 +136,21 @@ class MyPageFragment : Fragment() {
         // Update your views with user information
         binding.tvMypageName.text = user.name
         binding.tvMypageSpecialization2.text = user.mainSpecialty
-        binding.ivMypageBlog.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(user.blog))
-            startActivity(intent)
+        if (user.blog != null) {
+            binding.ivMypageBlog.setOnClickListener {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(user.blog))
+                startActivity(intent)
+            }
         }
-        binding.ivMypageGit.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(user.git))
-            startActivity(intent)
+        if (user.git != null) {
+            binding.ivMypageGit.setOnClickListener {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(user.git))
+                startActivity(intent)
+            }
         }
         binding.tvMypageAboutMe.text = user.info
 
-        val uri = Uri.parse(user.profile.toString())
-        binding.ivMypageProfile.setImageURI(uri)
+        binding.ivMypageProfile.load(user.profile)
 
         val level = user.level
         val levelicon: Drawable = DrawableCompat.wrap(binding.ivMypageLevel.drawable)
