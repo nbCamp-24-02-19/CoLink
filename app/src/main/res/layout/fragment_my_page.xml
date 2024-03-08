@@ -150,8 +150,19 @@
                 android:layout_height="32dp"
                 android:layout_marginStart="11dp"
                 android:layout_marginTop="132dp"
-                android:src="@drawable/ic_github"
+                android:src="@drawable/ic_git2"
                 app:layout_constraintStart_toEndOf="@+id/iv_mypage_blog"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/iv_mypage_link"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="11dp"
+                android:layout_marginTop="132dp"
+                android:src="@drawable/ic_link"
+                android:visibility= "gone"
+                app:layout_constraintStart_toEndOf="@+id/iv_mypage_git"
                 app:layout_constraintTop_toTopOf="parent" />
 
 

@@ -1,14 +1,12 @@
 package com.seven.colink.ui.mypage.adapter
 
 import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.seven.colink.R
 import com.seven.colink.databinding.MypageRecyclerviewItemPostBinding
-import com.seven.colink.ui.mypage.MyPageItem
 import com.seven.colink.ui.mypage.MyPostItem
 
 class MyPagePostAdapter(var mItems: List<MyPostItem>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -18,9 +16,20 @@ class MyPagePostAdapter(var mItems: List<MyPostItem>) : RecyclerView.Adapter<Rec
         private const val VIEW_TYPE_PROJECT = 1
         private const val VIEW_TYPE_STUDY = 2
     }
+
+    interface PostClick{
+        fun onClick(view: View, position: Int, item: MyPostItem.MyPagePostItem)
+    }
+
+    interface StudyClick{
+        fun onClick(view: View, position: Int, item: MyPostItem.MyPageStudyItem)
+    }
+
+    var studyClick: StudyClick? = null
+
+    var postClick: PostClick? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-//        val binding = MypageRecyclerviewItemPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-//        return postViewHolder(binding)
         val inflater = LayoutInflater.from(parent.context)
         return when(viewType){
             VIEW_TYPE_PROJECT -> {
@@ -48,14 +57,23 @@ class MyPagePostAdapter(var mItems: List<MyPostItem>) : RecyclerView.Adapter<Rec
                 }
                 holder.projectname.text = item.projectName
                 holder.projecttime.text = item.projectTime
+                holder.itemView.setOnClickListener {
+                    postClick?.onClick(it, position, item)
+                }
             }
             is MyPostItem.MyPageStudyItem ->{
                 (holder as StudyViewHolder).holderStudying.text = item.studying
                 if (holder.holderStudying.text == "참여중"){
                     holder.holderStudying.setBackgroundResource(R.drawable.bg_mypage_ing_blue)
+                } else if(holder.holderStudying.text == "완료"){
+                    holder.holderStudying.setBackgroundResource(R.drawable.bg_mypage_ing_purple)
+                    holder.holderStudying.setTextColor(Color.WHITE)
                 }
                 holder.studyname.text = item.studyName
                 holder.studytime.text = item.studyTime
+                holder.itemView.setOnClickListener {
+                    studyClick?.onClick(it, position, item)
+                }
             }
         }
     }
