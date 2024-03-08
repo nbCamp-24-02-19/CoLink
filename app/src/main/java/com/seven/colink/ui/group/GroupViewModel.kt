@@ -76,7 +76,7 @@ class GroupViewModel @Inject constructor(
             key = key,
             groupType = groupType,
             thumbnail = imageUrl,
-            projectName = title,
+            projectName = teamName,
             days = "모집중",
             description = description,
             tags = tags,

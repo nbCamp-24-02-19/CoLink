@@ -1,6 +1,7 @@
 package com.seven.colink.ui.search
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -15,7 +16,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentSearchBinding
+import com.seven.colink.ui.evaluation.EvaluationActivity
 import com.seven.colink.ui.post.register.PostActivity
+import com.seven.colink.ui.sign.signin.SignInActivity
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
@@ -48,6 +51,7 @@ class SearchFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -58,38 +62,61 @@ class SearchFragment : Fragment() {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        binding.fbSearchPost.setOnClickListener {
-            groupTypeOptions.setDialog(
-                requireContext(),
-                getString(R.string.group_type_options)
-            ) { selectedOption ->
-                when (selectedOption) {
-                    getString(R.string.project_kor) -> {
-                        startActivity(
-                            PostActivity.newIntent(
-                                requireActivity(),
-                                GroupType.PROJECT
-                            )
-                        )
-                    }
+        searchViewModel.checkLogin.observe(viewLifecycleOwner) {
+            binding.fbSearchPost.setOnClickListener {
+                searchViewModel.getCurrentUser()
+                if (searchViewModel.checkLogin.value == true) {
+                    groupTypeOptions.setDialog(
+                        requireContext(),
+                        getString(R.string.group_type_options)
+                    ) { selectedOption ->
+                        when (selectedOption) {
+                            getString(R.string.project_kor) -> {
+                                startActivity(
+                                    PostActivity.newIntent(
+                                        requireActivity(),
+                                        GroupType.PROJECT
+                                    )
+                                )
+                            }
 
-                    getString(R.string.study_kor) -> {
-                        startActivity(
-                            PostActivity.newIntent(
-                                requireActivity(),
-                                GroupType.STUDY
-                            )
-                        )
-                    }
+                            getString(R.string.study_kor) -> {
+                                startActivity(
+                                    PostActivity.newIntent(
+                                        requireActivity(),
+                                        GroupType.STUDY
+                                    )
+                                )
+                            }
 
-                    else -> Unit
+                            else -> Unit
+                        }
+                    }.show()
+                } else {
+                    requireContext().setDialog(
+                        title = "로그인 필요",
+                        message = "서비스를 이용하기 위해서는 로그인이 필요합니다. \n로그인 페이지로 이동하시겠습니까?",
+                        confirmAction = {
+                            val intent = Intent(requireContext(), SignInActivity::class.java)
+                            startActivity(intent)
+                            it.dismiss()
+                        },
+                        cancelAction = { it.dismiss() }
+                    ).show()
                 }
-            }.show()
+            }
         }
 
         binding.ivSearchButton.setOnClickListener {
-            searchViewModel.doSearch(binding.etSearchSearch.text.toString())
-            hideKeyboard()
+//            searchViewModel.doSearch(binding.etSearchSearch.text.toString())
+//            hideKeyboard()
+            startActivity(
+                EvaluationActivity.newIntentEval(
+                    requireContext(),
+                    GroupType.PROJECT,
+                    "ca4d315f-bbf8-420a-b997-a47b3f9a0fbb"
+                )
+            )
         }
 
 

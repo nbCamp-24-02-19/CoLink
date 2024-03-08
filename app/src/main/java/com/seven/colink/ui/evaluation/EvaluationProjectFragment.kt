@@ -15,14 +15,14 @@ class EvaluationProjectFragment : Fragment() {
     private var _binding: FragmentEvaluationProjectBinding? = null
     private val binding get() = _binding!!
     private val evalProjectViewModel: EvaluationProjectViewModel by viewModels()
-    private var projectUserList = mutableListOf<EvaluationData.EvalProject>()
+    private var userList = mutableListOf<EvaluationData.EvalProject>()
 
     companion object {
-        fun newInstanceProject(list: List<EvaluationData.EvalProject>)
+        fun newInstanceProject(user: EvaluationData.EvalProject)
         : EvaluationProjectFragment {
             val fragment = EvaluationProjectFragment()
             val args = Bundle()
-            args.putParcelableArrayList("projectUserList", ArrayList(list))
+            args.putParcelable("projectUserList", user)
             fragment.arguments = args
             return fragment
         }
@@ -34,6 +34,12 @@ class EvaluationProjectFragment : Fragment() {
     ): View {
         _binding = FragmentEvaluationProjectBinding.inflate(inflater, container, false)
         val root: View = binding.root
+        arguments?.let {
+            val projectUserList: ArrayList<EvaluationData.EvalProject> =
+                it.getParcelableArrayList("projectUserList") ?: arrayListOf()
+            Log.d("Evaluation", "projectUserlist = ${projectUserList}")
+        }
+
 
         return root
     }
@@ -47,11 +53,6 @@ class EvaluationProjectFragment : Fragment() {
 
     private fun initView(){
         Log.d("Evaluation", "EvaluationProjectFragment")
-        arguments?.let {
-            val projectUserList: ArrayList<EvaluationData.EvalProject> =
-                it.getParcelableArrayList("projectUserList") ?: arrayListOf()
-            Log.d("Evaluation", "projectUserlist = ${projectUserList}")
-        }
 
     }
 
