@@ -36,7 +36,7 @@ class RecruitRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getRecruit(key: String) = run {
-        firestore.collection(DataBaseType.APPINFO.title).document(key).get().await()
+        firestore.collection(DataBaseType.RECRUIT.title).document(key).get().await()
             .toObject(RecruitEntity::class.java)
     }
 
