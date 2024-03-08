@@ -18,16 +18,20 @@ import javax.inject.Inject
 class HomeChildViewModel @Inject constructor(
     private val postRepository: PostRepository,
 ) : ViewModel() {
+
     private val _bottomItems: MutableLiveData<List<BottomItems>> = MutableLiveData(mutableListOf())
+    private val _isLoading = MutableLiveData<Boolean>()
     val bottomItems: LiveData<List<BottomItems>> get() = _bottomItems
+    val isLoading : LiveData<Boolean> get() = _isLoading
 
     fun getBottomItems(num: Int,type : GroupType?) {
+        _isLoading.value = true
         var getBottomItemList: MutableList<BottomItems> = mutableListOf()
 
         viewModelScope.launch {
-
             getBottomItemList.clear()
             val repository = postRepository.getRecentPost(num,type)
+
             kotlin.runCatching {
                 repository.forEach {
                     var bottomRecentItem = BottomItems(it.groupType,it.title,it.description
@@ -35,6 +39,7 @@ class HomeChildViewModel @Inject constructor(
                     getBottomItemList.add(bottomRecentItem)
                 }
                 _bottomItems.value = getBottomItemList
+                _isLoading.value = false
             }.onFailure { exception ->
                 Log.e("HomeChildViewModel", "#aaa error $exception")
             }
