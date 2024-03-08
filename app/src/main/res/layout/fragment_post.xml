@@ -26,6 +26,16 @@
                 android:layout_height="24dp"
                 android:src="@drawable/ic_arrow_left" />
 
+            <TextView
+                android:id="@+id/tv_content_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/roboto_medium"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
         </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -52,7 +62,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
-                    android:id="@+id/iv_image_background"
+                    android:id="@+id/iv_post_image_bg"
                     android:layout_width="match_parent"
                     android:layout_height="167dp"
                     android:background="@drawable/bg_post_image_background"
@@ -62,7 +72,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
-                    android:id="@+id/iv_add_image"
+                    android:id="@+id/iv_post_image"
                     android:layout_width="92dp"
                     android:layout_height="92dp"
                     android:layout_marginStart="24dp"
@@ -72,16 +82,44 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <EditText
-                    android:id="@+id/et_title"
-                    style="@style/PostEditTextStyle"
+                <TextView
+                    android:id="@+id/tv_title"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="24dp"
+                    android:layout_marginVertical="12dp"
+                    android:text="@string/title_project_name"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/iv_post_image" />
+
+                <TextView
+                    android:id="@+id/tv_title_asterisk"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="@string/asterisk"
+                    android:textColor="@color/red"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@id/tv_title"
+                    app:layout_constraintTop_toTopOf="@id/tv_title" />
+
+                <EditText
+                    android:id="@+id/et_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_marginVertical="12dp"
+                    android:background="@android:color/transparent"
                     android:hint="@string/input_title"
-                    android:textSize="20sp"
+                    android:textColorHint="@color/edit_hint_color"
+                    android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/iv_add_image" />
+                    app:layout_constraintTop_toBottomOf="@id/tv_title" />
 
                 <View
                     android:id="@+id/view_title_line"
@@ -92,28 +130,69 @@
                     android:background="@color/bg"
                     app:layout_constraintTop_toBottomOf="@id/et_title" />
 
-                <EditText
-                    android:id="@+id/et_content"
-                    style="@style/PostEditTextStyle"
-                    android:layout_height="200dp"
+                <TextView
+                    android:id="@+id/tv_project_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginHorizontal="24dp"
-                    android:gravity="top"
-                    android:hint="@string/input_content_project"
-                    android:textSize="14sp"
-                    app:layout_constraintBottom_toTopOf="@id/recycler_view_tags"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginVertical="12dp"
+                    android:text="@string/title_project_description"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/view_title_line" />
+
+                <TextView
+                    android:id="@+id/tv_description_asterisk"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="@string/asterisk"
+                    android:textColor="@color/red"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@id/tv_project_description"
+                    app:layout_constraintTop_toTopOf="@id/tv_project_description" />
+
+                <TextView
+                    android:id="@+id/tv_project_description_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_marginVertical="12dp"
+                    android:text="@string/input_content_project"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_project_description" />
+
+                <EditText
+                    android:id="@+id/et_description"
+                    style="@style/PostEditTextStyle"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_marginBottom="12dp"
+                    android:background="@drawable/bg_round_corner_4dp"
+                    android:backgroundTint="@color/color_content"
+                    android:gravity="top"
+                    android:minHeight="250dp"
+                    android:padding="12dp"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_project_description_info" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_view_tags"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="24dp"
+                    android:layout_marginVertical="12dp"
                     android:orientation="horizontal"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/et_content"
+                    app:layout_constraintTop_toBottomOf="@id/et_description"
                     tools:listitem="@layout/item_list_post_tag" />
 
                 <TextView
@@ -122,17 +201,15 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="12dp"
-                    android:layout_marginBottom="24dp"
                     android:text="@string/sharp"
                     android:textColor="@color/sharp"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/recycler_view_tags" />
 
                 <EditText
-                    android:id="@+id/et_register_tag"
+                    android:id="@+id/et_group_tag"
                     android:layout_width="120dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
@@ -145,13 +222,85 @@
                     app:layout_constraintStart_toEndOf="@id/tv_sharp"
                     app:layout_constraintTop_toTopOf="@id/tv_sharp" />
 
+                <TextView
+                    android:id="@+id/tv_title_precautions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_marginVertical="12dp"
+                    android:text="@string/title_precautions"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/et_group_tag" />
+
+                <EditText
+                    android:id="@+id/et_title_precautions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_marginVertical="12dp"
+                    android:background="@android:color/transparent"
+                    android:hint="@string/description_precautions"
+                    android:textColorHint="@color/edit_hint_color"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_title_precautions" />
+
+                <View
+                    android:id="@+id/view_title_precautions_line"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@color/bg"
+                    app:layout_constraintTop_toBottomOf="@id/et_title_precautions" />
+
+                <TextView
+                    android:id="@+id/tv_recruitInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_marginVertical="12dp"
+                    android:text="@string/title_recruitInfo"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/view_title_precautions_line" />
+
+                <EditText
+                    android:id="@+id/et_recruitInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_marginVertical="12dp"
+                    android:background="@android:color/transparent"
+                    android:hint="@string/description_recruitInfo"
+                    android:textColorHint="@color/edit_hint_color"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_recruitInfo" />
+
+                <View
+                    android:id="@+id/view_recruitInfo_line"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@color/bg"
+                    app:layout_constraintTop_toBottomOf="@id/et_recruitInfo" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraint_layout_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="12dp"
                 android:background="@color/white"
                 android:paddingHorizontal="24dp"
                 android:paddingTop="24dp"

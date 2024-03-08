@@ -11,11 +11,12 @@ import com.seven.colink.domain.entity.GroupEntity
 import com.seven.colink.domain.entity.TagEntity
 import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.domain.repository.ImageRepository
-import com.seven.colink.ui.post.register.post.model.AddTagResult
+import com.seven.colink.ui.post.register.post.model.TagEvent
 import com.seven.colink.util.Constants
 import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.PostEntryType
+import com.seven.colink.util.status.ProjectStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -47,6 +48,7 @@ class GroupContentViewModel @Inject constructor(
                     description = it.description,
                     tags = it.tags?.map { TagEntity(name = it) } ?: emptyList(),
                     imageUrl = it.imageUrl,
+                    status = it.status,
                     selectedImageUrl = null,
                     groupTypeUiState = if (it.groupType == GroupType.PROJECT) GroupTypeUiState.Project else GroupTypeUiState.Study,
                     buttonUiState = if (entryType == PostEntryType.CREATE) ContentButtonUiState.Create else ContentButtonUiState.Update
@@ -55,16 +57,22 @@ class GroupContentViewModel @Inject constructor(
         }
     }
 
-    fun addTagItem(entity: TagEntity): AddTagResult {
+    fun onChangedSwitch(status: ProjectStatus) {
+        _uiState.value = _uiState.value?.copy(
+            status = status
+        )
+    }
+
+    fun addTagItem(entity: TagEntity): TagEvent {
         val currentUiState = _uiState.value?.copy()
         val list = currentUiState?.tags.orEmpty().toMutableList()
 
         return when {
-            list.size >= Constants.LIMITED_TAG_COUNT -> AddTagResult.MaxNumberExceeded
-            list.any { it.name == entity.name } -> AddTagResult.TagAlreadyExists
+            list.size >= Constants.LIMITED_TAG_COUNT -> TagEvent.MaxNumberExceeded
+            list.any { it.name == entity.name } -> TagEvent.TagAlreadyExists
             else -> {
                 _uiState.value = currentUiState?.copy(tags = list + entity)
-                AddTagResult.Success
+                TagEvent.Success
             }
         }
     }
@@ -91,7 +99,7 @@ class GroupContentViewModel @Inject constructor(
         )
 
         _groupOperationResult.postValue(uiState.value?.key?.let {
-            groupRepository.updateGroup(
+            groupRepository.updateGroupSomeData(
                 it,
                 updatedGroupEntity
             )
@@ -117,7 +125,8 @@ class GroupContentViewModel @Inject constructor(
             teamName = teamName,
             description = description,
             tags = _uiState.value?.tags?.map { it.name } ?: emptyList(),
-            imageUrl = imageUrl
+            imageUrl = imageUrl,
+            status = _uiState.value?.status ?: ProjectStatus.RECRUIT
         )
     }
 

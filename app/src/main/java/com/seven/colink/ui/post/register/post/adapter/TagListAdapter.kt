@@ -13,18 +13,18 @@ import com.seven.colink.ui.post.register.post.model.TagListItem
 import com.seven.colink.ui.post.register.post.model.TagListViewType
 
 class TagListAdapter(
-    private val onClickItem: (Int, TagListItem) -> Unit
+    private val onClickItem: (TagListItem) -> Unit
 ) : ListAdapter<TagListItem, TagListAdapter.TagViewHolder>(
     object : DiffUtil.ItemCallback<TagListItem>() {
 
         override fun areItemsTheSame(oldItem: TagListItem, newItem: TagListItem): Boolean =
             when {
                 oldItem is TagListItem.Item && newItem is TagListItem.Item -> {
-                    oldItem.tagEntity?.key == newItem.tagEntity?.key
+                    oldItem.name == newItem.name
                 }
 
                 oldItem is TagListItem.ContentItem && newItem is TagListItem.ContentItem -> {
-                    oldItem.tagName == newItem.tagName
+                    oldItem.name == newItem.name
                 }
 
                 else -> oldItem == newItem
@@ -39,7 +39,6 @@ class TagListAdapter(
     }
 
 ) {
-
     abstract class TagViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         abstract fun onBind(item: TagListItem)
     }
@@ -49,7 +48,6 @@ class TagListAdapter(
         is TagListItem.ContentItem -> TagListViewType.CONTENT_ITEM
         else -> TagListViewType.UNKNOWN
     }.ordinal
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TagViewHolder =
         when (TagListViewType.from(viewType)) {
@@ -77,13 +75,13 @@ class TagListAdapter(
 
     class TagListItemViewHolder(
         private val binding: ItemListPostTagBinding,
-        private val onClickItem: (Int, TagListItem) -> Unit
+        private val onClickItem: (TagListItem) -> Unit
     ) : TagViewHolder(binding.root) {
         override fun onBind(item: TagListItem) {
             if (item is TagListItem.Item) {
-                binding.tvTagName.text = item.tagEntity?.name
+                binding.tvTagName.text = item.name
                 binding.ivTagDelete.setOnClickListener {
-                    onClickItem(adapterPosition, item)
+                    onClickItem(item)
                 }
             }
         }
@@ -94,7 +92,7 @@ class TagListAdapter(
     ) : TagViewHolder(binding.root) {
         override fun onBind(item: TagListItem) {
             if (item is TagListItem.ContentItem) {
-                binding.tvTagName.text = "# ${item.tagName}"
+                binding.tvTagName.text = "# ${item.name}"
             }
         }
     }
@@ -103,6 +101,5 @@ class TagListAdapter(
         TagViewHolder(binding.root) {
         override fun onBind(item: TagListItem) = Unit
     }
-
 
 }
