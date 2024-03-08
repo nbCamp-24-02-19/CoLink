@@ -69,6 +69,7 @@ class MyPageFragment : Fragment() {
 
 
         showProgressOverlay()
+        binding.ntMypage.visibility = View.GONE
         privacypolicy()
         SkilRecyclerView()
         PostRecyclerView()
@@ -163,6 +164,7 @@ class MyPageFragment : Fragment() {
             }else{
                 startActivity(Intent(requireContext(), SignInActivity::class.java))
             }
+            binding.ntMypage.visibility = View.VISIBLE
             hideProgressOverlay()
         }
 
