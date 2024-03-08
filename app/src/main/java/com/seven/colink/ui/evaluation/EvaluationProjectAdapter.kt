@@ -7,37 +7,19 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 
 class EvaluationProjectAdapter(
     frag: FragmentActivity,
-    private val mItems: MutableList<EvaluationData>
+    val mItems: MutableList<EvaluationData.EvalProject>
 ) : FragmentStateAdapter(frag) {
     override fun getItemCount(): Int {
-//        return mItems.size
-        return 4
+        return mItems.size
     }
 
     override fun createFragment(position: Int): Fragment {
         Log.d("Evaluation", "EvalAdapter <createFragment_Project>")
-        return when (position) {
-            0 -> {
-                EvaluationProjectFragment.newInstanceProject(
-                    mItems.filterIsInstance<EvaluationData.EvalProject>()
-                )
-            }
-            1 -> {
-                EvaluationProjectFragment.newInstanceProject(
-                    mItems.filterIsInstance<EvaluationData.EvalProject>()
-                )
-            }
-            2 -> {
-                EvaluationProjectFragment.newInstanceProject(
-                    mItems.filterIsInstance<EvaluationData.EvalProject>()
-                )
-            }
-            3 -> {
-                EvaluationProjectFragment.newInstanceProject(
-                    mItems.filterIsInstance<EvaluationData.EvalProject>()
-                )
-            }
-            else -> throw IllegalArgumentException("Invalid type of data at position $position")
+        val user = mItems.filterIsInstance<EvaluationData.EvalProject>()
+
+        return if (position in user.indices){
+            EvaluationProjectFragment.newInstanceProject(user[position])
         }
+        else throw IllegalArgumentException("Invalid position $position")
     }
 }

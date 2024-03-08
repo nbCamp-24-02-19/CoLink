@@ -25,8 +25,9 @@ class EvaluationActivity : AppCompatActivity() {
         }
     }
 
-    private var userList = mutableListOf<EvaluationData>()
-    private lateinit var evalAdapter: EvaluationProjectAdapter
+    private var projectUserList = mutableListOf<EvaluationData.EvalProject>()
+    private var studyUserList = mutableListOf<EvaluationData.EvalStudy>()
+    private lateinit var evalProjectAdapter: EvaluationProjectAdapter
     private lateinit var evalStudyAdapter: EvaluationStudyAdapter
     private lateinit var evalViewModel: EvaluationViewModel
     private val binding by lazy {
@@ -46,49 +47,67 @@ class EvaluationActivity : AppCompatActivity() {
 
         initView()
         evalViewModel.getMembers(groupEntity)
-        setObserve()
+
 
     }
 
     private fun initView() {
-
-        when(groupTypeEntity){
+        when (groupTypeEntity) {
             0 -> {
-                evalAdapter = EvaluationProjectAdapter(this, userList)
-                binding.vpEvalViewpager.adapter = evalAdapter
+                evalProjectAdapter = EvaluationProjectAdapter(this, projectUserList)
+                binding.vpEvalViewpager.adapter = evalProjectAdapter
                 binding.vpEvalViewpager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+                setProjectObserve()
+                setProgress()
             }
             1 -> {
-                evalStudyAdapter = EvaluationStudyAdapter(this, userList)
+                evalStudyAdapter = EvaluationStudyAdapter(this, studyUserList)
                 binding.vpEvalViewpager.adapter = evalStudyAdapter
                 binding.vpEvalViewpager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+                setStudyObserve()
             }
             else -> throw IllegalArgumentException("Unknown GroupTypeEntity!")
         }
-//        evalAdapter = EvaluationAdapter(this, userList)
-//        binding.vpEvalViewpager.adapter = evalAdapter
-//        binding.vpEvalViewpager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
 
-        val pageCount = 3
-        binding.pbEvalProgress.max = pageCount - 1
+        Log.d("Evaluation", "evaluationValue = ${groupTypeEntity}, ${groupEntity}")
+    }
 
+
+    private fun setProgress(){
         binding.vpEvalViewpager.registerOnPageChangeCallback(object :
             ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 binding.pbEvalProgress.progress = position
             }
         })
-
-        Log.d("Evaluation", "evaluationValue = ${groupTypeEntity}, ${groupEntity}")
     }
 
-    private fun setObserve() {
-        evalViewModel.evalMembersData.observe(this) {
-
-
-            Log.d("Evaluation", "evalViewModel Observing!")
-            Log.d("Evaluation", "progressbar.size = ${binding.pbEvalProgress.max}")
+    private fun setProjectObserve() {
+        evalViewModel.evalProjectMembersData.observe(this) { it ->
+            it?.let { list ->
+                val nonNullList = list.filterNotNull()
+                evalProjectAdapter.mItems.clear()
+                evalProjectAdapter.mItems.addAll(nonNullList)
+                Log.d("Evaluation", "### Adapter mItems = ${evalProjectAdapter.mItems}")
+                val pageCount = nonNullList.size
+                binding.pbEvalProgress.max = pageCount - 1
+                evalProjectAdapter.notifyDataSetChanged()
+            }
         }
-        Log.d("Evaluation", "setObserve")
+        Log.d("Evaluation", "setProjectObserve")
+    }
+
+    private fun setStudyObserve() {
+        evalViewModel.evalStudyMembersData.observe(this) { it ->
+            it?.let { list ->
+                val nonNullList = list.filterNotNull()
+                evalStudyAdapter.mItems.clear()
+                evalStudyAdapter.mItems.addAll(nonNullList)
+                val pageCount = nonNullList.size
+                binding.pbEvalProgress.max = pageCount - 1
+                evalStudyAdapter.notifyDataSetChanged()
+            }
+        }
+        Log.d("Evaluation", "setProjectObserve")
     }
 }
