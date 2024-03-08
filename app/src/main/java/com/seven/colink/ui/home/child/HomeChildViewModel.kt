@@ -41,7 +41,7 @@ class HomeChildViewModel @Inject constructor(
                 _bottomItems.value = getBottomItemList
                 _isLoading.value = false
             }.onFailure { exception ->
-                Log.e("HomeChildViewModel", "#aaa error $exception")
+                Log.e("HomeChildViewModel", "error = $exception")
             }
         }
     }

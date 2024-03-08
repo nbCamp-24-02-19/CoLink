@@ -56,38 +56,49 @@ class HomeProjectFragment : Fragment() {
                 else -> binding.layProjectBottom5
             }
 
-            bottomLayout.apply {
-                tvHomeBottomStudy.visibility = View.INVISIBLE
-                tvHomeBottomProject.visibility = View.VISIBLE
-                tvHomeBottomTitle.text = bottom.title
-                tvHomeBottomDes.text = bottom.des
-                tvHomeBottomKind.text = bottom.kind?.map { "# " + it }?.joinToString("   ","","")
-                viewHomeBottomDivider.visibility = View.INVISIBLE
-                tvHomeBottomLv.visibility = View.INVISIBLE
-                ivHomeBottomThumubnail.load(bottom.img)
-                if (bottom.blind == ProjectStatus.END) {
-                    viewHomeBottomBlind.visibility = View.VISIBLE
-                    tvHomeBottomBlind.visibility = View.VISIBLE
-                } else {
-                    viewHomeBottomBlind.visibility = View.INVISIBLE
-                    tvHomeBottomBlind.visibility = View.INVISIBLE
-                }
+            try {
+                bottomLayout.apply {
+                    tvHomeBottomStudy.visibility = View.INVISIBLE
+                    tvHomeBottomProject.visibility = View.VISIBLE
+                    tvHomeBottomTitle.text = bottom.title
+                    tvHomeBottomDes.text = bottom.des
+                    tvHomeBottomKind.text =
+                        bottom.kind?.map { "# " + it }?.joinToString("   ", "", "")
+                    viewHomeBottomDivider.visibility = View.INVISIBLE
+                    tvHomeBottomLv.visibility = View.INVISIBLE
+                    ivHomeBottomThumubnail.load(bottom.img)
+                    if (bottom.blind == ProjectStatus.END) {
+                        viewHomeBottomBlind.visibility = View.VISIBLE
+                        tvHomeBottomBlind.visibility = View.VISIBLE
+                    } else {
+                        viewHomeBottomBlind.visibility = View.INVISIBLE
+                        tvHomeBottomBlind.visibility = View.INVISIBLE
+                    }
 
-                layBottom.setOnClickListener {
-                    lifecycleScope.launch {
-                        val key = bottom.key
-                        val entity = key?.let { homeChildViewModel.getPost(it) }
-                        if (key != null && entity != null) {
-                            val intent = PostActivity.newIntent(
-                                context = requireContext(), key = key)
-                            startActivity(intent)
-                        }else {
-                            Toast.makeText(requireContext(), "다음에 다시 시도해주세요.", Toast.LENGTH_SHORT)
-                                .show()
+                    layBottom.setOnClickListener {
+                        lifecycleScope.launch {
+                            val key = bottom.key
+                            val entity = key?.let { homeChildViewModel.getPost(it) }
+                            if (key != null && entity != null) {
+                                val intent = PostActivity.newIntent(
+                                    context = requireContext(), key = key
+                                )
+                                startActivity(intent)
+                            } else {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "다음에 다시 시도해주세요.",
+                                    Toast.LENGTH_SHORT
+                                )
+                                    .show()
+                            }
                         }
                     }
                 }
+            } catch (e: Exception) {
+                Log.e("HomeProjectFragment", "Error during receive data", e)
             }
+
         }
     }
 
@@ -100,7 +111,7 @@ class HomeProjectFragment : Fragment() {
             if (isLoading) {
                 showProgressOverlay()
                 binding.cvProject.visibility = View.INVISIBLE
-            }else {
+            } else {
                 hideProgressOverlay()
                 binding.cvProject.visibility = View.VISIBLE
             }

@@ -1,6 +1,7 @@
 package com.seven.colink.ui.home.child
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -54,39 +55,48 @@ class HomeStudyFragment : Fragment() {
                 3 -> binding.layStudyBottom4
                 else -> binding.layStudyBottom5
             }
+            try {
+                bottomLayout.apply {
+                    tvHomeBottomStudy.visibility = View.VISIBLE
+                    tvHomeBottomProject.visibility = View.INVISIBLE
+                    tvHomeBottomTitle.text = bottom.title
+                    tvHomeBottomDes.text = bottom.des
+                    tvHomeBottomKind.text =
+                        bottom.kind?.map { "# " + it }?.joinToString("   ", "", "")
+                    viewHomeBottomDivider.visibility = View.INVISIBLE
+                    tvHomeBottomLv.visibility = View.INVISIBLE
+                    ivHomeBottomThumubnail.load(bottom.img)
 
-            bottomLayout.apply {
-                tvHomeBottomStudy.visibility = View.VISIBLE
-                tvHomeBottomProject.visibility = View.INVISIBLE
-                tvHomeBottomTitle.text = bottom.title
-                tvHomeBottomDes.text = bottom.des
-                tvHomeBottomKind.text = bottom.kind?.map { "# " + it }?.joinToString("   ","","")
-                viewHomeBottomDivider.visibility = View.INVISIBLE
-                tvHomeBottomLv.visibility = View.INVISIBLE
-                ivHomeBottomThumubnail.load(bottom.img)
+                    if (bottom.blind == ProjectStatus.END) {
+                        viewHomeBottomBlind.visibility = View.VISIBLE
+                        tvHomeBottomBlind.visibility = View.VISIBLE
+                    } else {
+                        viewHomeBottomBlind.visibility = View.INVISIBLE
+                        tvHomeBottomBlind.visibility = View.INVISIBLE
+                    }
 
-                if (bottom.blind == ProjectStatus.END) {
-                    viewHomeBottomBlind.visibility = View.VISIBLE
-                    tvHomeBottomBlind.visibility = View.VISIBLE
-                } else {
-                    viewHomeBottomBlind.visibility = View.INVISIBLE
-                    tvHomeBottomBlind.visibility = View.INVISIBLE
-                }
-
-                layBottom.setOnClickListener {
-                    lifecycleScope.launch {
-                        val key = bottom.key
-                        val entity = key?.let { homeChildViewModel.getPost(it) }
-                        if (key != null && entity != null) {
-                            val intent = PostActivity.newIntent(
-                                context = requireContext(), key = key)
-                            startActivity(intent)
-                        }else {
-                            Toast.makeText(requireContext(), "다음에 다시 시도해주세요.", Toast.LENGTH_SHORT)
-                                .show()
+                    layBottom.setOnClickListener {
+                        lifecycleScope.launch {
+                            val key = bottom.key
+                            val entity = key?.let { homeChildViewModel.getPost(it) }
+                            if (key != null && entity != null) {
+                                val intent = PostActivity.newIntent(
+                                    context = requireContext(), key = key
+                                )
+                                startActivity(intent)
+                            } else {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "다음에 다시 시도해주세요.",
+                                    Toast.LENGTH_SHORT
+                                )
+                                    .show()
+                            }
                         }
                     }
                 }
+            }catch (e: Exception) {
+                Log.e("HomeStudyFragment", "Error during receive data", e)
             }
         }
     }

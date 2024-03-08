@@ -12,4 +12,5 @@
     <string name="home_top_example_team">팀 어쩌구저쩌구</string>
     <string name="home_top_example_title">[서울] 크리스찬들을 위한 챗 GPT 성경 앱</string>
     <string name="page_number">%d</string>
+    <string name="error_data">데이터를 불러오지 못 했습니다. 다시 시도 바랍니다.</string>
 </resources>

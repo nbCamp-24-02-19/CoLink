@@ -17,7 +17,7 @@
         <TextView
             android:id="@+id/tv_home_bottom_project"
             android:layout_width="wrap_content"
-            android:layout_height="20dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="15dp"
             android:paddingHorizontal="8dp"
@@ -34,7 +34,7 @@
         <TextView
             android:id="@+id/tv_home_bottom_study"
             android:layout_width="wrap_content"
-            android:layout_height="20dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="15dp"
             android:paddingHorizontal="8dp"
@@ -58,6 +58,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:text="@string/home_bottom_example_title"
+            android:fontFamily="@font/inter_regular"
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@id/iv_home_bottom_thumubnail"
@@ -69,7 +70,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="3dp"
+            android:fontFamily="@font/inter_regular"
+            android:layout_marginTop="2dp"
             android:layout_marginEnd="20dp"
             android:ellipsize="end"
             android:maxLines="1"
@@ -91,7 +93,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="1dp"
+                android:layout_marginTop="3dp"
                 android:text="@string/home_bottom_example_kind"
                 android:textSize="12sp"
                 android:fontFamily="@font/inter_regular"
@@ -137,8 +139,8 @@
 
         <ImageView
             android:id="@+id/iv_home_bottom_thumubnail"
-            android:layout_width="72dp"
-            android:layout_height="72dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_marginEnd="20dp"
             android:src="@drawable/img_dialog_study"
             app:layout_constraintBottom_toBottomOf="@id/lay_bottom_kind"
@@ -147,8 +149,8 @@
 
         <View
             android:id="@+id/view_home_bottom_blind"
-            android:layout_width="72dp"
-            android:layout_height="72dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:background="#A6000000"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/iv_home_bottom_thumubnail"
@@ -173,7 +175,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="15dp"
             android:layout_marginBottom="5dp"
             android:background="#F5F5F5"
             app:layout_constraintTop_toBottomOf="@id/lay_bottom_kind" />
