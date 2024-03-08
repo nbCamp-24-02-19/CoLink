@@ -23,7 +23,7 @@ import com.seven.colink.util.showToast
 
 class RecruitDialog(
     private val personnel: Int,
-    private val recruitTypes: List<String>,
+    private val recruitTypes: List<String?>,
     private val onConfirmed: (RecruitInfo) -> Unit,
     private val onCancelled: () -> Unit
 ) : DialogFragment() {
