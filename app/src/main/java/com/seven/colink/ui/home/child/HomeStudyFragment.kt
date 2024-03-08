@@ -6,13 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.seven.colink.databinding.FragmentHomeStudyBinding
-import com.seven.colink.ui.home.HomeViewModel
 import com.seven.colink.ui.post.register.PostActivity
+import com.seven.colink.util.progress.hideProgressOverlay
+import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,7 +23,8 @@ class HomeStudyFragment : Fragment() {
 
     private var _binding: FragmentHomeStudyBinding? = null
     private val binding get() = _binding!!
-    private val homeViewModel: HomeChildViewModel by viewModels()
+    private val homeChildViewModel: HomeChildViewModel by viewModels()
+    private var loading = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,7 +36,7 @@ class HomeStudyFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        homeViewModel.getBottomItems(5, GroupType.STUDY)
+        homeChildViewModel.getBottomItems(5, GroupType.STUDY)
         initViews()
         setObserve()
     }
@@ -45,7 +46,7 @@ class HomeStudyFragment : Fragment() {
     }
 
     private fun bottomViewsData() {
-        homeViewModel.bottomItems.value?.forEachIndexed { index, bottom ->
+        homeChildViewModel.bottomItems.value?.forEachIndexed { index, bottom ->
             val bottomLayout = when (index) {
                 0 -> binding.layStudyBottom1
                 1 -> binding.layStudyBottom2
@@ -59,7 +60,7 @@ class HomeStudyFragment : Fragment() {
                 tvHomeBottomProject.visibility = View.INVISIBLE
                 tvHomeBottomTitle.text = bottom.title
                 tvHomeBottomDes.text = bottom.des
-                tvHomeBottomKind.text = bottom.kind?.toString()
+                tvHomeBottomKind.text = bottom.kind?.map { "# " + it }?.joinToString("   ","","")
                 viewHomeBottomDivider.visibility = View.INVISIBLE
                 tvHomeBottomLv.visibility = View.INVISIBLE
                 ivHomeBottomThumubnail.load(bottom.img)
@@ -75,10 +76,12 @@ class HomeStudyFragment : Fragment() {
                 layBottom.setOnClickListener {
                     lifecycleScope.launch {
                         val key = bottom.key
-                        if (key != null) {
-                            val intent = PostActivity.newIntent(context = requireContext(), key = key)
+                        val entity = key?.let { homeChildViewModel.getPost(it) }
+                        if (key != null && entity != null) {
+                            val intent = PostActivity.newIntent(
+                                context = requireContext(), key = key)
                             startActivity(intent)
-                        } else {
+                        }else {
                             Toast.makeText(requireContext(), "다음에 다시 시도해주세요.", Toast.LENGTH_SHORT)
                                 .show()
                         }
@@ -89,8 +92,19 @@ class HomeStudyFragment : Fragment() {
     }
 
     private fun setObserve() {
-        homeViewModel.bottomItems.observe(viewLifecycleOwner) {
+        homeChildViewModel.bottomItems.observe(viewLifecycleOwner) {
             bottomViewsData()
+        }
+
+        homeChildViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            if (isLoading) {
+                showProgressOverlay()
+                binding.cvStudy.visibility = View.INVISIBLE
+            }else {
+                hideProgressOverlay()
+                binding.cvStudy.visibility = View.VISIBLE
+            }
+            loading = !isLoading
         }
     }
 

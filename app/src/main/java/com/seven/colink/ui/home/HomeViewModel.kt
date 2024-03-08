@@ -17,6 +17,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val postRepository: PostRepository,
 ) : ViewModel() {
+
     private val _topItems: MutableLiveData<List<TopItems>> = MutableLiveData(mutableListOf())
     val topItems: LiveData<List<TopItems>> get() = _topItems
 

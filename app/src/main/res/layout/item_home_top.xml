@@ -31,9 +31,9 @@
         android:layout_height="wrap_content"
         android:text="@string/home_top_example_team"
         android:textColor="@color/white"
-        android:textSize="12sp"
+        android:textSize="14sp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="147dp"
+        android:layout_marginTop="200dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:text="@string/home_top_example_date"
         android:textColor="@color/white"
-        android:textSize="12sp"
+        android:textSize="14sp"
         android:layout_marginStart="10dp"
         app:layout_constraintBottom_toBottomOf="@id/tv_top_team"
         app:layout_constraintTop_toTopOf="@id/tv_top_team"
@@ -52,17 +52,17 @@
 
     <TextView
         android:id="@+id/tv_top_title"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/home_top_example_title"
         android:textColor="@color/white"
-        android:textSize="14sp"
+        android:textSize="18sp"
         android:textStyle="bold"
         android:layout_marginStart="24dp"
         android:ellipsize="end"
         android:maxLines="1"
         app:layout_constraintBottom_toTopOf="@id/tv_top_date"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintWidth_percent="0.65"/>
+        app:layout_constraintWidth_percent="0.8"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
