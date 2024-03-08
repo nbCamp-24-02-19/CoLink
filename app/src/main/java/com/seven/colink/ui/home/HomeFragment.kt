@@ -1,21 +1,18 @@
 package com.seven.colink.ui.home
 
 import android.content.Context
-import android.graphics.Point
-import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.seven.colink.R
+import androidx.viewpager2.widget.ViewPager2
 import com.seven.colink.databinding.FragmentHomeBinding
 import com.seven.colink.ui.home.adapter.BottomViewPagerAdapter
 import com.seven.colink.ui.home.adapter.HomeMainAdapter
@@ -24,7 +21,7 @@ import com.seven.colink.ui.home.child.HomeProjectFragment
 import com.seven.colink.ui.post.register.PostActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-
+import kotlin.math.abs
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -39,6 +36,7 @@ class HomeFragment : Fragment() {
         HomeAdapterItems.TopView(TopViewPagerAdapter()),
         HomeAdapterItems.Header("그룹 추천")
     )
+    private val childProject by lazy { HomeProjectFragment() }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -70,21 +68,43 @@ class HomeFragment : Fragment() {
         }
 
         bottomAdapter = BottomViewPagerAdapter(this)
+        binding.vpHome.adapter = bottomAdapter
         previewViewPager()
     }
 
     private fun previewViewPager(){
-        binding.vpHome.adapter = bottomAdapter
-        binding.vpHome.offscreenPageLimit = 2
-        val pageMargin = resources.getDimensionPixelOffset(R.dimen.page_home_margin)
-        val pagerOffset = resources.getDimensionPixelOffset(R.dimen.offset_home_between_pages)
-        val screenWidth = resources.displayMetrics.widthPixels
-        val screen = pixelToDp(screenWidth,requireContext())
-        val offsetPx = screen - (pageMargin + pagerOffset) - (pageMargin/2)
+        binding.vpHome.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
+            override fun onPageSelected(position: Int) {
+                val currentPx = dpToPixel(40f, requireContext()).toInt()
+                val nextPx = dpToPixel(25f,requireContext()).toInt()
+                val transX = nextPx + currentPx
+                binding.vpHome.offscreenPageLimit = 1
 
-        binding.vpHome.setPageTransformer { page, position ->
-            page.translationX = position * (-offsetPx )
-        }
+                binding.vpHome.setPageTransformer { page, position ->
+                    val scaleFactor = 1 - 0.2 * abs(position)
+//                    page.scaleY = scaleFactor.toFloat()
+                    page.scaleX = scaleFactor.toFloat()
+                    page.translationX = -transX * position
+                }
+                val pageMargin = currentPx / 2
+                val currentItem = binding.vpHome.currentItem
+                val marginPx =  pageMargin / 2
+                if (currentItem == 0) {
+                    binding.vpHome.setPaddingRelative(0, 0, marginPx, 0)
+                }else{
+                    binding.vpHome.setPaddingRelative(marginPx, 0, 0, 0)
+                }
+
+                binding.vpHome.clipToPadding = false
+            }
+        })
+    }
+
+    private fun dpToPixel(dp: Float, context: Context): Float {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            dp,context.resources.displayMetrics
+        )
     }
 
     private fun pixelToDp(px: Int, context: Context) : Float {
@@ -111,13 +131,12 @@ class HomeFragment : Fragment() {
             lifecycleScope.launch {
                 val key = item.key
                 val entity = key?.let { homeViewModel.getPost(it) }
-                if (entity != null) {
-                    startActivity(
-                        PostActivity.newIntent(
-                            context = requireActivity(),
-                            key = item.key
-                        )
+                if (key != null && entity != null) {
+                    val intent = PostActivity.newIntent(
+                        context = requireActivity(),
+                        key = item.key
                     )
+                    startActivity(intent)
                 }else {
                     Toast.makeText(requireContext(), "다음에 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
                 }
