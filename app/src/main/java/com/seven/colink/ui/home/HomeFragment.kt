@@ -5,6 +5,7 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,10 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.CompositePageTransformer
-import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
-import coil.size.Dimension
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentHomeBinding
 import com.seven.colink.ui.home.adapter.BottomViewPagerAdapter
@@ -77,14 +75,55 @@ class HomeFragment : Fragment() {
     }
 
     private fun previewViewPager(){
-        binding.vpHome.offscreenPageLimit = 1
+
         val pageMargin = resources.getDimensionPixelOffset(R.dimen.page_home_margin)
         val pagerOffset = resources.getDimensionPixelOffset(R.dimen.offset_home_between_pages)
         val screenWidth = resources.displayMetrics.widthPixels
 
+        binding.vpHome.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
+            override fun onPageSelected(position: Int) {
+                val currentPx = dpToPixel(40f, requireContext()).toInt()
+                Log.d("Home","#iii currentPx = $currentPx")
+                val nextPx = dpToPixel(20f,requireContext()).toInt()
+                Log.d("Home","#iii nextPx = $nextPx")
+                val transX = nextPx + currentPx
+                Log.d("Home","#iii transX = $transX")
+                binding.vpHome.offscreenPageLimit = 2
+
+                binding.vpHome.setPageTransformer { page, position ->
+                    val scaleFactor = if (position <= 0) {
+                        (1 - 0.2 * abs(position))
+                    } else {
+                        (1 - 0.2 * abs(position))
+                    }
+
+                    page.scaleX = scaleFactor.toFloat()
+                    page.translationX = -transX * position
+                }
+                val recyclerViewMargin = currentPx / 2
+                Log.d("Home","#iii recyclerViewMargin = $recyclerViewMargin")
+                val currentItem = binding.vpHome.currentItem
+                val marginPx =  recyclerViewMargin / 2
+                Log.d("Home","#iii marginPx = $marginPx")
+                if (currentItem == 0) {
+                    binding.vpHome.setPaddingRelative(0, 0, marginPx, 0)
+                }else{
+                    binding.vpHome.setPaddingRelative(marginPx, 0, 0, 0)
+                }
+
+                binding.vpHome.clipToPadding = false
+
+            }
+        })
     }
 
-
+    private fun dpToPixel(dp: Float, context: Context): Float {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            dp,
+            context.resources.displayMetrics
+        )
+    }
 
 
 
