@@ -1,14 +1,12 @@
 package com.seven.colink.ui.home
 
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.repository.PostRepository
-import com.seven.colink.util.status.GroupType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,10 +28,19 @@ class HomeViewModel @Inject constructor(
 
             kotlin.runCatching {
                 repository.forEach {
-                    var topRecentItem = TopItems(it.imageUrl,it.recruitInfo,it.registeredDate,
-                        it.title,it.key)
-
-                    getTopItemList.add(topRecentItem)
+//                    var topRecentItem = TopItems(it.imageUrl,it.recruitInfo,it.registeredDate,
+//                        it.title,it.key)
+//                    getTopItemList.add(topRecentItem)
+                    while (true) {
+                        if (getTopItemList.size < num) {
+                            var topRecentItem = TopItems(it.imageUrl,it.recruitInfo,it.registeredDate,
+                                it.title,it.key)
+                            getTopItemList.add(topRecentItem)
+                        }else if (getTopItemList.size > num) {
+                            getTopItemList.removeAt(num +1)
+                        }
+                        break
+                    }
                 }
                 _topItems.value = getTopItemList
 

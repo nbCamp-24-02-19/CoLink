@@ -98,6 +98,7 @@ class HomeStudyFragment : Fragment() {
             }catch (e: Exception) {
                 Log.e("HomeStudyFragment", "Error during receive data", e)
             }
+            binding.layStudyBottom5.viewHomeDivide.visibility = View.INVISIBLE
         }
     }
 
