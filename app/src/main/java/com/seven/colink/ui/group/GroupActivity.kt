@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.seven.colink.R
 import com.seven.colink.databinding.ActivityGroupBinding
-import com.seven.colink.ui.group.board.GroupBoardFragment
+import com.seven.colink.ui.group.board.board.GroupBoardFragment
 import com.seven.colink.util.Constants
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.PostEntryType

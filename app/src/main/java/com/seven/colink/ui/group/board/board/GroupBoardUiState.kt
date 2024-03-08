@@ -1,4 +1,4 @@
-package com.seven.colink.ui.group.board
+package com.seven.colink.ui.group.board.board
 
 import com.seven.colink.domain.entity.GroupEntity
 import com.seven.colink.ui.post.content.model.ContentOwnerButtonUiState

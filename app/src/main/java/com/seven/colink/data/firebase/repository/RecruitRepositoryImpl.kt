@@ -1,7 +1,6 @@
 package com.seven.colink.data.firebase.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.toObject
 import com.seven.colink.data.firebase.type.DataBaseType
 import com.seven.colink.domain.entity.ApplicationInfoEntity
 import com.seven.colink.domain.entity.RecruitEntity
