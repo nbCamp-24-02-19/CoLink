@@ -6,8 +6,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.home.child.HomeProjectFragment">
 
-
     <androidx.cardview.widget.CardView
+        android:id="@+id/cv_project"
+        android:visibility="visible"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         app:cardCornerRadius="10dp"
