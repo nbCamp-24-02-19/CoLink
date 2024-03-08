@@ -8,6 +8,7 @@
     tools:context=".ui.home.HomeFragment">
 
     <ScrollView
+        android:id="@+id/sv_home"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -24,7 +25,8 @@
             <FrameLayout
                 android:id="@+id/frame_home"
                 android:layout_width="match_parent"
-                android:layout_height="590dp"
+                android:layout_height="600dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/rv_home">
 
                 <androidx.viewpager2.widget.ViewPager2
@@ -32,7 +34,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:clipChildren="false"
-                    android:clipToPadding="false"/>
+                    android:clipToPadding="false" />
 
             </FrameLayout>
 
