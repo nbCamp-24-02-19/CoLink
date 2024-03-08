@@ -108,7 +108,6 @@ class MyPageFragment : Fragment() {
             }else{
                 startActivity(Intent(requireContext(), SignInActivity::class.java))
             }
-            Log.d("Tag", "${userDetails.skill}")
         }
 
         //파이어베이스 유저 등록글

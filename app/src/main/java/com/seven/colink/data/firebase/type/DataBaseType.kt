@@ -24,5 +24,11 @@ enum class DataBaseType(
     ,
     PRODUCT(
         title = "products"
-    )
+    ),
+    RECRUIT(
+        title = "recruits"
+    ),
+    APPINFO(
+        title = "app_info"
+    ),
 }
