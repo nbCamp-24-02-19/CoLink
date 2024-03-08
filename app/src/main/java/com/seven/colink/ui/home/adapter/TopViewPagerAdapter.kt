@@ -38,6 +38,8 @@ class TopViewPagerAdapter : ListAdapter<TopItems, TopViewPagerAdapter.TopViewHol
             img.load(item.img)
             team.text = "팀 스파르타"
             date.text = item.date
+                ?.substring(2,10)
+                ?.replace("-",".")
             title.text = item.title
         }
     }

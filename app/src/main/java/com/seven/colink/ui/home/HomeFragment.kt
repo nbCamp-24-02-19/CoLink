@@ -17,6 +17,7 @@ import com.seven.colink.databinding.FragmentHomeBinding
 import com.seven.colink.ui.home.adapter.BottomViewPagerAdapter
 import com.seven.colink.ui.home.adapter.HomeMainAdapter
 import com.seven.colink.ui.home.adapter.TopViewPagerAdapter
+import com.seven.colink.ui.home.child.HomeProjectFragment
 import com.seven.colink.ui.post.register.PostActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -35,6 +36,7 @@ class HomeFragment : Fragment() {
         HomeAdapterItems.TopView(TopViewPagerAdapter()),
         HomeAdapterItems.Header("그룹 추천")
     )
+    private val childProject by lazy { HomeProjectFragment() }
 
     override fun onCreateView(
         inflater: LayoutInflater,

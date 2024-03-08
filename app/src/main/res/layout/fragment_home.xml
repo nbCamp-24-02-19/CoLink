@@ -8,6 +8,7 @@
     tools:context=".ui.home.HomeFragment">
 
     <ScrollView
+        android:id="@+id/sv_home"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -24,7 +25,7 @@
             <FrameLayout
                 android:id="@+id/frame_home"
                 android:layout_width="match_parent"
-                android:layout_height="625dp"
+                android:layout_height="600dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/rv_home">
 

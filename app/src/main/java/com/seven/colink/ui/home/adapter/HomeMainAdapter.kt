@@ -143,8 +143,14 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
                     }
 
                     fun handleScrollState(state: Int) {
+                        if (state == ViewPager2.SCROLL_STATE_DRAGGING) {
+                            handler.removeCallbacks(autoScrollRunnable)
+                        }
+
                         if (state == ViewPager2.SCROLL_STATE_IDLE && currentState == ViewPager2.SCROLL_STATE_DRAGGING) {
+                            handler.removeCallbacks(autoScrollRunnable)
                             setNextItem()
+                            handler.postDelayed(autoScrollRunnable, AUTO_SCROLL_DELAY + PAGE_SCROLL_DELAY)
                         }
                     }
 

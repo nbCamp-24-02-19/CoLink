@@ -38,7 +38,7 @@ class HomeViewModel @Inject constructor(
                 _topItems.value = getTopItemList
 
             }.onFailure { exception ->
-                Log.e("HomeViewModel","#aaa error $exception")
+                Log.e("HomeViewModel","데이터를 불러오지 못 했습니다 $exception")
             }
         }
     }
