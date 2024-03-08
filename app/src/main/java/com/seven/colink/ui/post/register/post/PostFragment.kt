@@ -2,8 +2,8 @@ package com.seven.colink.ui.post.register.post
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -21,13 +21,11 @@ import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentPostBinding
-import com.seven.colink.domain.entity.TagEntity
 import com.seven.colink.ui.post.register.post.adapter.RecruitListAdapter
 import com.seven.colink.ui.post.register.post.adapter.TagListAdapter
-import com.seven.colink.ui.post.register.post.model.AddTagResult
+import com.seven.colink.ui.post.register.post.model.TagEvent
 import com.seven.colink.ui.post.register.post.model.TagListItem
 import com.seven.colink.ui.post.register.post.viewmodel.PostViewModel
-import com.seven.colink.ui.post.register.recommend.RecommendFragment
 import com.seven.colink.ui.post.register.viewmodel.PostSharedViewModel
 import com.seven.colink.util.Constants
 import com.seven.colink.util.Constants.Companion.LIMITED_PEOPLE
@@ -38,33 +36,31 @@ import com.seven.colink.util.openGallery
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.showToast
+import com.seven.colink.util.status.GroupType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class PostFragment : Fragment() {
-    private val binding: FragmentPostBinding by lazy {
-        FragmentPostBinding.inflate(layoutInflater)
-    }
-    private var totalPersonnelCount = 0
-    private var selectedImageUri: Uri? = null
+    private var _binding: FragmentPostBinding? = null
+    private val binding: FragmentPostBinding get() = _binding!!
+
     private lateinit var galleryResultLauncher: ActivityResultLauncher<Intent>
-    private var recruitTypes: List<String> = emptyList()
 
     private val viewModel: PostViewModel by viewModels()
     private val sharedViewModel: PostSharedViewModel by activityViewModels()
 
     private val tagListAdapter: TagListAdapter by lazy {
-        TagListAdapter(onClickItem = { _, item ->
-            when (item) {
-                is TagListItem.Item -> viewModel.removeTagItem(item.tagEntity?.key)
-                is TagListItem.ContentItem -> Unit
+        TagListAdapter(onClickItem = { tag ->
+            when (tag) {
+                is TagListItem.Item -> viewModel.removeTagItem(tag.name)
+                else -> Unit
             }
         })
     }
 
     private val recruitListAdapter: RecruitListAdapter by lazy {
-        RecruitListAdapter(onClickItem = { _, entity ->
+        RecruitListAdapter(onClickItem = { entity ->
             viewModel.removeRecruitInfo(entity.type)
         })
     }
@@ -74,6 +70,7 @@ class PostFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        _binding = FragmentPostBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -86,12 +83,13 @@ class PostFragment : Fragment() {
     }
 
     private fun initSharedViewModel() = with(sharedViewModel) {
-
         lifecycleScope.launch {
             groupType.collect {
                 with(viewModel) {
                     if (it != null) {
                         setGroupType(it)
+                        viewByGroupType(it)
+                        viewModel.setViewByGroupType()
                     }
                 }
             }
@@ -101,6 +99,7 @@ class PostFragment : Fragment() {
             key.collect {
                 if (it != null) {
                     viewModel.setEntity(it)
+                    viewModel.setViewByEntity()
                 }
             }
         }
@@ -110,7 +109,6 @@ class PostFragment : Fragment() {
                 with(viewModel) {
                     if (it != null) {
                         setEntryType(it)
-                        viewModel.initViewStateByEntryType()
                     }
                 }
             }
@@ -128,88 +126,67 @@ class PostFragment : Fragment() {
     }
 
     private fun initView() = with(binding) {
-        initProjectView()
-        initStudyView()
-        tvLimitedPeople.text = getString(R.string.limited_people, LIMITED_PEOPLE)
-        recyclerViewTags.adapter = tagListAdapter
-        recyclerViewRecruit.adapter = recruitListAdapter
+        setEntityTypeView()
+        setListAdapter()
 
-        etRegisterTag.setOnEditorActionListener { _, actionId, event ->
-            if ((actionId == EditorInfo.IME_ACTION_DONE || (event?.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER)) && etRegisterTag.text.toString()
-                    .trim().isNotBlank()
-            ) {
-                handleTagAddResult(
+        etGroupTag.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE || (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
+                handleTagEvent(
                     viewModel.addTagItem(
-                        TagEntity(
-                            name = etRegisterTag.text.toString().trim()
-                        )
+                        etGroupTag.text.toString()
                     )
                 )
-                etRegisterTag.text.clear()
+                binding.etGroupTag.text.clear()
                 return@setOnEditorActionListener true
             }
-            false
-        }
-
-
-        ivAddImage.setOnClickListener {
-            openGallery(galleryResultLauncher)
+            return@setOnEditorActionListener false
         }
 
         btComplete.setOnClickListener {
             showProgressOverlay()
-            viewModel.registerPost(binding.etTitle.text.toString(),
-                binding.etContent.text.toString(),
-                onSuccess = {
-                    hideProgressOverlay()
-                },
-                onError = { exception ->
-                    hideProgressOverlay()
-                    requireContext().showToast(
-                        exception.message ?: getString(R.string.post_register_fail)
-                    )
-                })
+            Log.d("1111", "complete button")
+            viewModel.checkValid(
+                binding.etTitle.text.toString(),
+                binding.etDescription.text.toString(),
+            )
+        }
+
+        ivPostImage.setOnClickListener {
+            openGallery(galleryResultLauncher)
         }
 
         ivFinish.setOnClickListener {
-            requireActivity().finish()
+            activity?.finish()
         }
     }
 
-    private fun initProjectView() {
-        binding.ivAddRecruit.setOnClickListener {
-            if (totalPersonnelCount < LIMITED_PEOPLE) {
-                showRecruitDialog()
-            } else {
-                requireContext().showToast(getString(R.string.limited_people, LIMITED_PEOPLE))
-            }
-        }
-    }
-
-    private fun initStudyView() = with(binding) {
+    private fun setEntityTypeView() = with(binding) {
+        tvLimitedPeople.text = getString(R.string.limited_people, LIMITED_PEOPLE)
         includeStepperPersonnel.ivPlusPersonnel.setOnClickListener {
             viewModel.incrementCount()
-        }
 
+        }
         includeStepperPersonnel.ivMinusPersonnel.setOnClickListener {
             viewModel.decrementCount()
         }
+        ivAddRecruit.setOnClickListener {
+            viewModel.onClickRecruit()
+        }
     }
 
-    private fun showRecruitDialog() {
-        RecruitDialog(totalPersonnelCount, recruitTypes, onConfirmed = { entity ->
-            viewModel.addRecruitInfo(entity)
-        }, onCancelled = {}).show(requireActivity().supportFragmentManager, null)
+    private fun setListAdapter() = with(binding) {
+        recyclerViewTags.adapter = tagListAdapter
+        recyclerViewRecruit.adapter = recruitListAdapter
     }
 
-    private fun handleTagAddResult(result: AddTagResult) {
+    private fun handleTagEvent(result: TagEvent) {
         val messageResId = when (result) {
-            AddTagResult.Success -> return
-            AddTagResult.MaxNumberExceeded -> getString(
+            TagEvent.Success -> return
+            TagEvent.MaxNumberExceeded -> getString(
                 R.string.message_max_number, Constants.LIMITED_TAG_COUNT
             )
 
-            AddTagResult.TagAlreadyExists -> getString(R.string.message_already_exists)
+            TagEvent.TagAlreadyExists -> getString(R.string.message_already_exists)
         }
         requireContext().showToast(messageResId)
     }
@@ -217,70 +194,115 @@ class PostFragment : Fragment() {
     private fun initViewModel() = with(viewModel) {
         uiState.observe(viewLifecycleOwner) { state ->
             with(binding) {
-                if (state.isUpdated == true) {
-                    etContent.setText(state.editTextContent)
+                etTitle.setText(state.title)
+                etDescription.setText(state.description)
+                tvProjectDescriptionInfo.text = state.descriptionMessage
+                etTitlePrecautions.setText(state.precautions)
+                etRecruitInfo.setText(state.recruitInfo)
+                ivPostImage.load(state.selectedImageUrl ?: state.imageUrl)
+                ivPostImageBg.load(state.selectedImageUrl ?: state.imageUrl)
+
+                if (state.groupType == GroupType.PROJECT) {
+                    binding.tvTitle.text = getString(R.string.title_project_name)
+                    binding.tvProjectDescription.text =
+                        getString(R.string.title_project_description)
+                    binding.tvContentType.text = getString(R.string.bt_project)
                 } else {
-                    etContent.hint = state.editTextContent
+                    binding.tvTitle.text = getString(R.string.title_study_name)
+                    binding.tvProjectDescription.text = getString(R.string.title_study_description)
+                    binding.tvContentType.text = getString(R.string.bt_study)
                 }
 
-                etTitle.setText(state.editTextTitle)
+                recruitListAdapter.submitList(state.recruit)
+                tagListAdapter.submitList(state.tags?.map { TagListItem.Item(name = it) })
 
-                state.isProjectSelected?.let { viewByGroupType(it) }
-                state.isProjectSelected?.let { viewByGroupType(!it) }
-            }
-        }
+                if (state.selectedImageUrl != null) {
+                    binding.ivPostImageBg.applyDarkFilter()
+                }
 
-
-        postUiState.observe(viewLifecycleOwner) { state ->
-            with(binding) {
-                recruitListAdapter.submitList(state.recruitList)
-                tvTotalRecruit.text = getString(R.string.total_personnel, state.totalPersonnelCount)
-
+                val maxPersonnel = state.getTotalMaxPersonnel()
                 val mainColor = ContextCompat.getColor(requireContext(), R.color.main_color)
                 val coloredText = highlightNumbers(
-                    getString(R.string.total_personnel, state.totalPersonnelCount),
+                    getString(R.string.total_personnel, maxPersonnel),
                     mainColor
                 )
                 tvTotalRecruit.setText(coloredText, TextView.BufferType.SPANNABLE)
-
-                totalPersonnelCount = state.totalPersonnelCount ?: 0
-                recruitTypes = state.recruitList?.map { it.type.orEmpty() } ?: emptyList()
-
-                tagListAdapter.submitList(state.tagList?.map { TagListItem.Item(tagEntity = it) })
             }
         }
 
-        selectedPersonnelCount.observe(viewLifecycleOwner) { count ->
-            binding.includeStepperPersonnel.tvRecruitPersonnel.text = count.toString()
-        }
-
-        selectedImage.observe(viewLifecycleOwner) { selected ->
-            val imageUrl = selected?.newImage ?: selected?.originImage
-            if (imageUrl != null) {
-                binding.ivAddImage.load(imageUrl)
-                binding.ivImageBackground.load(imageUrl)
-                binding.ivImageBackground.applyDarkFilter()
-
-                selectedImageUri = imageUrl
-            }
-        }
 
         lifecycleScope.launch {
             complete.collect { newKey ->
-                sharedViewModel.setKey(newKey)
-                parentFragmentManager.beginTransaction().apply {
-                    replace(R.id.fg_activity_post, RecommendFragment())
-                    commit()
+//                sharedViewModel.setKey(newKey)
+//                parentFragmentManager.beginTransaction().apply {
+//                    replace(R.id.fg_activity_post, RecommendFragment())
+//                    commit()
+//                }
+            }
+        }
+
+        errorUiState.observe(viewLifecycleOwner) {
+            if (it == null) {
+                return@observe
+            }
+
+            if (it.message == PostErrorMessage.PASS) {
+                Log.d("1111", "message= ${it.message}")
+                viewModel.createPost(
+                    binding.etTitle.text.toString(),
+                    binding.etDescription.text.toString(),
+                    binding.etTitlePrecautions.text.toString(),
+                    binding.etRecruitInfo.text.toString(),
+                    onSuccess = {
+                        hideProgressOverlay()
+                    },
+                    onError = { exception ->
+                        hideProgressOverlay()
+                        requireContext().showToast(
+                            exception.message ?: getString(R.string.post_register_fail)
+                        )
+                    })
+            }
+        }
+
+        event.observe(viewLifecycleOwner) { event ->
+            when (event) {
+                is PostEvent.DialogEvent -> {
+                    val maxPersonnel = event.recruit?.sumOf { it.maxPersonnel ?: 0 } ?: 0
+
+                    if (maxPersonnel < LIMITED_PEOPLE) {
+                        val recruitTypes = event.recruit?.map { it.type } ?: emptyList()
+
+                        RecruitDialog(
+                            maxPersonnel,
+                            recruitTypes,
+                            onConfirmed = { entity ->
+                                viewModel.addRecruitInfo(entity)
+                            }
+                        ) {}.show(requireActivity().supportFragmentManager, null)
+                    } else {
+                        requireContext().showToast(
+                            getString(
+                                R.string.limited_people,
+                                LIMITED_PEOPLE
+                            )
+                        )
+                    }
+
                 }
             }
         }
 
+//        selectedCount.observe(viewLifecycleOwner) {
+//            binding.includeStepperPersonnel.tvRecruitPersonnel.text = it.toString()
+//        }
     }
 
-    private fun viewByGroupType(isSelected: Boolean) {
+    private fun viewByGroupType(groupType: GroupType) {
         with(binding) {
-            constraintLayoutProject.isVisible = !isSelected
-            constraintLayoutStudy.isVisible = isSelected
+            constraintLayoutProject.isVisible = groupType == GroupType.PROJECT
+            constraintLayoutStudy.isVisible = groupType != GroupType.PROJECT
         }
     }
+
 }

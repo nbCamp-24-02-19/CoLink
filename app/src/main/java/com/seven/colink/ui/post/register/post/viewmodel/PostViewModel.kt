@@ -4,29 +4,26 @@ import android.app.Activity
 import android.app.Application
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seven.colink.R
 import com.seven.colink.domain.entity.GroupEntity
-import com.seven.colink.domain.entity.PostEntity
-import com.seven.colink.domain.entity.TagEntity
-import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.entity.RecruitInfo
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.domain.repository.ImageRepository
 import com.seven.colink.domain.usecase.GetPostUseCase
 import com.seven.colink.domain.usecase.RegisterPostUseCase
-import com.seven.colink.ui.post.register.post.model.AddTagResult
-import com.seven.colink.ui.post.register.post.model.ImageUiState
+import com.seven.colink.ui.post.register.post.PostErrorMessage
+import com.seven.colink.ui.post.register.post.PostErrorUiState
+import com.seven.colink.ui.post.register.post.PostEvent
 import com.seven.colink.ui.post.register.post.model.Post
 import com.seven.colink.ui.post.register.post.model.PostUiState
-import com.seven.colink.ui.post.register.post.model.PostViewState
-import com.seven.colink.util.Constants.Companion.LIMITED_PEOPLE
+import com.seven.colink.ui.post.register.post.model.TagEvent
 import com.seven.colink.util.Constants.Companion.LIMITED_TAG_COUNT
-import com.seven.colink.util.PersonnelUtils
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.PostEntryType
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,8 +34,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PostViewModel @Inject constructor(
-    private val app: Application,
-    private val postRepository: PostRepository,
+    private val context: Application,
     private val imageRepository: ImageRepository,
     private val authRepository: AuthRepository,
     private val groupRepository: GroupRepository,
@@ -49,21 +45,21 @@ class PostViewModel @Inject constructor(
     private lateinit var entity: Post
     private lateinit var groupType: GroupType
 
-    private val _uiState: MutableLiveData<PostViewState> = MutableLiveData(PostViewState.init())
-    val uiState: LiveData<PostViewState> get() = _uiState
+    private val _uiState: MutableLiveData<PostUiState> = MutableLiveData(PostUiState.init())
+    val uiState: LiveData<PostUiState> get() = _uiState
 
-    private val _postUiState: MutableLiveData<PostUiState> = MutableLiveData(PostUiState.init())
-    val postUiState: LiveData<PostUiState> get() = _postUiState
+    private val _errorUiState: MutableLiveData<PostErrorUiState> =
+        MutableLiveData(PostErrorUiState.init())
+    val errorUiState: LiveData<PostErrorUiState> get() = _errorUiState
 
-    private val _selectedImage: MutableLiveData<ImageUiState> = MutableLiveData(ImageUiState.init())
-    val selectedImage: LiveData<ImageUiState?> get() = _selectedImage
+    private val _event: MutableLiveData<PostEvent> = MutableLiveData()
+    val event: LiveData<PostEvent> get() = _event
 
-    private val _selectedPersonnelCount: MutableLiveData<Int> = MutableLiveData(0)
-    val selectedPersonnelCount: LiveData<Int> get() = _selectedPersonnelCount
+    private val _selectedCount = MutableLiveData<Int>().apply { value = 0 }
+    val selectedCount: LiveData<Int> get() = _selectedCount
 
     private val _complete = MutableSharedFlow<String>()
     val complete: SharedFlow<String> = _complete
-
 
     fun setEntryType(type: PostEntryType) {
         entryType = type
@@ -74,234 +70,211 @@ class PostViewModel @Inject constructor(
     }
 
     suspend fun setEntity(key: String) {
-        entity = getPostUseCase(key)?: Post()
+        entity = getPostUseCase(key) ?: Post()
     }
 
-    fun initViewStateByEntryType() {
-        _uiState.value = when (entryType) {
-            PostEntryType.CREATE -> initCreateViewState()
-            PostEntryType.UPDATE -> initUpdateViewState()
-        }
+    fun setViewByGroupType() {
+        setCreateView()
     }
-    private fun initCreateViewState(): PostViewState {
-        val isProjectSelected = groupType == GroupType.PROJECT
-        val projectButtonTextColor = if (isProjectSelected) R.color.white else R.color.main_color
-        val studyButtonTextColor = if (isProjectSelected) R.color.main_color else R.color.white
-        val editTextContent =
-            if (isProjectSelected) app.getString(R.string.input_content_project) else app.getString(
+
+    fun setViewByEntity() {
+        setUpdateView()
+    }
+
+    private fun setCreateView() {
+        _uiState.value = _uiState.value?.copy(
+            groupType = groupType,
+            descriptionMessage = if (groupType == GroupType.PROJECT) context.getString(R.string.input_content_project) else context.getString(
                 R.string.input_content_study
             )
-
-        return PostViewState.init().copy(
-            isProjectSelected = isProjectSelected,
-            projectButtonTextColor = projectButtonTextColor,
-            studyButtonTextColor = studyButtonTextColor,
-            editTextContent = editTextContent,
-            isUpdated = false
         )
     }
 
-    private fun initUpdateViewState(): PostViewState {
-        if (!::entity.isInitialized) {
-            return PostViewState.init()
-        }
+    private fun setUpdateView() {
         entity.let { entity ->
-            _postUiState.value = _postUiState.value?.copy(
-                tagList = entity.tags?.map { TagEntity(name = it) } ?: emptyList(),
-                recruitList = entity.recruit ?: emptyList(),
-                totalPersonnelCount = entity.recruit?.sumOf { info -> info.maxPersonnel ?: 0 } ?: 0
+            _uiState.value = _uiState.value?.copy(
+                title = entity.title,
+                imageUrl = entity.imageUrl,
+                groupType = entity.groupType ?: GroupType.UNKNOWN,
+                description = entity.description,
+                descriptionMessage = if (entity.groupType == GroupType.PROJECT) context.getString(R.string.input_content_project) else context.getString(
+                    R.string.input_content_study
+                ),
+                tags = entity.tags,
+                precautions = entity.precautions,
+                recruitInfo = entity.recruitInfo,
+                recruit = entity.recruit,
+                registeredDate = entity.registeredDate,
+                view = entity.views,
+                memberIds = entity.memberIds
             )
 
-            _selectedImage.value =
-                _selectedImage.value?.copy(originImage = Uri.parse(entity.imageUrl))
-            _selectedPersonnelCount.value =
-                entity.recruit?.sumOf { info -> info.maxPersonnel ?: 0 } ?: 0
-
-            val isProjectSelected = entity.groupType == GroupType.PROJECT
-            val projectButtonTextColor =
-                if (isProjectSelected) R.color.white else R.color.main_color
-            val studyButtonTextColor = if (isProjectSelected) R.color.main_color else R.color.white
-
-            return PostViewState.init().copy(
-                isProjectSelected = isProjectSelected,
-                projectButtonTextColor = projectButtonTextColor,
-                studyButtonTextColor = studyButtonTextColor,
-                editTextTitle = entity.title,
-                editTextContent = entity.description,
-                isUpdated = true
-            )
         }
     }
 
-    fun addTagItem(entity: TagEntity): AddTagResult {
-        val currentList = _postUiState.value?.tagList.orEmpty().toMutableList()
+    fun addTagItem(tag: String): TagEvent {
+        val currentTags = _uiState.value?.tags.orEmpty()
         return when {
-            currentList.size >= LIMITED_TAG_COUNT -> AddTagResult.MaxNumberExceeded
-            currentList.any { it.name == entity.name } -> AddTagResult.TagAlreadyExists
+            currentTags.size >= LIMITED_TAG_COUNT -> TagEvent.MaxNumberExceeded
+            currentTags.any { it == tag } -> TagEvent.TagAlreadyExists
             else -> {
-                _postUiState.value = _postUiState.value?.copy(tagList = currentList + entity)
-                AddTagResult.Success
+                _uiState.value = _uiState.value?.copy(
+                    tags = currentTags + tag
+                )
+                TagEvent.Success
             }
         }
     }
 
-    fun removeTagItem(entityKey: String?) {
-        _postUiState.value = postUiState.value?.let { state ->
-            state.copy(tagList = state.tagList?.filterNot { it.key == entityKey })
+    fun removeTagItem(tag: String?) {
+        _uiState.value = _uiState.value?.let { state ->
+            state.copy(
+                tags = state.tags?.filterNot { it == tag }
+            )
         }
     }
 
-    fun addRecruitInfo(recruitInfo: RecruitInfo) {
-        val currentList = postUiState.value?.recruitList.orEmpty().toMutableList()
-        currentList.add(recruitInfo)
-        _postUiState.value = postUiState.value?.copy(recruitList = currentList)
-        updateTotalPersonnelCount()
+    fun addRecruitInfo(entity: RecruitInfo) {
+        val recruits = uiState.value?.recruit.orEmpty().toMutableList()
+        recruits.add(entity)
+        _uiState.value = _uiState.value?.copy(
+            recruit = recruits
+        )
     }
 
     fun removeRecruitInfo(type: String?) {
-        _postUiState.value = _postUiState.value?.let { state ->
-            state.copy(recruitList = state.recruitList?.filterNot { it.type == type })
-        }
-        updateTotalPersonnelCount()
-    }
-
-    private fun updateTotalPersonnelCount() {
-        val totalPersonnelCount =
-            _postUiState.value?.recruitList?.sumOf { it.maxPersonnel ?: 0 } ?: 0
-        _postUiState.value = _postUiState.value?.copy(totalPersonnelCount = totalPersonnelCount)
-    }
-
-    fun handleGalleryResult(resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK) {
-            val selectedImageUri = data?.data
-            _selectedImage.value = _selectedImage.value?.copy(newImage = selectedImageUri)
+        _uiState.value = _uiState.value?.let { state ->
+            state.copy(
+                recruit = state.recruit?.toMutableList()?.apply {
+                    removeAll { it.type == type }
+                }
+            )
         }
     }
 
-    fun registerPost(
+    fun createPost(
         title: String,
         description: String,
+        precautions: String,
+        recruitInfo: String,
         onSuccess: (String) -> Unit,
         onError: (Exception) -> Unit
     ) = viewModelScope.launch {
         try {
-            val imageUrl = selectedImage.value?.newImage?.let { uploadImage(it) }.orEmpty()
+            _uiState.value = _uiState.value?.copy(
+                title = title,
+                description = description,
+                precautions = precautions,
+                recruitInfo = recruitInfo
+            )
+
             val entity = if (entryType == PostEntryType.CREATE) {
-                createPostEntity(title, description, imageUrl)
+                getCreatePostEntity(title, description, precautions, recruitInfo)
             } else {
-                updatePostEntity(title, description, imageUrl)
+                getUpdatePostEntity(title, description, precautions, recruitInfo)
             }
 
             if (entryType == PostEntryType.CREATE) {
                 registerPostUseCase(entity)
                 try {
-                    val data = entity.convertGroupEntity()
-                    groupRepository.registerGroup(data)
-                    onSuccess(app.getString(R.string.post_register_success))
+                    groupRepository.registerGroup(entity.convertGroupEntity())
+                    onSuccess(context.getString(R.string.post_register_success))
                     _complete.emit(entity.key)
+                    Log.d("1111", "success")
                 } catch (groupException: Exception) {
                     onError(groupException)
+                    Log.d("1111", "error= $groupException")
                 }
             } else {
+
                 registerPostUseCase(entity)
-                onSuccess(app.getString(R.string.post_update_success))
+                onSuccess(context.getString(R.string.post_update_success))
             }
         } catch (e: Exception) {
             onError(e)
         }
     }
 
-    private suspend fun createPostEntity(
+    private suspend fun getCreatePostEntity(
         title: String,
         description: String,
-        imageUrl: String?
+        precautions: String,
+        recruitInfo: String
     ): Post {
-        val currentState = postUiState.value
+        val currentState = uiState.value
 
         return Post(
             authId = getCurrentUser(),
             title = title,
-            imageUrl = imageUrl.orEmpty(),
+            imageUrl = currentState?.selectedImageUrl?.let { uploadImage(it) },
             groupType = groupType,
             description = description,
-            tags = currentState?.tagList?.map { it.name },
-            recruit = currentState?.recruitList,
+            tags = currentState?.tags,
+            precautions = precautions,
+            recruitInfo = recruitInfo,
+            recruit = currentState?.recruit,
             memberIds = listOf(getCurrentUser())
         )
     }
 
-    private fun updatePostEntity(
+    private suspend fun getUpdatePostEntity(
         title: String,
         description: String,
-        imageUrl: String
+        precautions: String,
+        recruitInfo: String
     ): Post {
-        val currentState = postUiState.value
+        val currentState = uiState.value
+        val imageUrl =
+            currentState?.selectedImageUrl?.let { uploadImage(it) } ?: currentState?.imageUrl
 
         return entity.copy(
             title = title,
-            imageUrl = imageUrl.ifEmpty { entity.imageUrl },
+            imageUrl = imageUrl,
             description = description,
-            tags = currentState?.tagList?.map { it.name },
-            recruit = if (groupType == GroupType.PROJECT) postUiState.value?.recruitList
-            else currentState?.recruitList,
+            tags = currentState?.tags,
+            precautions = precautions,
+            recruitInfo = recruitInfo,
+            recruit = currentState?.recruit,
             memberIds = entity.memberIds
         )
     }
 
-    private suspend fun uploadImage(uri: Uri): String =
-        imageRepository.uploadImage(uri).getOrThrow().toString()
-
-
-    private fun performCountOperation(operation: (Int, Int, Int) -> Pair<Int, Int>) {
-        val currentState = _postUiState.value
-        if (currentState != null) {
-            val (updateSelectedCount, updateTotalCount) = operation(
-                _selectedPersonnelCount.value ?: 0,
-                currentState.totalPersonnelCount ?: 0,
-                LIMITED_PEOPLE
-            )
-            _selectedPersonnelCount.value = updateSelectedCount
-
-            val updatedRecruitList = currentState.recruitList?.toMutableList() ?: mutableListOf()
-            val studyIndex = updatedRecruitList.indexOfFirst { it.type == "" }
-
-            if (studyIndex != -1) {
-                updatedRecruitList[studyIndex] =
-                    updatedRecruitList[studyIndex].copy(maxPersonnel = updateSelectedCount)
-            } else {
-                updatedRecruitList.add(
-                    RecruitInfo(
-                        type = "",
-                        maxPersonnel = updateSelectedCount
-                    )
-                )
-            }
-
-            _postUiState.value = currentState.copy(
-                totalPersonnelCount = updateTotalCount,
-                recruitList = updatedRecruitList
-            )
-        }
-    }
-
     fun incrementCount() {
-        performCountOperation { selected, total, limit ->
-            PersonnelUtils.incrementCount(selected, total, limit)
-        }
+        val currentCount = _selectedCount.value ?: 0
+        _selectedCount.value = currentCount + 1
+        updateRecruitBasedOnCount()
     }
 
     fun decrementCount() {
-        performCountOperation { selected, total, _ ->
-            PersonnelUtils.decrementCount(selected, total)
-        }
+        val currentCount = _selectedCount.value ?: 0
+        _selectedCount.value = if (currentCount > 0) currentCount - 1 else 0
+        updateRecruitBasedOnCount()
     }
 
-    private suspend fun getCurrentUser(): String = authRepository.getCurrentUser().message
+    private fun updateRecruitBasedOnCount() {
+        val newCount = _selectedCount.value ?: 0
+        val updatedRecruit = _uiState.value?.recruit?.map {
+            it.copy(maxPersonnel = newCount)
+        }
+        updateRecruit(updatedRecruit)
+    }
 
-    private fun Post.convertGroupEntity() = GroupEntity(
+    fun updateRecruit(updatedRecruit: List<RecruitInfo>?) {
+        _uiState.value = _uiState.value?.copy(recruit = updatedRecruit)
+    }
+
+
+    private suspend fun getCurrentUser(): String =
+        authRepository.getCurrentUser().message
+
+    private suspend fun Post.convertGroupEntity() = GroupEntity(
         key = key,
         postKey = key,
         authId = authId,
+        teamName = runCatching {
+            val userEntity = authRepository.getCurrentUser()
+            "${userEntity.name}님의 팀"
+        }.getOrElse { "" },
         title = title,
         imageUrl = imageUrl,
         status = status,
@@ -309,9 +282,36 @@ class PostViewModel @Inject constructor(
         description = description,
         tags = tags,
         memberIds = memberIds,
-        registeredDate = registeredDate,
-        startDate = "",
-        endDate = "",
+        registeredDate = registeredDate
     )
+
+    fun handleGalleryResult(resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK) {
+            val selectedImageUri = data?.data
+            _uiState.value = _uiState.value?.copy(
+                selectedImageUrl = selectedImageUri
+            )
+        }
+    }
+
+    private suspend fun uploadImage(uri: Uri): String =
+        imageRepository.uploadImage(uri).getOrThrow().toString()
+
+    fun onClickRecruit() {
+        _event.value = PostEvent.DialogEvent(
+            uiState.value?.recruit
+        )
+    }
+
+    fun checkValid(title: String, description: String) {
+        _errorUiState.value = errorUiState.value?.copy(
+            message = when {
+                title.isBlank() -> PostErrorMessage.TITLE_BLANK
+                description.isBlank() -> PostErrorMessage.DESCRIPTION_BLANK
+                else -> PostErrorMessage.PASS
+            }
+        )
+
+    }
 
 }

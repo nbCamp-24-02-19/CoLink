@@ -10,10 +10,12 @@ import com.seven.colink.domain.entity.ApplicationInfo
 import com.seven.colink.domain.entity.RecruitInfo
 import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.domain.repository.AuthRepository
+import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.domain.usecase.GetPostUseCase
 import com.seven.colink.domain.usecase.RegisterPostUseCase
+import com.seven.colink.ui.group.board.board.GroupContentViewType
 import com.seven.colink.ui.post.content.model.ContentOwnerButtonUiState
 import com.seven.colink.ui.post.content.model.DialogUiState
 import com.seven.colink.ui.post.content.model.PostContentItem
@@ -27,9 +29,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PostContentViewModel @Inject constructor(
-    private val app: Application,
+    private val context: Application,
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository,
+    private val groupRepository: GroupRepository,
     private val postRepository: PostRepository,
     private val getPostUseCase: GetPostUseCase,
     private val registerPostUseCase: RegisterPostUseCase,
@@ -47,63 +50,52 @@ class PostContentViewModel @Inject constructor(
     val updateButtonUiState: LiveData<ContentOwnerButtonUiState> get() = _updateButtonUiState
 
     suspend fun setEntity(key: String) {
-        entity = getPostUseCase(key)?: return
+        entity = getPostUseCase(key) ?: return
     }
 
     fun initViewStateByEntity() = viewModelScope.launch {
-        determineUserButtonUiState(entity)
-        updatePostContentItems(entity.recruit)
+        setUserButtonUiState(entity)
+        setPostContentItems(entity.recruit)
         incrementPostViews()
     }
 
-    private suspend fun determineUserButtonUiState(post: Post) {
+    private suspend fun setUserButtonUiState(post: Post) {
         _updateButtonUiState.value =
             if (post.authId == getCurrentUser()) ContentOwnerButtonUiState.Owner
             else ContentOwnerButtonUiState.User
     }
 
-    private fun updatePostContentItems(updatedRecruitList: List<RecruitInfo>?) =
+    private fun setPostContentItems(updatedRecruitList: List<RecruitInfo>?) =
         viewModelScope.launch {
             val items = mutableListOf<PostContentItem>()
-
             entity.let { currentEntity ->
-                items.add(createImageItem(currentEntity))
-                items.add(createGroupTypeItem(currentEntity))
-                items.add(createPostContentItem(currentEntity))
-                items.add(createTitleItem(R.string.recruitment_status))
-                items.addAll(createPostRecruit(updatedRecruitList))
-                items.add(createTitleItem(if (currentEntity.groupType == GroupType.PROJECT) R.string.project_member_info else R.string.study_member_info))
-                items.add(createSubTitleItem(R.string.project_team_member))
+                items.add(currentEntity.createPostContentItem())
+                items.add(PostContentItem.AdditionalInfo(precautions = entity.precautions, recruitInfo = entity.recruitInfo))
+                items.add(
+                    PostContentItem.TitleItem(
+                        R.string.recruitment_status,
+                        GroupContentViewType.MEMBER_ITEM
+                    )
+                )
+                val recruitItems = createPostRecruit(updatedRecruitList)
+                if (recruitItems.isEmpty()) {
+                    items.add(PostContentItem.MessageItem(context.getString(R.string.no_recruitment_status)))
+                } else {
+                    items.addAll(recruitItems)
+                }
+
+                items.add(
+                    PostContentItem.TitleItem(
+                        if (currentEntity.groupType == GroupType.PROJECT) R.string.project_member_info else R.string.study_member_info,
+                        GroupContentViewType.UNKNOWN
+                    )
+                )
+                items.add(PostContentItem.SubTitleItem(R.string.project_team_member))
                 items.addAll(createMember(currentEntity))
 
                 _uiState.value = items
             }
         }
-
-
-    private fun createGroupTypeItem(uiState: Post) = PostContentItem.GroupTypeItem(
-        groupType = uiState.groupType,
-    )
-
-    private fun createPostContentItem(uiState: Post) = PostContentItem.Item(
-        key = uiState.key,
-        authId = uiState.authId,
-        title = uiState.title,
-        status = uiState.status,
-        description = uiState.description,
-        tags = uiState.tags,
-        registeredDate = uiState.registeredDate,
-        views = uiState.views
-    )
-
-    private fun createImageItem(uiState: Post) = PostContentItem.ImageItem(
-        imageUrl = uiState.imageUrl.orEmpty()
-    )
-
-    private fun createTitleItem(titleRes: Int) = PostContentItem.TitleItem(titleRes = titleRes)
-
-    private fun createSubTitleItem(subTitleRes: Int) =
-        PostContentItem.SubTitleItem(titleRes = subTitleRes)
 
     private fun createPostRecruit(recruitList: List<RecruitInfo>?) =
         recruitList?.map { recruitInfo ->
@@ -127,10 +119,11 @@ class PostContentViewModel @Inject constructor(
         }
     }
 
+    // 모집 분야 지원 했을 때
     suspend fun applyForProject(recruitItem: PostContentItem.RecruitItem): DataResultStatus {
         if (isAlreadySupported(recruitItem)) {
             return DataResultStatus.FAIL.apply {
-                message = app.getString(R.string.already_supported)
+                message = context.getString(R.string.already_supported)
             }
         }
 
@@ -139,11 +132,28 @@ class PostContentViewModel @Inject constructor(
             applicationStatus = ApplicationStatus.PENDING,
         )
         val updatedRecruitList = updateRecruitList(recruitItem, newApplicationInfo)
-
-        return updatePost(updatedRecruitList, ApplicationStatus.PENDING)
+        return updatePostRecruit(updatedRecruitList, ApplicationStatus.PENDING)
     }
 
+    // 지원한 회원 데이터 추가
+    private fun updateRecruitList(
+        recruitItem: PostContentItem.RecruitItem,
+        newApplicationInfo: ApplicationInfo
+    ): List<RecruitInfo>? {
+        return entity.recruit?.map { recruitInfo ->
+            if (recruitInfo.type == recruitItem.recruit.type) {
+                recruitInfo.copy(
+                    applicationInfos = (recruitInfo.applicationInfos.orEmpty() + newApplicationInfo.copy(
+                        recruitId = recruitItem.recruit.key
+                    )).toList()
+                )
+            } else {
+                recruitInfo
+            }
+        }
+    }
 
+    // 이미 지원 한 회원일 때
     private suspend fun isAlreadySupported(recruitItem: PostContentItem.RecruitItem): Boolean {
         return entity.recruit?.any { recruitInfo ->
             recruitInfo.type == recruitItem.recruit.type &&
@@ -151,50 +161,7 @@ class PostContentViewModel @Inject constructor(
         } == true
     }
 
-    private fun updateRecruitList(
-        recruitItem: PostContentItem.RecruitItem,
-        newApplicationInfo: ApplicationInfo
-    ): List<RecruitInfo>? {
-        return entity.recruit?.map { recruitInfo ->
-            if (recruitInfo.type == recruitItem.recruit.type) {
-                recruitInfo.copy(applicationInfos = (recruitInfo.applicationInfos.orEmpty() + newApplicationInfo.copy(recruitId = recruitItem.recruit.key)).toList())
-            } else {
-                recruitInfo
-            }
-        }
-    }
-
-    private suspend fun updatePost(
-        updatedRecruitList: List<RecruitInfo>?,
-        applicationStatus: ApplicationStatus
-    ): DataResultStatus {
-        return entity.copy(recruit = updatedRecruitList).let { updatedEntity ->
-            when (registerPostUseCase(updatedEntity)) {
-                DataResultStatus.SUCCESS -> {
-                    DataResultStatus.SUCCESS.apply {
-                        updatePostContentItems(updatedEntity.recruit)
-                        message = if (applicationStatus == ApplicationStatus.APPROVE)
-                            app.getString(R.string.approved_processing_completed)
-                        else
-                            app.getString(R.string.refusal_completed)
-                    }
-                }
-
-                else -> DataResultStatus.FAIL
-            }
-        }
-    }
-
-    fun createDialog(recruitItem: PostContentItem.RecruitItem) {
-        _dialogUiState.value = _dialogUiState.value?.copy(
-            title = if (entity.groupType == GroupType.PROJECT) app.getString(R.string.project_kor) else app.getString(
-                R.string.study_kor
-            ),
-            message = entity.title,
-            recruitItem = recruitItem
-        )
-    }
-
+    // 지원 요청 상태가 PENDING 인 목록
     suspend fun getUserEntitiesFromRecruit(item: PostContentItem.RecruitItem): List<UserEntity> {
         return item.recruit.applicationInfos
             ?.filter { it.applicationStatus == ApplicationStatus.PENDING }
@@ -203,7 +170,44 @@ class PostContentViewModel @Inject constructor(
             ?: emptyList()
     }
 
-    suspend fun updateApplicationStatus(
+    // 지원 요청 데이터 수정
+    private suspend fun updatePostRecruit(
+        updatedRecruitList: List<RecruitInfo>?,
+        applicationStatus: ApplicationStatus
+    ): DataResultStatus {
+        return entity.copy(recruit = updatedRecruitList).let { updatedEntity ->
+            when (registerPostUseCase(updatedEntity)) {
+                DataResultStatus.SUCCESS -> {
+                    DataResultStatus.SUCCESS.apply {
+                        setPostContentItems(updatedEntity.recruit)
+                        message = if (applicationStatus == ApplicationStatus.APPROVE)
+                            context.getString(R.string.approved_processing_completed)
+                        else
+                            context.getString(R.string.refusal_completed)
+                    }
+                }
+
+                else -> DataResultStatus.FAIL
+            }
+        }
+    }
+
+
+    // 승인 된 사용자 멤버에 추가
+    private fun updateMemberList(userEntity: UserEntity): DataResultStatus {
+        return entity.let { currentEntity ->
+            currentEntity.memberIds.toMutableList().apply {
+                userEntity.uid?.let { add(it) }
+                entity = currentEntity.copy(memberIds = this)
+            }
+
+            DataResultStatus.SUCCESS
+        }
+    }
+
+
+    // 승인 된 회원 멤버에 추가
+    suspend fun addMemberStatusApprove(
         applicationStatus: ApplicationStatus,
         userEntity: UserEntity,
         item: PostContentItem.RecruitItem
@@ -213,12 +217,12 @@ class PostContentViewModel @Inject constructor(
         if (applicationStatus == ApplicationStatus.APPROVE) {
             if (updateMemberList(userEntity) != DataResultStatus.SUCCESS) {
                 return DataResultStatus.FAIL.apply {
-                    message = app.getString(R.string.failed_error)
+                    message = context.getString(R.string.failed_error)
                 }
             }
         }
 
-        return updateApplicationStatus(updatedRecruitList, applicationStatus)
+        return updatePostRecruit(updatedRecruitList, applicationStatus)
     }
 
     private fun updateRecruitList(
@@ -243,41 +247,31 @@ class PostContentViewModel @Inject constructor(
         }
     }
 
-    private fun updateMemberList(userEntity: UserEntity): DataResultStatus {
-        return entity.let { currentEntity ->
-            currentEntity.memberIds.toMutableList().apply {
-                userEntity.uid?.let { add(it) }
-                entity = currentEntity.copy(memberIds = this)
-            }
-
-            DataResultStatus.SUCCESS
-        }
-    }
-
-    private suspend fun updateApplicationStatus(
-        updatedRecruitList: List<RecruitInfo>?,
-        applicationStatus: ApplicationStatus
-    ): DataResultStatus {
-        return entity.copy(recruit = updatedRecruitList).let { updatedEntity ->
-            when (val updateResult = registerPostUseCase(updatedEntity)) {
-                DataResultStatus.SUCCESS -> {
-                    updatePostContentItems(updatedEntity.recruit)
-                    DataResultStatus.SUCCESS.apply {
-                        message = if (applicationStatus == ApplicationStatus.APPROVE)
-                            app.getString(R.string.approved_processing_completed)
-                        else
-                            app.getString(R.string.refusal_completed)
-                    }
-                }
-
-                else -> updateResult
-            }
-        }
-    }
-
-
+    // 조회수
     private suspend fun incrementPostViews(): DataResultStatus =
         postRepository.incrementPostViews(entity.key)
 
 
+    private fun Post.createPostContentItem() = PostContentItem.Item(
+        key = key,
+        authId = authId,
+        title = title,
+        status = status,
+        imageUrl = imageUrl.orEmpty(),
+        groupType = groupType,
+        description = description,
+        tags = tags,
+        registeredDate = registeredDate,
+        views = views
+    )
+
+    fun createDialog(recruitItem: PostContentItem.RecruitItem) {
+        _dialogUiState.value = _dialogUiState.value?.copy(
+            title = if (entity.groupType == GroupType.PROJECT) context.getString(R.string.project_kor) else context.getString(
+                R.string.study_kor
+            ),
+            message = entity.title,
+            recruitItem = recruitItem
+        )
+    }
 }

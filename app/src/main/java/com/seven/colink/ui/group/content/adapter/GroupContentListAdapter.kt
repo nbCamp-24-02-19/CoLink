@@ -14,18 +14,20 @@ import coil.load
 import com.seven.colink.R
 import com.seven.colink.databinding.ItemGroupContentBinding
 import com.seven.colink.databinding.ItemUnknownBinding
-import com.seven.colink.ui.group.board.GroupContentViewType
+import com.seven.colink.ui.group.board.board.GroupContentViewType
 import com.seven.colink.ui.group.content.GroupContentItem
 import com.seven.colink.ui.post.register.post.adapter.TagListAdapter
 import com.seven.colink.ui.post.register.post.model.TagListItem
 import com.seven.colink.util.status.GroupType
+import com.seven.colink.util.status.ProjectStatus
 
 class GroupContentListAdapter(
     private val context: Context,
     private val recyclerView: RecyclerView,
     private val onClickItem: (GroupContentItem, View) -> Unit,
     private val onGroupImageClick: (String) -> Unit,
-    private val tagAdapterOnClickItem: (Int, TagListItem) -> Unit
+    private val tagAdapterOnClickItem: (Int, TagListItem) -> Unit,
+    private val onSwitchChanged: (Boolean) -> Unit
 ) : ListAdapter<GroupContentItem, GroupContentListAdapter.GroupContentViewHolder>(
     object : DiffUtil.ItemCallback<GroupContentItem>() {
         override fun areItemsTheSame(
@@ -70,7 +72,8 @@ class GroupContentListAdapter(
                 ),
                 onClickItem,
                 onGroupImageClick,
-                tagAdapterOnClickItem
+                tagAdapterOnClickItem,
+                onSwitchChanged
             )
 
             else -> GroupUnknownViewHolder(
@@ -91,14 +94,19 @@ class GroupContentListAdapter(
         private val binding: ItemGroupContentBinding,
         private val onClickItem: (GroupContentItem, View) -> Unit,
         private val onGroupImageClick: (String) -> Unit,
-        private val tagAdapterOnClickItem: (Int, TagListItem) -> Unit
+        private val tagAdapterOnClickItem: (Int, TagListItem) -> Unit,
+        private val onSwitchChanged: (Boolean) -> Unit
     ) : GroupContentViewHolder(binding.root) {
-        private val tagAdapter = TagListAdapter(onClickItem = { _, item ->
-            tagAdapterOnClickItem(adapterPosition, item)
-        })
+
+        private val tagAdapter = TagListAdapter { item -> tagAdapterOnClickItem(adapterPosition, item) }
 
         init {
             binding.recyclerViewTags.adapter = tagAdapter
+            initializeEditorActionListener()
+            binding.switchProjectStatus.setOnCheckedChangeListener { _, isChecked ->
+
+                onSwitchChanged(isChecked)
+            }
         }
 
         private fun initializeEditorActionListener() {
@@ -114,60 +122,39 @@ class GroupContentListAdapter(
             }
         }
 
-        fun getEtTitleText(): String {
-            return binding.etTitle.text.toString().trim()
-        }
+        fun getEtTitleText(): String = binding.etTitle.text.toString().trim()
 
-        fun getEtDescriptionText(): String {
-            return binding.etDescription.text.toString().trim()
-        }
+        fun getEtDescriptionText(): String = binding.etDescription.text.toString().trim()
 
         override fun onBind(item: GroupContentItem) {
             if (item is GroupContentItem.GroupContent) {
-                initializeEditorActionListener()
                 binding.ivGroupImage.load(item.selectedImageUrl ?: item.imageUrl)
                 binding.etTitle.setText(item.teamName)
                 binding.etDescription.setText(item.description)
-                val tagListItems =
-                    item.tags?.map { TagListItem.Item(it) } ?: emptyList()
+
+                val tagListItems = item.tags?.map { TagListItem.Item(it.name) } ?: emptyList()
                 tagAdapter.submitList(tagListItems)
 
-                binding.ivGroupImage.setOnClickListener {
-                    onClickItem(item, it)
-                }
+                binding.ivGroupImage.setOnClickListener { onClickItem(item, it) }
 
+                setupGroupTypeView(item.groupType ?: GroupType.UNKNOWN)
 
-                when (item.groupType) {
-                    GroupType.PROJECT -> {
-                        binding.tvGroupType.backgroundTintList =
-                            ContextCompat.getColorStateList(
-                                context,
-                                R.color.forth_color
-                            )
-                        binding.tvGroupType.text = context.getString(R.string.project_kor)
-                    }
-
-                    GroupType.STUDY -> {
-                        binding.tvGroupType.backgroundTintList =
-                            ContextCompat.getColorStateList(
-                                context,
-                                R.color.study_color
-                            )
-                        binding.tvGroupType.text = context.getString(R.string.study_kor)
-                    }
-
-                    else -> {
-                        binding.tvGroupType.backgroundTintList =
-                            ContextCompat.getColorStateList(
-                                context,
-                                R.color.enable_stroke
-                            )
-                        binding.tvGroupType.text = context.getString(R.string.unknown)
-                    }
-                }
+                binding.switchProjectStatus.isChecked = item.status == ProjectStatus.START
             }
         }
+
+        private fun setupGroupTypeView(groupType: GroupType) {
+            val (backgroundTint, typeNameResId) = when (groupType) {
+                GroupType.PROJECT -> Pair(R.color.forth_color, R.string.bt_project)
+                GroupType.STUDY -> Pair(R.color.study_color, R.string.bt_study)
+                else -> Pair(R.color.enable_stroke, R.string.unknown)
+            }
+
+            binding.tvGroupType.backgroundTintList = ContextCompat.getColorStateList(context, backgroundTint)
+            binding.tvGroupType.text = context.getString(typeNameResId)
+        }
     }
+
 
 
     class GroupUnknownViewHolder(binding: ItemUnknownBinding) :
