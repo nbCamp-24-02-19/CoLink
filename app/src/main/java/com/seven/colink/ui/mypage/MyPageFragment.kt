@@ -14,7 +14,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import coil.load
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentMyPageBinding
 import com.seven.colink.databinding.ItemSignUpSkillBinding
@@ -58,7 +60,6 @@ class MyPageFragment : Fragment() {
         privacypolicy()
         SkilRecyclerView()
         PostRecyclerView()
-        //settingClick()
         setLogout()
 
         //스킬 추가
@@ -146,8 +147,12 @@ class MyPageFragment : Fragment() {
         }
         binding.tvMypageAboutMe.text = user.info
 
-        val uri = Uri.parse(user.profile.toString())
-        binding.ivMypageProfile.setImageURI(uri)
+//        binding.ivMypageProfile.load(user.profile)
+        if(user.profile == null){
+            binding.ivMypageProfile
+        } else{
+            binding.ivMypageProfile.load(user.profile)
+        }
 
         val level = user.level
         val levelicon: Drawable = DrawableCompat.wrap(binding.ivMypageLevel.drawable)
@@ -213,27 +218,16 @@ class MyPageFragment : Fragment() {
 
 
 
-//    private fun settingClick(){
-//        binding.ivMypageSetting.setOnClickListener {
-//            val myPageEditDetailFragment = LayoutInflater.from(context).inflate(R.layout.fragment_my_page_edit_detail, null)
-//            val myBuilder = AlertDialog.Builder(context)
-//                .setView(myPageEditDetailFragment)
-//            val mAlertDialog = myBuilder.show()
-//
-//            val mypageBackButton = myPageEditDetailFragment.findViewById<ImageView>(R.id.iv_mypage_detail_back)
-//
-//            mypageBackButton.setOnClickListener {
-//                mAlertDialog.dismiss()
-//            }
-//        }
+
+//    private fun SkilRecyclerView(){
+//        skiladapter = MyPageSkilAdapter(MyPageSkilItemManager.getAllItem())
+//        binding.reMypageItem.adapter = skiladapter
+//        binding.reMypageItem.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 //    }
-
-
-
     private fun SkilRecyclerView(){
         skiladapter = MyPageSkilAdapter(MyPageSkilItemManager.getAllItem())
         binding.reMypageItem.adapter = skiladapter
-        binding.reMypageItem.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        binding.reMypageItem.layoutManager = GridLayoutManager(context, 4)
     }
 
 
