@@ -54,6 +54,7 @@ class MyPagePostAdapter(var mItems: List<MyPostItem>) : RecyclerView.Adapter<Rec
                     holder.holderProjecting.setBackgroundResource(R.drawable.bg_mypage_ing_gray)
                 } else if(holder.holderProjecting.text =="완료"){
                     holder.holderProjecting.setBackgroundResource(R.drawable.bg_mypage_ing_purple)
+                    holder.holderProjecting.setTextColor(Color.WHITE)
                 }
                 holder.projectname.text = item.projectName
                 holder.projecttime.text = item.projectTime
