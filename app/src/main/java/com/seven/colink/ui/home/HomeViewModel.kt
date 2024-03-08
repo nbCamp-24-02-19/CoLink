@@ -17,10 +17,9 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val postRepository: PostRepository,
 ) : ViewModel() {
+
     private val _topItems: MutableLiveData<List<TopItems>> = MutableLiveData(mutableListOf())
-    var _bottomItems: MutableLiveData<List<BottomItems>> = MutableLiveData(mutableListOf())
     val topItems: LiveData<List<TopItems>> get() = _topItems
-//    val bottomItems: LiveData<List<BottomItems>> get() = _bottomItems
 
     fun getTopItems(num : Int) {
         var getTopItemList: MutableList<TopItems> = mutableListOf()
@@ -39,26 +38,7 @@ class HomeViewModel @Inject constructor(
                 _topItems.value = getTopItemList
 
             }.onFailure { exception ->
-                Log.e("HomeViewModel","#aaa error $exception")
-            }
-        }
-    }
-
-    fun getBottomItems(num: Int,type : GroupType?) {
-        var getBottomItemList: MutableList<BottomItems> = mutableListOf()
-
-        viewModelScope.launch {
-            getBottomItemList.clear()
-            val repository = postRepository.getRecentPost(num,type)
-            kotlin.runCatching {
-                repository.forEach {
-                    var bottomRecentItem = BottomItems(it.groupType,it.title,it.description
-                    ,it.tags,it.imageUrl,it.key,it.status,it.status)
-                    getBottomItemList.add(bottomRecentItem)
-                }
-                _bottomItems.value = getBottomItemList
-            }.onFailure { exception ->
-                Log.e("HomeViewModel", "#aaa error $exception")
+                Log.e("HomeViewModel","데이터를 불러오지 못 했습니다 $exception")
             }
         }
     }
