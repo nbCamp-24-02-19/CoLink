@@ -7,6 +7,7 @@ import com.seven.colink.data.firebase.repository.GroupRepositoryImpl
 import com.seven.colink.data.firebase.repository.ImageRepositoryImpl
 import com.seven.colink.data.firebase.repository.PostRepositoryImpl
 import com.seven.colink.data.firebase.repository.ProductRepositoryImpl
+import com.seven.colink.data.firebase.repository.RecruitRepositoryImpl
 import com.seven.colink.data.firebase.repository.UserRepositoryImpl
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.ChatRepository
@@ -15,6 +16,7 @@ import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.domain.repository.ImageRepository
 import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.repository.ProductRepository
+import com.seven.colink.domain.repository.RecruitRepository
 import com.seven.colink.domain.repository.UserRepository
 import dagger.Binds
 import dagger.Module
@@ -41,4 +43,7 @@ abstract class RepositoryModule {
     abstract fun bindPostRepository(repository: PostRepositoryImpl): PostRepository
     @Binds
     abstract fun bindProductRepository(repository: ProductRepositoryImpl): ProductRepository
+
+    @Binds
+    abstract fun bindRecruitRepository(repository: RecruitRepositoryImpl): RecruitRepository
 }
