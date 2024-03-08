@@ -9,7 +9,7 @@ import com.seven.colink.databinding.ItemListRecruitmentBinding
 import com.seven.colink.domain.entity.RecruitInfo
 
 class RecruitListAdapter(
-    private val onClickItem: (Int, RecruitInfo) -> Unit
+    private val onClickItem: (RecruitInfo) -> Unit
 ) : ListAdapter<RecruitInfo, RecruitListAdapter.ViewHolder>(
     object : DiffUtil.ItemCallback<RecruitInfo>() {
 
@@ -35,14 +35,14 @@ class RecruitListAdapter(
 
     class ViewHolder(
         private val binding: ItemListRecruitmentBinding,
-        private val onClickItem: (Int, RecruitInfo) -> Unit,
+        private val onClickItem: (RecruitInfo) -> Unit,
     ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: RecruitInfo) = with(binding) {
             tvRecruitType.text = item.type
             tvRecruitPersonnel.text = "${item.maxPersonnel}명"
             ivRecruitItemDelete.setOnClickListener {
-                onClickItem(adapterPosition, item)
+                onClickItem(item)
             }
         }
     }

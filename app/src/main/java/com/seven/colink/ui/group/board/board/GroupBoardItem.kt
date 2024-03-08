@@ -1,7 +1,8 @@
-package com.seven.colink.ui.group.board
+package com.seven.colink.ui.group.board.board
 
-import com.seven.colink.domain.entity.PostEntity
+import androidx.annotation.StyleRes
 import com.seven.colink.domain.entity.UserEntity
+import com.seven.colink.ui.post.register.post.model.Post
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
 
@@ -21,12 +22,12 @@ sealed interface GroupBoardItem {
     ) : GroupBoardItem
 
     data class PostItem(
-        val post: PostEntity
+        val post: Post
     ) : GroupBoardItem
 
     data class MemberItem(
         val userInfo: UserEntity,
-        val role: String?,
+        val isManagementButtonVisible: Boolean
     ) : GroupBoardItem
 
     data class TitleItem(
@@ -35,14 +36,12 @@ sealed interface GroupBoardItem {
     ) : GroupBoardItem
 
     data class SubTitleItem(
-        val title: String?
+        val title: String?,
+        @StyleRes val style: Int = 0
     ) : GroupBoardItem
 
-}
+    data class MessageItem(
+        val message: String?
+    ) : GroupBoardItem
 
-sealed interface GroupContentEvent {
-    data class Update(
-        val isOwner: Boolean,
-        val postKey: String,
-    ) : GroupContentEvent
 }

@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentPostContentBinding
 import com.seven.colink.domain.entity.UserEntity
+import com.seven.colink.ui.group.board.list.ApplyRequestFragment
 import com.seven.colink.ui.post.content.adapter.PostContentListAdapter
 import com.seven.colink.ui.post.content.model.ContentOwnerButtonUiState
 import com.seven.colink.ui.post.content.model.DialogUiState
@@ -38,8 +39,23 @@ class PostContentFragment : Fragment() {
         PostContentListAdapter(
             requireContext(),
             onClickItem = { _, item -> handleItemClick(item) },
-            onClickButton = { _, item, buttonUiState -> handleButtonClick(item, buttonUiState) }
-        )
+            onClickButton = { _, item, buttonUiState -> handleButtonClick(item, buttonUiState) },
+            onClickView = { item, view ->
+                when (view.id) {
+                    R.id.tv_apply_request -> {
+                        parentFragmentManager.beginTransaction().apply {
+                            replace(
+                                R.id.fg_activity_post,
+                                ApplyRequestFragment()
+                            )
+                            addToBackStack(null)
+                            commit()
+                        }
+                    }
+                }
+            },
+
+            )
     }
 
     override fun onCreateView(
@@ -166,19 +182,11 @@ class PostContentFragment : Fragment() {
     ) {
         userEntities.setUserInfoDialog(requireContext()) { userEntity, isRefuseButton ->
             lifecycleScope.launch {
-                if (isRefuseButton) {
-                    viewModel.updateApplicationStatus(
-                        ApplicationStatus.APPROVE,
-                        userEntity,
-                        item
-                    )
-                } else {
-                    viewModel.updateApplicationStatus(
-                        ApplicationStatus.REJECTED,
-                        userEntity,
-                        item
-                    )
-                }
+                viewModel.addMemberStatusApprove(
+                    if (isRefuseButton) ApplicationStatus.APPROVE else ApplicationStatus.REJECTED,
+                    userEntity,
+                    item
+                )
             }
         }.show()
     }
