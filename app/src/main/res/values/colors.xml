@@ -52,5 +52,8 @@
     <!-- chat -->
     <color name="chat_notice">#ED2478</color>
 
+    <!-- home -->
+    <color name="home_top_bottom">#C8C8C8</color>
+
 
 </resources>
