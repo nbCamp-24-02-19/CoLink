@@ -17,8 +17,11 @@ import com.seven.colink.domain.entity.RecruitInfo
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.domain.repository.ImageRepository
+import com.seven.colink.domain.usecase.GetPostUseCase
+import com.seven.colink.domain.usecase.RegisterPostUseCase
 import com.seven.colink.ui.post.register.post.model.AddTagResult
 import com.seven.colink.ui.post.register.post.model.ImageUiState
+import com.seven.colink.ui.post.register.post.model.Post
 import com.seven.colink.ui.post.register.post.model.PostUiState
 import com.seven.colink.ui.post.register.post.model.PostViewState
 import com.seven.colink.util.Constants.Companion.LIMITED_PEOPLE
@@ -38,10 +41,12 @@ class PostViewModel @Inject constructor(
     private val postRepository: PostRepository,
     private val imageRepository: ImageRepository,
     private val authRepository: AuthRepository,
-    private val groupRepository: GroupRepository
+    private val groupRepository: GroupRepository,
+    private val getPostUseCase: GetPostUseCase,
+    private val registerPostUseCase: RegisterPostUseCase,
 ) : ViewModel() {
     private lateinit var entryType: PostEntryType
-    private lateinit var entity: PostEntity
+    private lateinit var entity: Post
     private lateinit var groupType: GroupType
 
     private val _uiState: MutableLiveData<PostViewState> = MutableLiveData(PostViewState.init())
@@ -69,7 +74,7 @@ class PostViewModel @Inject constructor(
     }
 
     suspend fun setEntity(key: String) {
-        entity = postRepository.getPost(key).getOrNull() ?: PostEntity()
+        entity = getPostUseCase(key)?: Post()
     }
 
     fun initViewStateByEntryType() {
@@ -188,7 +193,7 @@ class PostViewModel @Inject constructor(
             }
 
             if (entryType == PostEntryType.CREATE) {
-                postRepository.registerPost(entity)
+                registerPostUseCase(entity)
                 try {
                     val data = entity.convertGroupEntity()
                     groupRepository.registerGroup(data)
@@ -198,7 +203,7 @@ class PostViewModel @Inject constructor(
                     onError(groupException)
                 }
             } else {
-                postRepository.updatePost(entity.key, entity)
+                registerPostUseCase(entity)
                 onSuccess(app.getString(R.string.post_update_success))
             }
         } catch (e: Exception) {
@@ -210,10 +215,10 @@ class PostViewModel @Inject constructor(
         title: String,
         description: String,
         imageUrl: String?
-    ): PostEntity {
+    ): Post {
         val currentState = postUiState.value
 
-        return PostEntity(
+        return Post(
             authId = getCurrentUser(),
             title = title,
             imageUrl = imageUrl.orEmpty(),
@@ -229,7 +234,7 @@ class PostViewModel @Inject constructor(
         title: String,
         description: String,
         imageUrl: String
-    ): PostEntity {
+    ): Post {
         val currentState = postUiState.value
 
         return entity.copy(
@@ -293,7 +298,8 @@ class PostViewModel @Inject constructor(
 
     private suspend fun getCurrentUser(): String = authRepository.getCurrentUser().message
 
-    private fun PostEntity.convertGroupEntity() = GroupEntity(
+    private fun Post.convertGroupEntity() = GroupEntity(
+        key = key,
         postKey = key,
         authId = authId,
         title = title,
