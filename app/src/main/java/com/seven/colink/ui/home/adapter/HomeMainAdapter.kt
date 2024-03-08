@@ -1,20 +1,14 @@
 package com.seven.colink.ui.home.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import androidx.viewpager2.widget.CompositePageTransformer
-import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
 import com.seven.colink.databinding.ItemHomeHeaderBinding
 import com.seven.colink.databinding.ItemHomeTopViewpagerBinding
 import com.seven.colink.ui.home.HomeAdapterItems
-import com.seven.colink.ui.home.TopItems
-import kotlin.math.ceil
 
 class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUtil) {
     object HomeMainDiffUtil : DiffUtil.ItemCallback<HomeAdapterItems>() {
@@ -118,11 +112,11 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
 
                     fun handleScrollState(state: Int) {
                         if (state == ViewPager2.SCROLL_STATE_IDLE && currentState == ViewPager2.SCROLL_STATE_DRAGGING) {
-                            setNextItemIfNeeded()
+                            setNextItem()
                         }
                     }
 
-                    fun setNextItemIfNeeded() {
+                    fun setNextItem() {
                         if (currentState != ViewPager2.SCROLL_STATE_SETTLING){
                             handleSetNextItem()
                         }
