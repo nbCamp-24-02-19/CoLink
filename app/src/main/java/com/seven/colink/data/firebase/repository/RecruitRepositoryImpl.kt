@@ -1,7 +1,6 @@
 package com.seven.colink.data.firebase.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.toObject
 import com.seven.colink.data.firebase.type.DataBaseType
 import com.seven.colink.domain.entity.ApplicationInfoEntity
 import com.seven.colink.domain.entity.RecruitEntity
@@ -36,7 +35,7 @@ class RecruitRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getRecruit(key: String) = run {
-        firestore.collection(DataBaseType.APPINFO.title).document(key).get().await()
+        firestore.collection(DataBaseType.RECRUIT.title).document(key).get().await()
             .toObject(RecruitEntity::class.java)
     }
 

@@ -1,16 +1,13 @@
 package com.seven.colink.ui.post.register.post.model
 
-import com.seven.colink.domain.entity.TagEntity
 
 sealed interface TagListItem {
     data class Item(
-        val tagEntity: TagEntity?
-    ) : TagListItem {
-        val key: String? get() = tagEntity?.key
-    }
+        val name: String?
+    ) : TagListItem
 
     data class ContentItem(
-        val tagName: String?
+        val name: String?
     ) : TagListItem
 }
 
@@ -27,8 +24,8 @@ enum class TagListViewType {
     }
 }
 
-sealed class AddTagResult {
-    data object Success : AddTagResult()
-    data object MaxNumberExceeded : AddTagResult()
-    data object TagAlreadyExists : AddTagResult()
+sealed class TagEvent {
+    data object Success : TagEvent()
+    data object MaxNumberExceeded : TagEvent()
+    data object TagAlreadyExists : TagEvent()
 }
