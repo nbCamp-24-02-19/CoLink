@@ -4,14 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:paddingHorizontal="24dp">
+    android:paddingHorizontal="48dp"
+    android:paddingVertical="48dp">
 
     <TextView
-        android:id="@+id/tv_sub_title"
-        android:layout_width="wrap_content"
+        android:id="@+id/tv_message"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/black"
-        android:textSize="14sp"
+        android:gravity="center"
+        android:textColor="@color/enable_stroke"
+        android:textSize="13sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

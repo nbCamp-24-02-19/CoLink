@@ -1,4 +1,4 @@
-package com.seven.colink.ui.group.board
+package com.seven.colink.ui.group.board.board
 
 
 import android.os.Bundle
@@ -11,7 +11,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentGroupBoardBinding
-import com.seven.colink.ui.group.board.adapter.GroupBoardListAdapter
+import com.seven.colink.ui.group.board.board.adapter.GroupBoardListAdapter
+import com.seven.colink.ui.group.board.list.ApplyRequestFragment
 import com.seven.colink.ui.group.content.GroupContentFragment
 import com.seven.colink.ui.group.viewmodel.GroupSharedViewModel
 import com.seven.colink.ui.post.content.model.ContentOwnerButtonUiState
@@ -24,6 +25,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class GroupBoardFragment : Fragment() {
     private var _binding: FragmentGroupBoardBinding? = null
+
     private val binding: FragmentGroupBoardBinding get() = _binding!!
     private val viewModel: GroupBoardViewModel by viewModels()
     private val sharedViewModel: GroupSharedViewModel by activityViewModels()
@@ -58,6 +60,21 @@ class GroupBoardFragment : Fragment() {
                     else -> Unit
                 }
             },
+            onClickView = { item, view ->
+                when (view.id) {
+                    R.id.tv_apply_request -> {
+                        parentFragmentManager.beginTransaction().apply {
+                            replace(
+                                R.id.fg_activity_group,
+                                ApplyRequestFragment()
+                            )
+                            addToBackStack(null)
+                            commit()
+                        }
+                    }
+                }
+
+            }
         )
     }
 
@@ -65,7 +82,7 @@ class GroupBoardFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentGroupBoardBinding.inflate(inflater, container, false)
+        _binding = FragmentGroupBoardBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
@@ -74,6 +91,7 @@ class GroupBoardFragment : Fragment() {
         initView()
         initViewModel()
         initSharedViewModel()
+
     }
 
     private fun initView() = with(binding) {
@@ -82,7 +100,15 @@ class GroupBoardFragment : Fragment() {
             activity?.finish()
         }
         binding.tvComplete.setOnClickListener {
-            viewModel.onClickUpdate()
+            sharedViewModel.setEntryType(PostEntryType.UPDATE)
+            parentFragmentManager.beginTransaction().apply {
+                replace(
+                    R.id.fg_activity_group,
+                    GroupContentFragment()
+                )
+                addToBackStack(null)
+                commit()
+            }
         }
     }
 
@@ -101,21 +127,6 @@ class GroupBoardFragment : Fragment() {
             }
 
         }
-
-        event.observe(requireActivity()) { event ->
-            when (event) {
-                is GroupContentEvent.Update -> {
-                    if (event.isOwner) {
-                        sharedViewModel.setEntryType(PostEntryType.UPDATE)
-                        parentFragmentManager.beginTransaction().apply {
-                            replace(R.id.fg_activity_group, GroupContentFragment())
-//                            addToBackStack(null)
-                            commit()
-                        }
-                    }
-                }
-            }
-        }
     }
 
     private fun initSharedViewModel() = with(sharedViewModel) {
@@ -129,7 +140,6 @@ class GroupBoardFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        _binding = null
         super.onDestroyView()
     }
 }
