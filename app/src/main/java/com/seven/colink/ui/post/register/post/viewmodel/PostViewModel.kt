@@ -240,27 +240,27 @@ class PostViewModel @Inject constructor(
     }
 
     fun incrementCount() {
-        val currentCount = _selectedCount.value ?: 0
+        val currentCount = selectedCount.value ?: 0
         _selectedCount.value = currentCount + 1
         updateRecruitBasedOnCount()
     }
 
     fun decrementCount() {
-        val currentCount = _selectedCount.value ?: 0
+        val currentCount = selectedCount.value ?: 0
         _selectedCount.value = if (currentCount > 0) currentCount - 1 else 0
         updateRecruitBasedOnCount()
     }
 
     private fun updateRecruitBasedOnCount() {
         val newCount = _selectedCount.value ?: 0
-        val updatedRecruit = _uiState.value?.recruit?.map {
+        val updatedRecruit = uiState.value?.recruit?.map {
             it.copy(maxPersonnel = newCount)
         }
         updateRecruit(updatedRecruit)
     }
 
     fun updateRecruit(updatedRecruit: List<RecruitInfo>?) {
-        _uiState.value = _uiState.value?.copy(recruit = updatedRecruit)
+        _uiState.value = uiState.value?.copy(recruit = updatedRecruit)
     }
 
 

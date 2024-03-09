@@ -35,6 +35,7 @@ class RecommendFragment: Fragment() {
         RecommendAdapter(
             inviteGroup = {
                 /*Todo 상대방에게 게시물 페이지로 이동시켜주는 알림 생성 전송되면 성공 메세지*/
+                          Unit
             },
             onChat = {
                 viewModel.setChatRoom(it)
