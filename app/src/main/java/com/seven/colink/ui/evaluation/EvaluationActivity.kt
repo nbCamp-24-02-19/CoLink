@@ -1,27 +1,18 @@
 package com.seven.colink.ui.evaluation
 
-import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.view.animation.AccelerateInterpolator
-import android.view.animation.DecelerateInterpolator
-import android.view.animation.OvershootInterpolator
-import android.widget.ProgressBar
-import androidx.core.view.size
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.commit
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator
-import androidx.lifecycle.ReportFragment.Companion.reportFragment
+import android.util.Log
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
-import com.seven.colink.R
 import com.seven.colink.databinding.ActivityEvaluationBinding
 import com.seven.colink.util.Constants
 import com.seven.colink.util.status.GroupType
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class EvaluationActivity : AppCompatActivity() {
     companion object {
         fun newIntentEval(
@@ -29,37 +20,60 @@ class EvaluationActivity : AppCompatActivity() {
             groupType: GroupType,
             entityKey: String
         ) = Intent(context, EvaluationActivity::class.java).apply {
-            putExtra(Constants.EXTRA_GROUP_TYPE, groupType)
+            putExtra(Constants.EXTRA_GROUP_TYPE, groupType.ordinal)
             putExtra("extra_group_entity", entityKey)
         }
     }
 
-    private val evalAdapter by lazy {
-        EvaluationAdapter(
-            this,
-            onClickButton = { _, item -> handleItemClick(item) }
-        )
-    }
-
+    private var projectUserList = mutableListOf<EvaluationData.EvalProject>()
+    private var studyUserList = mutableListOf<EvaluationData.EvalStudy>()
+    private lateinit var evalProjectAdapter: EvaluationProjectAdapter
+    private lateinit var evalStudyAdapter: EvaluationStudyAdapter
+    private lateinit var evalViewModel: EvaluationViewModel
     private val binding by lazy {
         ActivityEvaluationBinding.inflate(layoutInflater)
+    }
+    private val groupTypeEntity by lazy {
+        intent.getSerializableExtra(Constants.EXTRA_GROUP_TYPE)
+    }
+    private val groupEntity by lazy {
+        intent.getStringExtra("extra_group_entity")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        evalViewModel = ViewModelProvider(this).get(EvaluationViewModel::class.java)
 
         initView()
+        evalViewModel.getMembers(groupEntity)
+
 
     }
 
     private fun initView() {
-        binding.vpEvalViewpager.adapter = evalAdapter
-        binding.vpEvalViewpager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+        when (groupTypeEntity) {
+            0 -> {
+                evalProjectAdapter = EvaluationProjectAdapter(this, projectUserList)
+                binding.vpEvalViewpager.adapter = evalProjectAdapter
+                binding.vpEvalViewpager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+                setProjectObserve()
+                setProgress()
+            }
+            1 -> {
+                evalStudyAdapter = EvaluationStudyAdapter(this, studyUserList)
+                binding.vpEvalViewpager.adapter = evalStudyAdapter
+                binding.vpEvalViewpager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+                setStudyObserve()
+            }
+            else -> throw IllegalArgumentException("Unknown GroupTypeEntity!")
+        }
 
-        val pageCount = 5
-        binding.pbEvalProgress.max = pageCount - 1
+        Log.d("Evaluation", "evaluationValue = ${groupTypeEntity}, ${groupEntity}")
+    }
 
+
+    private fun setProgress(){
         binding.vpEvalViewpager.registerOnPageChangeCallback(object :
             ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -68,17 +82,32 @@ class EvaluationActivity : AppCompatActivity() {
         })
     }
 
-    private fun handleItemClick(item: EvaluationData) {
-        when (item) {
-            is EvaluationData.EvalProject -> {}
-            is EvaluationData.EvalStudy -> {}
-            else -> throw UnsupportedOperationException("Unhandled type : $item")
+    private fun setProjectObserve() {
+        evalViewModel.evalProjectMembersData.observe(this) { it ->
+            it?.let { list ->
+                val nonNullList = list.filterNotNull()
+                evalProjectAdapter.mItems.clear()
+                evalProjectAdapter.mItems.addAll(nonNullList)
+                Log.d("Evaluation", "### Adapter mItems = ${evalProjectAdapter.mItems}")
+                val pageCount = nonNullList.size
+                binding.pbEvalProgress.max = pageCount - 1
+                evalProjectAdapter.notifyDataSetChanged()
+            }
         }
+        Log.d("Evaluation", "setProjectObserve")
     }
 
-    private fun setFragment(frag: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.vp_eval_viewpager, frag)
-            .commit()
+    private fun setStudyObserve() {
+        evalViewModel.evalStudyMembersData.observe(this) { it ->
+            it?.let { list ->
+                val nonNullList = list.filterNotNull()
+                evalStudyAdapter.mItems.clear()
+                evalStudyAdapter.mItems.addAll(nonNullList)
+                val pageCount = nonNullList.size
+                binding.pbEvalProgress.max = pageCount - 1
+                evalStudyAdapter.notifyDataSetChanged()
+            }
+        }
+        Log.d("Evaluation", "setProjectObserve")
     }
 }

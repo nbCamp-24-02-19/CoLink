@@ -11,6 +11,7 @@ import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.domain.repository.PostRepository
+import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.GroupType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -33,22 +34,27 @@ class GroupViewModel @Inject constructor(
     private val _wantList = MutableLiveData<List<GroupData.GroupWant>?>()
     val wantList: LiveData<List<GroupData.GroupWant>?> get() = _wantList
 
+    private val _checkLogin = MutableLiveData<Boolean>(false)
+    val checkLogin: LiveData<Boolean> get() = _checkLogin
+
     init {
-        viewModelScope.launch {
-            getInPost()
-            itemUpdate()
-        }
+
     }
 
-    private fun itemUpdate() {
+    fun itemUpdate() {
         viewModelScope.launch {
             val items = mutableListOf<GroupData>()
 
             items.add(getTitle())
-            if (joinList.value.isNullOrEmpty()) {
+            if (checkLogin.value == true) {
+                if (joinList.value.isNullOrEmpty()) {
+                    items.add(getEmptyJoinList())
+                } else {
+                    joinList.value?.map { items.add(it) }
+                }
+            }
+            else {
                 items.add(getEmptyJoinList())
-            } else {
-                joinList.value?.map { items.add(it) }
             }
             items.add(getAdd())
             if (wantList.value.isNullOrEmpty()) {
@@ -58,16 +64,21 @@ class GroupViewModel @Inject constructor(
             }
 
             _groupData.value = items
-            Log.d("Group", "GroupData.value = ${_groupData.value}")
         }
     }
 
-    private suspend fun getInPost() {
+    fun getCurrentUser(){
+        viewModelScope.launch {
+            val currentUser = authRepository.getCurrentUser()
+            _checkLogin.value = currentUser == DataResultStatus.SUCCESS
+        }
+    }
+
+    suspend fun getInPost() {
         val currentUser = authRepository.getCurrentUser()
         val result = groupRepository.getGroupByContainUserId(currentUser.message).getOrNull()?.map {
             it.convertGroupList()
         }
-        Log.d("Group", "result1 = ${result}")
         _joinList.value = result
     }
 
@@ -76,7 +87,7 @@ class GroupViewModel @Inject constructor(
             key = key,
             groupType = groupType,
             thumbnail = imageUrl,
-            projectName = title,
+            projectName = teamName,
             days = "모집중",
             description = description,
             tags = tags,
