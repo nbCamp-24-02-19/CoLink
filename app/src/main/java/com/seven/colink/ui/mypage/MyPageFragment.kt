@@ -10,25 +10,37 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentMyPageBinding
 import com.seven.colink.databinding.ItemSignUpSkillBinding
 import com.seven.colink.databinding.MypageEditDialogBinding
+import com.seven.colink.databinding.UtilCustomBasicDialogBinding
 import com.seven.colink.ui.mypage.MyPageItem.skilItems
 import com.seven.colink.ui.mypage.adapter.MyPagePostAdapter
 import com.seven.colink.ui.mypage.adapter.MyPageSkilAdapter
+import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.ui.sign.signin.SignInActivity
 import com.seven.colink.util.dialog.setDialog
+import com.seven.colink.util.progress.hideProgressOverlay
+import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.skillCategory
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
+import com.seven.colink.util.status.UiState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import okhttp3.internal.notify
+import okhttp3.internal.notifyAll
 
 @AndroidEntryPoint
 class MyPageFragment : Fragment() {
@@ -56,10 +68,11 @@ class MyPageFragment : Fragment() {
         _binding = MypageEditDialogBinding.inflate(layoutInflater)
 
 
+        showProgressOverlay()
+        binding.ntMypage.visibility = View.GONE
         privacypolicy()
         SkilRecyclerView()
         PostRecyclerView()
-        //settingClick()
         setLogout()
 
         //스킬 추가
@@ -77,17 +90,60 @@ class MyPageFragment : Fragment() {
         }
         //스킬 삭제
         skiladapter.skilLongClick = object : MyPageSkilAdapter.SkilLongClick{
-            override fun onLongClick(language: Any, position: Int) {
-                val ad = AlertDialog.Builder(context)
-                ad.setTitle("삭제")
-                ad.setMessage("정말로 삭제하시겠습니까?")
-                ad.setPositiveButton("확인"){dialog,_ ->
-                    viewModel.removeSkill(language)
+            override fun onLongClick(language: String, position: Int) {
+                context?.setDialog("삭제",
+                    "정말로 삭제하시겠습니까?",
+                    null,
+                    confirmAction = {
+                        viewModel.removeSkill(language)
+                        it.dismiss()
+                    },
+                    cancelAction = {
+                        it.dismiss()
+                    })?.show()
+            }
+        }
+
+        postadapter.postClick = object :MyPagePostAdapter.PostClick{
+            override fun onClick(view: View, position: Int, item: MyPostItem.MyPagePostItem) {
+                lifecycleScope.launch {
+                    var key = item.projectKey
+                    Log.d("postClick","key = ${key}")
+                    val post = key.let { viewModel.getPost(it) }
+                    Log.d("postClick","post = ${post}")
+                    if (post != null) {
+                        startActivity(
+                            PostActivity.newIntent(
+                                context = requireActivity(),
+                                key = key
+                            )
+                        )
+                    }else {
+                        Toast.makeText(requireContext(), "다음에 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+                    }
                 }
-                ad.setNegativeButton("취소"){dialog,_ ->
-                    dialog.dismiss()
+            }
+
+        }
+
+        postadapter.studyClick = object : MyPagePostAdapter.StudyClick{
+            override fun onClick(view: View, position: Int, item: MyPostItem.MyPageStudyItem) {
+                lifecycleScope.launch {
+                    var key = item.studyKey
+                    Log.d("postClick","key = ${key}")
+                    val post = key?.let { viewModel.getPost(it) }
+                    Log.d("postClick","post = ${post}")
+                    if (post != null) {
+                        startActivity(
+                            PostActivity.newIntent(
+                                context = requireActivity(),
+                                key = key
+                            )
+                        )
+                    }else {
+                        Toast.makeText(requireContext(), "다음에 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+                    }
                 }
-                ad.show()
             }
         }
 
@@ -108,6 +164,8 @@ class MyPageFragment : Fragment() {
             }else{
                 startActivity(Intent(requireContext(), SignInActivity::class.java))
             }
+            binding.ntMypage.visibility = View.VISIBLE
+            hideProgressOverlay()
         }
 
         //파이어베이스 유저 등록글
@@ -116,11 +174,11 @@ class MyPageFragment : Fragment() {
                 if (post.grouptype == GroupType.PROJECT){
                     MyPostItem.MyPagePostItem(if (post.ing != ProjectStatus.END){
                         "참여중"
-                    } else "완료", projectName = post.title.toString(), projectTime = post.time.toString())
+                    } else "완료", projectName = post.title.toString(), projectTime = post.time.toString(), projectKey = post.key.toString())
                 } else {
                     MyPostItem.MyPageStudyItem(if(post.ing != ProjectStatus.END){
                         "참여중"
-                    } else "완료",  post.title.toString(), post.time.toString()
+                    } else "완료",  post.title.toString(), post.time.toString(), post.key.toString()
                     )
 
                 }}?.let { it1 -> postadapter.changeDataset(it1) }
@@ -134,23 +192,63 @@ class MyPageFragment : Fragment() {
 
     private fun updateUI(user: MyPageUserModel) {
         // Update your views with user information
-        binding.tvMypageName.text = user.name
-        binding.tvMypageSpecialization2.text = user.mainSpecialty
-        if (user.blog != null) {
-            binding.ivMypageBlog.setOnClickListener {
+        //이름을 안 적고 넘어갈 수 있나..........?
+//        if (user.name != null){
+            binding.tvMypageName.text = user.name
+//        } else {
+//            binding.tvMypageName.text = user.email
+//        }
+        //링크가 있으면 버튼 활성화 없으면 사라짐
+        if (user.link == null){
+            binding.ivMypageLink.visibility = View.GONE
+        } else {
+            binding.ivMypageLink.visibility = View.VISIBLE
+            binding.ivMypageLink.setOnClickListener {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(user.link))
+                startActivity(intent)
+            }
+        }
+
+        //전문분야가 없으면
+        if (user.specialty != null){
+            binding.tvMypageSpecialization2.text = user.mainSpecialty
+        } else {
+            binding.tvMypageSpecialization2.text = "없음"
+        }
+
+        //블로그 주소가 없으면
+        binding.ivMypageBlog.setOnClickListener {
+            if (user.blog != null){
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(user.blog))
                 startActivity(intent)
+            } else{
+                Toast.makeText(context,"블로그 주소가 없습니다.",Toast.LENGTH_SHORT).show()
             }
         }
-        if (user.git != null) {
-            binding.ivMypageGit.setOnClickListener {
+
+        //깃헙 주소가 없으면
+        binding.ivMypageGit.setOnClickListener {
+            if (user.git != null){
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(user.git))
                 startActivity(intent)
+            } else{
+                Toast.makeText(context,"깃허브 주소가 없습니다.",Toast.LENGTH_SHORT).show()
             }
         }
-        binding.tvMypageAboutMe.text = user.info
 
-        binding.ivMypageProfile.load(user.profile)
+
+        if(user.info != null){
+            binding.tvMypageAboutMe.text = user.info
+        } else {
+            binding.tvMypageAboutMe.text = "자기소개가 없습니다."
+        }
+
+//        프로필이 없으면
+        if(user.profile == null){
+            binding.ivMypageProfile
+        } else{
+            binding.ivMypageProfile.load(user.profile)
+        }
 
         val level = user.level
         val levelicon: Drawable = DrawableCompat.wrap(binding.ivMypageLevel.drawable)
@@ -216,27 +314,16 @@ class MyPageFragment : Fragment() {
 
 
 
-//    private fun settingClick(){
-//        binding.ivMypageSetting.setOnClickListener {
-//            val myPageEditDetailFragment = LayoutInflater.from(context).inflate(R.layout.fragment_my_page_edit_detail, null)
-//            val myBuilder = AlertDialog.Builder(context)
-//                .setView(myPageEditDetailFragment)
-//            val mAlertDialog = myBuilder.show()
-//
-//            val mypageBackButton = myPageEditDetailFragment.findViewById<ImageView>(R.id.iv_mypage_detail_back)
-//
-//            mypageBackButton.setOnClickListener {
-//                mAlertDialog.dismiss()
-//            }
-//        }
+
+//    private fun SkilRecyclerView(){
+//        skiladapter = MyPageSkilAdapter(MyPageSkilItemManager.getAllItem())
+//        binding.reMypageItem.adapter = skiladapter
+//        binding.reMypageItem.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 //    }
-
-
-
     private fun SkilRecyclerView(){
         skiladapter = MyPageSkilAdapter(MyPageSkilItemManager.getAllItem())
         binding.reMypageItem.adapter = skiladapter
-        binding.reMypageItem.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        binding.reMypageItem.layoutManager = GridLayoutManager(context, 4)
     }
 
 

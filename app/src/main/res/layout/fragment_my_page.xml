@@ -8,9 +8,8 @@
     tools:context=".ui.mypage.MyPageFragment">
 
 
-
-
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/nt_mypage"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -27,16 +26,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
-
-<!--            <ImageView-->
-<!--                android:id="@+id/iv_mypage_setting"-->
-<!--                android:layout_width="25dp"-->
-<!--                android:layout_height="25dp"-->
-<!--                android:layout_marginTop="40dp"-->
-<!--                android:layout_marginEnd="27dp"-->
-<!--                android:src="@drawable/ic_mypage_edit"-->
-<!--                app:layout_constraintEnd_toEndOf="parent"-->
-<!--                app:layout_constraintTop_toTopOf="parent" />-->
 
 
             <ImageView
@@ -128,7 +117,7 @@
                 android:id="@+id/tv_mypage_score"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="69dp"
+                android:layout_marginTop="42dp"
                 android:layout_marginEnd="48dp"
                 android:text="9.0"
                 android:textColor="@color/black"
@@ -162,8 +151,19 @@
                 android:layout_height="32dp"
                 android:layout_marginStart="11dp"
                 android:layout_marginTop="132dp"
-                android:src="@drawable/ic_github"
+                android:src="@drawable/ic_git2"
                 app:layout_constraintStart_toEndOf="@+id/iv_mypage_blog"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/iv_mypage_link"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="11dp"
+                android:layout_marginTop="132dp"
+                android:src="@drawable/ic_link"
+                android:visibility= "gone"
+                app:layout_constraintStart_toEndOf="@+id/iv_mypage_git"
                 app:layout_constraintTop_toTopOf="parent" />
 
 
@@ -199,8 +199,7 @@
                     android:id="@+id/re_mypage_item"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="13dp"
-                    android:padding="15dp"
+                    android:layout_marginStart="20dp"
                     app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
