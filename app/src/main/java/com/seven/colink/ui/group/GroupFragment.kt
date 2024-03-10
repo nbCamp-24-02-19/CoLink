@@ -75,8 +75,6 @@ class GroupFragment : Fragment() {
             groupViewModel.getCurrentUser()
             groupViewModel.checkLogin.value
             groupViewModel.joinList.value
-            Log.d("GroupTest", "joinList.value4 = ${groupViewModel.joinList.value}")
-            Log.d("GroupTest", "checkLogin.value4 = ${groupViewModel.checkLogin.value}")
             groupAdapter.submitList(it)
         }
     }

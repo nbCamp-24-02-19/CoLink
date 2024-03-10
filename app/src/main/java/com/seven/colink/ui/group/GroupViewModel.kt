@@ -49,18 +49,12 @@ class GroupViewModel @Inject constructor(
             if (checkLogin.value == true) {
                 if (joinList.value.isNullOrEmpty()) {
                     items.add(getEmptyJoinList())
-                    Log.d("GroupTest", "joinList.value1 = ${joinList.value}")
-                    Log.d("GroupTest", "checkLogin.value1 = ${checkLogin.value}")
                 } else {
                     joinList.value?.map { items.add(it) }
-                    Log.d("GroupTest", "joinList.value2 = ${joinList.value}")
-                    Log.d("GroupTest", "checkLogin.value2 = ${checkLogin.value}")
                 }
             }
             else {
                 items.add(getEmptyJoinList())
-                Log.d("GroupTest", "joinList.value3 = ${joinList.value}")
-                Log.d("GroupTest", "checkLogin.value3 = ${checkLogin.value}")
             }
             items.add(getAdd())
             if (wantList.value.isNullOrEmpty()) {
@@ -70,7 +64,6 @@ class GroupViewModel @Inject constructor(
             }
 
             _groupData.value = items
-            Log.d("Group", "GroupData.value = ${_groupData.value}")
         }
     }
 
@@ -83,11 +76,9 @@ class GroupViewModel @Inject constructor(
 
     suspend fun getInPost() {
         val currentUser = authRepository.getCurrentUser()
-        Log.d("GroupTest", "### currentUser = ${currentUser}")
         val result = groupRepository.getGroupByContainUserId(currentUser.message).getOrNull()?.map {
             it.convertGroupList()
         }
-        Log.d("Group", "result1 = ${result}")
         _joinList.value = result
     }
 
