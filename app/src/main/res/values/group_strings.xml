@@ -16,4 +16,6 @@
     <string name="group_post_title">그룹에서 작성한 게시물</string>
     <string name="input_team_name">팀명을 설정해주세요</string>
     <string name="promotion">홍보하기</string>
+    <string name="title_apply_request">지원 요청자 보기</string>
+    <string name="apply_request_list">지원 요청 목록</string>
 </resources>

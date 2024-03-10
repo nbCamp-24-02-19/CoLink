@@ -17,13 +17,14 @@ import com.seven.colink.databinding.FragmentGroupContentBinding
 import com.seven.colink.domain.entity.TagEntity
 import com.seven.colink.ui.group.content.adapter.GroupContentListAdapter
 import com.seven.colink.ui.group.viewmodel.GroupSharedViewModel
-import com.seven.colink.ui.post.register.post.model.AddTagResult
+import com.seven.colink.ui.post.register.post.model.TagEvent
 import com.seven.colink.ui.post.register.post.model.TagListItem
 import com.seven.colink.util.Constants
 import com.seven.colink.util.openGallery
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.showToast
+import com.seven.colink.util.status.ProjectStatus
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -39,7 +40,7 @@ class GroupContentFragment : Fragment() {
         GroupContentListAdapter(
             requireContext(),
             binding.recyclerViewGroupContent,
-            onClickItem = { item, view ->
+            onClickItem = { _, view ->
                 when (view.id) {
                     R.id.iv_group_image -> {
                         openGallery(galleryResultLauncher)
@@ -59,9 +60,17 @@ class GroupContentFragment : Fragment() {
             tagAdapterOnClickItem = { _, tagItem ->
                 when (tagItem) {
                     is TagListItem.Item -> {
-                        viewModel.removeTagItem(tagItem.key)}
+                        viewModel.removeTagItem(tagItem.name)
+                    }
+
                     else -> Unit
                 }
+            },
+            onSwitchChanged = { isChecked ->
+
+                viewModel.onChangedSwitch(
+                    if (isChecked) ProjectStatus.START else ProjectStatus.END
+                )
             }
         )
     }
@@ -122,7 +131,9 @@ class GroupContentFragment : Fragment() {
 
         groupOperationResult.observe(requireActivity()) {
             hideProgressOverlay()
-            parentFragmentManager.popBackStack()
+            if (!parentFragmentManager.isStateSaved) {
+                parentFragmentManager.popBackStack()
+            }
         }
     }
 
@@ -145,15 +156,15 @@ class GroupContentFragment : Fragment() {
         }
     }
 
-    private fun handleTagAddResult(result: AddTagResult) {
+    private fun handleTagAddResult(result: TagEvent) {
         val messageResId = when (result) {
-            AddTagResult.Success -> return
-            AddTagResult.MaxNumberExceeded -> getString(
+            TagEvent.Success -> return
+            TagEvent.MaxNumberExceeded -> getString(
                 R.string.message_max_number,
                 Constants.LIMITED_TAG_COUNT
             )
 
-            AddTagResult.TagAlreadyExists -> getString(R.string.message_already_exists)
+            TagEvent.TagAlreadyExists -> getString(R.string.message_already_exists)
         }
         requireActivity().showToast(messageResId)
     }
