@@ -26,6 +26,7 @@ import com.seven.colink.ui.post.register.post.adapter.TagListAdapter
 import com.seven.colink.ui.post.register.post.model.TagEvent
 import com.seven.colink.ui.post.register.post.model.TagListItem
 import com.seven.colink.ui.post.register.post.viewmodel.PostViewModel
+import com.seven.colink.ui.post.register.recommend.RecommendFragment
 import com.seven.colink.ui.post.register.viewmodel.PostSharedViewModel
 import com.seven.colink.util.Constants
 import com.seven.colink.util.Constants.Companion.LIMITED_PEOPLE
@@ -233,11 +234,11 @@ class PostFragment : Fragment() {
 
         lifecycleScope.launch {
             complete.collect { newKey ->
-//                sharedViewModel.setKey(newKey)
-//                parentFragmentManager.beginTransaction().apply {
-//                    replace(R.id.fg_activity_post, RecommendFragment())
-//                    commit()
-//                }
+                sharedViewModel.setKey(newKey)
+                parentFragmentManager.beginTransaction().apply {
+                    replace(R.id.fg_activity_post, RecommendFragment())
+                    commit()
+                }
             }
         }
 

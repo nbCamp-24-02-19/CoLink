@@ -48,7 +48,7 @@ class RecommendViewModel @Inject constructor(
                 try {
                     userRepository.getUserDetails(
                         authRepository.getCurrentUser().message
-                    ).getOrNull()?.name!!
+                    ).getOrNull()?.name
                 } catch (e: Exception) {
                     e
                 }
@@ -78,7 +78,7 @@ class RecommendViewModel @Inject constructor(
                             listOfNotNull(
                                 RecommendType.Title(title),
                                 RecommendType.Card(members.first().convertCard()),
-                                RecommendType.Middle(members.first().name!!),
+                                members.first().name?.let { RecommendType.Middle(it) },
                             ) + members.drop(1).map {
                                 RecommendType.Others(it.convertUser())
                             } + listOf(RecommendType.Close)
@@ -100,21 +100,21 @@ class RecommendViewModel @Inject constructor(
     }
 
     private fun UserEntity.convertCard() = MemberCard(
-        key = uid!!,
-        name = name!!,
-        profileUrl = photoUrl!!,
-        level = level!!,
-        grade = grade!!,
+        key = uid,
+        name = name,
+        profileUrl = photoUrl,
+        level = level,
+        grade = grade,
         info = info,
         recruits = 1,
     )
 
     private fun UserEntity.convertUser() = MemberInfo(
-        key = uid!!,
-        name = name!!,
-        profileUrl = photoUrl!!,
+        key = uid,
+        name = name,
+        profileUrl = photoUrl,
         info = info,
-        grade = grade!!,
-        level = level!!,
+        grade = grade,
+        level = level,
     )
 }
