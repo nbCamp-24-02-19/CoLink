@@ -1,32 +1,26 @@
 package com.seven.colink.ui.group.board.board
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seven.colink.R
 import com.seven.colink.domain.entity.GroupEntity
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.GroupRepository
-import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.domain.usecase.GetPostUseCase
-import com.seven.colink.ui.post.content.model.ContentOwnerButtonUiState
-import com.seven.colink.ui.post.register.post.model.Post
-import com.seven.colink.util.status.DataResultStatus
-import com.seven.colink.util.status.ProjectStatus
+import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class GroupBoardViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository,
     private val groupRepository: GroupRepository,
-    private val postRepository: PostRepository,
     private val postUseCase: GetPostUseCase
 ) : ViewModel() {
     private val _uiStateList = MutableLiveData<List<GroupBoardItem>?>()
@@ -37,7 +31,7 @@ class GroupBoardViewModel @Inject constructor(
 
     fun setEntity(key: String) = viewModelScope.launch {
         val groupEntity = key.let { groupRepository.getGroupDetail(it).getOrNull() }
-        _entity.value = _entity.value?.copy(groupEntity = groupEntity)
+        _entity.value = entity.value?.copy(groupEntity = groupEntity)
         entity.value?.let {
             checkCurrentUser(it.groupEntity)
             groupContentItems()
@@ -46,10 +40,10 @@ class GroupBoardViewModel @Inject constructor(
 
     private fun checkCurrentUser(groupEntity: GroupEntity?) = viewModelScope.launch {
         val currentUser = getCurrentUser()
-        _entity.value = _entity.value?.copy(
+        _entity.value = entity.value?.copy(
             buttonUiState =
-            if (groupEntity?.authId == currentUser) ContentOwnerButtonUiState.Owner
-            else ContentOwnerButtonUiState.User
+            if (groupEntity?.authId == currentUser) ContentButtonUiState.Manager
+            else ContentButtonUiState.User
         )
     }
 
@@ -59,99 +53,67 @@ class GroupBoardViewModel @Inject constructor(
         val items = mutableListOf<GroupBoardItem>()
         val postEntity =
             entity.value?.groupEntity?.postKey?.let { postUseCase(it) }
+        Log.d("1234", "${postEntity?.recruit}")
         entity.value?.groupEntity?.let { entity ->
-            items.add(entity.createGroupContentItem())
-            items.add(R.string.group_post_title.createTitleItem(GroupContentViewType.POST_ITEM))
-            postEntity?.let { items.add(it.createPostItem()) }
-            items.add(R.string.project_member_info.createTitleItem(GroupContentViewType.MEMBER_ITEM))
+            items.add(
+                GroupBoardItem.GroupItem(
+                    key = entity.key,
+                    authId = entity.authId,
+                    teamName = entity.teamName,
+                    imageUrl = entity.imageUrl.orEmpty(),
+                    status = entity.status,
+                    groupType = entity.groupType,
+                    description = entity.description,
+                    tags = entity.tags,
+                    startDate = entity.startDate,
+                    endDate = entity.endDate,
+                    isOwner = entity.authId == getCurrentUser()
+                )
+            )
+            items.add(
+                GroupBoardItem.TitleItem(
+                    titleRes = R.string.group_post_title,
+                    viewType = GroupContentViewType.POST_ITEM
+                )
+            )
+            postEntity?.let { items.add(GroupBoardItem.PostItem(it)) }
+            items.add(
+                GroupBoardItem.TitleItem(
+                    titleRes = R.string.project_member_info,
+                    viewType = GroupContentViewType.MEMBER_ITEM
+                )
+            )
             items.addAll(entity.createMember())
             _uiStateList.value = items
         }
     }
 
-
-    private suspend fun GroupEntity.createGroupContentItem() = GroupBoardItem.GroupItem(
-        key = key,
-        authId = authId,
-        teamName = teamName,
-        imageUrl = imageUrl.orEmpty(),
-        status = status,
-        groupType = groupType,
-        description = description,
-        tags = tags,
-        startDate = startDate,
-        endDate = endDate,
-        isOwner = authId == getCurrentUser()
-    )
-
-    private fun Post.createPostItem() = GroupBoardItem.PostItem(
-        post = this
-    )
-
-    private fun Int.createTitleItem(viewType: GroupContentViewType) = GroupBoardItem.TitleItem(
-        titleRes = this,
-        viewType = viewType
-    )
-
     private suspend fun GroupEntity.createMember(): List<GroupBoardItem> {
-        var leaderAdded = false
-        var teamMemberAdded = false
-        val processedItems = mutableListOf<GroupBoardItem>()
+        val memberItems = mutableListOf<GroupBoardItem>()
+        var leaderTitleAdded = false
+        val memberIdsSet = memberIds.toSet()
 
-        memberIds.forEach { memberId ->
-            userRepository.getUserDetails(memberId).getOrNull()?.let {
-                val isLeader = memberId == entity.value?.groupEntity?.authId
-                val title = when {
-                    isLeader && !leaderAdded -> {
-                        leaderAdded = true
-                        "리더"
-                    }
-                    !isLeader && !teamMemberAdded -> {
-                        teamMemberAdded = true
-                        "팀원"
-                    }
-                    else -> null
+        for (memberId in memberIdsSet) {
+            val userEntity = userRepository.getUserDetails(memberId).getOrNull()
+
+            if (userEntity != null) {
+                val isLeader = authId == memberId
+
+                if (isLeader && !leaderTitleAdded) {
+                    memberItems.add(GroupBoardItem.SubTitleItem("리더"))
+                } else if (!isLeader && !leaderTitleAdded) {
+                    memberItems.add(GroupBoardItem.SubTitleItem("팀원"))
+                    leaderTitleAdded = true
                 }
 
-                if (title != null) {
-                    processedItems.add(GroupBoardItem.SubTitleItem(title = title, style = R.style.BoldTextStyle))
-                }
-                processedItems.add(GroupBoardItem.MemberItem(userInfo = it, isManagementButtonVisible = false))
+                memberItems.add(GroupBoardItem.MemberItem(userEntity, false))
             }
         }
 
-        return processedItems
+        return memberItems
     }
 
-
     fun onClickStatusButton() = viewModelScope.launch {
-        val updateItem = when (entity.value?.groupEntity?.status) {
-            ProjectStatus.RECRUIT -> ProjectStatus.START
-            ProjectStatus.START -> ProjectStatus.END
-            else -> return@launch
-        }
-
-        val result = entity.value?.groupEntity?.key?.let {
-            groupRepository.updateGroupStatus(
-                it,
-                updateItem
-            )
-        }
-
-        if (result == DataResultStatus.SUCCESS) {
-            _uiStateList.value = _uiStateList.value?.map { item ->
-                if (item is GroupBoardItem.GroupItem) {
-                    item.copy(status = updateItem)
-                } else {
-                    item
-                }
-            }
-
-            _entity.value = _entity.value?.copy(
-                groupEntity = entity.value?.groupEntity?.copy(status = updateItem)
-            )
-        } else {
-
-        }
+        // TODO 홍보 하기
     }
 }
