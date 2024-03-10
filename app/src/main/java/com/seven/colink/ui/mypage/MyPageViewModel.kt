@@ -5,9 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.storage
 import com.seven.colink.domain.entity.PostEntity
@@ -70,7 +67,7 @@ class MyPageViewModel @Inject constructor(
        }
     }
 
-    fun removeSkill(skill: Any){
+    fun removeSkill(skill: String){
 
         viewModelScope.launch {
             val currentUser = authRepository.getCurrentUser().message
@@ -87,8 +84,10 @@ class MyPageViewModel @Inject constructor(
                 Log.e("ViewModel", "Error fetching user details", exception)
             }
         }
+    }
 
-
+    suspend fun getPost(key: String): PostEntity? {
+        return postRepository.getPost(key).getOrNull()
     }
 
     fun logout(){
