@@ -6,8 +6,9 @@ enum class GroupContentViewType {
     MEMBER_ITEM,
     TITLE,
     SUB_TITLE,
+    PROJECT_STATUS,
+    MESSAGE,
     UNKNOWN,
-    MESSAGE
     ;
 
     companion object {

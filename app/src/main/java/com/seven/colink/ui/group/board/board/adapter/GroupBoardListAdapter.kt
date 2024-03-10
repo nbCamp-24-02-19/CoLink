@@ -1,6 +1,7 @@
 package com.seven.colink.ui.group.board.board.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +28,7 @@ import com.seven.colink.util.setLevelIcon
 import com.seven.colink.util.status.ApplicationStatus
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
+import kotlin.math.log
 
 class GroupBoardListAdapter(
     private val context: Context,
@@ -197,6 +199,9 @@ class GroupBoardListAdapter(
 
                 binding.includeDialogButton.btApproval.isVisible = item.isManagementButtonVisible
                 binding.includeDialogButton.btRefuse.isVisible = item.isManagementButtonVisible
+                binding.includeDialogButton.btApproval.setOnClickListener {
+                    onClickItem(adapterPosition, item)
+                }
             }
         }
     }

@@ -8,7 +8,7 @@ interface GroupRepository {
 
     suspend fun registerGroup(group: GroupEntity): DataResultStatus
     suspend fun getGroupDetail(key: String): Result<GroupEntity?>
-    suspend fun updateGroupSomeData(key: String, updatedGroup: GroupEntity): DataResultStatus
+    suspend fun updateGroupSection(key: String, updatedGroup: GroupEntity): DataResultStatus
     suspend fun getGroupByContainUserId(userId: String): Result<List<GroupEntity>>
     suspend fun updateGroupStatus(key: String, status: ProjectStatus): DataResultStatus
     suspend fun updateGroup(key: String, updatedGroup: GroupEntity): DataResultStatus
