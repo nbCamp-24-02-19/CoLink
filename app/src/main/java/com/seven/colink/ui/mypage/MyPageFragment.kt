@@ -169,7 +169,7 @@ class MyPageFragment : Fragment() {
         }
 
         //파이어베이스 유저 등록글
-        viewModel.userPost.observe(viewLifecycleOwner) { it ->
+        viewModel.userPost.observe(viewLifecycleOwner) {
             it?.map{post ->
                 if (post.grouptype == GroupType.PROJECT){
                     MyPostItem.MyPagePostItem(if (post.ing != ProjectStatus.END){
