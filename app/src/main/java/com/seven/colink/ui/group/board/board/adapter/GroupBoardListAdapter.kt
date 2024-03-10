@@ -53,6 +53,10 @@ class GroupBoardListAdapter(
                     oldItem.userInfo.uid == newItem.userInfo.uid
                 }
 
+                oldItem is GroupBoardItem.MemberApplicationInfoItem && newItem is GroupBoardItem.MemberApplicationInfoItem -> {
+                    oldItem.userInfo.uid == newItem.userInfo.uid
+                }
+
                 else -> oldItem == newItem
             }
 
@@ -86,6 +90,15 @@ class GroupBoardListAdapter(
                     false
                 ),
                 onClickItem,
+            )
+
+            GroupContentViewType.APPLICATION_INFO -> MemberApplicationInfoItemViewHolder(
+                UtilMemberInfoDialogItemBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                ),
+                onClickView,
             )
 
             GroupContentViewType.POST_ITEM -> PostItemViewHolder(
@@ -133,6 +146,7 @@ class GroupBoardListAdapter(
         is GroupBoardItem.GroupItem -> GroupContentViewType.GROUP_ITEM
         is GroupBoardItem.PostItem -> GroupContentViewType.POST_ITEM
         is GroupBoardItem.MemberItem -> GroupContentViewType.MEMBER_ITEM
+        is GroupBoardItem.MemberApplicationInfoItem -> GroupContentViewType.APPLICATION_INFO
         is GroupBoardItem.TitleItem -> GroupContentViewType.TITLE
         is GroupBoardItem.SubTitleItem -> GroupContentViewType.SUB_TITLE
         is GroupBoardItem.MessageItem -> GroupContentViewType.MESSAGE
@@ -201,6 +215,28 @@ class GroupBoardListAdapter(
                 binding.includeDialogButton.btRefuse.isVisible = item.isManagementButtonVisible
                 binding.includeDialogButton.btApproval.setOnClickListener {
                     onClickItem(adapterPosition, item)
+                }
+            }
+        }
+    }
+
+
+    class MemberApplicationInfoItemViewHolder(
+        private val binding: UtilMemberInfoDialogItemBinding,
+        private val onClickView: (GroupBoardItem, View) -> Unit,
+    ) : GroupViewHolder(binding.root) {
+        override fun onBind(item: GroupBoardItem) {
+            if (item is GroupBoardItem.MemberApplicationInfoItem) {
+
+                binding.includePostMemberInfo.tvUserName.text = item.userInfo.name
+                binding.includePostMemberInfo.tvUserGrade.text = item.userInfo.grade.toString()
+                item.userInfo.level?.let { binding.includePostMemberInfo.ivLevelDiaIcon.setLevelIcon(it) }
+                binding.includePostMemberInfo.tvLevelDiaIcon.text = item.userInfo.level.toString()
+                binding.includePostMemberInfo.tvUserIntroduction.text = item.userInfo.info
+                binding.root.setOnClickListener { onClickView(item, it) }
+
+                binding.includeDialogButton.btApproval.setOnClickListener {
+                    onClickView(item, it)
                 }
             }
         }
@@ -294,9 +330,6 @@ class GroupBoardListAdapter(
             }
         }
     }
-
-    private fun countMemberItems(): Int =
-        currentList.filterIsInstance<GroupBoardItem.MemberItem>().size
 
     private fun countPostApplyRequester(): Int {
         val postItem = currentList.filterIsInstance<GroupBoardItem.PostItem>()

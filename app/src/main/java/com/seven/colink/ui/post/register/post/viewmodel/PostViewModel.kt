@@ -206,7 +206,7 @@ class PostViewModel @Inject constructor(
     }
 
     private suspend fun getCurrentUser(): String =
-        authRepository.getCurrentUser().name
+        authRepository.getCurrentUser().message
 
     private suspend fun Post.convertGroupEntity() = GroupEntity(
         key = key,

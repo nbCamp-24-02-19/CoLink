@@ -5,7 +5,6 @@ sealed interface ContentButtonUiState {
     data object Manager : ContentButtonUiState
     data object User : ContentButtonUiState
     data object Unknown : ContentButtonUiState
-
 }
 
 data class DialogUiState(

@@ -83,13 +83,10 @@ class GroupRepositoryImpl @Inject constructor(
             }
     }
 
-    override suspend fun updateGroupStatus(key: String, status: ProjectStatus) =
+    private suspend fun updateFirestoreField(key: String, fieldMap: Map<String, Any?>): DataResultStatus =
         suspendCoroutine { continuation ->
-            val updateMap = mutableMapOf<String, Any?>()
-            updateMap["status"] = status
-
             firestore.collection(DataBaseType.GROUP.title).document(key)
-                .update(updateMap)
+                .update(fieldMap)
                 .addOnSuccessListener {
                     continuation.resume(DataResultStatus.SUCCESS)
                 }
@@ -99,4 +96,15 @@ class GroupRepositoryImpl @Inject constructor(
                     })
                 }
         }
+
+    override suspend fun updateGroupStatus(key: String, status: ProjectStatus): DataResultStatus {
+        val fieldMap = mapOf("status" to status)
+        return updateFirestoreField(key, fieldMap)
+    }
+
+    override suspend fun updateGroupMemberIds(key: String, updatedGroup: GroupEntity): DataResultStatus {
+        val fieldMap = mapOf("memberIds" to updatedGroup.memberIds)
+        return updateFirestoreField(key, fieldMap)
+    }
+
 }

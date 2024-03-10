@@ -58,7 +58,6 @@ class GroupViewModel @Inject constructor(
             }
 
             _groupData.value = items
-            Log.d("Group", "GroupData.value = ${_groupData.value}")
         }
     }
 
@@ -67,7 +66,6 @@ class GroupViewModel @Inject constructor(
         val result = groupRepository.getGroupByContainUserId(currentUser.message).getOrNull()?.map {
             it.convertGroupList()
         }
-        Log.d("Group", "result1 = ${result}")
         _joinList.value = result
     }
 
