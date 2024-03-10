@@ -1,6 +1,7 @@
 package com.seven.colink.ui.search
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -8,14 +9,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.appbar.AppBarLayout
 import com.seven.colink.R
+import com.seven.colink.R.color.main_color
+import com.seven.colink.R.color.white
 import com.seven.colink.databinding.FragmentSearchBinding
+import com.seven.colink.ui.evaluation.EvaluationActivity
 import com.seven.colink.ui.post.register.PostActivity
+import com.seven.colink.ui.sign.signin.SignInActivity
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
@@ -48,6 +56,7 @@ class SearchFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -58,33 +67,49 @@ class SearchFragment : Fragment() {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        binding.fbSearchPost.setOnClickListener {
-            groupTypeOptions.setDialog(
-                requireContext(),
-                getString(R.string.group_type_options)
-            ) { selectedOption ->
-                when (selectedOption) {
-                    getString(R.string.project_kor) -> {
-                        startActivity(
-                            PostActivity.newIntent(
-                                requireActivity(),
-                                GroupType.PROJECT
-                            )
-                        )
-                    }
+        searchViewModel.checkLogin.observe(viewLifecycleOwner) {
+            binding.fbSearchPost.setOnClickListener {
+                searchViewModel.getCurrentUser()
+                if (searchViewModel.checkLogin.value == true) {
+                    groupTypeOptions.setDialog(
+                        requireContext(),
+                        getString(R.string.group_type_options)
+                    ) { selectedOption ->
+                        when (selectedOption) {
+                            getString(R.string.project_kor) -> {
+                                startActivity(
+                                    PostActivity.newIntent(
+                                        requireActivity(),
+                                        GroupType.PROJECT
+                                    )
+                                )
+                            }
 
-                    getString(R.string.study_kor) -> {
-                        startActivity(
-                            PostActivity.newIntent(
-                                requireActivity(),
-                                GroupType.STUDY
-                            )
-                        )
-                    }
+                            getString(R.string.study_kor) -> {
+                                startActivity(
+                                    PostActivity.newIntent(
+                                        requireActivity(),
+                                        GroupType.STUDY
+                                    )
+                                )
+                            }
 
-                    else -> Unit
+                            else -> Unit
+                        }
+                    }.show()
+                } else {
+                    requireContext().setDialog(
+                        title = "로그인 필요",
+                        message = "서비스를 이용하기 위해서는 로그인이 필요합니다. \n로그인 페이지로 이동하시겠습니까?",
+                        confirmAction = {
+                            val intent = Intent(requireContext(), SignInActivity::class.java)
+                            startActivity(intent)
+                            it.dismiss()
+                        },
+                        cancelAction = { it.dismiss() }
+                    ).show()
                 }
-            }.show()
+            }
         }
 
         binding.ivSearchButton.setOnClickListener {
@@ -107,7 +132,7 @@ class SearchFragment : Fragment() {
                 }
             } else {
                 project = true
-                getProjectColor(binding.tvSearchProject)
+                onColor(binding.tvSearchProject)
                 if (project && !study) {
                     searchViewModel.setProjectFilter(query)
                 } else {
@@ -128,7 +153,7 @@ class SearchFragment : Fragment() {
                 }
             } else {
                 study = true
-                getStudyColor(binding.tvSearchStudy)
+                onColor(binding.tvSearchStudy)
                 if (study && !project) {
                     searchViewModel.setStudyFilter(query)
                 } else {
@@ -149,7 +174,7 @@ class SearchFragment : Fragment() {
                 }
             } else {
                 recruitEnd = true
-                getRecruitEndColor(binding.tvSearchRecruitEnd)
+                onColor(binding.tvSearchRecruitEnd)
                 if (recruitEnd && !recruit) {
                     searchViewModel.setRecruitEndFilter(query)
                 } else {
@@ -170,7 +195,7 @@ class SearchFragment : Fragment() {
                 }
             } else {
                 recruit = true
-                getRecruitColor(binding.tvSearchRecruit)
+                onColor(binding.tvSearchRecruit)
                 if (recruit && !recruitEnd) {
                     searchViewModel.setRecruitFilter(query)
                 } else {
@@ -192,7 +217,6 @@ class SearchFragment : Fragment() {
         binding.rvSearchRecyclerView.adapter = searchAdapter
         binding.rvSearchRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.rvSearchRecyclerView.itemAnimator = null
-        Log.d("Search", "postList = $postList}")
     }
 
     private fun setObserve() {
@@ -202,6 +226,28 @@ class SearchFragment : Fragment() {
             searchAdapter.notifyDataSetChanged()
             hideProgressOverlay()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setSearchAppbar()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        returnAppbar()
+    }
+
+    private fun setSearchAppbar(){
+        activity?.findViewById<ImageView>(R.id.iv_main_toolbar_image)?.setImageResource(R.drawable.logo_co_link_search)
+        activity?.findViewById<AppBarLayout>(R.id.al_main_appbar)?.elevation = 0f
+        activity?.findViewById<AppBarLayout>(R.id.al_main_appbar)?.setBackgroundResource(main_color)
+    }
+
+    private fun returnAppbar(){
+        activity?.findViewById<ImageView>(R.id.iv_main_toolbar_image)?.setImageResource(R.drawable.logo_co_link)
+        activity?.findViewById<AppBarLayout>(R.id.al_main_appbar)?.elevation = 5f
+        activity?.findViewById<AppBarLayout>(R.id.al_main_appbar)?.setBackgroundResource(white)
     }
 
     override fun onDestroyView() {
@@ -232,24 +278,13 @@ class SearchFragment : Fragment() {
     }
 
     private fun offColor(text: TextView) {
-        text.setTextColor(Color.parseColor("#717171"))
+        text.setTextColor(Color.parseColor("#20816F"))
     }
 
-    private fun getProjectColor(text: TextView) {
-        text.setTextColor(Color.parseColor("#64B5F6"))
+    private fun onColor(text: TextView) {
+        text.setTextColor(Color.parseColor("#FFFFFF"))
     }
 
-    private fun getStudyColor(text: TextView) {
-        text.setTextColor(Color.parseColor("#EB8447"))
-    }
-
-    private fun getRecruitColor(text: TextView) {
-        text.setTextColor(Color.parseColor("#17B397"))
-    }
-
-    private fun getRecruitEndColor(text: TextView) {
-        text.setTextColor(Color.parseColor("#2F4858"))
-    }
 
 
 }

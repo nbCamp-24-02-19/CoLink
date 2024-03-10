@@ -6,9 +6,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seven.colink.domain.entity.PostEntity
+import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.util.convert.convertToDaysAgo
+import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val postRepository: PostRepository,
-    private val userRepository: UserRepository,
+    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
     private val _searchModel = MutableLiveData<List<SearchModel>>()
     val searchModel: LiveData<List<SearchModel>> get() = _searchModel
@@ -30,6 +33,9 @@ class SearchViewModel @Inject constructor(
 
     private val _searchRecruitState = MutableLiveData("ALL")
     val searchRecruitState: LiveData<String> get() = _searchRecruitState
+
+    private val _checkLogin = MutableLiveData<Boolean>(false)
+    val checkLogin: LiveData<Boolean> get() = _checkLogin
 
     init {
         doSearch("")
@@ -71,6 +77,13 @@ class SearchViewModel @Inject constructor(
             Log.d("doSearch", "SearchValue = ${groupType} , ${recruitType}")
             Log.d("doSearch", "SearchValueResult = ${_searchModel.value}")
 
+        }
+    }
+
+    fun getCurrentUser(){
+        viewModelScope.launch {
+            val currentUser = authRepository.getCurrentUser()
+            _checkLogin.value = currentUser == DataResultStatus.SUCCESS
         }
     }
 
@@ -123,6 +136,7 @@ class SearchViewModel @Inject constructor(
     private suspend fun PostEntity.convertSearchModel() =
         SearchModel(
             key = key,
+            thumbnail = imageUrl,
             authId = withContext(Dispatchers.IO) {
                 userRepository.getUserDetails(authId.toString()).getOrNull()?.name.toString()
             },
