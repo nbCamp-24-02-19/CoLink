@@ -76,7 +76,9 @@ class RecommendFragment: Fragment() {
     private fun initViewModel() = with(viewModel) {
         lifecycleScope.launch {
             chatRoomEvent.collect {
+                startActivity(
                 ChatRoomActivity.newIntent(requireContext(),it.key, it.title.toString())
+                )
             }
         }
 

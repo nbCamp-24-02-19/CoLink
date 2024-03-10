@@ -57,8 +57,8 @@ class RecommendViewModel @Inject constructor(
             val membersDeferred =
                 key.let { postRepository.getPost(it) }.getOrNull()?.recruit?.map { recruitId ->
                     async {
-                        recruitId.let { recruitRepository.getRecruit(it) }?.type?.let {
-                            userRepository.getUserBySpecialty(it)
+                        recruitId.let { recruitRepository.getRecruit(it) }?.type?.let {type ->
+                            userRepository.getUserBySpecialty(type).getOrNull()
                         }
                     }
                 } ?: listOf()
@@ -66,7 +66,7 @@ class RecommendViewModel @Inject constructor(
 
             val title = titleDeferred.await()
             val members = membersDeferred.awaitAll().mapNotNull {
-                it?.getOrNull()
+                it
             }.flatten().sortedByDescending { it.grade }
 
             _recommendList.value = if (title is Exception) UiState.Error(title)

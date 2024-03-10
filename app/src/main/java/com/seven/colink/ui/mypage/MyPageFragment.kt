@@ -108,9 +108,9 @@ class MyPageFragment : Fragment() {
             override fun onClick(view: View, position: Int, item: MyPostItem.MyPagePostItem) {
                 lifecycleScope.launch {
                     var key = item.projectKey
-                    Log.d("postClick","key = ${key}")
+                    Log.d("postClick","key = $key")
                     val post = key.let { viewModel.getPost(it) }
-                    Log.d("postClick","post = ${post}")
+                    Log.d("postClick","post = $post")
                     if (post != null) {
                         startActivity(
                             PostActivity.newIntent(

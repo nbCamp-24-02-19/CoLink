@@ -206,7 +206,7 @@ class PostViewModel @Inject constructor(
     }
 
     private suspend fun getCurrentUser(): String =
-        authRepository.getCurrentUser().name
+        authRepository.getCurrentUser().message
 
     private suspend fun Post.convertGroupEntity() = GroupEntity(
         key = key,
@@ -322,23 +322,23 @@ class PostViewModel @Inject constructor(
                 getUpdatePostEntity()
             }
 
-//            if (entryType == PostEntryType.CREATE) {
-//                try {
-//                    registerPostUseCase(entity)
-//                    groupRepository.registerGroup(entity.convertGroupEntity())
-//                    onSuccess(context.getString(R.string.post_register_success))
-//                    _complete.emit(entity.key)
-//                } catch (groupException: Exception) {
-//                    onError(groupException)
-//                }
-//            } else {
-//                try {
-//                    registerPostUseCase(entity)
-//                    onSuccess(context.getString(R.string.post_update_success))
-//                } catch (e: Exception) {
-//                    onError(e)
-//                }
-//            }
+            if (entryType == PostEntryType.CREATE) {
+                try {
+                    registerPostUseCase(entity)
+                    groupRepository.registerGroup(entity.convertGroupEntity())
+                    onSuccess(context.getString(R.string.post_register_success))
+                    _complete.emit(entity.key)
+                } catch (groupException: Exception) {
+                    onError(groupException)
+                }
+            } else {
+                try {
+                    registerPostUseCase(entity)
+                    onSuccess(context.getString(R.string.post_update_success))
+                } catch (e: Exception) {
+                    onError(e)
+                }
+            }
         } catch (e: Exception) {
             onError(e)
         }
