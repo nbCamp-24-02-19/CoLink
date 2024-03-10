@@ -31,7 +31,7 @@ class GroupRepositoryImpl @Inject constructor(
             .toObject(GroupEntity::class.java)
     }
 
-    override suspend fun updateGroupSomeData(key: String, updatedGroup: GroupEntity) =
+    override suspend fun updateGroupSection(key: String, updatedGroup: GroupEntity) =
         suspendCoroutine { continuation ->
             val updateMap = mutableMapOf<String, Any?>()
 
@@ -46,9 +46,6 @@ class GroupRepositoryImpl @Inject constructor(
             }
             if (updatedGroup.imageUrl != null) {
                 updateMap["imageUrl"] = updatedGroup.imageUrl
-            }
-            if (updatedGroup.imageUrl != null) {
-                updateMap["status"] = updatedGroup.status
             }
 
             firestore.collection(DataBaseType.GROUP.title).document(key)

@@ -13,7 +13,6 @@ import com.seven.colink.databinding.FragmentApplyRequestBinding
 import com.seven.colink.ui.group.board.board.GroupBoardItem
 import com.seven.colink.ui.group.board.board.adapter.GroupBoardListAdapter
 import com.seven.colink.ui.group.viewmodel.GroupSharedViewModel
-import com.seven.colink.ui.post.register.PostActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -37,7 +36,6 @@ class ApplyRequestFragment : Fragment() {
 
                     is GroupBoardItem.TitleItem -> {
                         // TODO 지원 요청 목록, 멤버 추천 화면 이동
-
                     }
 
                     else -> Unit
@@ -47,11 +45,12 @@ class ApplyRequestFragment : Fragment() {
                 when (view.id) {
                     R.id.bt_approval -> {
                         lifecycleScope.launch {
+                            viewModel.onClickApproval()
                         }
                     }
 
                     R.id.bt_refuse -> {
-
+                        viewModel.onClickRefuse()
                     }
 
                 }

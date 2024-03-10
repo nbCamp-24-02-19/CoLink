@@ -1,10 +1,8 @@
 package com.seven.colink.ui.post.register.post.viewmodel
 
-import android.app.Activity
 import android.app.Application
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,16 +17,14 @@ import com.seven.colink.domain.usecase.GetPostUseCase
 import com.seven.colink.domain.usecase.RegisterPostUseCase
 import com.seven.colink.ui.post.register.post.PostErrorMessage
 import com.seven.colink.ui.post.register.post.PostErrorUiState
-import com.seven.colink.ui.post.register.post.PostEvent
 import com.seven.colink.ui.post.register.post.model.Post
-import com.seven.colink.ui.post.register.post.model.PostUiState
-import com.seven.colink.ui.post.register.post.model.TagEvent
+import com.seven.colink.ui.post.register.post.model.PostListItem
 import com.seven.colink.util.Constants.Companion.LIMITED_TAG_COUNT
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.PostEntryType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -45,21 +41,14 @@ class PostViewModel @Inject constructor(
     private lateinit var entity: Post
     private lateinit var groupType: GroupType
 
-    private val _uiState: MutableLiveData<PostUiState> = MutableLiveData(PostUiState.init())
-    val uiState: LiveData<PostUiState> get() = _uiState
-
+    private val _uiState: MutableLiveData<List<PostListItem>> = MutableLiveData()
+    val uiState: LiveData<List<PostListItem>> get() = _uiState
     private val _errorUiState: MutableLiveData<PostErrorUiState> =
         MutableLiveData(PostErrorUiState.init())
     val errorUiState: LiveData<PostErrorUiState> get() = _errorUiState
 
-    private val _event: MutableLiveData<PostEvent> = MutableLiveData()
-    val event: LiveData<PostEvent> get() = _event
-
-    private val _selectedCount = MutableLiveData<Int>().apply { value = 0 }
-    val selectedCount: LiveData<Int> get() = _selectedCount
-
     private val _complete = MutableSharedFlow<String>()
-    val complete: SharedFlow<String> = _complete
+    val complete = _complete.asSharedFlow()
 
     fun setEntryType(type: PostEntryType) {
         entryType = type
@@ -74,206 +63,157 @@ class PostViewModel @Inject constructor(
     }
 
     fun setViewByGroupType() {
-        setCreateView()
+        setPostCreateItem()
     }
 
     fun setViewByEntity() {
-        setUpdateView()
+        setPostUpdateItem()
     }
 
-    private fun setCreateView() {
-        _uiState.value = _uiState.value?.copy(
-            groupType = groupType,
-            descriptionMessage = if (groupType == GroupType.PROJECT) context.getString(R.string.input_content_project) else context.getString(
-                R.string.input_content_study
-            )
-        )
-    }
-
-    private fun setUpdateView() {
-        entity.let { entity ->
-            _uiState.value = _uiState.value?.copy(
+    private fun setPostUpdateItem() {
+        val items = mutableListOf<PostListItem>()
+        items.add(
+            PostListItem.PostItem(
+                key = entity.key,
                 title = entity.title,
                 imageUrl = entity.imageUrl,
                 groupType = entity.groupType ?: GroupType.UNKNOWN,
+                selectedImageUrl = null,
                 description = entity.description,
                 descriptionMessage = if (entity.groupType == GroupType.PROJECT) context.getString(R.string.input_content_project) else context.getString(
                     R.string.input_content_study
                 ),
                 tags = entity.tags,
-                precautions = entity.precautions,
-                recruitInfo = entity.recruitInfo,
-                recruit = entity.recruit,
                 registeredDate = entity.registeredDate,
                 view = entity.views,
                 memberIds = entity.memberIds
             )
+        )
+        items.add(
+            PostListItem.PostOptionItem(
+                key = entity.key,
+                precautions = entity.precautions,
+                recruitInfo = entity.recruitInfo
+            )
+        )
+        items.add(
+            PostListItem.TitleItem(
+                R.string.people_recruited,
+                R.string.limited_people,
+            )
+        )
+        items.add(
+            PostListItem.RecruitItem(
+                key = entity.key,
+                recruit = entity.recruit,
+                groupType = entity.groupType ?: GroupType.PROJECT,
+                selectedCount = 0
+            )
+        )
+        items.add(
+            PostListItem.ButtonItem(
+                text = R.string.bt_complete
+            )
+        )
 
-        }
+        _uiState.postValue(items)
     }
 
-    fun addTagItem(tag: String): TagEvent {
-        val currentTags = _uiState.value?.tags.orEmpty()
+    private fun setPostCreateItem() {
+        val items = mutableListOf<PostListItem>()
+        items.add(
+            PostListItem.PostItem(
+                title = null,
+                key = null,
+                imageUrl = null,
+                groupType = groupType,
+                selectedImageUrl = null,
+                description = null,
+                descriptionMessage = if (groupType == GroupType.PROJECT) context.getString(R.string.input_content_project) else context.getString(
+                    R.string.input_content_study
+                ),
+                tags = null,
+                registeredDate = null,
+                view = 0,
+                memberIds = emptyList()
+            )
+        )
+        items.add(
+            PostListItem.PostOptionItem(
+                key = null,
+                precautions = null,
+                recruitInfo = null
+            )
+        )
+        items.add(
+            PostListItem.TitleItem(
+                R.string.people_recruited,
+                R.string.limited_people,
+            )
+        )
+        items.add(
+            PostListItem.RecruitItem(
+                key = null,
+                recruit = null,
+                groupType = groupType,
+                selectedCount = 0
+            )
+        )
+        items.add(
+            PostListItem.ButtonItem(
+                text = R.string.bt_complete
+            )
+        )
+
+        _uiState.postValue(items)
+    }
+
+
+    fun checkValidAddTag(tag: String) {
+        _errorUiState.value = errorUiState.value?.copy(tag = getValidAddTag(tag))
+    }
+
+    private fun getValidAddTag(tag: String): PostErrorMessage {
+        val list = when (val uiStateValue = uiState.value?.firstOrNull()) {
+            is PostListItem.PostItem -> uiStateValue.tags.orEmpty()
+            else -> emptyList()
+        }
         return when {
-            currentTags.size >= LIMITED_TAG_COUNT -> TagEvent.MaxNumberExceeded
-            currentTags.any { it == tag } -> TagEvent.TagAlreadyExists
+            list.size >= LIMITED_TAG_COUNT -> PostErrorMessage.TAG_MAX_COUNT
+            list.any { it == tag } -> PostErrorMessage.TAG_ALREADY_EXIST
             else -> {
-                _uiState.value = _uiState.value?.copy(
-                    tags = currentTags + tag
-                )
-                TagEvent.Success
+                _uiState.value = uiState.value?.map { uiStateValue ->
+                    when (uiStateValue) {
+                        is PostListItem.PostItem -> uiStateValue.copy(tags = list + tag)
+                        else -> uiStateValue
+                    }
+                }
+                PostErrorMessage.PASS
             }
         }
     }
 
     fun removeTagItem(tag: String?) {
-        _uiState.value = _uiState.value?.let { state ->
-            state.copy(
-                tags = state.tags?.filterNot { it == tag }
-            )
-        }
-    }
+        _uiState.value = uiState.value?.map { uiStateValue ->
+            when (uiStateValue) {
+                is PostListItem.PostItem -> uiStateValue.copy(
+                    tags = uiStateValue.tags?.filter { it != tag } ?: emptyList()
+                )
 
-    fun addRecruitInfo(entity: RecruitInfo) {
-        val recruits = uiState.value?.recruit.orEmpty().toMutableList()
-        recruits.add(entity)
-        _uiState.value = _uiState.value?.copy(
-            recruit = recruits
-        )
-    }
-
-    fun removeRecruitInfo(type: String?) {
-        _uiState.value = _uiState.value?.let { state ->
-            state.copy(
-                recruit = state.recruit?.toMutableList()?.apply {
-                    removeAll { it.type == type }
-                }
-            )
-        }
-    }
-
-    fun createPost(
-        title: String,
-        description: String,
-        precautions: String,
-        recruitInfo: String,
-        onSuccess: (String) -> Unit,
-        onError: (Exception) -> Unit
-    ) = viewModelScope.launch {
-        try {
-            _uiState.value = _uiState.value?.copy(
-                title = title,
-                description = description,
-                precautions = precautions,
-                recruitInfo = recruitInfo
-            )
-
-            val entity = if (entryType == PostEntryType.CREATE) {
-                getCreatePostEntity(title, description, precautions, recruitInfo)
-            } else {
-                getUpdatePostEntity(title, description, precautions, recruitInfo)
+                else -> uiStateValue
             }
-
-            if (entryType == PostEntryType.CREATE) {
-                registerPostUseCase(entity)
-                try {
-                    groupRepository.registerGroup(entity.convertGroupEntity())
-                    onSuccess(context.getString(R.string.post_register_success))
-                    _complete.emit(entity.key)
-                    Log.d("1111", "success")
-                } catch (groupException: Exception) {
-                    onError(groupException)
-                    Log.d("1111", "error= $groupException")
-                }
-            } else {
-
-                registerPostUseCase(entity)
-                onSuccess(context.getString(R.string.post_update_success))
-            }
-        } catch (e: Exception) {
-            onError(e)
         }
     }
-
-    private suspend fun getCreatePostEntity(
-        title: String,
-        description: String,
-        precautions: String,
-        recruitInfo: String
-    ): Post {
-        val currentState = uiState.value
-
-        return Post(
-            authId = getCurrentUser(),
-            title = title,
-            imageUrl = currentState?.selectedImageUrl?.let { uploadImage(it) },
-            groupType = groupType,
-            description = description,
-            tags = currentState?.tags,
-            precautions = precautions,
-            recruitInfo = recruitInfo,
-            recruit = currentState?.recruit,
-            memberIds = listOf(getCurrentUser())
-        )
-    }
-
-    private suspend fun getUpdatePostEntity(
-        title: String,
-        description: String,
-        precautions: String,
-        recruitInfo: String
-    ): Post {
-        val currentState = uiState.value
-        val imageUrl =
-            currentState?.selectedImageUrl?.let { uploadImage(it) } ?: currentState?.imageUrl
-
-        return entity.copy(
-            title = title,
-            imageUrl = imageUrl,
-            description = description,
-            tags = currentState?.tags,
-            precautions = precautions,
-            recruitInfo = recruitInfo,
-            recruit = currentState?.recruit,
-            memberIds = entity.memberIds
-        )
-    }
-
-    fun incrementCount() {
-        val currentCount = _selectedCount.value ?: 0
-        _selectedCount.value = currentCount + 1
-        updateRecruitBasedOnCount()
-    }
-
-    fun decrementCount() {
-        val currentCount = _selectedCount.value ?: 0
-        _selectedCount.value = if (currentCount > 0) currentCount - 1 else 0
-        updateRecruitBasedOnCount()
-    }
-
-    private fun updateRecruitBasedOnCount() {
-        val newCount = _selectedCount.value ?: 0
-        val updatedRecruit = _uiState.value?.recruit?.map {
-            it.copy(maxPersonnel = newCount)
-        }
-        updateRecruit(updatedRecruit)
-    }
-
-    fun updateRecruit(updatedRecruit: List<RecruitInfo>?) {
-        _uiState.value = _uiState.value?.copy(recruit = updatedRecruit)
-    }
-
 
     private suspend fun getCurrentUser(): String =
-        authRepository.getCurrentUser().message
+        authRepository.getCurrentUser().name
 
     private suspend fun Post.convertGroupEntity() = GroupEntity(
         key = key,
         postKey = key,
         authId = authId,
         teamName = runCatching {
-            val userEntity = authRepository.getCurrentUser()
-            "${userEntity.name}님의 팀"
+            "${getCurrentUser()}님의 팀"
         }.getOrElse { "" },
         title = title,
         imageUrl = imageUrl,
@@ -285,33 +225,263 @@ class PostViewModel @Inject constructor(
         registeredDate = registeredDate
     )
 
-    fun handleGalleryResult(resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK) {
-            val selectedImageUri = data?.data
-            _uiState.value = _uiState.value?.copy(
-                selectedImageUrl = selectedImageUri
-            )
+    fun setImageResult(data: Intent?) {
+        _uiState.value = uiState.value?.map { uiStateValue ->
+            when (uiStateValue) {
+                is PostListItem.PostItem -> uiStateValue.copy(selectedImageUrl = data?.data)
+                else -> uiStateValue
+            }
         }
     }
 
     private suspend fun uploadImage(uri: Uri): String =
         imageRepository.uploadImage(uri).getOrThrow().toString()
 
-    fun onClickRecruit() {
-        _event.value = PostEvent.DialogEvent(
-            uiState.value?.recruit
-        )
-    }
+    fun arePostListItemFieldsValid() {
+        val postListItems = uiState.value
 
-    fun checkValid(title: String, description: String) {
-        _errorUiState.value = errorUiState.value?.copy(
-            message = when {
-                title.isBlank() -> PostErrorMessage.TITLE_BLANK
-                description.isBlank() -> PostErrorMessage.DESCRIPTION_BLANK
-                else -> PostErrorMessage.PASS
+        val postItemsValid = postListItems?.filterIsInstance<PostListItem.PostItem>()
+            ?.all { it.title != null && it.description != null } ?: false
+
+        val postOptionItemsValid = postListItems?.filterIsInstance<PostListItem.PostOptionItem>()
+            ?.all { it.precautions != null && it.recruitInfo != null } ?: false
+
+        if (postItemsValid && postOptionItemsValid) {
+            _errorUiState.value = errorUiState.value?.copy(message = PostErrorMessage.PASS)
+        } else {
+            postListItems?.forEach { postListItem ->
+                when (postListItem) {
+                    is PostListItem.PostItem -> {
+                        checkPostItem(postListItem)
+                    }
+                    is PostListItem.PostOptionItem -> {
+                        checkPostOptionItem(postListItem)
+                    }
+                    else -> Unit
+                }
             }
-        )
-
+        }
     }
 
+    private fun checkPostItem(postItem: PostListItem.PostItem) {
+        when {
+            postItem.description != null -> {
+                _errorUiState.value = errorUiState.value?.copy(message = PostErrorMessage.DESCRIPTION_BLANK)
+            }
+        }
+    }
+
+    private fun checkPostOptionItem(postOptionItem: PostListItem.PostOptionItem) {
+        when {
+            postOptionItem.precautions == null -> {
+                _errorUiState.value = errorUiState.value?.copy(message = PostErrorMessage.PRECAUTIONS_BLANK)
+            }
+            postOptionItem.recruitInfo == null -> {
+                _errorUiState.value = errorUiState.value?.copy(message = PostErrorMessage.RECRUIT_INFO_BLANK)
+            }
+        }
+    }
+
+    fun addRecruitInfo(entity: RecruitInfo) {
+        _uiState.value = uiState.value?.map { uiStateValue ->
+            when (uiStateValue) {
+                is PostListItem.RecruitItem -> {
+                    val recruits = uiStateValue.recruit?.toMutableList() ?: mutableListOf()
+                    recruits.add(entity)
+                    uiStateValue.copy(recruit = recruits)
+                }
+
+                else -> uiStateValue
+            }
+        }
+    }
+
+
+    fun removeRecruitInfo(type: String?) {
+        _uiState.value = uiState.value?.map { uiStateValue ->
+            when (uiStateValue) {
+                is PostListItem.RecruitItem -> uiStateValue.copy(
+                    recruit = uiStateValue.recruit?.toMutableList()?.apply {
+                        removeAll { it.type == type }
+                    }
+                )
+
+                else -> uiStateValue
+            }
+        }
+    }
+
+    fun createPost(
+        onSuccess: (String) -> Unit,
+        onError: (Exception) -> Unit
+    ) = viewModelScope.launch {
+        try {
+            val entity = if (entryType == PostEntryType.CREATE) {
+                getCreatePostEntity()
+            } else {
+                getUpdatePostEntity()
+            }
+
+//            if (entryType == PostEntryType.CREATE) {
+//                try {
+//                    registerPostUseCase(entity)
+//                    groupRepository.registerGroup(entity.convertGroupEntity())
+//                    onSuccess(context.getString(R.string.post_register_success))
+//                    _complete.emit(entity.key)
+//                } catch (groupException: Exception) {
+//                    onError(groupException)
+//                }
+//            } else {
+//                try {
+//                    registerPostUseCase(entity)
+//                    onSuccess(context.getString(R.string.post_update_success))
+//                } catch (e: Exception) {
+//                    onError(e)
+//                }
+//            }
+        } catch (e: Exception) {
+            onError(e)
+        }
+    }
+
+    private suspend fun getCreatePostEntity(): Post {
+        val postItem = _uiState.value?.find { it is PostListItem.PostItem } as? PostListItem.PostItem
+
+        return Post(
+            authId = getCurrentUser(),
+            title = postItem?.title,
+            imageUrl = postItem?.selectedImageUrl?.let { uploadImage(it) },
+            groupType = groupType,
+            description = postItem?.description,
+            tags = postItem?.tags,
+            precautions = _uiState.value?.find { it is PostListItem.PostOptionItem }
+                .let { (it as? PostListItem.PostOptionItem)?.precautions },
+            recruitInfo = _uiState.value?.find { it is PostListItem.PostOptionItem }
+                .let { (it as? PostListItem.PostOptionItem)?.recruitInfo },
+            recruit = (_uiState.value?.find { it is PostListItem.RecruitItem }
+                    as? PostListItem.RecruitItem)?.recruit,
+            memberIds = listOf(getCurrentUser())
+        )
+    }
+
+    private suspend fun getUpdatePostEntity(): Post {
+        val postItem = _uiState.value?.find { it is PostListItem.PostItem } as? PostListItem.PostItem
+        val imageUrl = postItem?.selectedImageUrl?.let { uploadImage(it) } ?: postItem?.imageUrl
+
+        return entity.copy(
+            title = postItem?.title,
+            imageUrl = imageUrl,
+            description = postItem?.description,
+            tags = postItem?.tags,
+            precautions = _uiState.value?.find { it is PostListItem.PostOptionItem }
+                .let { (it as? PostListItem.PostOptionItem)?.precautions },
+            recruitInfo = _uiState.value?.find { it is PostListItem.PostOptionItem }
+                .let { (it as? PostListItem.PostOptionItem)?.recruitInfo },
+            recruit = (_uiState.value?.find { it is PostListItem.RecruitItem }
+                    as? PostListItem.RecruitItem)?.recruit,
+            memberIds = entity.memberIds
+        )
+    }
+
+    fun incrementCount() {
+        _uiState.value = uiState.value?.map { uiStateValue ->
+            when (uiStateValue) {
+                is PostListItem.RecruitItem -> {
+                    val currentCount = uiStateValue.selectedCount ?: 0
+                    uiStateValue.copy(selectedCount = currentCount + 1)
+                }
+
+                else -> uiStateValue
+            }
+
+        }
+        updateRecruitBasedOnCount()
+    }
+
+    fun decrementCount() {
+        _uiState.value = uiState.value?.map { uiStateValue ->
+            when (uiStateValue) {
+                is PostListItem.RecruitItem -> {
+                    val currentCount = uiStateValue.selectedCount ?: 0
+                    uiStateValue.copy(selectedCount = if (currentCount > 0) currentCount - 1 else 0)
+                }
+
+                else -> uiStateValue
+            }
+
+        }
+        updateRecruitBasedOnCount()
+    }
+
+    private fun updateRecruitBasedOnCount() {
+        _uiState.value = _uiState.value?.map { uiStateValue ->
+            when (uiStateValue) {
+                is PostListItem.RecruitItem -> {
+                    val selectedCount = uiStateValue.selectedCount ?: 0
+                    val updatedRecruit = uiStateValue.recruit?.toMutableList() ?: mutableListOf()
+
+                    val existingRecruitIndex = updatedRecruit.indexOfFirst { it.type == "" }
+
+                    if (existingRecruitIndex != -1) {
+                        updatedRecruit[existingRecruitIndex] =
+                            updatedRecruit[existingRecruitIndex].copy(maxPersonnel = selectedCount)
+                    } else {
+                        val newRecruitInfo = RecruitInfo(type = "", maxPersonnel = selectedCount)
+                        updatedRecruit.add(newRecruitInfo)
+                    }
+
+                    uiStateValue.copy(selectedCount = selectedCount, recruit = updatedRecruit)
+                }
+
+                else -> uiStateValue
+            }
+        }
+
+        val updatedRecruit = _uiState.value?.find { it is PostListItem.RecruitItem }?.let {
+            val recruitItem = it as? PostListItem.RecruitItem
+            recruitItem?.recruit
+        }
+        updateRecruit(updatedRecruit)
+    }
+
+    private fun updateRecruit(updatedRecruit: List<RecruitInfo>?) {
+        _uiState.value = _uiState.value?.map { uiStateValue ->
+            when (uiStateValue) {
+                is PostListItem.RecruitItem -> uiStateValue.copy(recruit = updatedRecruit)
+                else -> uiStateValue
+            }
+        }
+    }
+
+    fun updatePostItemText(position: Int, title: String, description: String) {
+        _uiState.value = _uiState.value?.mapIndexed { index, uiStateValue ->
+            when (uiStateValue) {
+                is PostListItem.PostItem -> {
+                    if (index == position) {
+                        uiStateValue.copy(title = title, description = description)
+                    } else {
+                        uiStateValue
+                    }
+                }
+
+                else -> uiStateValue
+            }
+        }
+    }
+
+fun updatePostOprionItemText(position: Int, title: String, description: String) {
+    _uiState.value = _uiState.value?.mapIndexed { index, uiStateValue ->
+        when (uiStateValue) {
+            is PostListItem.PostOptionItem -> {
+                if (index == position) {
+                    uiStateValue.copy(precautions = title, recruitInfo = description)
+                } else {
+                    uiStateValue
+                }
+            }
+
+            else -> uiStateValue
+        }
+    }
+}
 }
