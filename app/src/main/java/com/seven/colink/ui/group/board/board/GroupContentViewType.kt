@@ -4,6 +4,7 @@ enum class GroupContentViewType {
     GROUP_ITEM,
     POST_ITEM,
     MEMBER_ITEM,
+    APPLICATION_INFO,
     TITLE,
     SUB_TITLE,
     PROJECT_STATUS,
