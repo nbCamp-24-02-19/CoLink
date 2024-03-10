@@ -13,7 +13,7 @@ import com.seven.colink.databinding.FragmentPostContentBinding
 import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.ui.group.board.list.ApplyRequestFragment
 import com.seven.colink.ui.post.content.adapter.PostContentListAdapter
-import com.seven.colink.ui.post.content.model.ContentOwnerButtonUiState
+import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.content.model.DialogUiState
 import com.seven.colink.ui.post.content.model.PostContentItem
 import com.seven.colink.ui.post.content.viewmodel.PostContentViewModel
@@ -98,7 +98,7 @@ class PostContentFragment : Fragment() {
 
         updateButtonUiState.observe(requireActivity()) {
             binding.tvEdit.visibility =
-                if (it == ContentOwnerButtonUiState.Owner) View.VISIBLE else View.GONE
+                if (it == ContentButtonUiState.Manager) View.VISIBLE else View.GONE
         }
 
         dialogUiState.observe(requireActivity()) { state ->
@@ -129,7 +129,7 @@ class PostContentFragment : Fragment() {
         }
     }
 
-    private fun handleButtonClick(item: PostContentItem, buttonUiState: ContentOwnerButtonUiState) {
+    private fun handleButtonClick(item: PostContentItem, buttonUiState: ContentButtonUiState) {
         when (item) {
             is PostContentItem.RecruitItem -> handleRecruitItemClick(item, buttonUiState)
             else -> throw UnsupportedOperationException("Unhandled type: $item")
@@ -138,14 +138,14 @@ class PostContentFragment : Fragment() {
 
     private fun handleRecruitItemClick(
         item: PostContentItem.RecruitItem,
-        buttonUiState: ContentOwnerButtonUiState
+        buttonUiState: ContentButtonUiState
     ) {
         when (buttonUiState) {
-            ContentOwnerButtonUiState.User -> {
+            ContentButtonUiState.User -> {
                 viewModel.createDialog(item)
             }
 
-            ContentOwnerButtonUiState.Owner -> {
+            ContentButtonUiState.Manager -> {
                 lifecycleScope.launch {
                     val userEntities = viewModel.getUserEntitiesFromRecruit(item)
                     if (userEntities.isNotEmpty()) {
@@ -153,6 +153,7 @@ class PostContentFragment : Fragment() {
                     }
                 }
             }
+            else -> {}
         }
     }
 

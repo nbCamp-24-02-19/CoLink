@@ -77,4 +77,12 @@ class ApplyRequestViewModel @Inject constructor(
         _uiState.value = dataList
     }
 
+    fun onClickApproval() {
+
+    }
+
+    fun onClickRefuse() {
+
+    }
+
 }
