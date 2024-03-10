@@ -7,9 +7,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import coil.load
 import com.seven.colink.R
 import com.seven.colink.databinding.ActivityUserDetailBinding
 import com.seven.colink.ui.userdetail.adapter.UserDetailPostAdapter
@@ -56,15 +59,14 @@ class UserDetailActivity : AppCompatActivity() {
     }
 
     private fun updateUI(user: UserDetailModel){
-        val userLink = user.userLink
-        if (userLink?.isNotEmpty() == true){
+        if (user.userLink == null){
+            binding.ivUserdetailLink.visibility = View.GONE
+        } else {
             binding.ivUserdetailLink.visibility = View.VISIBLE
             binding.ivUserdetailLink.setOnClickListener {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(userLink))
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(user.userLink))
                 startActivity(intent)
             }
-        } else {
-            binding.ivUserdetailLink.visibility = View.GONE
         }
 
         binding.btnUserdetailChat.setOnClickListener {
@@ -76,19 +78,43 @@ class UserDetailActivity : AppCompatActivity() {
         }
 
         binding.tvUserdetailName.text = user.userName
-        binding.tvUserdetailAboutMe.text = user.userInfo
-        binding.tvUserdetailSpecialization.text = user.userMainSpecialty
+
+        if (user.userInfo != null){
+            binding.tvUserdetailAboutMe.text = user.userInfo
+        } else {
+            binding.tvUserdetailAboutMe.text = "자기소개가 없습니다."
+        }
+
+        if (user.userMainSpecialty != null) {
+            binding.tvUserdetailSpecialization.text = user.userMainSpecialty
+        } else{
+            binding.tvUserdetailSpecialization.text = "없음"
+        }
+
         binding.tvUserdetailScore.text = user.userscore.toString()
+
         binding.ivUserdetailBlog.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(user.userBlog))
-            startActivity(intent)
+            if (user.userBlog != null){
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(user.userBlog))
+                startActivity(intent)
+            } else {
+                Toast.makeText(this, "블로그 주소가 없습니다.", Toast.LENGTH_SHORT).show()
+            }
         }
         binding.ivUserdetailGit.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(user.userGit))
-            startActivity(intent)
+            if (user.userGit != null){
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(user.userGit))
+                startActivity(intent)
+            } else {
+                Toast.makeText(this, "깃허브 주소가 없습니다.", Toast.LENGTH_SHORT).show()
+            }
         }
-        val uri = Uri.parse(user.userProfile.toString())
-        binding.ivUserdetailProfile.setImageURI(uri)
+
+        if (user.userProfile == null){
+            binding.ivUserdetailProfile
+        } else {
+            binding.ivUserdetailProfile.load(user.userProfile)
+        }
 
         val level = user.userLevel
         val levelicon: Drawable = DrawableCompat.wrap(binding.ivUserdetailLevel.drawable)
@@ -138,11 +164,18 @@ class UserDetailActivity : AppCompatActivity() {
         Log.d("Tag","user = ${user}")
     }
 
+//    private fun userSkill(){
+//        adapter = UserSkillAdapter(UserSkillItemManager.getItem())
+//        binding.reUserdetailItem.adapter = adapter
+//        binding.reUserdetailItem.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+//    }
+
     private fun userSkill(){
         adapter = UserSkillAdapter(UserSkillItemManager.getItem())
         binding.reUserdetailItem.adapter = adapter
-        binding.reUserdetailItem.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        binding.reUserdetailItem.layoutManager = GridLayoutManager(this, 4)
     }
+
 
     private fun PostRecyclerView(){
         postadapter = UserDetailPostAdapter(UserDetailPostItemManager.getItemAll())
