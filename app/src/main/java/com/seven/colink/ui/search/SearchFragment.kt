@@ -108,15 +108,8 @@ class SearchFragment : Fragment() {
         }
 
         binding.ivSearchButton.setOnClickListener {
-//            searchViewModel.doSearch(binding.etSearchSearch.text.toString())
-//            hideKeyboard()
-            startActivity(
-                EvaluationActivity.newIntentEval(
-                    requireContext(),
-                    GroupType.PROJECT,
-                    "ca4d315f-bbf8-420a-b997-a47b3f9a0fbb"
-                )
-            )
+            searchViewModel.doSearch(binding.etSearchSearch.text.toString())
+            hideKeyboard()
         }
 
 
