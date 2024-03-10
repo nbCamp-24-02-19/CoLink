@@ -53,7 +53,6 @@ class GroupBoardViewModel @Inject constructor(
         val items = mutableListOf<GroupBoardItem>()
         val postEntity =
             entity.value?.groupEntity?.postKey?.let { postUseCase(it) }
-        Log.d("1234", "${postEntity?.recruit}")
         entity.value?.groupEntity?.let { entity ->
             items.add(
                 GroupBoardItem.GroupItem(

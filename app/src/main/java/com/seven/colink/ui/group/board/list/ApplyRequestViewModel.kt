@@ -3,16 +3,22 @@ package com.seven.colink.ui.group.board.list
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.seven.colink.R
+import com.seven.colink.domain.entity.ApplicationInfo
+import com.seven.colink.domain.entity.ApplicationInfoEntity
 import com.seven.colink.domain.entity.GroupEntity
 import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.domain.repository.PostRepository
+import com.seven.colink.domain.repository.RecruitRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.domain.usecase.GetPostUseCase
 import com.seven.colink.ui.group.board.board.GroupBoardItem
 import com.seven.colink.ui.group.board.board.GroupContentViewType
 import com.seven.colink.util.status.ApplicationStatus
+import com.seven.colink.util.status.DataResultStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,6 +27,7 @@ class ApplyRequestViewModel @Inject constructor(
     val postRepository: PostRepository,
     val userRepository: UserRepository,
     val postUseCase: GetPostUseCase,
+    val recruitRepository: RecruitRepository
 ) : ViewModel() {
     private lateinit var entity: GroupEntity
 
@@ -35,16 +42,6 @@ class ApplyRequestViewModel @Inject constructor(
     private suspend fun initViewState() {
         val postEntity = postUseCase(entity.postKey)
 
-        val pendingUserIds = postEntity?.recruit?.flatMap { recruitInfo ->
-            recruitInfo.applicationInfos?.filter {
-                it.applicationStatus == ApplicationStatus.PENDING
-            }?.mapNotNull { it.userId } ?: emptyList()
-        } ?: emptyList()
-
-        val userEntities = pendingUserIds.mapNotNull { userId ->
-            userRepository.getUserDetails(userId).getOrNull()
-        }
-
         val dataList = mutableListOf<GroupBoardItem>()
         dataList.add(
             GroupBoardItem.TitleItem(
@@ -55,19 +52,25 @@ class ApplyRequestViewModel @Inject constructor(
 
         postEntity?.recruit?.forEach { recruitInfo ->
             val type = recruitInfo.type ?: ""
+            val matchingApplicationInfos = recruitInfo.applicationInfos?.filter {
+                it.recruitId == recruitInfo.key && it.applicationStatus == ApplicationStatus.PENDING
+            } ?: emptyList()
 
-            val usersWithType = userEntities.filter { userEntity ->
-                postEntity.recruit.any { it.type == type && it.applicationInfos?.any { appInfo -> appInfo.userId == userEntity.uid } == true }
-            }
 
-            if (usersWithType.isNotEmpty()) {
+            if (matchingApplicationInfos.isNotEmpty()) {
                 dataList.add(GroupBoardItem.SubTitleItem(title = type))
-                dataList.addAll(usersWithType.map {
-                    GroupBoardItem.MemberItem(
-                        it,
-                        isManagementButtonVisible = true
-                    )
-                })
+                matchingApplicationInfos.forEach { applicationInfo ->
+                    applicationInfo.userId?.let {
+                        userRepository.getUserDetails(it).getOrNull()?.let { userEntity ->
+                            dataList.add(
+                                GroupBoardItem.MemberApplicationInfoItem(
+                                    userEntity,
+                                    applicationInfo = applicationInfo
+                                )
+                            )
+                        }
+                    }
+                }
             } else {
                 dataList.add(GroupBoardItem.SubTitleItem(title = type))
                 dataList.add(GroupBoardItem.MessageItem(message = "지원 목록이 없습니다."))
@@ -77,12 +80,50 @@ class ApplyRequestViewModel @Inject constructor(
         _uiState.value = dataList
     }
 
-    fun onClickApproval() {
-
+    fun onClickApproval(applicationInfo: ApplicationInfo?) {
+        updateApplicationStatus(applicationInfo, ApplicationStatus.APPROVE)
     }
 
-    fun onClickRefuse() {
-
+    fun onClickRefuse(applicationInfo: ApplicationInfo?) {
+        updateApplicationStatus(applicationInfo, ApplicationStatus.REJECTED)
     }
+
+    private fun updateApplicationStatus(applicationInfo: ApplicationInfo?, newStatus: ApplicationStatus) {
+        applicationInfo?.let {
+            viewModelScope.launch {
+
+                val updateResult = recruitRepository.registerApplicationInfo(
+                    ApplicationInfoEntity(
+                        key = applicationInfo.key,
+                        recruitId = applicationInfo.recruitId,
+                        userId = applicationInfo.userId,
+                        applicationStatus = newStatus,
+                        applicationDate = applicationInfo.applicationDate
+                    )
+                )
+
+                if (updateResult == DataResultStatus.SUCCESS) {
+                    _uiState.value = _uiState.value?.map { item ->
+                        when (item) {
+                            is GroupBoardItem.MemberApplicationInfoItem -> {
+                                if (item.applicationInfo == applicationInfo) {
+                                    item.copy(applicationInfo = applicationInfo.copy(applicationStatus = newStatus))
+                                } else {
+                                    item
+                                }
+                            }
+                            else -> item
+                        }
+                    }
+
+                    if (newStatus == ApplicationStatus.APPROVE) {
+                        entity = entity.copy(memberIds = entity.memberIds + listOf(applicationInfo.userId.orEmpty()))
+                        groupRepository.updateGroupMemberIds(entity.key, entity)
+                    }
+                }
+            }
+        }
+    }
+
 
 }
