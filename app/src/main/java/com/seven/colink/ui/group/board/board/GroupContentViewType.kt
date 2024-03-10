@@ -1,4 +1,4 @@
-package com.seven.colink.ui.group.board
+package com.seven.colink.ui.group.board.board
 
 enum class GroupContentViewType {
     GROUP_ITEM,
@@ -6,7 +6,8 @@ enum class GroupContentViewType {
     MEMBER_ITEM,
     TITLE,
     SUB_TITLE,
-    UNKNOWN
+    UNKNOWN,
+    MESSAGE
     ;
 
     companion object {
