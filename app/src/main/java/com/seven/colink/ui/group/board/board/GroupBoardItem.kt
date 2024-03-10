@@ -1,6 +1,7 @@
 package com.seven.colink.ui.group.board.board
 
 import androidx.annotation.StyleRes
+import com.seven.colink.domain.entity.ApplicationInfo
 import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.ui.post.register.post.model.Post
 import com.seven.colink.util.status.GroupType
@@ -28,6 +29,11 @@ sealed interface GroupBoardItem {
     data class MemberItem(
         val userInfo: UserEntity,
         val isManagementButtonVisible: Boolean
+    ) : GroupBoardItem
+
+    data class MemberApplicationInfoItem(
+        val userInfo: UserEntity,
+        val applicationInfo: ApplicationInfo?
     ) : GroupBoardItem
 
     data class TitleItem(

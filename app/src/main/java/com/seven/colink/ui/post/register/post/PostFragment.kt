@@ -3,7 +3,6 @@ package com.seven.colink.ui.post.register.post
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,8 +22,6 @@ import com.seven.colink.ui.post.register.recommend.RecommendFragment
 import com.seven.colink.ui.post.register.viewmodel.PostSharedViewModel
 import com.seven.colink.util.dialog.RecruitDialog
 import com.seven.colink.util.openGallery
-import com.seven.colink.util.progress.hideProgressOverlay
-import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -188,10 +185,7 @@ class PostFragment : Fragment() {
 
     private fun initViewModel() = with(viewModel) {
         uiState.observe(viewLifecycleOwner) {
-            with(binding) {
-                postListAdapter.submitList(it)
-
-            }
+            postListAdapter.submitList(it)
         }
 
 
@@ -209,7 +203,6 @@ class PostFragment : Fragment() {
             if (it == null) {
                 return@observe
             }
-            Log.d("77777", "${it.message}")
             if (it.message == PostErrorMessage.PASS) {
 
                 viewModel.createPost(

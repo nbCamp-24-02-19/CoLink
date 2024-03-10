@@ -26,6 +26,7 @@ import com.seven.colink.ui.post.register.post.adapter.TagListAdapter
 import com.seven.colink.ui.post.register.post.model.TagListItem
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.content.model.PostContentItem
+import com.seven.colink.ui.post.register.post.model.PostListItem
 import com.seven.colink.util.setLevelIcon
 import com.seven.colink.util.status.ApplicationStatus
 import com.seven.colink.util.status.GroupType
@@ -311,15 +312,21 @@ class PostContentListAdapter(
         }
     }
 
-    private fun countPostApplyRequester(): Int {
-        val postItem = currentList.filterIsInstance<GroupBoardItem.PostItem>()
 
-        return postItem.sumOf { postItem ->
-            postItem.post.recruit?.sumOf { recruitInfo ->
-                recruitInfo.applicationInfos?.count { it.applicationStatus == ApplicationStatus.PENDING }
-                    ?: 0
-            } ?: 0
+//    private fun getButtonUiState(): ContentButtonUiState {
+//        val recruitItems = currentList.filterIsInstance<PostContentItem.RecruitItem>()
+//
+//    }
+
+    private fun countPostApplyRequester(): Int {
+        val recruitItems = currentList.filterIsInstance<PostContentItem.RecruitItem>()
+
+        return recruitItems.sumOf { recruitItem ->
+            recruitItem.recruit.applicationInfos?.count { it.applicationStatus == ApplicationStatus.PENDING }
+                ?: 0
         }
     }
+
+
 
 }

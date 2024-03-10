@@ -16,11 +16,10 @@ enum class PostErrorMessage(
     DESCRIPTION_BLANK(R.string.input_description_message),
     PRECAUTIONS_BLANK(R.string.description_precautions),
     RECRUIT_INFO_BLANK(R.string.description_recruitInfo),
+    ALREADY_SUPPORT(R.string.already_supported),
+    SUCCESS_SUPPORT(R.string.successful_support),
+
     EMPTY(R.string.sign_up_pass),
     PASS(R.string.sign_up_pass)
     ;
-
-
-
-
 }

@@ -1,6 +1,7 @@
 package com.seven.colink.ui.group.board.list
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -34,25 +35,33 @@ class ApplyRequestFragment : Fragment() {
 
                     }
 
-                    is GroupBoardItem.TitleItem -> {
-                        // TODO 지원 요청 목록, 멤버 추천 화면 이동
-                    }
-
                     else -> Unit
                 }
             },
             onClickView = { item, view ->
                 when (view.id) {
                     R.id.bt_approval -> {
-                        lifecycleScope.launch {
-                            viewModel.onClickApproval()
+                        when (item) {
+                            is GroupBoardItem.MemberApplicationInfoItem -> {
+                                lifecycleScope.launch {
+                                    viewModel.onClickApproval(item.applicationInfo)
+                                    Log.d("click", "approve")
+                                }
+                            }
+                            else -> Unit
                         }
                     }
 
                     R.id.bt_refuse -> {
-                        viewModel.onClickRefuse()
+                        when (item) {
+                            is GroupBoardItem.MemberApplicationInfoItem -> {
+                                lifecycleScope.launch {
+                                    viewModel.onClickRefuse(item.applicationInfo)
+                                }
+                            }
+                            else -> Unit
+                        }
                     }
-
                 }
             }
         )
