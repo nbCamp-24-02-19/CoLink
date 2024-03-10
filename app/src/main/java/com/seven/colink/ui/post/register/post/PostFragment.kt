@@ -212,16 +212,16 @@ class PostFragment : Fragment() {
             Log.d("77777", "${it.message}")
             if (it.message == PostErrorMessage.PASS) {
 
-//                viewModel.createPost(
-//                    onSuccess = {
-//                        hideProgressOverlay()
-//                    },
-//                    onError = { exception ->
-//                        hideProgressOverlay()
-//                        requireContext().showToast(
-//                            exception.message ?: getString(R.string.post_register_fail)
-//                        )
-//                    })
+                viewModel.createPost(
+                    onSuccess = {
+                        hideProgressOverlay()
+                    },
+                    onError = { exception ->
+                        hideProgressOverlay()
+                        requireContext().showToast(
+                            exception.message ?: getString(R.string.post_register_fail)
+                        )
+                    })
             }
 
             if (it.tag != PostErrorMessage.PASS) {
