@@ -16,7 +16,7 @@ class MyPageSkilAdapter(var mItems: List<MyPageItem>): RecyclerView.Adapter<View
     }
 
     interface SkilLongClick{
-            fun onLongClick(language: Any, position: Int)
+            fun onLongClick(language: String, position: Int)
     }
 
     interface PlusClick{
