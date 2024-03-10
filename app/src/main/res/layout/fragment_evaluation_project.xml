@@ -4,14 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginStart="24dp"
-    android:layout_marginEnd="24dp"
     android:background="@color/bg"
     tools:context=".ui.evaluation.EvaluationProjectFragment">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginHorizontal="24dp"
         android:scrollbars="none">
 
         <LinearLayout
@@ -42,10 +41,10 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="20dp"
                 android:ellipsize="end"
-                android:textAlignment="center"
                 android:fontFamily="@font/inter_bold"
                 android:maxLines="2"
                 android:text="@string/eval_project_name_title"
+                android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textSize="20sp" />
 
@@ -87,11 +86,11 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="12dp"
-                android:numStars="5"
                 android:isIndicator="false"
-                android:secondaryProgressTint="@android:color/transparent"
+                android:numStars="5"
                 android:progressTint="@color/star_color"
                 android:rating="3"
+                android:secondaryProgressTint="@android:color/transparent"
                 android:stepSize="1" />
 
             <LinearLayout
@@ -133,9 +132,9 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="12dp"
                 android:numStars="5"
-                android:secondaryProgressTint="@android:color/transparent"
                 android:progressTint="@color/star_color"
                 android:rating="3"
+                android:secondaryProgressTint="@android:color/transparent"
                 android:stepSize="1" />
 
             <LinearLayout
@@ -177,9 +176,9 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="12dp"
                 android:numStars="5"
-                android:secondaryProgressTint="@android:color/transparent"
                 android:progressTint="@color/star_color"
                 android:rating="3"
+                android:secondaryProgressTint="@android:color/transparent"
                 android:stepSize="1" />
 
             <LinearLayout
@@ -221,9 +220,9 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="12dp"
                 android:numStars="5"
-                android:secondaryProgressTint="@android:color/transparent"
                 android:progressTint="@color/star_color"
                 android:rating="3"
+                android:secondaryProgressTint="@android:color/transparent"
                 android:stepSize="1" />
 
             <LinearLayout
@@ -265,9 +264,9 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="12dp"
                 android:numStars="5"
-                android:secondaryProgressTint="@android:color/transparent"
                 android:progressTint="@color/star_color"
                 android:rating="3"
+                android:secondaryProgressTint="@android:color/transparent"
                 android:stepSize="1" />
 
             <LinearLayout

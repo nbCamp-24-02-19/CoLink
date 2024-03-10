@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import com.seven.colink.databinding.ItemSearchPostBinding
 import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.util.convert.convertError
@@ -29,6 +30,7 @@ class SearchAdapter(val mItems: MutableList<SearchModel>) :
     inner class SearchViewHolder(binding: ItemSearchPostBinding) :
         RecyclerView.ViewHolder(binding.root) {
         val itemBox = binding.linearLayout
+        val thumbnail = binding.ivSearchItemThumbnail
         val project = binding.tvSearchItemProject
         val study = binding.tvSearchItemStudy
         val recruit = binding.tvSearchItemRecruit
@@ -70,6 +72,7 @@ class SearchAdapter(val mItems: MutableList<SearchModel>) :
             holder.recruitEnd.visibility = View.VISIBLE
             holder.recruit.visibility = View.GONE
         }
+        holder.thumbnail.load(item.thumbnail)
         holder.title.text = item.title
         holder.description.text = item.description
         holder.tag.text = item.tags?.map { "# " + it }?.joinToString("   ","","")
