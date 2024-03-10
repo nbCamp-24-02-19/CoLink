@@ -1,16 +1,20 @@
 package com.seven.colink.ui.group
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentGroupBinding
 import com.seven.colink.ui.post.register.PostActivity
+import com.seven.colink.ui.sign.signin.SignInActivity
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.showToast
 import com.seven.colink.util.status.GroupType
@@ -57,6 +61,7 @@ class GroupFragment : Fragment() {
 
         initView()
         setObserve()
+        initViewModel()
 
     }
 
@@ -67,53 +72,84 @@ class GroupFragment : Fragment() {
 
     private fun setObserve() {
         groupViewModel.groupData.observe(viewLifecycleOwner) {
+            groupViewModel.getCurrentUser()
+            groupViewModel.checkLogin.value
+            groupViewModel.joinList.value
+            Log.d("GroupTest", "joinList.value4 = ${groupViewModel.joinList.value}")
+            Log.d("GroupTest", "checkLogin.value4 = ${groupViewModel.checkLogin.value}")
             groupAdapter.submitList(it)
+        }
+    }
+
+    private fun initViewModel(){
+        groupViewModel.getCurrentUser()
+        groupViewModel.itemUpdate()
+        lifecycleScope.launch {
+            groupViewModel.getInPost()
         }
     }
 
     private fun handleItemClick(item: GroupData) {
         when (item) {
             is GroupData.GroupList -> {
-                lifecycleScope.launch {
-                    if (item.key != null) {
-                        val intent = GroupActivity.newIntent(
-                            context = requireContext(),
-                            key = item.key
-                        )
-                        startActivity(intent)
-                    } else {
-                        requireContext().showToast("알 수 없는 오류")
+                if (groupViewModel.checkLogin.value == true) {
+                    lifecycleScope.launch {
+                        if (item.key != null) {
+                            val intent = GroupActivity.newIntent(
+                                context = requireContext(),
+                                key = item.key
+                            )
+                            startActivity(intent)
+                        } else {
+                            requireContext().showToast("알 수 없는 오류")
+                        }
                     }
+                }
+                else {
+                    requireContext().showToast("로그인 후 이용해 주세요")
                 }
             }
 
             is GroupData.GroupAdd -> {
-                groupTypeOptions.setDialog(
-                    requireContext(),
-                    getString(R.string.group_type_options)
-                ) { selectedOption ->
-                    when (selectedOption) {
-                        getString(R.string.project_kor) -> {
-                            startActivity(
-                                PostActivity.newIntent(
-                                    requireContext(),
-                                    GroupType.PROJECT
+                if (groupViewModel.checkLogin.value == true) {
+                    groupTypeOptions.setDialog(
+                        requireContext(),
+                        getString(R.string.group_type_options)
+                    ) { selectedOption ->
+                        when (selectedOption) {
+                            getString(R.string.project_kor) -> {
+                                startActivity(
+                                    PostActivity.newIntent(
+                                        requireContext(),
+                                        GroupType.PROJECT
+                                    )
                                 )
-                            )
-                        }
+                            }
 
-                        getString(R.string.study_kor) -> {
-                            startActivity(
-                                PostActivity.newIntent(
-                                    requireContext(),
-                                    GroupType.STUDY
+                            getString(R.string.study_kor) -> {
+                                startActivity(
+                                    PostActivity.newIntent(
+                                        requireContext(),
+                                        GroupType.STUDY
+                                    )
                                 )
-                            )
-                        }
+                            }
 
-                        else -> Unit
-                    }
-                }.show()
+                            else -> Unit
+                        }
+                    }.show()
+                } else {
+                    requireContext().setDialog(
+                        title = "로그인 필요",
+                        message = "서비스를 이용하기 위해서는 로그인이 필요합니다. \n로그인 페이지로 이동하시겠습니까?",
+                        confirmAction = {
+                            val intent = Intent(requireContext(), SignInActivity::class.java)
+                            startActivity(intent)
+                            it.dismiss()
+                        },
+                        cancelAction = { it.dismiss() }
+                    ).show()
+                }
             }
 
             is GroupData.GroupWant -> {
