@@ -229,7 +229,7 @@ class SignUpActivity : AppCompatActivity() {
     }
     private fun setTextChangeListener(state: SignUpUIState) = with(binding){
         etSignUpEdit1.addTextChangedListener {
-            btSignUpBtn.isEnabled = (it?.length ?: 0) >= 2
+            btSignUpBtn.isEnabled = (it?.length ?: 0) >= 6
             tvSignUpTitle.setText(state.title)
             tvSignUpSubtitle.setText(state.subTitle)
             tvSignUpSubtitle.setTextColor(this@SignUpActivity.getColor(R.color.black))
@@ -237,7 +237,7 @@ class SignUpActivity : AppCompatActivity() {
         }
 
         etSignUpPasswordCheck.addTextChangedListener {
-            btSignUpBtn.isEnabled = (it?.length ?: 0) >= 2
+            btSignUpBtn.isEnabled = (it?.length ?: 0) >= 6
             tvSignUpTitle.setText(state.title)
             tvSignUpSubtitle.setText(state.subTitle)
             tvSignUpPasswordCheck.setText(R.string.sign_up_password_check)

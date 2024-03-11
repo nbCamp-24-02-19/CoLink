@@ -12,9 +12,7 @@ sealed interface TagListItem {
 }
 
 enum class TagListViewType {
-    LIST_ITEM,
-    CONTENT_ITEM,
-    UNKNOWN
+    LIST_ITEM, CONTENT_ITEM, UNKNOWN
     ;
 
     companion object {
@@ -22,10 +20,4 @@ enum class TagListViewType {
             it.ordinal == ordinal
         } ?: UNKNOWN
     }
-}
-
-sealed class TagEvent {
-    data object Success : TagEvent()
-    data object MaxNumberExceeded : TagEvent()
-    data object TagAlreadyExists : TagEvent()
 }

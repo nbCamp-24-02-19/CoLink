@@ -5,7 +5,6 @@ import com.seven.colink.util.status.ProjectStatus
 import java.util.UUID
 
 data class MyPagePostModel(
-//    val key: String? = UUID.randomUUID().toString(),
     val key: String? = null,
     val title: String? = null,
     val ing: ProjectStatus? = null,

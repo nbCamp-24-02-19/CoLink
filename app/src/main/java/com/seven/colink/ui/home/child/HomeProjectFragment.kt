@@ -98,7 +98,7 @@ class HomeProjectFragment : Fragment() {
             } catch (e: Exception) {
                 Log.e("HomeProjectFragment", "Error during receive data", e)
             }
-
+            binding.layProjectBottom5.viewHomeDivide.visibility = View.INVISIBLE
         }
     }
 
