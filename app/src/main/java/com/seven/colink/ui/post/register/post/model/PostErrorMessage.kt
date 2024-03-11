@@ -1,4 +1,4 @@
-package com.seven.colink.ui.post.register.post
+package com.seven.colink.ui.post.register.post.model
 
 import androidx.annotation.StringRes
 import com.seven.colink.R

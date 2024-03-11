@@ -27,12 +27,12 @@ class ApplyRequestViewModel @Inject constructor(
     val postRepository: PostRepository,
     val userRepository: UserRepository,
     val postUseCase: GetPostUseCase,
-    val recruitRepository: RecruitRepository
+    private val recruitRepository: RecruitRepository
 ) : ViewModel() {
     private lateinit var entity: GroupEntity
 
-    private val _uiState = MutableLiveData<List<GroupBoardItem>>()
-    val uiState: LiveData<List<GroupBoardItem>> get() = _uiState
+    private val _uiState = MutableLiveData<List<GroupBoardItem>?>()
+    val uiState: LiveData<List<GroupBoardItem>?> get() = _uiState
 
     suspend fun setEntity(key: String) {
         entity = groupRepository.getGroupDetail(key).getOrNull() ?: return
@@ -44,9 +44,8 @@ class ApplyRequestViewModel @Inject constructor(
 
         val dataList = mutableListOf<GroupBoardItem>()
         dataList.add(
-            GroupBoardItem.TitleItem(
+            GroupBoardItem.TitleSingleItem(
                 titleRes = R.string.apply_request_list,
-                viewType = GroupContentViewType.TITLE
             )
         )
 
@@ -55,7 +54,6 @@ class ApplyRequestViewModel @Inject constructor(
             val matchingApplicationInfos = recruitInfo.applicationInfos?.filter {
                 it.recruitId == recruitInfo.key && it.applicationStatus == ApplicationStatus.PENDING
             } ?: emptyList()
-
 
             if (matchingApplicationInfos.isNotEmpty()) {
                 dataList.add(GroupBoardItem.SubTitleItem(title = type))
@@ -103,7 +101,7 @@ class ApplyRequestViewModel @Inject constructor(
                 )
 
                 if (updateResult == DataResultStatus.SUCCESS) {
-                    _uiState.value = _uiState.value?.map { item ->
+                    val updatedUiState = uiState.value?.map { item ->
                         when (item) {
                             is GroupBoardItem.MemberApplicationInfoItem -> {
                                 if (item.applicationInfo == applicationInfo) {
@@ -116,6 +114,8 @@ class ApplyRequestViewModel @Inject constructor(
                         }
                     }
 
+                    _uiState.postValue(updatedUiState)
+
                     if (newStatus == ApplicationStatus.APPROVE) {
                         entity = entity.copy(memberIds = entity.memberIds + listOf(applicationInfo.userId.orEmpty()))
                         groupRepository.updateGroupMemberIds(entity.key, entity)
@@ -124,6 +124,4 @@ class ApplyRequestViewModel @Inject constructor(
             }
         }
     }
-
-
 }
