@@ -120,6 +120,7 @@ class HomeFragment : Fragment() {
     private fun setObserve() {
         homeViewModel.topItems.observe(viewLifecycleOwner){
             topAdapter.submitList(it)
+            topAdapter.notifyDataSetChanged()
             homeItem = mutableListOf(
                 HomeAdapterItems.TopView(topAdapter),
                 HomeAdapterItems.Header("그룹 추천")
