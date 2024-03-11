@@ -84,8 +84,7 @@ class PostFragment : Fragment() {
                     }
 
                     R.id.post_complete -> {
-
-
+                        viewModel.arePostListItemFieldsValid()
                     }
 
                 }
@@ -131,7 +130,7 @@ class PostFragment : Fragment() {
             groupType.collect {
                 with(viewModel) {
                     if (it != null) {
-                        viewModel.setPostItem(groupType = it)
+                        setPostItem(groupType = it)
                     }
                 }
             }

@@ -29,6 +29,7 @@ class RecommendAdapter(
     private val inviteGroup: (String) -> Unit,
     private val onChat: (String) -> Unit,
     private val onNext: () -> Unit,
+    private val onDetail: (String) -> Unit,
 ) : ListAdapter<RecommendType, RecommendAdapter.RecommendViewHolder>(
     object : DiffUtil.ItemCallback<RecommendType>() {
         override fun areItemsTheSame(
@@ -78,7 +79,8 @@ class RecommendAdapter(
             RecommendViewType.CARD -> CardViewHolder(
                 ItemMemberCardBinding.inflate(LayoutInflater.from(parent.context), parent, false),
                 inviteGroup,
-                onChat
+                onChat,
+                onDetail
             )
 
             RecommendViewType.MIDDLE -> MiddleViewHolder(
@@ -94,7 +96,8 @@ class RecommendAdapter(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
-                )
+                ),
+                onDetail
             )
 
             RecommendViewType.CLOSE -> CloseViewHolder(
@@ -120,6 +123,7 @@ class RecommendAdapter(
         private val binding: ItemMemberCardBinding,
         private val inviteGroup: (String) -> Unit,
         private val onChat: (String) -> Unit,
+        private val onDetail: (String) -> Unit,
     ) : RecommendViewHolder(binding.root) {
         override fun onBind(item: RecommendType) = with(binding) {
             item as RecommendType.Card
@@ -157,6 +161,9 @@ class RecommendAdapter(
             btMemberChat.setOnClickListener {
                 item.memberCard?.key?.let { key -> onChat(key) }
             }
+            root.setOnClickListener {
+                item.memberCard?.key?.let { it1 -> onDetail(it1) }
+            }
         }
     }
 
@@ -171,7 +178,8 @@ class RecommendAdapter(
     }
 
     class OthersViewHolder(
-        private val binding: ItemPostMemberInfoBinding
+        private val binding: ItemPostMemberInfoBinding,
+        private val onDetail: (String) -> Unit,
     ) : RecommendViewHolder(binding.root) {
         override fun onBind(item: RecommendType) = with(binding) {
             item as RecommendType.Others
@@ -181,6 +189,10 @@ class RecommendAdapter(
             tvUserGrade.text = item.memberInfo?.grade.toString()
             ivLevelDiaIcon.setLevelIcon(item.memberInfo?.level?: 0)
             tvLevelDiaIcon.text = item.memberInfo?.level.toString()
+
+            root.setOnClickListener {
+                item.memberInfo?.key?.let { onDetail(it) }
+            }
         }
     }
 

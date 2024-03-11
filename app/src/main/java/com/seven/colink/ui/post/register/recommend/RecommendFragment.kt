@@ -17,6 +17,7 @@ import com.seven.colink.ui.post.register.recommend.adapter.RecommendAdapter
 import com.seven.colink.ui.post.register.recommend.viewmodel.RecommendViewModel
 import com.seven.colink.ui.post.register.setgroup.SetGroupFragment
 import com.seven.colink.ui.post.register.viewmodel.PostSharedViewModel
+import com.seven.colink.ui.userdetail.UserDetailActivity
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.status.GroupType
@@ -46,6 +47,9 @@ class RecommendFragment: Fragment() {
                     replace(R.id.fg_activity_post, SetGroupFragment())
                     commit()
                 }
+            },
+            onDetail = {
+                startActivity(UserDetailActivity.newIntent(requireActivity(),it))
             }
         )
     }

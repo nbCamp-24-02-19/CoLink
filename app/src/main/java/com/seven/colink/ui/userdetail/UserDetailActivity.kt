@@ -9,13 +9,16 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import com.seven.colink.R
 import com.seven.colink.databinding.ActivityUserDetailBinding
+import com.seven.colink.ui.chat.ChatRoomActivity
 import com.seven.colink.ui.sign.signup.SignUpActivity
 import com.seven.colink.ui.sign.signup.model.SignUpUserModel
 import com.seven.colink.ui.sign.signup.type.SignUpEntryType
@@ -23,25 +26,28 @@ import com.seven.colink.ui.userdetail.adapter.UserDetailPostAdapter
 import com.seven.colink.ui.userdetail.adapter.UserSkillAdapter
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class UserDetailActivity : AppCompatActivity() {
     private lateinit var binding:ActivityUserDetailBinding
-    private lateinit var viewModel: UserDetailViewModel
     private lateinit var adapter: UserSkillAdapter
     private lateinit var postadapter: UserDetailPostAdapter
+
+    private val viewModel: UserDetailViewModel by viewModels()
 
     companion object {
         const val EXTRA_USER_KEY = "extra_user_key"
 
         fun newIntent(
             context: Context,
-            entryType: SignUpEntryType,
-            entity: SignUpUserModel? = null,
+            userId: String,
         ) = Intent(
-            context, SignUpActivity()::class.java
+            context, UserDetailActivity()::class.java
         ).apply {
-            putExtra(SignUpActivity.EXTRA_ENTRY_TYPE, entryType.ordinal)
-            putExtra(SignUpActivity.EXTRA_USER_ENTITY, entity)
+            putExtra(EXTRA_USER_KEY, userId)
         }
     }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,6 +58,7 @@ class UserDetailActivity : AppCompatActivity() {
 
         userSkill()
         PostRecyclerView()
+        initViewModel()
 
 
 
@@ -89,7 +96,7 @@ class UserDetailActivity : AppCompatActivity() {
         }
 
         binding.btnUserdetailChat.setOnClickListener {
-            //1:1 채팅
+            viewModel.registerChatRoom()
         }
 
         binding.btnUserdetailGroup.setOnClickListener {
@@ -184,10 +191,6 @@ class UserDetailActivity : AppCompatActivity() {
     }
 
 //    private fun userSkill(){
-//        adapter = UserSkillAdapter(UserSkillItemManager.getItem())
-//        binding.reUserdetailItem.adapter = adapter
-//        binding.reUserdetailItem.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-//    }
 
     private fun userSkill(){
         adapter = UserSkillAdapter(UserSkillItemManager.getItem())
@@ -195,10 +198,22 @@ class UserDetailActivity : AppCompatActivity() {
         binding.reUserdetailItem.layoutManager = GridLayoutManager(this, 4)
     }
 
-
     private fun PostRecyclerView(){
         postadapter = UserDetailPostAdapter(UserDetailPostItemManager.getItemAll())
         binding.reUserdetailProject.adapter = postadapter
         binding.reUserdetailProject.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+    }
+
+    //    }
+//        binding.reUserdetailItem.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+//        binding.reUserdetailItem.adapter = adapter
+//        adapter = UserSkillAdapter(UserSkillItemManager.getItem())
+
+    private fun initViewModel() = with(viewModel) {
+        viewModelScope.launch {
+            chatRoom.collect {
+                startActivity(ChatRoomActivity.newIntent(this@UserDetailActivity,it.key, it.title?: ""))
+            }
+        }
     }
 }
