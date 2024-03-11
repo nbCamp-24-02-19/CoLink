@@ -37,7 +37,7 @@ class EvaluationProjectFragment : Fragment() {
         arguments?.let {
             val projectUserList: ArrayList<EvaluationData.EvalProject> =
                 it.getParcelableArrayList("projectUserList") ?: arrayListOf()
-            Log.d("Evaluation", "projectUserlist = ${projectUserList}")
+            Log.d("Evaluation", "projectUserList = $projectUserList")
         }
 
 

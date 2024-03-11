@@ -14,14 +14,18 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class EvaluationActivity : AppCompatActivity() {
+
     companion object {
+
+        const val EXTRA_GROUP_ENTITY = "extra_group_entity"
+
         fun newIntentEval(
             context: Context,
             groupType: GroupType,
             entityKey: String
         ) = Intent(context, EvaluationActivity::class.java).apply {
             putExtra(Constants.EXTRA_GROUP_TYPE, groupType.ordinal)
-            putExtra("extra_group_entity", entityKey)
+            putExtra(EXTRA_GROUP_ENTITY, entityKey)
         }
     }
 
@@ -30,6 +34,7 @@ class EvaluationActivity : AppCompatActivity() {
     private lateinit var evalProjectAdapter: EvaluationProjectAdapter
     private lateinit var evalStudyAdapter: EvaluationStudyAdapter
     private lateinit var evalViewModel: EvaluationViewModel
+
     private val binding by lazy {
         ActivityEvaluationBinding.inflate(layoutInflater)
     }
@@ -43,7 +48,7 @@ class EvaluationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        evalViewModel = ViewModelProvider(this).get(EvaluationViewModel::class.java)
+        evalViewModel = ViewModelProvider(this)[EvaluationViewModel::class.java]
 
         initView()
         evalViewModel.getMembers(groupEntity)
@@ -69,7 +74,7 @@ class EvaluationActivity : AppCompatActivity() {
             else -> throw IllegalArgumentException("Unknown GroupTypeEntity!")
         }
 
-        Log.d("Evaluation", "evaluationValue = ${groupTypeEntity}, ${groupEntity}")
+        Log.d("Evaluation", "evaluationValue = ${groupTypeEntity}, $groupEntity")
     }
 
 
@@ -83,7 +88,7 @@ class EvaluationActivity : AppCompatActivity() {
     }
 
     private fun setProjectObserve() {
-        evalViewModel.evalProjectMembersData.observe(this) { it ->
+        evalViewModel.evalProjectMembersData.observe(this) {
             it?.let { list ->
                 val nonNullList = list.filterNotNull()
                 evalProjectAdapter.mItems.clear()
@@ -94,7 +99,7 @@ class EvaluationActivity : AppCompatActivity() {
                 evalProjectAdapter.notifyDataSetChanged()
             }
         }
-        Log.d("Evaluation", "setProjectObserve")
+        Log.d("Evaluation", "setProjectObserve ^{^오^} 심규상 왔다감")
     }
 
     private fun setStudyObserve() {

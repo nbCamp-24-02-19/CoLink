@@ -60,7 +60,7 @@ class GroupBoardFragment : Fragment() {
                     else -> Unit
                 }
             },
-            onClickView = { item, view ->
+            onClickView = { _, view ->
                 when (view.id) {
                     R.id.tv_apply_request -> {
                         parentFragmentManager.beginTransaction().apply {

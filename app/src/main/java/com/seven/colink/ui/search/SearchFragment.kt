@@ -36,15 +36,20 @@ class SearchFragment : Fragment() {
 
     private var _binding: FragmentSearchBinding? = null
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
+
     private lateinit var searchAdapter: SearchAdapter
+
     private var postList = mutableListOf<SearchModel>()
+
     private lateinit var searchViewModel: SearchViewModel
+
     private var project = true
+
     private var study = true
+
     private var recruit = true
+
     private var recruitEnd = true
 
     private val groupTypeOptions: List<String>
@@ -53,16 +58,12 @@ class SearchFragment : Fragment() {
             getString(R.string.study_kor)
         )
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        searchViewModel = ViewModelProvider(this).get(SearchViewModel::class.java)
+        searchViewModel = ViewModelProvider(this)[SearchViewModel::class.java]
 
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         val root: View = binding.root
