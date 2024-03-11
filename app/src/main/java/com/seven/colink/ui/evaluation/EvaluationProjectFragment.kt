@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.seven.colink.databinding.FragmentEvaluationProjectBinding
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.FieldPosition
 
 @AndroidEntryPoint
 class EvaluationProjectFragment : Fragment() {
@@ -19,7 +20,7 @@ class EvaluationProjectFragment : Fragment() {
 
     companion object {
         fun newInstanceProject(user: EvaluationData.EvalProject)
-        : EvaluationProjectFragment {
+                : EvaluationProjectFragment {
             val fragment = EvaluationProjectFragment()
             val args = Bundle()
             args.putParcelable("projectUserList", user)
@@ -28,12 +29,13 @@ class EvaluationProjectFragment : Fragment() {
         }
     }
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentEvaluationProjectBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+
         arguments?.let {
             val projectUserList: ArrayList<EvaluationData.EvalProject> =
                 it.getParcelableArrayList("projectUserList") ?: arrayListOf()
@@ -41,7 +43,7 @@ class EvaluationProjectFragment : Fragment() {
         }
 
 
-        return root
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
