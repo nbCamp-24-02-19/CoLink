@@ -1,19 +1,16 @@
 package com.seven.colink.ui.post.register.post
 
-import com.seven.colink.domain.entity.RecruitInfo
 
 data class PostErrorUiState(
     val message: PostErrorMessage,
+    val recruit: PostErrorMessage,
+    val tag: PostErrorMessage
 ) {
     companion object {
         fun init() = PostErrorUiState(
             message = PostErrorMessage.EMPTY,
+            recruit = PostErrorMessage.EMPTY,
+            tag = PostErrorMessage.PASS
         )
     }
-}
-
-sealed interface PostEvent {
-    data class DialogEvent(
-        val recruit: List<RecruitInfo>?,
-    ) : PostEvent
 }

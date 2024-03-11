@@ -24,8 +24,8 @@ enum class TagListViewType {
     }
 }
 
-sealed class TagEvent {
-    data object Success : TagEvent()
-    data object MaxNumberExceeded : TagEvent()
-    data object TagAlreadyExists : TagEvent()
-}
+//sealed class TagEvent {
+//    data object Success : TagEvent()
+//    data object MaxNumberExceeded : TagEvent()
+//    data object TagAlreadyExists : TagEvent()
+//}

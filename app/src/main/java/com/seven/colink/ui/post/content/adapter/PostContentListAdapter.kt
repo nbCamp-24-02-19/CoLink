@@ -1,6 +1,7 @@
 package com.seven.colink.ui.post.content.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,17 +24,19 @@ import com.seven.colink.ui.group.board.board.GroupBoardItem
 import com.seven.colink.ui.group.board.board.GroupContentViewType
 import com.seven.colink.ui.post.register.post.adapter.TagListAdapter
 import com.seven.colink.ui.post.register.post.model.TagListItem
-import com.seven.colink.ui.post.content.model.ContentOwnerButtonUiState
+import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.content.model.PostContentItem
+import com.seven.colink.ui.post.register.post.model.PostListItem
 import com.seven.colink.util.setLevelIcon
 import com.seven.colink.util.status.ApplicationStatus
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.PostContentViewTypeItem
+import kotlin.math.log
 
 class PostContentListAdapter(
     private val context: Context,
     private val onClickItem: (Int, PostContentItem) -> Unit,
-    private val onClickButton: (Int, PostContentItem, ContentOwnerButtonUiState) -> Unit,
+    private val onClickButton: (Int, PostContentItem, ContentButtonUiState) -> Unit,
     private val onClickView: (PostContentItem, View) -> Unit,
 
     ) : ListAdapter<PostContentItem, PostContentListAdapter.PostViewHolder>(
@@ -51,6 +54,10 @@ class PostContentListAdapter(
 
                 oldItem is PostContentItem.MemberItem && newItem is PostContentItem.MemberItem -> {
                     oldItem.userInfo.uid == newItem.userInfo.uid
+                }
+
+                oldItem is PostContentItem.AdditionalInfo && newItem is PostContentItem.AdditionalInfo -> {
+                    oldItem.key == newItem.key
                 }
 
                 else -> oldItem == newItem
@@ -88,7 +95,6 @@ class PostContentListAdapter(
             )
 
             PostContentViewTypeItem.RECRUIT -> PostRecruitItemViewHolder(
-                context,
                 ItemPostRecruitBinding.inflate(LayoutInflater.from(parent.context), parent, false),
                 onClickButton,
             )
@@ -169,9 +175,8 @@ class PostContentListAdapter(
     }
 
     class PostRecruitItemViewHolder(
-        private val context: Context,
         private val binding: ItemPostRecruitBinding,
-        private val onClickButton: (Int, PostContentItem, ContentOwnerButtonUiState) -> Unit
+        private val onClickButton: (Int, PostContentItem, ContentButtonUiState) -> Unit
     ) : PostViewHolder(binding.root) {
         override fun onBind(item: PostContentItem) {
             if (item is PostContentItem.RecruitItem) {
@@ -181,14 +186,15 @@ class PostContentListAdapter(
                 binding.tvNowPersonnel.text = "${item.recruit.nowPersonnel}"
                 binding.tvMaxPersonnel.text = "${item.recruit.maxPersonnel}"
 
-                if (item.buttonUiState == ContentOwnerButtonUiState.User) {
+                if (item.buttonUiState == ContentButtonUiState.User) {
                     binding.btRecruit.isEnabled =
                         item.recruit.nowPersonnel < (item.recruit.maxPersonnel ?: -1)
                     binding.btRecruit.alpha = if (binding.btRecruit.isEnabled) 1.0f else 0.5f
                 }
 
-                binding.btRecruit.visibility = if (item.buttonUiState == ContentOwnerButtonUiState.Owner) View.GONE
-                else View.VISIBLE
+                binding.btRecruit.visibility =
+                    if (item.buttonUiState == ContentButtonUiState.User) View.VISIBLE
+                    else View.GONE
 
                 binding.btRecruit.setOnClickListener {
                     onClickButton(adapterPosition, item, item.buttonUiState)
@@ -201,7 +207,7 @@ class PostContentListAdapter(
         private val context: Context,
         private val binding: ItemPostContentBinding
     ) : PostViewHolder(binding.root) {
-        private val tagAdapter = TagListAdapter(onClickItem = { item -> })
+        private val tagAdapter = TagListAdapter(onClickItem = { _ -> })
 
         init {
             binding.recyclerViewTag.adapter = tagAdapter
@@ -298,25 +304,29 @@ class PostContentListAdapter(
     ) : PostViewHolder(binding.root) {
         override fun onBind(item: PostContentItem) {
             if (item is PostContentItem.AdditionalInfo) {
-                binding.tvPrecautions.text = item.precautions
-                binding.tvDescription.text = item.recruitInfo
+                binding.tvPrecautions.setText(item.precautions)
+                binding.tvDescription.setText(item.recruitInfo)
+                binding.tvPrecautions.isEnabled = false
+                binding.tvDescription.isEnabled = false
             }
         }
     }
 
 
-
-
+//    private fun getButtonUiState(): ContentButtonUiState {
+//        val recruitItems = currentList.filterIsInstance<PostContentItem.RecruitItem>()
+//
+//    }
 
     private fun countPostApplyRequester(): Int {
-        val postItem = currentList.filterIsInstance<GroupBoardItem.PostItem>()
+        val recruitItems = currentList.filterIsInstance<PostContentItem.RecruitItem>()
 
-        return postItem.sumOf { postItem ->
-            postItem.post.recruit?.sumOf { recruitInfo ->
-                recruitInfo.applicationInfos?.count { it.applicationStatus == ApplicationStatus.PENDING }
-                    ?: 0
-            } ?: 0
+        return recruitItems.sumOf { recruitItem ->
+            recruitItem.recruit.applicationInfos?.count { it.applicationStatus == ApplicationStatus.PENDING }
+                ?: 0
         }
     }
+
+
 
 }

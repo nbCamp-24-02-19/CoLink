@@ -1,5 +1,6 @@
 package com.seven.colink.domain.usecase
 
+import android.util.Log
 import com.seven.colink.domain.entity.ApplicationInfo
 import com.seven.colink.domain.entity.ApplicationInfoEntity
 import com.seven.colink.domain.entity.PostEntity
@@ -35,7 +36,8 @@ class GetPostUseCase @Inject constructor(
 
     private suspend fun convertAppInfo(applicationInfo: List<String>?) = coroutineScope {
         applicationInfo?.map {
-            async { recruitRepository.getApplicationInfo(it)?.convert() }
+            async { recruitRepository.getApplicationInfo(it)?.convert().apply {
+            } }
         }?.awaitAll()?.filterNotNull() ?: emptyList()
     }
 

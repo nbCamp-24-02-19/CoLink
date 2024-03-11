@@ -21,11 +21,13 @@ sealed interface PostContentItem {
     ) : PostContentItem
 
     data class RecruitItem(
+        val key: String?,
         val recruit: RecruitInfo,
-        val buttonUiState: ContentOwnerButtonUiState
+        val buttonUiState: ContentButtonUiState
     ) : PostContentItem
 
     data class MemberItem(
+        val key: String?,
         val userInfo: UserEntity
     ) : PostContentItem
 
@@ -43,6 +45,7 @@ sealed interface PostContentItem {
     ) : PostContentItem
 
     data class AdditionalInfo(
+        val key: String?,
         val precautions: String?,
         val recruitInfo: String?
     ) : PostContentItem
