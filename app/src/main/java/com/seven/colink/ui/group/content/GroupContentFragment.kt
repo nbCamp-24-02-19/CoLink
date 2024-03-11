@@ -37,7 +37,7 @@ class GroupContentFragment : Fragment() {
         GroupContentListAdapter(
             requireContext(),
             binding.recyclerViewGroupContent,
-            onClickItem = { _, view ->
+            onClickItem = { view ->
                 when (view.id) {
                     R.id.iv_group_image -> {
                         openGallery(galleryResultLauncher)
@@ -48,7 +48,7 @@ class GroupContentFragment : Fragment() {
             onGroupImageClick = {
                 viewModel.checkValidAddTag(it)
             },
-            tagAdapterOnClickItem = { _, tagItem ->
+            tagAdapterOnClickItem = {tagItem ->
                 when (tagItem) {
                     is TagListItem.Item -> {
                         viewModel.removeTagItem(tagItem.name)
@@ -97,7 +97,6 @@ class GroupContentFragment : Fragment() {
 
     private fun initView() = with(binding) {
         setListAdapter()
-
         ivGroupFinish.setOnClickListener {
             if (!parentFragmentManager.isStateSaved) {
                 parentFragmentManager.popBackStack()
@@ -113,6 +112,7 @@ class GroupContentFragment : Fragment() {
 
     private fun setListAdapter() = with(binding) {
         recyclerViewGroupContent.adapter = groupContentListAdapter
+        recyclerViewGroupContent.itemAnimator = null
     }
 
     private fun initViewModel() = with(viewModel) {
@@ -128,6 +128,16 @@ class GroupContentFragment : Fragment() {
                     if (it.tag != GroupErrorMessage.PASS) {
                         requireContext().showToast(getString(it.tag.message1, it.tag.message2))
                     }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.complete.collect {
+                hideProgressOverlay()
+                requireContext().showToast(it)
+                if (!parentFragmentManager.isStateSaved) {
+                    parentFragmentManager.popBackStack()
                 }
             }
         }
@@ -159,7 +169,6 @@ class GroupContentFragment : Fragment() {
                     viewModel.setEntryType(it)
                 }
             }
-
         }
     }
 

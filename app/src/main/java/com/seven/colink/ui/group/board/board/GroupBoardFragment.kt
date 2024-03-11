@@ -32,7 +32,7 @@ class GroupBoardFragment : Fragment() {
     private val groupBoardListAdapter by lazy {
         GroupBoardListAdapter(
             requireContext(),
-            onClickItem = { _, item ->
+            onClickItem = { item ->
                 when (item) {
                     is GroupBoardItem.GroupItem -> {
                         viewModel.onClickStatusButton()
@@ -50,10 +50,6 @@ class GroupBoardFragment : Fragment() {
 
                     is GroupBoardItem.MemberItem -> {
                         // TODO 멤버 상세 화면 이동
-                    }
-
-                    is GroupBoardItem.TitleItem -> {
-                        // TODO 지원 요청 목록, 멤버 추천 화면 이동
                     }
 
                     else -> Unit
@@ -145,4 +141,5 @@ class GroupBoardFragment : Fragment() {
         _binding = null
         super.onDestroyView()
     }
+
 }
