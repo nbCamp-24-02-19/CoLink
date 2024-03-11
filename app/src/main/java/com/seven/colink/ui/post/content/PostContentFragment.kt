@@ -39,7 +39,7 @@ class PostContentFragment : Fragment() {
             requireContext(),
             onClickItem = { _, item -> handleItemClick(item) },
             onClickButton = { _, item, buttonUiState -> handleButtonClick(item, buttonUiState) },
-            onClickView = { item, view ->
+            onClickView = { _, view ->
                 when (view.id) {
                     R.id.tv_apply_request -> {
                         parentFragmentManager.beginTransaction().apply {

@@ -19,6 +19,7 @@ import com.seven.colink.ui.post.register.setgroup.SetGroupFragment
 import com.seven.colink.ui.post.register.viewmodel.PostSharedViewModel
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
+import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.UiState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -68,6 +69,16 @@ class RecommendFragment: Fragment() {
             key.collect {
                 if (it != null) {
                     viewModel.loadList(key = it)
+                }
+            }
+        }
+        lifecycleScope.launch {
+            groupType.collect {
+                if (it != GroupType.PROJECT) {
+                    parentFragmentManager.beginTransaction().apply {
+                        replace(R.id.fg_activity_post, SetGroupFragment())
+                        commit()
+                    }
                 }
             }
         }

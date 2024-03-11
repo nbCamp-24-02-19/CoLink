@@ -22,6 +22,7 @@ import com.seven.colink.ui.post.register.recommend.RecommendFragment
 import com.seven.colink.ui.post.register.viewmodel.PostSharedViewModel
 import com.seven.colink.util.dialog.RecruitDialog
 import com.seven.colink.util.openGallery
+import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -41,12 +42,8 @@ class PostFragment : Fragment() {
             requireContext(),
             onChangedFocus = { position, title, description, item ->
                 when (item) {
-                    is PostListItem.PostItem -> {
+                    is PostListItem.PostItem, is PostListItem.PostOptionItem -> {
                         viewModel.updatePostItemText(position, title, description)
-                    }
-                    is PostListItem.PostOptionItem -> {
-                        viewModel.updatePostOprionItemText(position, title, description)
-
                     }
                      else -> Unit
                 }
@@ -134,8 +131,7 @@ class PostFragment : Fragment() {
             groupType.collect {
                 with(viewModel) {
                     if (it != null) {
-                        setGroupType(it)
-                        viewModel.setViewByGroupType()
+                        viewModel.setPostItem(groupType = it)
                     }
                 }
             }
@@ -144,8 +140,7 @@ class PostFragment : Fragment() {
         lifecycleScope.launch {
             key.collect {
                 if (it != null) {
-                    viewModel.setEntity(it)
-                    viewModel.setViewByEntity()
+                    viewModel.setPostItem(entityKey = it)
                 }
             }
         }
@@ -192,10 +187,6 @@ class PostFragment : Fragment() {
         lifecycleScope.launch {
             complete.collect { newKey ->
                 sharedViewModel.setKey(newKey)
-                parentFragmentManager.beginTransaction().apply {
-                    replace(R.id.fg_activity_post, RecommendFragment())
-                    commit()
-                }
             }
         }
 
@@ -208,6 +199,10 @@ class PostFragment : Fragment() {
                 viewModel.createPost(
                     onSuccess = {
                         hideProgressOverlay()
+                        parentFragmentManager.beginTransaction().apply {
+                            replace(R.id.fg_activity_post, RecommendFragment())
+                            commit()
+                        }
                     },
                     onError = { exception ->
                         hideProgressOverlay()

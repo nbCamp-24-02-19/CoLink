@@ -83,7 +83,7 @@ class MyPageFragment : Fragment() {
                 skillCategory.setDialog(binding_.root.context, "사용 가능한 언어/툴을 선택해주세요"){
                     binding_.btSignUpSubCategoryBtn.text = it
                     viewModel.updateSkill(it)
-                    Log.d("tag", "skil = $it")
+                    Log.d("tag", "skill = $it")
                 }.show()
             }
 
