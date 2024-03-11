@@ -15,7 +15,7 @@ import com.seven.colink.ui.group.board.board.adapter.GroupBoardListAdapter
 import com.seven.colink.ui.group.board.list.ApplyRequestFragment
 import com.seven.colink.ui.group.content.GroupContentFragment
 import com.seven.colink.ui.group.viewmodel.GroupSharedViewModel
-import com.seven.colink.ui.post.content.model.ContentOwnerButtonUiState
+import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.util.status.PostEntryType
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,7 +25,6 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class GroupBoardFragment : Fragment() {
     private var _binding: FragmentGroupBoardBinding? = null
-
     private val binding: FragmentGroupBoardBinding get() = _binding!!
     private val viewModel: GroupBoardViewModel by viewModels()
     private val sharedViewModel: GroupSharedViewModel by activityViewModels()
@@ -33,7 +32,7 @@ class GroupBoardFragment : Fragment() {
     private val groupBoardListAdapter by lazy {
         GroupBoardListAdapter(
             requireContext(),
-            onClickItem = { _, item ->
+            onClickItem = { item ->
                 when (item) {
                     is GroupBoardItem.GroupItem -> {
                         viewModel.onClickStatusButton()
@@ -51,10 +50,6 @@ class GroupBoardFragment : Fragment() {
 
                     is GroupBoardItem.MemberItem -> {
                         // TODO 멤버 상세 화면 이동
-                    }
-
-                    is GroupBoardItem.TitleItem -> {
-                        // TODO 지원 요청 목록, 멤버 추천 화면 이동
                     }
 
                     else -> Unit
@@ -95,7 +90,7 @@ class GroupBoardFragment : Fragment() {
     }
 
     private fun initView() = with(binding) {
-        recyclerViewBoard.adapter = groupBoardListAdapter
+        setListAdapter()
         binding.ivGroupFinish.setOnClickListener {
             activity?.finish()
         }
@@ -112,6 +107,10 @@ class GroupBoardFragment : Fragment() {
         }
     }
 
+    private fun setListAdapter() = with(binding) {
+        recyclerViewBoard.adapter = groupBoardListAdapter
+    }
+
     private fun initViewModel() = with(viewModel) {
         uiStateList.observe(requireActivity()) {
             groupBoardListAdapter.submitList(it)
@@ -119,13 +118,12 @@ class GroupBoardFragment : Fragment() {
 
         entity.observe(requireActivity()) {
             when (it?.buttonUiState) {
-                ContentOwnerButtonUiState.Owner -> {
+                ContentButtonUiState.Manager -> {
                     binding.tvComplete.visibility = View.VISIBLE
                 }
 
                 else -> binding.tvComplete.visibility = View.INVISIBLE
             }
-
         }
     }
 
@@ -140,6 +138,8 @@ class GroupBoardFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        _binding = null
         super.onDestroyView()
     }
+
 }

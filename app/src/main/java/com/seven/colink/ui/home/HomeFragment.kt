@@ -19,6 +19,8 @@ import com.seven.colink.ui.home.adapter.HomeMainAdapter
 import com.seven.colink.ui.home.adapter.TopViewPagerAdapter
 import com.seven.colink.ui.home.child.HomeProjectFragment
 import com.seven.colink.ui.post.register.PostActivity
+import com.seven.colink.util.progress.hideProgressOverlay
+import com.seven.colink.util.progress.showProgressOverlay
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -36,7 +38,7 @@ class HomeFragment : Fragment() {
         HomeAdapterItems.TopView(TopViewPagerAdapter()),
         HomeAdapterItems.Header("그룹 추천")
     )
-    private val childProject by lazy { HomeProjectFragment() }
+    private var loading = true
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -123,6 +125,18 @@ class HomeFragment : Fragment() {
                 HomeAdapterItems.Header("그룹 추천")
             )
             mainAdapter.submitList(homeItem)
+            mainAdapter.notifyDataSetChanged()
+        }
+
+        homeViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            if (isLoading) {
+                showProgressOverlay()
+                binding.svHome.visibility = View.INVISIBLE
+            }else {
+                hideProgressOverlay()
+                binding.svHome.visibility = View.VISIBLE
+            }
+            loading = !isLoading
         }
     }
 

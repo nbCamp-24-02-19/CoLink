@@ -38,7 +38,7 @@ class SignUpViewModel @Inject constructor(
     val uiStatus: StateFlow<SignUpUIState> = _uiStatus
 
     private val _userModel = MutableStateFlow(SignUpUserModel())
-    val userModel: StateFlow<SignUpUserModel> = _userModel
+    private val userModel: StateFlow<SignUpUserModel> = _userModel
 
     private val _errorMessage = MutableStateFlow(SignUpErrorMessage.DUMMY)
     val errorMessage: StateFlow<SignUpErrorMessage> = _errorMessage

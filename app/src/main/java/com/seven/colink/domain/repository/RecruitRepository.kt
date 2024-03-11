@@ -1,5 +1,6 @@
 package com.seven.colink.domain.repository
 
+import com.seven.colink.domain.entity.ApplicationInfo
 import com.seven.colink.domain.entity.ApplicationInfoEntity
 import com.seven.colink.domain.entity.RecruitEntity
 import com.seven.colink.util.status.DataResultStatus
@@ -10,4 +11,5 @@ interface RecruitRepository {
     suspend fun registerApplicationInfo(appInfo: ApplicationInfoEntity): DataResultStatus
     suspend fun getRecruit(key: String): RecruitEntity?
     suspend fun getApplicationInfo(key: String): ApplicationInfoEntity?
+    suspend fun updateStatusApplicationInfo(applicationInfo: ApplicationInfo): DataResultStatus
 }
