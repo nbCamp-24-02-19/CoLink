@@ -118,8 +118,6 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
                     handleRightButtonClick()
                 }
 
-                pager.setCurrentItem(1,false)
-
                 pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                     @RequiresApi(Build.VERSION_CODES.Q)
                     override fun onPageSelected(position: Int) {
@@ -164,19 +162,21 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
 
                         if (currentPos == 0) {
                             if (lastPosition != null) {
-                                pager.setCurrentItem(lastPosition, true)
+                                pager.setCurrentItem(lastPosition, false)
                             }
                         } else if (currentPos == lastPosition) {
-                            pager.setCurrentItem(0, true)
+                            pager.setCurrentItem(0, false)
                         }
-                    }
-                    private fun startAutoScroll() {
-                        handler.removeCallbacks(autoScrollRunnable)
-                        handler.postDelayed(autoScrollRunnable, AUTO_SCROLL_DELAY + PAGE_SCROLL_DELAY)
                     }
                 })
             }
         }
+
+        private fun startAutoScroll() {
+            handler.removeCallbacks(autoScrollRunnable)
+            handler.postDelayed(autoScrollRunnable, AUTO_SCROLL_DELAY + PAGE_SCROLL_DELAY)
+        }
+
         private fun handleLeftButtonClick() {
             handler.removeCallbacks(autoScrollRunnable)
             if (currentPos == 1) {
