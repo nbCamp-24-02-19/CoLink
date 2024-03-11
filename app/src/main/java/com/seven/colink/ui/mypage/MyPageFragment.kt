@@ -83,7 +83,7 @@ class MyPageFragment : Fragment() {
                 skillCategory.setDialog(binding_.root.context, "사용 가능한 언어/툴을 선택해주세요"){
                     binding_.btSignUpSubCategoryBtn.text = it
                     viewModel.updateSkill(it)
-                    Log.d("tag", "skil = $it")
+                    Log.d("tag", "skill = $it")
                 }.show()
             }
 
@@ -108,9 +108,9 @@ class MyPageFragment : Fragment() {
             override fun onClick(view: View, position: Int, item: MyPostItem.MyPagePostItem) {
                 lifecycleScope.launch {
                     var key = item.projectKey
-                    Log.d("postClick","key = ${key}")
+                    Log.d("postClick","key = $key")
                     val post = key.let { viewModel.getPost(it) }
-                    Log.d("postClick","post = ${post}")
+                    Log.d("postClick","post = $post")
                     if (post != null) {
                         startActivity(
                             PostActivity.newIntent(
@@ -168,7 +168,7 @@ class MyPageFragment : Fragment() {
         }
 
         //파이어베이스 유저 등록글
-        viewModel.userPost.observe(viewLifecycleOwner) { it ->
+        viewModel.userPost.observe(viewLifecycleOwner) {
             it?.map{post ->
                 if (post.grouptype == GroupType.PROJECT){
                     MyPostItem.MyPagePostItem(if (post.ing != ProjectStatus.END){

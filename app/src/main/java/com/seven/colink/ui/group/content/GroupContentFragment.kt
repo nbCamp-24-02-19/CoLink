@@ -14,17 +14,13 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentGroupContentBinding
-import com.seven.colink.domain.entity.TagEntity
 import com.seven.colink.ui.group.content.adapter.GroupContentListAdapter
 import com.seven.colink.ui.group.viewmodel.GroupSharedViewModel
-import com.seven.colink.ui.post.register.post.model.TagEvent
 import com.seven.colink.ui.post.register.post.model.TagListItem
-import com.seven.colink.util.Constants
 import com.seven.colink.util.openGallery
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.showToast
-import com.seven.colink.util.status.ProjectStatus
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -35,12 +31,13 @@ class GroupContentFragment : Fragment() {
     private val binding: FragmentGroupContentBinding get() = _binding!!
     private val viewModel: GroupContentViewModel by viewModels()
     private val sharedViewModel: GroupSharedViewModel by activityViewModels()
+    private lateinit var galleryResultLauncher: ActivityResultLauncher<Intent>
 
     private val groupContentListAdapter by lazy {
         GroupContentListAdapter(
             requireContext(),
             binding.recyclerViewGroupContent,
-            onClickItem = { _, view ->
+            onClickItem = { view ->
                 when (view.id) {
                     R.id.iv_group_image -> {
                         openGallery(galleryResultLauncher)
@@ -49,15 +46,9 @@ class GroupContentFragment : Fragment() {
                 }
             },
             onGroupImageClick = {
-                handleTagAddResult(
-                    viewModel.addTagItem(
-                        TagEntity(
-                            name = it
-                        )
-                    )
-                )
+                viewModel.checkValidAddTag(it)
             },
-            tagAdapterOnClickItem = { _, tagItem ->
+            tagAdapterOnClickItem = {tagItem ->
                 when (tagItem) {
                     is TagListItem.Item -> {
                         viewModel.removeTagItem(tagItem.name)
@@ -66,15 +57,11 @@ class GroupContentFragment : Fragment() {
                     else -> Unit
                 }
             },
-            onSwitchChanged = { isChecked ->
-
-                viewModel.onChangedSwitch(
-                    if (isChecked) ProjectStatus.START else ProjectStatus.END
-                )
+            onChangeStatus = {
+                viewModel.onChangedStatus(it)
             }
         )
     }
-    private lateinit var galleryResultLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -103,14 +90,13 @@ class GroupContentFragment : Fragment() {
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                viewModel.handleGalleryResult(result.resultCode, result.data)
+                viewModel.setImageResult(result.data)
             }
         }
     }
 
     private fun initView() = with(binding) {
-        recyclerViewGroupContent.adapter = groupContentListAdapter
-
+        setListAdapter()
         ivGroupFinish.setOnClickListener {
             if (!parentFragmentManager.isStateSaved) {
                 parentFragmentManager.popBackStack()
@@ -119,22 +105,53 @@ class GroupContentFragment : Fragment() {
 
         tvComplete.setOnClickListener {
             showProgressOverlay()
-            val (etTitle, etDescription) = groupContentListAdapter.getEtTitleAndDescription(0)
-            viewModel.handleGroupEntity(etTitle, etDescription)
+            val (title, description) = groupContentListAdapter.getEtTitleAndDescription(0)
+            viewModel.handleGroupEntity(title, description)
         }
     }
 
-    private fun initViewModel() = with(viewModel) {
-        uiState.observe(requireActivity()) {
-            groupContentListAdapter.submitList(listOf(it))
-        }
+    private fun setListAdapter() = with(binding) {
+        recyclerViewGroupContent.adapter = groupContentListAdapter
+        recyclerViewGroupContent.itemAnimator = null
+    }
 
-        groupOperationResult.observe(requireActivity()) {
-            hideProgressOverlay()
-            if (!parentFragmentManager.isStateSaved) {
-                parentFragmentManager.popBackStack()
+    private fun initViewModel() = with(viewModel) {
+        lifecycleScope.launch {
+            uiState.collect {
+                groupContentListAdapter.submitList(it)
             }
         }
+
+        lifecycleScope.launch {
+            errorUiState.collect { errorState ->
+                errorState?.let {
+                    if (it.tag != GroupErrorMessage.PASS) {
+                        requireContext().showToast(getString(it.tag.message1, it.tag.message2))
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.complete.collect {
+                hideProgressOverlay()
+                requireContext().showToast(it)
+                if (!parentFragmentManager.isStateSaved) {
+                    parentFragmentManager.popBackStack()
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.complete.collect {
+                hideProgressOverlay()
+                requireContext().showToast(it)
+                if (!parentFragmentManager.isStateSaved) {
+                    parentFragmentManager.popBackStack()
+                }
+            }
+        }
+
     }
 
     private fun initSharedViewModel() = with(sharedViewModel) {
@@ -152,20 +169,7 @@ class GroupContentFragment : Fragment() {
                     viewModel.setEntryType(it)
                 }
             }
-
         }
     }
 
-    private fun handleTagAddResult(result: TagEvent) {
-        val messageResId = when (result) {
-            TagEvent.Success -> return
-            TagEvent.MaxNumberExceeded -> getString(
-                R.string.message_max_number,
-                Constants.LIMITED_TAG_COUNT
-            )
-
-            TagEvent.TagAlreadyExists -> getString(R.string.message_already_exists)
-        }
-        requireActivity().showToast(messageResId)
-    }
 }

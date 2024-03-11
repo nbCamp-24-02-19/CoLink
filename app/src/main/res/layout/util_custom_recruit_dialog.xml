@@ -41,7 +41,7 @@
 
     <include
         android:id="@+id/include_stepper_personnel"
-        layout="@layout/layout_personnel_component"
+        layout="@layout/item_personnel_component"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="12dp"

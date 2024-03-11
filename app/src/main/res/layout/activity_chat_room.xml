@@ -88,7 +88,7 @@
             android:layout_height="44dp"
             android:layout_gravity="end|center_vertical"
             android:background="@drawable/bg_round_corner_8dp"
-            android:backgroundTint="@color/button_color_selector"
+            android:backgroundTint="@color/main_color"
             android:clipToOutline="true"
             android:padding="12dp"
             android:scaleType="centerCrop"

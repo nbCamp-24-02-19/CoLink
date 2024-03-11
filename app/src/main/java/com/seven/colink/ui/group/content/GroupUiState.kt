@@ -1,6 +1,7 @@
 package com.seven.colink.ui.group.content
 
 import android.net.Uri
+import com.seven.colink.domain.entity.GroupEntity
 import com.seven.colink.domain.entity.TagEntity
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
@@ -21,11 +22,15 @@ sealed interface GroupContentItem {
         val teamName: String?,
         val groupType: GroupType?,
         val description: String?,
-        val tags: List<TagEntity>?,
+        val tags: List<String>?,
         val imageUrl: String?,
-        val status: ProjectStatus?,
         val selectedImageUrl: Uri?,
         val groupTypeUiState: GroupTypeUiState?,
         val buttonUiState: ContentButtonUiState?,
     ): GroupContentItem
+
+    data class GroupProjectStatus(
+        val key: String?,
+        val status: ProjectStatus?
+    ) : GroupContentItem
 }
