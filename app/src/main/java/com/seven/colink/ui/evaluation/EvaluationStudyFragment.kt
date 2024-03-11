@@ -33,9 +33,7 @@ class EvaluationStudyFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentEvaluationStudyBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-        return root
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -50,7 +48,7 @@ class EvaluationStudyFragment : Fragment() {
         arguments?.let {
             val studyUserList: ArrayList<EvaluationData.EvalStudy> =
                 it.getParcelableArrayList("studyUserList") ?: arrayListOf()
-            Log.d("Evaluation", "studyUserlist = ${studyUserList}")
+            Log.d("Evaluation", "studyUserList = $studyUserList")
         }
 
     }

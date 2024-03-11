@@ -51,7 +51,7 @@ class EvaluationStudyViewModel @Inject constructor(
             }
 
         _evalStudyData.value = getUserEntity
-        Log.d("Evaluation", "getGroupEntity = ${getUserEntity}")
+        Log.d("Evaluation", "getGroupEntity = $getUserEntity")
     }
 
     private fun UserEntity.convertEvalStudyData() =

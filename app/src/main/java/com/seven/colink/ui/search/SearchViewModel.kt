@@ -29,12 +29,12 @@ class SearchViewModel @Inject constructor(
     val searchModel: LiveData<List<SearchModel>> get() = _searchModel
 
     private val _searchGroupState = MutableLiveData("ALL")
-    val searchGroupState: LiveData<String> get() = _searchGroupState
+    private val searchGroupState: LiveData<String> get() = _searchGroupState
 
     private val _searchRecruitState = MutableLiveData("ALL")
-    val searchRecruitState: LiveData<String> get() = _searchRecruitState
+    private val searchRecruitState: LiveData<String> get() = _searchRecruitState
 
-    private val _checkLogin = MutableLiveData<Boolean>(false)
+    private val _checkLogin = MutableLiveData(false)
     val checkLogin: LiveData<Boolean> get() = _checkLogin
 
     init {
@@ -67,16 +67,12 @@ class SearchViewModel @Inject constructor(
                     postRepository.searchQuery(query, groupType, recruitType).sortedByDescending {
                         it.registeredDate
                     }.map {
-                        Log.d("qweew", "$it")
                         it.convertSearchModel()
                     }
                 _searchModel.postValue(result)
             } catch (e: Exception) {
                 Log.e("doSearch", "Error during search", e)
             }
-            Log.d("doSearch", "SearchValue = ${groupType} , ${recruitType}")
-            Log.d("doSearch", "SearchValueResult = ${_searchModel.value}")
-
         }
     }
 
@@ -89,7 +85,7 @@ class SearchViewModel @Inject constructor(
 
     suspend fun getPost(key: String): PostEntity? {
         val post = postRepository.getPost(key).getOrNull()
-        Log.d("getPost", "post = ${post}")
+        Log.d("getPost", "post = $post")
         return post
     }
 

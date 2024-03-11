@@ -22,10 +22,6 @@ sealed interface GroupData {
         val memberIds: List<String> = emptyList()
     ) : GroupData
 
-    data class GroupItem(
-        val group: GroupEntity?
-    ) : GroupData
-
     data class GroupAdd(
         val addGroupImage: Int,
         val addGroupText: String,

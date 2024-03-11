@@ -56,7 +56,7 @@ class EvaluationProjectViewModel @Inject constructor(
 
         // evalProjectData에 그룹에 속해있는 UserEntity 리스트로 넣어줌
         _evalProjectData.value = getUserEntity
-        Log.d("Evaluation","getGroupEntity = ${getUserEntity}")
+        Log.d("Evaluation","getGroupEntity = $getUserEntity")
     }
 
 //    private fun GroupEntity.convertUserEntity() =
