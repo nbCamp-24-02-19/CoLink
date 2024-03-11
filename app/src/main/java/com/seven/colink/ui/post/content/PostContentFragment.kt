@@ -19,6 +19,7 @@ import com.seven.colink.ui.post.content.viewmodel.PostContentViewModel
 import com.seven.colink.ui.post.register.post.model.PostErrorMessage
 import com.seven.colink.ui.post.register.post.PostFragment
 import com.seven.colink.ui.post.register.viewmodel.PostSharedViewModel
+import com.seven.colink.ui.userdetail.UserDetailActivity
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.showToast
 import com.seven.colink.util.status.GroupType
@@ -38,7 +39,14 @@ class PostContentFragment : Fragment() {
     private val postContentListAdapter by lazy {
         PostContentListAdapter(
             requireContext(),
-            onClickItem = { item -> },
+            onClickItem = { item ->
+                when(item) {
+                    is PostContentItem.MemberItem -> {
+                        startActivity(UserDetailActivity.newIntent(requireActivity(),item.userInfo.uid?: return@PostContentListAdapter))
+                    }
+                    else -> Unit
+                }
+            },
             onClickButton = { item, buttonUiState -> handleButtonClick(item, buttonUiState) },
             onClickView = { view ->
                 when (view.id) {

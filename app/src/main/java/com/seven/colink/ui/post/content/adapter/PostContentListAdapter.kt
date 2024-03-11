@@ -157,7 +157,7 @@ class PostContentListAdapter(
 
     class PostMemberInfoViewHolder(
         private val binding: ItemPostMemberInfoBinding,
-        onClickItem: (PostContentItem) -> Unit
+        private val onClickItem: (PostContentItem) -> Unit
     ) : PostViewHolder(binding.root) {
         override fun onBind(item: PostContentItem) {
             if (item is PostContentItem.MemberItem) {
@@ -166,6 +166,10 @@ class PostContentListAdapter(
                 item.userInfo.level?.let { binding.ivLevelDiaIcon.setLevelIcon(it) }
                 binding.tvLevelDiaIcon.text = item.userInfo.level.toString()
                 binding.tvUserIntroduction.text = item.userInfo.info
+
+                binding.root.setOnClickListener {
+                    onClickItem(item)
+                }
             }
         }
     }
