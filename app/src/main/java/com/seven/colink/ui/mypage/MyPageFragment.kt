@@ -125,7 +125,6 @@ class MyPageFragment : Fragment() {
             }
 
         }
-
         postadapter.studyClick = object : MyPagePostAdapter.StudyClick{
             override fun onClick(view: View, position: Int, item: MyPostItem.MyPageStudyItem) {
                 lifecycleScope.launch {
