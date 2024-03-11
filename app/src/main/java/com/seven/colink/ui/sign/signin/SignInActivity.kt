@@ -1,12 +1,11 @@
 package com.seven.colink.ui.sign.signin
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.seven.colink.R
 import com.seven.colink.databinding.ActivitySignInBinding
 import com.seven.colink.ui.main.MainActivity
 import com.seven.colink.ui.sign.signin.viewmodel.SignInViewModel
@@ -16,7 +15,6 @@ import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.status.DataResultStatus
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint

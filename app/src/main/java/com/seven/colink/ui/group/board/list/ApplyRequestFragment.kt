@@ -1,6 +1,7 @@
 package com.seven.colink.ui.group.board.list
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +14,6 @@ import com.seven.colink.databinding.FragmentApplyRequestBinding
 import com.seven.colink.ui.group.board.board.GroupBoardItem
 import com.seven.colink.ui.group.board.board.adapter.GroupBoardListAdapter
 import com.seven.colink.ui.group.viewmodel.GroupSharedViewModel
-import com.seven.colink.ui.post.register.PostActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -28,15 +28,10 @@ class ApplyRequestFragment : Fragment() {
     private val groupBoardListAdapter by lazy {
         GroupBoardListAdapter(
             requireContext(),
-            onClickItem = { _, item ->
+            onClickItem = {item ->
                 when (item) {
                     is GroupBoardItem.MemberItem -> {
                         // TODO 멤버 상세 화면 이동
-
-                    }
-
-                    is GroupBoardItem.TitleItem -> {
-                        // TODO 지원 요청 목록, 멤버 추천 화면 이동
 
                     }
 
@@ -46,16 +41,23 @@ class ApplyRequestFragment : Fragment() {
             onClickView = { item, view ->
                 when (view.id) {
                     R.id.bt_approval -> {
-                        lifecycleScope.launch {
+                        if (item is GroupBoardItem.MemberApplicationInfoItem) {
+                            lifecycleScope.launch {
+                                viewModel.onClickApproval(item.applicationInfo)
+                            }
                         }
                     }
 
                     R.id.bt_refuse -> {
-
+                        if (item is GroupBoardItem.MemberApplicationInfoItem) {
+                            lifecycleScope.launch {
+                                viewModel.onClickRefuse(item.applicationInfo)
+                            }
+                        }
                     }
-
                 }
             }
+
         )
     }
 

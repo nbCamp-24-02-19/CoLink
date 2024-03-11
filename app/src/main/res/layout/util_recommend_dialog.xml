@@ -9,7 +9,6 @@
         android:id="@+id/rc_recommend_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingHorizontal="24dp"
         android:background="@color/white"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 

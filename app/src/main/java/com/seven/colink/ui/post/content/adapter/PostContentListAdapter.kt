@@ -1,6 +1,7 @@
 package com.seven.colink.ui.post.content.adapter
 
 import android.content.Context
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,22 +20,22 @@ import com.seven.colink.databinding.ItemPostRecruitBinding
 import com.seven.colink.databinding.ItemPostSelectionTypeBinding
 import com.seven.colink.databinding.ItemPostSubTitleBinding
 import com.seven.colink.databinding.ItemUnknownBinding
-import com.seven.colink.ui.group.board.board.GroupBoardItem
 import com.seven.colink.ui.group.board.board.GroupContentViewType
 import com.seven.colink.ui.post.register.post.adapter.TagListAdapter
 import com.seven.colink.ui.post.register.post.model.TagListItem
-import com.seven.colink.ui.post.content.model.ContentOwnerButtonUiState
+import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.content.model.PostContentItem
 import com.seven.colink.util.setLevelIcon
 import com.seven.colink.util.status.ApplicationStatus
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.PostContentViewTypeItem
+import kotlin.math.log
 
 class PostContentListAdapter(
     private val context: Context,
-    private val onClickItem: (Int, PostContentItem) -> Unit,
-    private val onClickButton: (Int, PostContentItem, ContentOwnerButtonUiState) -> Unit,
-    private val onClickView: (PostContentItem, View) -> Unit,
+    private val onClickItem: (PostContentItem) -> Unit,
+    private val onClickButton: (PostContentItem, ContentButtonUiState) -> Unit,
+    private val onClickView: (View) -> Unit,
 
     ) : ListAdapter<PostContentItem, PostContentListAdapter.PostViewHolder>(
     object : DiffUtil.ItemCallback<PostContentItem>() {
@@ -53,9 +54,12 @@ class PostContentListAdapter(
                     oldItem.userInfo.uid == newItem.userInfo.uid
                 }
 
+                oldItem is PostContentItem.AdditionalInfo && newItem is PostContentItem.AdditionalInfo -> {
+                    oldItem.key == newItem.key
+                }
+
                 else -> oldItem == newItem
             }
-
 
         override fun areContentsTheSame(
             oldItem: PostContentItem,
@@ -88,7 +92,6 @@ class PostContentListAdapter(
             )
 
             PostContentViewTypeItem.RECRUIT -> PostRecruitItemViewHolder(
-                context,
                 ItemPostRecruitBinding.inflate(LayoutInflater.from(parent.context), parent, false),
                 onClickButton,
             )
@@ -141,7 +144,6 @@ class PostContentListAdapter(
             else -> PostUnknownViewHolder(
                 ItemUnknownBinding.inflate(LayoutInflater.from(parent.context), parent, false),
             )
-
         }
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
@@ -155,7 +157,7 @@ class PostContentListAdapter(
 
     class PostMemberInfoViewHolder(
         private val binding: ItemPostMemberInfoBinding,
-        onClickItem: (Int, PostContentItem) -> Unit
+        private val onClickItem: (PostContentItem) -> Unit
     ) : PostViewHolder(binding.root) {
         override fun onBind(item: PostContentItem) {
             if (item is PostContentItem.MemberItem) {
@@ -164,14 +166,17 @@ class PostContentListAdapter(
                 item.userInfo.level?.let { binding.ivLevelDiaIcon.setLevelIcon(it) }
                 binding.tvLevelDiaIcon.text = item.userInfo.level.toString()
                 binding.tvUserIntroduction.text = item.userInfo.info
+
+                binding.root.setOnClickListener {
+                    onClickItem(item)
+                }
             }
         }
     }
 
     class PostRecruitItemViewHolder(
-        private val context: Context,
         private val binding: ItemPostRecruitBinding,
-        private val onClickButton: (Int, PostContentItem, ContentOwnerButtonUiState) -> Unit
+        private val onClickButton: (PostContentItem, ContentButtonUiState) -> Unit
     ) : PostViewHolder(binding.root) {
         override fun onBind(item: PostContentItem) {
             if (item is PostContentItem.RecruitItem) {
@@ -181,17 +186,18 @@ class PostContentListAdapter(
                 binding.tvNowPersonnel.text = "${item.recruit.nowPersonnel}"
                 binding.tvMaxPersonnel.text = "${item.recruit.maxPersonnel}"
 
-                if (item.buttonUiState == ContentOwnerButtonUiState.User) {
+                if (item.buttonUiState == ContentButtonUiState.User) {
                     binding.btRecruit.isEnabled =
                         item.recruit.nowPersonnel < (item.recruit.maxPersonnel ?: -1)
                     binding.btRecruit.alpha = if (binding.btRecruit.isEnabled) 1.0f else 0.5f
                 }
 
-                binding.btRecruit.visibility = if (item.buttonUiState == ContentOwnerButtonUiState.Owner) View.GONE
-                else View.VISIBLE
+                binding.btRecruit.visibility =
+                    if (item.buttonUiState == ContentButtonUiState.User) View.VISIBLE
+                    else View.GONE
 
                 binding.btRecruit.setOnClickListener {
-                    onClickButton(adapterPosition, item, item.buttonUiState)
+                    onClickButton(item, item.buttonUiState)
                 }
             }
         }
@@ -201,7 +207,7 @@ class PostContentListAdapter(
         private val context: Context,
         private val binding: ItemPostContentBinding
     ) : PostViewHolder(binding.root) {
-        private val tagAdapter = TagListAdapter(onClickItem = { item -> })
+        private val tagAdapter = TagListAdapter(onClickItem = { _ -> })
 
         init {
             binding.recyclerViewTag.adapter = tagAdapter
@@ -243,7 +249,7 @@ class PostContentListAdapter(
         private val context: Context,
         private val binding: ItemGroupBoardTitleBinding,
         private val adapter: PostContentListAdapter,
-        private val onClickView: (PostContentItem, View) -> Unit,
+        private val onClickView: (View) -> Unit,
     ) : PostViewHolder(binding.root) {
         override fun onBind(item: PostContentItem) {
             if (item is PostContentItem.TitleItem) {
@@ -256,13 +262,19 @@ class PostContentListAdapter(
                     }
 
                     GroupContentViewType.MEMBER_ITEM -> {
-                        binding.ivApplyRequest.visibility = View.VISIBLE
-                        binding.tvApplyRequest.visibility = View.VISIBLE
+                        val buttonState = adapter.getButtonUiState()
+                        binding.ivApplyRequest.isVisible =
+                            buttonState == ContentButtonUiState.Manager
+                        binding.tvApplyRequest.isVisible =
+                            buttonState == ContentButtonUiState.Manager
 
-                        binding.ivNotify.isVisible = adapter.countPostApplyRequester() > 0
+                        binding.ivNotify.isVisible = buttonState == ContentButtonUiState.Manager &&
+                                adapter.countPostApplyRequester() > 0
 
                         binding.tvApplyRequest.setOnClickListener {
-                            onClickView(item, it)
+                            if (buttonState == ContentButtonUiState.Manager) {
+                                onClickView(it)
+                            }
                         }
                     }
 
@@ -298,25 +310,27 @@ class PostContentListAdapter(
     ) : PostViewHolder(binding.root) {
         override fun onBind(item: PostContentItem) {
             if (item is PostContentItem.AdditionalInfo) {
-                binding.tvPrecautions.text = item.precautions
-                binding.tvDescription.text = item.recruitInfo
+                binding.tvPrecautions.setText(item.precautions)
+                binding.tvDescription.setText(item.recruitInfo)
+                binding.tvPrecautions.inputType = InputType.TYPE_NULL
+                binding.tvDescription.inputType = InputType.TYPE_NULL
             }
         }
     }
 
+    private fun getButtonUiState(): ContentButtonUiState? {
+        val recruitItems = currentList.filterIsInstance<PostContentItem.RecruitItem>()
+        val specificRecruitItem: PostContentItem.RecruitItem? = recruitItems.firstOrNull()
 
-
-
-
-    private fun countPostApplyRequester(): Int {
-        val postItem = currentList.filterIsInstance<GroupBoardItem.PostItem>()
-
-        return postItem.sumOf { postItem ->
-            postItem.post.recruit?.sumOf { recruitInfo ->
-                recruitInfo.applicationInfos?.count { it.applicationStatus == ApplicationStatus.PENDING }
-                    ?: 0
-            } ?: 0
-        }
+        return specificRecruitItem?.buttonUiState
     }
 
+    private fun countPostApplyRequester(): Int {
+        val recruitItems = currentList.filterIsInstance<PostContentItem.RecruitItem>()
+
+        return recruitItems.sumOf { recruitItem ->
+            recruitItem.recruit.applicationInfos?.count { it.applicationStatus == ApplicationStatus.PENDING }
+                ?: 0
+        }
+    }
 }

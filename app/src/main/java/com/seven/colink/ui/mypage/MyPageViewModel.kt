@@ -5,20 +5,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.storage
 import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.repository.UserRepository
-import com.seven.colink.ui.sign.signup.model.SignUpUserModel
+import com.seven.colink.ui.mypage.MyPagePostModel
+import com.seven.colink.util.convert.convertToDaysAgo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.HashMap
-import java.util.Objects
 import javax.inject.Inject
 
 @HiltViewModel
@@ -51,7 +46,7 @@ class MyPageViewModel @Inject constructor(
         viewModelScope.launch {
             val result = postRepository.getPostByAuthId(authRepository.getCurrentUser().message)
             result.onSuccess { post ->
-                _userPosts.postValue(post.map { it.convertPostEntity() })
+                _userPosts.postValue(post.sortedByDescending{ it.registeredDate}.map { it.convertPostEntity() })
             }
         }
     }
@@ -100,7 +95,7 @@ class MyPageViewModel @Inject constructor(
         title = title,
         ing = status,
         grouptype = groupType,
-        time = registeredDate
+        time = registeredDate?.convertToDaysAgo()
     )
 
     // TODO: Implement the ViewModel

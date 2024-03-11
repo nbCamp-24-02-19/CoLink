@@ -42,7 +42,7 @@
     <string name="support_dialog_message">선택하신 %1$s %2$s에 지원하시겠습니까?</string>
     <string name="support_dialog_title">%1$s 지원</string>
 
-    <string name="successful_support">프로젝트에 성공적으로 지원하였습니다.</string>
+    <string name="successful_support">성공적으로 지원하였습니다.</string>
     <string name="already_supported">이미 지원한 상태입니다.</string>
     <string name="failed_error">예기치 못한 오류가 발생하였습니다.</string>
     <string name="no_support_list">지원 목록이 없습니다.</string>
