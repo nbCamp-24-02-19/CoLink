@@ -118,6 +118,8 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
                     handleRightButtonClick()
                 }
 
+                pager.setCurrentItem(1,false)
+
                 pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                     @RequiresApi(Build.VERSION_CODES.Q)
                     override fun onPageSelected(position: Int) {

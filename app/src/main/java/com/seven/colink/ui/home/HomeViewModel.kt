@@ -20,8 +20,11 @@ class HomeViewModel @Inject constructor(
 
     private val _topItems: MutableLiveData<List<TopItems>> = MutableLiveData(mutableListOf())
     val topItems: LiveData<List<TopItems>> get() = _topItems
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading : LiveData<Boolean> get() = _isLoading
 
     fun getTopItems(num : Int) {
+        _isLoading.value = true
         val getTopItemList: MutableList<TopItems> = mutableListOf()
 
         viewModelScope.launch {
@@ -41,9 +44,8 @@ class HomeViewModel @Inject constructor(
                     getTopItemList.add(lastItem)
                     getTopItemList.add(0, firstItem)
                 }
-
                 _topItems.value = getTopItemList
-
+                _isLoading.value = false
             }.onFailure { exception ->
                 Log.e("HomeViewModel","데이터를 불러오지 못 했습니다 $exception")
             }
