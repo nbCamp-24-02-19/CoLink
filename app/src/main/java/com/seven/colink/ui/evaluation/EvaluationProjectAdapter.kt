@@ -15,10 +15,10 @@ class EvaluationProjectAdapter(
 
     override fun createFragment(position: Int): Fragment {
         Log.d("Evaluation", "EvalAdapter <createFragment_Project>")
-        val user = mItems.filterIsInstance<EvaluationData.EvalProject>()
+//        val user = mItems.filterIsInstance<EvaluationData.EvalProject>()
 
-        return if (position in user.indices){
-            EvaluationProjectFragment.newInstanceProject(user[position])
+        return if (position in mItems.indices){
+            EvaluationProjectFragment.newInstanceProject(mItems[position])
         }
         else throw IllegalArgumentException("Invalid position $position")
     }
