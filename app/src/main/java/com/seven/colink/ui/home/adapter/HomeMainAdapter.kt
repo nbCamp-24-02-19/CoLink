@@ -4,6 +4,8 @@ import android.os.Build
 import android.os.Handler
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -80,29 +82,40 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
         val pager = binding.vpHomeTop
         var pos = binding.tvHomeTopCurrent
         val sum = binding.tvHomeTopSum
-        private val left = binding.btnHomeBack
-        private val right = binding.btnHomeFront
+
+        private lateinit var left : ImageView
+        private lateinit var right : ImageView
+
+        private var currentState = 0
+        private var currentPos = 0
+        private var ignoreCallback = false
+
+        private val handler = Handler()
+        private val autoScrollRunnable = object : Runnable {
+            override fun run() {
+                val nextPos = (currentPos + 1 ) % 7
+                pos.text = (nextPos + 1).toString()
+                ignoreCallback = true
+                pager.setCurrentItem(nextPos, true)
+                ignoreCallback = false
+                currentPos = nextPos
+                handler.postDelayed(this, AUTO_SCROLL_DELAY + PAGE_SCROLL_DELAY)
+            }
+        }
 
         init {
             pager.post {
+                left = binding.btnHomeBack
+                right = binding.btnHomeFront
+
+                left.setOnClickListener {
+                    handleLeftButtonClick()
+                }
+                right.setOnClickListener {
+                    handleRightButtonClick()
+                }
+
                 pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-                    var currentState = 0
-                    var currentPos = 0
-                    var ignoreCallback = false
-
-                    val handler = Handler()
-                    val autoScrollRunnable = object : Runnable {
-                        override fun run() {
-                            val nextPos = (currentPos + 1 ) % 7
-                            pos.text = (nextPos + 1).toString()
-                            ignoreCallback = true
-                            pager.setCurrentItem(nextPos, true)
-                            ignoreCallback = false
-                            currentPos = nextPos
-                            handler.postDelayed(this, AUTO_SCROLL_DELAY + PAGE_SCROLL_DELAY)
-                        }
-                    }
-
                     private fun startAutoScroll() {
                         handler.removeCallbacks(autoScrollRunnable)
                         handler.postDelayed(autoScrollRunnable, AUTO_SCROLL_DELAY + PAGE_SCROLL_DELAY)
@@ -113,26 +126,6 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
                         currentPos = position
                         pos.text = (currentPos + 1).toString()
                         super.onPageSelected(position)
-
-                        left.setOnClickListener {
-                            handler.removeCallbacks(autoScrollRunnable)
-                            if (currentPos == 0) {
-                                pager.setCurrentItem(6,true)
-                            }else{
-                                pager.setCurrentItem(currentPos -1,true)
-                            }
-                            handler.postDelayed(autoScrollRunnable, AUTO_SCROLL_DELAY + PAGE_SCROLL_DELAY)
-                        }
-
-                        right.setOnClickListener {
-                            handler.removeCallbacks(autoScrollRunnable)
-                            if (currentPos == 6) {
-                                pager.setCurrentItem(0,true)
-                            }else{
-                                pager.setCurrentItem(currentPos +1, true)
-                            }
-                            handler.postDelayed(autoScrollRunnable, AUTO_SCROLL_DELAY + PAGE_SCROLL_DELAY)
-                        }
                         startAutoScroll()
                     }
 
@@ -173,6 +166,25 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
                     }
                 })
             }
+        }
+        private fun handleLeftButtonClick() {
+            handler.removeCallbacks(autoScrollRunnable)
+            if (currentPos == 0) {
+                pager.setCurrentItem(6, true)
+            } else {
+                pager.setCurrentItem(currentPos - 1, true)
+            }
+            handler.postDelayed(autoScrollRunnable, AUTO_SCROLL_DELAY + PAGE_SCROLL_DELAY)
+        }
+
+        private fun handleRightButtonClick() {
+            handler.removeCallbacks(autoScrollRunnable)
+            if (currentPos == 6) {
+                pager.setCurrentItem(0, true)
+            } else {
+                pager.setCurrentItem(currentPos + 1, true)
+            }
+            handler.postDelayed(autoScrollRunnable, AUTO_SCROLL_DELAY + PAGE_SCROLL_DELAY)
         }
     }
 
