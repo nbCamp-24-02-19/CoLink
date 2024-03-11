@@ -4,6 +4,8 @@ import android.os.Build
 import android.os.Handler
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -12,7 +14,6 @@ import androidx.viewpager2.widget.ViewPager2
 import com.seven.colink.databinding.ItemHomeHeaderBinding
 import com.seven.colink.databinding.ItemHomeTopViewpagerBinding
 import com.seven.colink.ui.home.HomeAdapterItems
-import kotlin.math.abs
 
 class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUtil) {
     object HomeMainDiffUtil : DiffUtil.ItemCallback<HomeAdapterItems>() {
@@ -57,6 +58,9 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
             with(holder as TopViewHolder) {
                 pager.adapter = item.adapter
                 sum.text = "7"
+                pager.post{
+                    pager.setCurrentItem(1,false)
+                }
             }
         }
         if (item is HomeAdapterItems.Header) {
@@ -81,76 +85,54 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
         val pager = binding.vpHomeTop
         var pos = binding.tvHomeTopCurrent
         val sum = binding.tvHomeTopSum
-        private val left = binding.btnHomeBack
-        private val right = binding.btnHomeFront
+
+        private lateinit var left : ImageView
+        private lateinit var right : ImageView
+
+        private var currentState = 0
+        private var currentPos = 0
+        private var ignoreCallback = false
+
+        private val handler = Handler()
+        private val autoScrollRunnable = object : Runnable {
+            override fun run() {
+                val nextPos = (currentPos + 1 ) % 7
+                pos.text = (nextPos + 1).toString()
+                ignoreCallback = true
+                pager.setCurrentItem(nextPos, true)
+                ignoreCallback = false
+                currentPos = nextPos
+                handler.postDelayed(this, AUTO_SCROLL_DELAY + PAGE_SCROLL_DELAY)
+            }
+        }
 
         init {
             pager.post {
-                pager.offscreenPageLimit = 1
-                pager.setPageTransformer { page, position ->
-                    val normalPosition = abs(position)
-                    page.translationX = -normalPosition * 0.5f * page.width
-                    page.alpha = 1 - normalPosition
+                left = binding.btnHomeBack
+                right = binding.btnHomeFront
+
+                left.setOnClickListener {
+                    handleLeftButtonClick()
+                }
+                right.setOnClickListener {
+                    handleRightButtonClick()
                 }
 
+                pager.setCurrentItem(1,false)
+
                 pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-                    var currentState = 0
-                    var currentPos = 0
-                    var ignoreCallback = false
-
-                    val handler = Handler()
-                    val autoScrollRunnable = object : Runnable {
-                        override fun run() {
-                            val nextPos = (currentPos + 1) % 7
-                            pos.text = (nextPos + 1).toString()
-                            ignoreCallback = true
-                            pager.setCurrentItem(nextPos, true)
-                            ignoreCallback = false
-                            currentPos = nextPos
-                            handler.postDelayed(this, AUTO_SCROLL_DELAY + PAGE_SCROLL_DELAY)
-                        }
-                    }
-
-                    private fun startAutoScroll() {
-                        handler.removeCallbacks(autoScrollRunnable)
-                        handler.postDelayed(
-                            autoScrollRunnable,
-                            AUTO_SCROLL_DELAY + PAGE_SCROLL_DELAY
-                        )
-                    }
-
                     @RequiresApi(Build.VERSION_CODES.Q)
                     override fun onPageSelected(position: Int) {
                         currentPos = position
-                        pos.text = (currentPos + 1).toString()
+                        pos.text = currentPos.toString()
                         super.onPageSelected(position)
-
-                        left.setOnClickListener {
-                            handler.removeCallbacks(autoScrollRunnable)
-                            if (currentPos == 0) {
-                                pager.setCurrentItem(6, true)
-                            } else {
-                                pager.setCurrentItem(currentPos - 1, true)
-                            }
-                            handler.postDelayed(
-                                autoScrollRunnable,
-                                AUTO_SCROLL_DELAY + PAGE_SCROLL_DELAY
-                            )
-                        }
-
-                        right.setOnClickListener {
-                            handler.removeCallbacks(autoScrollRunnable)
-                            if (currentPos == 6) {
-                                pager.setCurrentItem(0, true)
-                            } else {
-                                pager.setCurrentItem(currentPos + 1, true)
-                            }
-                            handler.postDelayed(
-                                autoScrollRunnable,
-                                AUTO_SCROLL_DELAY + PAGE_SCROLL_DELAY
-                            )
-                        }
                         startAutoScroll()
+
+                        if (currentPos == 0) {
+                            pager.setCurrentItem(7,false)
+                        }else if (currentPos == 8) {
+                            pager.setCurrentItem(1,false)
+                        }
                     }
 
                     override fun onPageScrollStateChanged(state: Int) {
@@ -159,7 +141,7 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
                         super.onPageScrollStateChanged(state)
                     }
 
-                    fun handleScrollState(state: Int) {
+                    private fun handleScrollState(state: Int) {
                         if (state == ViewPager2.SCROLL_STATE_DRAGGING) {
                             handler.removeCallbacks(autoScrollRunnable)
                         }
@@ -167,20 +149,17 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
                         if (state == ViewPager2.SCROLL_STATE_IDLE && currentState == ViewPager2.SCROLL_STATE_DRAGGING) {
                             handler.removeCallbacks(autoScrollRunnable)
                             setNextItem()
-                            handler.postDelayed(
-                                autoScrollRunnable,
-                                AUTO_SCROLL_DELAY + PAGE_SCROLL_DELAY
-                            )
+                            handler.postDelayed(autoScrollRunnable, AUTO_SCROLL_DELAY + PAGE_SCROLL_DELAY)
                         }
                     }
 
-                    fun setNextItem() {
-                        if (currentState != ViewPager2.SCROLL_STATE_SETTLING) {
+                    private fun setNextItem() {
+                        if (currentState != ViewPager2.SCROLL_STATE_SETTLING){
                             handleSetNextItem()
                         }
                     }
 
-                    fun handleSetNextItem() {
+                    private fun handleSetNextItem() {
                         val lastPosition = pager.adapter?.itemCount?.minus(1)
 
                         if (currentPos == 0) {
@@ -191,8 +170,31 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
                             pager.setCurrentItem(0, true)
                         }
                     }
+                    private fun startAutoScroll() {
+                        handler.removeCallbacks(autoScrollRunnable)
+                        handler.postDelayed(autoScrollRunnable, AUTO_SCROLL_DELAY + PAGE_SCROLL_DELAY)
+                    }
                 })
             }
+        }
+        private fun handleLeftButtonClick() {
+            handler.removeCallbacks(autoScrollRunnable)
+            if (currentPos == 1) {
+                pager.setCurrentItem(7, true)
+            } else {
+                pager.setCurrentItem(currentPos - 1, true)
+            }
+            handler.postDelayed(autoScrollRunnable, AUTO_SCROLL_DELAY + PAGE_SCROLL_DELAY)
+        }
+
+        private fun handleRightButtonClick() {
+            handler.removeCallbacks(autoScrollRunnable)
+            if (currentPos == 7) {
+                pager.setCurrentItem(1, true)
+            } else {
+                pager.setCurrentItem(currentPos + 1, true)
+            }
+            handler.postDelayed(autoScrollRunnable, AUTO_SCROLL_DELAY + PAGE_SCROLL_DELAY)
         }
     }
 
