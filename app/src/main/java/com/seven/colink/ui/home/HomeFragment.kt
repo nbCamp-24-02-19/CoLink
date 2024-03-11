@@ -36,7 +36,6 @@ class HomeFragment : Fragment() {
         HomeAdapterItems.TopView(TopViewPagerAdapter()),
         HomeAdapterItems.Header("그룹 추천")
     )
-    private val childProject by lazy { HomeProjectFragment() }
 
     override fun onCreateView(
         inflater: LayoutInflater,

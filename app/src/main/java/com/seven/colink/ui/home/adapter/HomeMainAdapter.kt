@@ -58,6 +58,9 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
             with(holder as TopViewHolder) {
                 pager.adapter = item.adapter
                 sum.text = "7"
+                pager.post{
+                    pager.setCurrentItem(1,false)
+                }
             }
         }
         if (item is HomeAdapterItems.Header) {
@@ -116,17 +119,18 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
                 }
 
                 pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-                    private fun startAutoScroll() {
-                        handler.removeCallbacks(autoScrollRunnable)
-                        handler.postDelayed(autoScrollRunnable, AUTO_SCROLL_DELAY + PAGE_SCROLL_DELAY)
-                    }
-
                     @RequiresApi(Build.VERSION_CODES.Q)
                     override fun onPageSelected(position: Int) {
                         currentPos = position
-                        pos.text = (currentPos + 1).toString()
+                        pos.text = currentPos.toString()
                         super.onPageSelected(position)
                         startAutoScroll()
+
+                        if (currentPos == 0) {
+                            pager.setCurrentItem(7,false)
+                        }else if (currentPos == 8) {
+                            pager.setCurrentItem(1,false)
+                        }
                     }
 
                     override fun onPageScrollStateChanged(state: Int) {
@@ -135,7 +139,7 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
                         super.onPageScrollStateChanged(state)
                     }
 
-                    fun handleScrollState(state: Int) {
+                    private fun handleScrollState(state: Int) {
                         if (state == ViewPager2.SCROLL_STATE_DRAGGING) {
                             handler.removeCallbacks(autoScrollRunnable)
                         }
@@ -147,13 +151,13 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
                         }
                     }
 
-                    fun setNextItem() {
+                    private fun setNextItem() {
                         if (currentState != ViewPager2.SCROLL_STATE_SETTLING){
                             handleSetNextItem()
                         }
                     }
 
-                    fun handleSetNextItem() {
+                    private fun handleSetNextItem() {
                         val lastPosition = pager.adapter?.itemCount?.minus(1)
 
                         if (currentPos == 0) {
@@ -164,13 +168,17 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
                             pager.setCurrentItem(0, true)
                         }
                     }
+                    private fun startAutoScroll() {
+                        handler.removeCallbacks(autoScrollRunnable)
+                        handler.postDelayed(autoScrollRunnable, AUTO_SCROLL_DELAY + PAGE_SCROLL_DELAY)
+                    }
                 })
             }
         }
         private fun handleLeftButtonClick() {
             handler.removeCallbacks(autoScrollRunnable)
-            if (currentPos == 0) {
-                pager.setCurrentItem(6, true)
+            if (currentPos == 1) {
+                pager.setCurrentItem(7, true)
             } else {
                 pager.setCurrentItem(currentPos - 1, true)
             }
@@ -179,8 +187,8 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
 
         private fun handleRightButtonClick() {
             handler.removeCallbacks(autoScrollRunnable)
-            if (currentPos == 6) {
-                pager.setCurrentItem(0, true)
+            if (currentPos == 7) {
+                pager.setCurrentItem(1, true)
             } else {
                 pager.setCurrentItem(currentPos + 1, true)
             }
