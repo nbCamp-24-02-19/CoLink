@@ -13,13 +13,16 @@ import coil.load
 import com.seven.colink.R
 import com.seven.colink.databinding.ItemGroupBoardContentBinding
 import com.seven.colink.databinding.ItemGroupBoardTitleBinding
+import com.seven.colink.databinding.ItemPostMemberInfoBinding
 import com.seven.colink.databinding.ItemPostMessageBinding
 import com.seven.colink.databinding.ItemPostPaddingBinding
 import com.seven.colink.databinding.ItemPostSubTitleBinding
+import com.seven.colink.databinding.ItemPostTitleBinding
 import com.seven.colink.databinding.ItemUnknownBinding
 import com.seven.colink.databinding.UtilMemberInfoDialogItemBinding
 import com.seven.colink.ui.group.board.board.GroupBoardItem
 import com.seven.colink.ui.group.board.board.GroupContentViewType
+import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.register.post.adapter.TagListAdapter
 import com.seven.colink.ui.post.register.post.model.TagListItem
 import com.seven.colink.util.convert.convertCalculateDays
@@ -27,10 +30,11 @@ import com.seven.colink.util.setLevelIcon
 import com.seven.colink.util.status.ApplicationStatus
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
+import kotlin.math.log
 
 class GroupBoardListAdapter(
     private val context: Context,
-    private val onClickItem: (Int, GroupBoardItem) -> Unit,
+    private val onClickItem: (GroupBoardItem) -> Unit,
     private val onClickView: (GroupBoardItem, View) -> Unit,
 ) : ListAdapter<GroupBoardItem, GroupBoardListAdapter.GroupViewHolder>(
     object : DiffUtil.ItemCallback<GroupBoardItem>() {
@@ -48,6 +52,10 @@ class GroupBoardListAdapter(
                 }
 
                 oldItem is GroupBoardItem.MemberItem && newItem is GroupBoardItem.MemberItem -> {
+                    oldItem.userInfo.uid == newItem.userInfo.uid
+                }
+
+                oldItem is GroupBoardItem.MemberApplicationInfoItem && newItem is GroupBoardItem.MemberApplicationInfoItem -> {
                     oldItem.userInfo.uid == newItem.userInfo.uid
                 }
 
@@ -78,12 +86,21 @@ class GroupBoardListAdapter(
             )
 
             GroupContentViewType.MEMBER_ITEM -> MemberItemViewHolder(
-                UtilMemberInfoDialogItemBinding.inflate(
+                ItemPostMemberInfoBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
                 ),
                 onClickItem,
+            )
+
+            GroupContentViewType.APPLICATION_INFO -> MemberApplicationInfoItemViewHolder(
+                UtilMemberInfoDialogItemBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                ),
+                onClickView,
             )
 
             GroupContentViewType.POST_ITEM -> PostItemViewHolder(
@@ -100,6 +117,15 @@ class GroupBoardListAdapter(
                 ),
                 this,
                 onClickView
+            )
+
+            GroupContentViewType.SINGLE_TITLE -> GroupTitleSingleViewHolder(
+                context,
+                ItemPostTitleBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
             )
 
             GroupContentViewType.SUB_TITLE -> GroupSubTitleViewHolder(
@@ -131,22 +157,25 @@ class GroupBoardListAdapter(
         is GroupBoardItem.GroupItem -> GroupContentViewType.GROUP_ITEM
         is GroupBoardItem.PostItem -> GroupContentViewType.POST_ITEM
         is GroupBoardItem.MemberItem -> GroupContentViewType.MEMBER_ITEM
+        is GroupBoardItem.MemberApplicationInfoItem -> GroupContentViewType.APPLICATION_INFO
         is GroupBoardItem.TitleItem -> GroupContentViewType.TITLE
+        is GroupBoardItem.TitleSingleItem -> GroupContentViewType.SINGLE_TITLE
         is GroupBoardItem.SubTitleItem -> GroupContentViewType.SUB_TITLE
         is GroupBoardItem.MessageItem -> GroupContentViewType.MESSAGE
         else -> GroupContentViewType.UNKNOWN
     }.ordinal
 
-
     class GroupItemViewHolder(
         private val context: Context,
         private val binding: ItemGroupBoardContentBinding,
-        private val onClickItem: (Int, GroupBoardItem) -> Unit
+        private val onClickItem: (GroupBoardItem) -> Unit
     ) : GroupViewHolder(binding.root) {
-        private val tagAdapter = TagListAdapter {_ -> }
+        private val tagAdapter = TagListAdapter { _ -> }
+
         init {
             binding.recyclerViewTags.adapter = tagAdapter
         }
+
         override fun onBind(item: GroupBoardItem) {
             if (item !is GroupBoardItem.GroupItem) return
 
@@ -158,7 +187,7 @@ class GroupBoardListAdapter(
                 btStatus.visibility =
                     if (item.status != ProjectStatus.END) View.GONE else View.VISIBLE
                 btStatus.isEnabled = item.isOwner ?: false
-                btStatus.setOnClickListener { onClickItem(adapterPosition, item) }
+                btStatus.setOnClickListener { onClickItem(item) }
 
                 tvTeamName.text = item.teamName
                 tvDescription.text = item.description
@@ -181,30 +210,49 @@ class GroupBoardListAdapter(
         }
     }
 
-
     class MemberItemViewHolder(
-        private val binding: UtilMemberInfoDialogItemBinding,
-        private val onClickItem: (Int, GroupBoardItem) -> Unit,
+        private val binding: ItemPostMemberInfoBinding,
+        private val onClickItem: (GroupBoardItem) -> Unit,
     ) : GroupViewHolder(binding.root) {
         override fun onBind(item: GroupBoardItem) {
             if (item is GroupBoardItem.MemberItem) {
-                binding.includePostMemberInfo.tvUserName.text = item.userInfo.name
-                binding.includePostMemberInfo.tvUserGrade.text = item.userInfo.grade.toString()
-                item.userInfo.level?.let { binding.includePostMemberInfo.ivLevelDiaIcon.setLevelIcon(it) }
-                binding.includePostMemberInfo.tvLevelDiaIcon.text = item.userInfo.level.toString()
-                binding.includePostMemberInfo.tvUserIntroduction.text = item.userInfo.info
-                binding.root.setOnClickListener { onClickItem(adapterPosition, item) }
-
-                binding.includeDialogButton.btApproval.isVisible = item.isManagementButtonVisible
-                binding.includeDialogButton.btRefuse.isVisible = item.isManagementButtonVisible
+                binding.tvUserName.text = item.userInfo.name
+                binding.tvUserGrade.text = item.userInfo.grade.toString()
+                item.userInfo.level?.let { binding.ivLevelDiaIcon.setLevelIcon(it) }
+                binding.tvLevelDiaIcon.text = item.userInfo.level.toString()
+                binding.tvUserIntroduction.text = item.userInfo.info
+                binding.root.setOnClickListener { onClickItem(item) }
             }
         }
     }
 
+    class MemberApplicationInfoItemViewHolder(
+        private val binding: UtilMemberInfoDialogItemBinding,
+        private val onClickView: (GroupBoardItem, View) -> Unit,
+    ) : GroupViewHolder(binding.root) {
+        override fun onBind(item: GroupBoardItem) {
+            if (item is GroupBoardItem.MemberApplicationInfoItem) {
+
+                binding.includePostMemberInfo.tvUserName.text = item.userInfo.name
+                binding.includePostMemberInfo.tvUserGrade.text = item.userInfo.grade.toString()
+                item.userInfo.level?.let {
+                    binding.includePostMemberInfo.ivLevelDiaIcon.setLevelIcon(
+                        it
+                    )
+                }
+                binding.includePostMemberInfo.tvLevelDiaIcon.text = item.userInfo.level.toString()
+                binding.includePostMemberInfo.tvUserIntroduction.text = item.userInfo.info
+                binding.root.setOnClickListener { onClickView(item, it) }
+                binding.includeDialogButton.btApproval.setOnClickListener {
+                    onClickView(item, it)
+                }
+            }
+        }
+    }
 
     class PostItemViewHolder(
         private val binding: ItemPostPaddingBinding,
-        private val onClickItem: (Int, GroupBoardItem) -> Unit
+        private val onClickItem: (GroupBoardItem) -> Unit
     ) : GroupViewHolder(binding.root) {
         override fun onBind(item: GroupBoardItem) {
             if (item is GroupBoardItem.PostItem) {
@@ -225,7 +273,7 @@ class GroupBoardListAdapter(
                 binding.tvHomeBottomKind.text =
                     if (formattedTags?.isNotEmpty() == true) "# $formattedTags" else ""
 
-                binding.root.setOnClickListener { onClickItem(adapterPosition, item) }
+                binding.root.setOnClickListener { onClickItem(item) }
             }
         }
     }
@@ -253,13 +301,19 @@ class GroupBoardListAdapter(
                     }
 
                     GroupContentViewType.MEMBER_ITEM -> {
-                        binding.ivApplyRequest.visibility = View.VISIBLE
-                        binding.tvApplyRequest.visibility = View.VISIBLE
+                        val buttonState = item.buttonUiState
+                        binding.ivApplyRequest.isVisible =
+                            buttonState == ContentButtonUiState.Manager
+                        binding.tvApplyRequest.isVisible =
+                            buttonState == ContentButtonUiState.Manager
 
-                        binding.ivNotify.isVisible = adapter.countPostApplyRequester() > 0
+                        binding.ivNotify.isVisible = buttonState == ContentButtonUiState.Manager &&
+                                adapter.countPostApplyRequester() > 0
 
                         binding.tvApplyRequest.setOnClickListener {
-                            onClickView(item, it)
+                            if (buttonState == ContentButtonUiState.Manager) {
+                                onClickView(item, it)
+                            }
                         }
                     }
 
@@ -268,7 +322,6 @@ class GroupBoardListAdapter(
             }
         }
     }
-
 
     class GroupSubTitleViewHolder(
         private val binding: ItemPostSubTitleBinding
@@ -290,8 +343,16 @@ class GroupBoardListAdapter(
         }
     }
 
-    private fun countMemberItems(): Int =
-        currentList.filterIsInstance<GroupBoardItem.MemberItem>().size
+    class GroupTitleSingleViewHolder(
+        private val context: Context,
+        private val binding: ItemPostTitleBinding
+    ) : GroupViewHolder(binding.root) {
+        override fun onBind(item: GroupBoardItem) {
+            if (item is GroupBoardItem.TitleSingleItem) {
+                binding.tvTitle.text = context.getString(item.titleRes)
+            }
+        }
+    }
 
     private fun countPostApplyRequester(): Int {
         val postItem = currentList.filterIsInstance<GroupBoardItem.PostItem>()
@@ -305,7 +366,3 @@ class GroupBoardListAdapter(
     }
 
 }
-
-
-
-

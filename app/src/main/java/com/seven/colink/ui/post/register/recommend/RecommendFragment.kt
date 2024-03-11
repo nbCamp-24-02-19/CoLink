@@ -17,8 +17,10 @@ import com.seven.colink.ui.post.register.recommend.adapter.RecommendAdapter
 import com.seven.colink.ui.post.register.recommend.viewmodel.RecommendViewModel
 import com.seven.colink.ui.post.register.setgroup.SetGroupFragment
 import com.seven.colink.ui.post.register.viewmodel.PostSharedViewModel
+import com.seven.colink.ui.userdetail.UserDetailActivity
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
+import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.UiState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -35,6 +37,7 @@ class RecommendFragment: Fragment() {
         RecommendAdapter(
             inviteGroup = {
                 /*Todo 상대방에게 게시물 페이지로 이동시켜주는 알림 생성 전송되면 성공 메세지*/
+                          Unit
             },
             onChat = {
                 viewModel.setChatRoom(it)
@@ -44,6 +47,9 @@ class RecommendFragment: Fragment() {
                     replace(R.id.fg_activity_post, SetGroupFragment())
                     commit()
                 }
+            },
+            onDetail = {
+                startActivity(UserDetailActivity.newIntent(requireActivity(),it))
             }
         )
     }
@@ -70,12 +76,24 @@ class RecommendFragment: Fragment() {
                 }
             }
         }
+        lifecycleScope.launch {
+            groupType.collect {
+                if (it != GroupType.PROJECT) {
+                    parentFragmentManager.beginTransaction().apply {
+                        replace(R.id.fg_activity_post, SetGroupFragment())
+                        commit()
+                    }
+                }
+            }
+        }
     }
 
     private fun initViewModel() = with(viewModel) {
         lifecycleScope.launch {
             chatRoomEvent.collect {
+                startActivity(
                 ChatRoomActivity.newIntent(requireContext(),it.key, it.title.toString())
+                )
             }
         }
 

@@ -67,7 +67,6 @@ class SearchViewModel @Inject constructor(
                     postRepository.searchQuery(query, groupType, recruitType).sortedByDescending {
                         it.registeredDate
                     }.map {
-                        Log.d("qweew", "$it")
                         it.convertSearchModel()
                     }
                 _searchModel.postValue(result)

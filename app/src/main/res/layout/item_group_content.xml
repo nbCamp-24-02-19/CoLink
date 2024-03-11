@@ -82,27 +82,6 @@
         android:background="@color/bg"
         app:layout_constraintTop_toBottomOf="@id/et_description" />
 
-    <TextView
-        android:id="@+id/tv_project_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="12dp"
-        android:text="프로젝트 진행 여부"
-        android:textStyle="bold"
-        android:textColor="@color/main_color"
-        android:textSize="12sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/view_description_line" />
-
-    <Switch
-        android:id="@+id/switch_project_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        app:layout_constraintBottom_toBottomOf="@id/tv_project_status"
-        app:layout_constraintStart_toEndOf="@id/tv_project_status"
-        app:layout_constraintTop_toTopOf="@id/tv_project_status" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_tags"
@@ -113,7 +92,7 @@
         android:orientation="horizontal"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_project_status"
+        app:layout_constraintTop_toBottomOf="@id/view_description_line"
         tools:listitem="@layout/item_list_post_tag" />
 
     <TextView

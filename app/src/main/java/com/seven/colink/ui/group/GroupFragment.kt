@@ -70,21 +70,23 @@ class GroupFragment : Fragment() {
         rvGroupRecyclerView.layoutManager = LinearLayoutManager(requireContext())
     }
 
-    private fun setObserve() {
-        groupViewModel.groupData.observe(viewLifecycleOwner) {
-            groupViewModel.getCurrentUser()
-            groupViewModel.checkLogin.value
-            groupViewModel.joinList.value
-            groupAdapter.submitList(it)
-        }
-    }
-
     private fun initViewModel(){
         groupViewModel.getCurrentUser()
-        groupViewModel.itemUpdate()
         lifecycleScope.launch {
             groupViewModel.getInPost()
         }
+    }
+
+    private fun setObserve() {
+
+        groupViewModel.joinList.observe(viewLifecycleOwner) {
+            groupViewModel.itemUpdate()
+        }
+
+        groupViewModel.groupData.observe(viewLifecycleOwner) {
+            groupAdapter.submitList(it)
+        }
+
     }
 
     private fun handleItemClick(item: GroupData) {
