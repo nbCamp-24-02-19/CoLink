@@ -1,9 +1,10 @@
 package com.seven.colink.ui.post.content.model
 
 
-sealed interface ContentOwnerButtonUiState {
-    data object Owner : ContentOwnerButtonUiState
-    data object User : ContentOwnerButtonUiState
+sealed interface ContentButtonUiState {
+    data object Manager : ContentButtonUiState
+    data object User : ContentButtonUiState
+    data object Unknown : ContentButtonUiState
 }
 
 data class DialogUiState(

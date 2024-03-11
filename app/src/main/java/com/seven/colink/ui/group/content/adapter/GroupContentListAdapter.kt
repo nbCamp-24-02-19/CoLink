@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.seven.colink.R
 import com.seven.colink.databinding.ItemGroupContentBinding
+import com.seven.colink.databinding.ItemGroupProjectStatusBinding
 import com.seven.colink.databinding.ItemUnknownBinding
 import com.seven.colink.ui.group.board.board.GroupContentViewType
 import com.seven.colink.ui.group.content.GroupContentItem
@@ -27,7 +28,7 @@ class GroupContentListAdapter(
     private val onClickItem: (GroupContentItem, View) -> Unit,
     private val onGroupImageClick: (String) -> Unit,
     private val tagAdapterOnClickItem: (Int, TagListItem) -> Unit,
-    private val onSwitchChanged: (Boolean) -> Unit
+    private val onChangeStatus: (ProjectStatus) -> Unit
 ) : ListAdapter<GroupContentItem, GroupContentListAdapter.GroupContentViewHolder>(
     object : DiffUtil.ItemCallback<GroupContentItem>() {
         override fun areItemsTheSame(
@@ -37,6 +38,10 @@ class GroupContentListAdapter(
             when {
                 oldItem is GroupContentItem.GroupContent && newItem is GroupContentItem.GroupContent -> {
                     oldItem.key == newItem.key
+                }
+
+                oldItem is GroupContentItem.GroupProjectStatus && newItem is GroupContentItem.GroupProjectStatus -> {
+                    oldItem.status == newItem.status
                 }
 
                 else -> oldItem == newItem
@@ -54,9 +59,10 @@ class GroupContentListAdapter(
     }
 
     override fun getItemViewType(position: Int): Int = when (getItem(position)) {
-        is GroupContentItem.GroupContent -> GroupContentViewType.GROUP_ITEM
-        else -> GroupContentViewType.UNKNOWN
-    }.ordinal
+        is GroupContentItem.GroupContent -> GroupContentViewType.GROUP_ITEM.ordinal
+        is GroupContentItem.GroupProjectStatus -> GroupContentViewType.PROJECT_STATUS.ordinal
+        else -> GroupContentViewType.UNKNOWN.ordinal
+    }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -72,8 +78,17 @@ class GroupContentListAdapter(
                 ),
                 onClickItem,
                 onGroupImageClick,
-                tagAdapterOnClickItem,
-                onSwitchChanged
+                tagAdapterOnClickItem
+            )
+
+            GroupContentViewType.PROJECT_STATUS -> ProjectStatusItemViewHolder(
+                context,
+                ItemGroupProjectStatusBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                ),
+                onChangeStatus,
             )
 
             else -> GroupUnknownViewHolder(
@@ -81,12 +96,11 @@ class GroupContentListAdapter(
             )
         }
 
-
-    override fun onBindViewHolder(
-        holder: GroupContentViewHolder,
-        position: Int
-    ) {
-        holder.onBind(getItem(position))
+    override fun onBindViewHolder(holder: GroupContentViewHolder, position: Int) {
+        val item = getItem(position)
+        if (item != null) {
+            holder.onBind(item)
+        }
     }
 
     class GroupContentItemViewHolder(
@@ -94,19 +108,15 @@ class GroupContentListAdapter(
         private val binding: ItemGroupContentBinding,
         private val onClickItem: (GroupContentItem, View) -> Unit,
         private val onGroupImageClick: (String) -> Unit,
-        private val tagAdapterOnClickItem: (Int, TagListItem) -> Unit,
-        private val onSwitchChanged: (Boolean) -> Unit
+        private val tagAdapterOnClickItem: (Int, TagListItem) -> Unit
     ) : GroupContentViewHolder(binding.root) {
 
-        private val tagAdapter = TagListAdapter { item -> tagAdapterOnClickItem(adapterPosition, item) }
+        private val tagAdapter =
+            TagListAdapter { item -> tagAdapterOnClickItem(adapterPosition, item) }
 
         init {
             binding.recyclerViewTags.adapter = tagAdapter
             initializeEditorActionListener()
-            binding.switchProjectStatus.setOnCheckedChangeListener { _, isChecked ->
-
-                onSwitchChanged(isChecked)
-            }
         }
 
         private fun initializeEditorActionListener() {
@@ -128,18 +138,16 @@ class GroupContentListAdapter(
 
         override fun onBind(item: GroupContentItem) {
             if (item is GroupContentItem.GroupContent) {
+                setupGroupTypeView(item.groupType ?: GroupType.UNKNOWN)
+
                 binding.ivGroupImage.load(item.selectedImageUrl ?: item.imageUrl)
                 binding.etTitle.setText(item.teamName)
                 binding.etDescription.setText(item.description)
 
-                val tagListItems = item.tags?.map { TagListItem.Item(it.name) } ?: emptyList()
-                tagAdapter.submitList(tagListItems)
+                val tagList = item.tags?.map { TagListItem.Item(it) } ?: emptyList()
+                tagAdapter.submitList(tagList)
 
                 binding.ivGroupImage.setOnClickListener { onClickItem(item, it) }
-
-                setupGroupTypeView(item.groupType ?: GroupType.UNKNOWN)
-
-                binding.switchProjectStatus.isChecked = item.status == ProjectStatus.START
             }
         }
 
@@ -149,13 +157,59 @@ class GroupContentListAdapter(
                 GroupType.STUDY -> Pair(R.color.study_color, R.string.bt_study)
                 else -> Pair(R.color.enable_stroke, R.string.unknown)
             }
-
-            binding.tvGroupType.backgroundTintList = ContextCompat.getColorStateList(context, backgroundTint)
+            binding.tvGroupType.backgroundTintList =
+                ContextCompat.getColorStateList(context, backgroundTint)
             binding.tvGroupType.text = context.getString(typeNameResId)
         }
     }
 
+    class ProjectStatusItemViewHolder(
+        private val context: Context,
+        private val binding: ItemGroupProjectStatusBinding,
+        private val onChangeStatus: (ProjectStatus) -> Unit
+    ) :
+        GroupContentViewHolder(binding.root) {
+        override fun onBind(item: GroupContentItem) {
+            if (item is GroupContentItem.GroupProjectStatus) {
+                when (item.status) {
+                    ProjectStatus.RECRUIT -> {
+                        binding.btGroupProjectStatus.text = "프로젝트 시작하기"
+                    }
 
+                    ProjectStatus.START -> {
+                        binding.btGroupProjectStatus.text = "프로젝트 종료하기"
+                    }
+
+                    ProjectStatus.END -> {
+                        binding.btGroupProjectStatus.text = "프로젝트 종료하기"
+                        binding.btGroupProjectStatus.setBackgroundResource(R.drawable.bg_round_corner_8dp_stroke_enabled)
+                        binding.btGroupProjectStatus.setTextColor(context.getColor(R.color.enable_stroke))
+                        binding.btGroupProjectStatus.isEnabled = false
+                    }
+
+                    else -> Unit
+                }
+
+                binding.btGroupProjectStatus.setOnClickListener {
+                    when (item.status) {
+                        ProjectStatus.RECRUIT -> {
+                            onChangeStatus(ProjectStatus.START)
+                        }
+
+                        ProjectStatus.START -> {
+                            onChangeStatus(ProjectStatus.END)
+                        }
+
+                        ProjectStatus.END -> {
+                            onChangeStatus(ProjectStatus.RECRUIT)
+                        }
+
+                        else -> Unit
+                    }
+                }
+            }
+        }
+    }
 
     class GroupUnknownViewHolder(binding: ItemUnknownBinding) :
         GroupContentViewHolder(binding.root) {
