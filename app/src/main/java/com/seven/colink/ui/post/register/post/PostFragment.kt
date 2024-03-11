@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentPostBinding
 import com.seven.colink.ui.post.register.post.adapter.PostListAdapter
+import com.seven.colink.ui.post.register.post.model.PostErrorMessage
 import com.seven.colink.ui.post.register.post.model.PostListItem
 import com.seven.colink.ui.post.register.post.model.TagListItem
 import com.seven.colink.ui.post.register.post.viewmodel.PostViewModel
@@ -33,7 +34,6 @@ class PostFragment : Fragment() {
     private val binding: FragmentPostBinding get() = _binding!!
 
     private lateinit var galleryResultLauncher: ActivityResultLauncher<Intent>
-
     private val viewModel: PostViewModel by viewModels()
     private val sharedViewModel: PostSharedViewModel by activityViewModels()
 
@@ -45,7 +45,7 @@ class PostFragment : Fragment() {
                     is PostListItem.PostItem, is PostListItem.PostOptionItem -> {
                         viewModel.updatePostItemText(position, title, description)
                     }
-                     else -> Unit
+                    else -> Unit
                 }
             },
             onClickView = { view, item ->
@@ -84,9 +84,9 @@ class PostFragment : Fragment() {
                     }
 
                     R.id.post_complete -> {
-                        viewModel.arePostListItemFieldsValid()
-                    }
 
+
+                    }
 
                 }
             },
@@ -218,5 +218,3 @@ class PostFragment : Fragment() {
         }
     }
 }
-
-

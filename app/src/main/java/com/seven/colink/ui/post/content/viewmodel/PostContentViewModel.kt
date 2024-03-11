@@ -18,8 +18,8 @@ import com.seven.colink.ui.group.board.board.GroupContentViewType
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.content.model.DialogUiState
 import com.seven.colink.ui.post.content.model.PostContentItem
-import com.seven.colink.ui.post.register.post.PostErrorMessage
-import com.seven.colink.ui.post.register.post.PostErrorUiState
+import com.seven.colink.ui.post.register.post.model.PostErrorMessage
+import com.seven.colink.ui.post.register.post.model.PostErrorUiState
 import com.seven.colink.ui.post.register.post.model.Post
 import com.seven.colink.util.status.ApplicationStatus
 import com.seven.colink.util.status.DataResultStatus
@@ -206,7 +206,6 @@ class PostContentViewModel @Inject constructor(
     private suspend fun incrementPostViews(): DataResultStatus =
         postRepository.incrementPostViews(entity.key)
 
-
     private fun Post.createPostContentItem() = PostContentItem.Item(
         key = key,
         authId = authId,
@@ -226,6 +225,7 @@ class PostContentViewModel @Inject constructor(
                 R.string.study_kor
             ),
             message = entity.title,
+            groupType = entity.groupType,
             recruitItem = recruitItem
         )
     }

@@ -17,8 +17,8 @@ import com.seven.colink.domain.repository.ImageRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.domain.usecase.GetPostUseCase
 import com.seven.colink.domain.usecase.RegisterPostUseCase
-import com.seven.colink.ui.post.register.post.PostErrorMessage
-import com.seven.colink.ui.post.register.post.PostErrorUiState
+import com.seven.colink.ui.post.register.post.model.PostErrorMessage
+import com.seven.colink.ui.post.register.post.model.PostErrorUiState
 import com.seven.colink.ui.post.register.post.model.Post
 import com.seven.colink.ui.post.register.post.model.PostListItem
 import com.seven.colink.util.Constants.Companion.LIMITED_TAG_COUNT
