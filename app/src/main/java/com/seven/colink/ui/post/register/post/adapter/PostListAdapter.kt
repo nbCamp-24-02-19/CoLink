@@ -171,6 +171,7 @@ class PostListAdapter(
         is PostListItem.PostOptionItem -> PostContentViewType.OPTION_ITEM
         is PostListItem.RecruitItem -> PostContentViewType.GROUP_TYPE
         is PostListItem.TitleItem -> PostContentViewType.TITLE
+        is PostListItem.ButtonItem -> PostContentViewType.BUTTON_COMPLETE
         else -> GroupContentViewType.UNKNOWN
     }.ordinal
 

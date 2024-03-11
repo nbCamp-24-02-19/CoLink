@@ -1,5 +1,6 @@
 package com.seven.colink.ui.userdetail
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -15,6 +16,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import com.seven.colink.R
 import com.seven.colink.databinding.ActivityUserDetailBinding
+import com.seven.colink.ui.sign.signup.SignUpActivity
+import com.seven.colink.ui.sign.signup.model.SignUpUserModel
+import com.seven.colink.ui.sign.signup.type.SignUpEntryType
 import com.seven.colink.ui.userdetail.adapter.UserDetailPostAdapter
 import com.seven.colink.ui.userdetail.adapter.UserSkillAdapter
 import com.seven.colink.util.status.GroupType
@@ -25,6 +29,21 @@ class UserDetailActivity : AppCompatActivity() {
     private lateinit var viewModel: UserDetailViewModel
     private lateinit var adapter: UserSkillAdapter
     private lateinit var postadapter: UserDetailPostAdapter
+
+    companion object {
+        const val EXTRA_USER_KEY = "extra_user_key"
+
+        fun newIntent(
+            context: Context,
+            entryType: SignUpEntryType,
+            entity: SignUpUserModel? = null,
+        ) = Intent(
+            context, SignUpActivity()::class.java
+        ).apply {
+            putExtra(SignUpActivity.EXTRA_ENTRY_TYPE, entryType.ordinal)
+            putExtra(SignUpActivity.EXTRA_USER_ENTITY, entity)
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
 
         binding = ActivityUserDetailBinding.inflate(layoutInflater)
