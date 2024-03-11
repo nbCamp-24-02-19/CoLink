@@ -22,7 +22,7 @@ class HomeViewModel @Inject constructor(
     val topItems: LiveData<List<TopItems>> get() = _topItems
 
     fun getTopItems(num : Int) {
-        var getTopItemList: MutableList<TopItems> = mutableListOf()
+        val getTopItemList: MutableList<TopItems> = mutableListOf()
 
         viewModelScope.launch {
             getTopItemList.clear()
@@ -30,11 +30,18 @@ class HomeViewModel @Inject constructor(
 
             kotlin.runCatching {
                 repository.forEach {
-                    var topRecentItem = TopItems(it.imageUrl,it.recruitInfo,it.registeredDate,
+                    val topRecentItem = TopItems(it.imageUrl,it.recruitInfo,it.registeredDate,
                         it.title,it.key)
-
                     getTopItemList.add(topRecentItem)
                 }
+
+                if (getTopItemList.isNotEmpty()) {
+                    val lastItem = getTopItemList.first().copy()
+                    val firstItem = getTopItemList.last().copy()
+                    getTopItemList.add(lastItem)
+                    getTopItemList.add(0, firstItem)
+                }
+
                 _topItems.value = getTopItemList
 
             }.onFailure { exception ->
