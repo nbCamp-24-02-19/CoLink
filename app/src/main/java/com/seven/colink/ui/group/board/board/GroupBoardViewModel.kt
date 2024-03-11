@@ -1,6 +1,5 @@
 package com.seven.colink.ui.group.board.board
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -72,14 +71,18 @@ class GroupBoardViewModel @Inject constructor(
             items.add(
                 GroupBoardItem.TitleItem(
                     titleRes = R.string.group_post_title,
-                    viewType = GroupContentViewType.POST_ITEM
+                    viewType = GroupContentViewType.POST_ITEM,
+                    buttonUiState = if (entity.authId == getCurrentUser()) ContentButtonUiState.Manager
+                    else ContentButtonUiState.User
                 )
             )
             postEntity?.let { items.add(GroupBoardItem.PostItem(it)) }
             items.add(
                 GroupBoardItem.TitleItem(
                     titleRes = R.string.project_member_info,
-                    viewType = GroupContentViewType.MEMBER_ITEM
+                    viewType = GroupContentViewType.MEMBER_ITEM,
+                    buttonUiState = if (entity.authId == getCurrentUser()) ContentButtonUiState.Manager
+                    else ContentButtonUiState.User
                 )
             )
             items.addAll(entity.createMember())
@@ -105,7 +108,7 @@ class GroupBoardViewModel @Inject constructor(
                     leaderTitleAdded = true
                 }
 
-                memberItems.add(GroupBoardItem.MemberItem(userEntity, false))
+                memberItems.add(GroupBoardItem.MemberItem(userEntity))
             }
         }
 

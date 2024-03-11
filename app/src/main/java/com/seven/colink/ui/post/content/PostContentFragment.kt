@@ -16,11 +16,12 @@ import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.content.model.DialogUiState
 import com.seven.colink.ui.post.content.model.PostContentItem
 import com.seven.colink.ui.post.content.viewmodel.PostContentViewModel
-import com.seven.colink.ui.post.register.post.PostErrorMessage
+import com.seven.colink.ui.post.register.post.model.PostErrorMessage
 import com.seven.colink.ui.post.register.post.PostFragment
 import com.seven.colink.ui.post.register.viewmodel.PostSharedViewModel
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.showToast
+import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.PostEntryType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -37,9 +38,9 @@ class PostContentFragment : Fragment() {
     private val postContentListAdapter by lazy {
         PostContentListAdapter(
             requireContext(),
-            onClickItem = { _, item -> handleItemClick(item) },
-            onClickButton = { _, item, buttonUiState -> handleButtonClick(item, buttonUiState) },
-            onClickView = { item, view ->
+            onClickItem = { item -> },
+            onClickButton = { item, buttonUiState -> handleButtonClick(item, buttonUiState) },
+            onClickView = { view ->
                 when (view.id) {
                     R.id.tv_apply_request -> {
                         parentFragmentManager.beginTransaction().apply {
@@ -53,7 +54,7 @@ class PostContentFragment : Fragment() {
                     }
                 }
             },
-            )
+        )
     }
 
     override fun onCreateView(
@@ -100,6 +101,10 @@ class PostContentFragment : Fragment() {
         }
 
         dialogUiState.observe(viewLifecycleOwner) { state ->
+            if (state == null) {
+                return@observe
+            }
+
             showDialog(state)
         }
 
@@ -107,14 +112,15 @@ class PostContentFragment : Fragment() {
             errorState ?: return@observe
 
             val messageResId = when (errorState.message) {
-                PostErrorMessage.ALREADY_SUPPORT, PostErrorMessage.SUCCESS_SUPPORT ->
-                    errorState.recruit.message1
+                PostErrorMessage.ALREADY_SUPPORT, PostErrorMessage.SUCCESS_SUPPORT -> {
+                    errorState.message.message1
+                }
+
                 else -> return@observe
             }
 
             requireContext().showToast(getString(messageResId))
         }
-
     }
 
     private fun initSharedViewModel() = with(sharedViewModel) {
@@ -131,13 +137,6 @@ class PostContentFragment : Fragment() {
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
-    }
-
-    private fun handleItemClick(item: PostContentItem) {
-        when (item) {
-            is PostContentItem.MemberItem -> {}
-            else -> throw UnsupportedOperationException("Unhandled type: $item")
-        }
     }
 
     private fun handleButtonClick(item: PostContentItem, buttonUiState: ContentButtonUiState) {
@@ -164,8 +163,9 @@ class PostContentFragment : Fragment() {
             requireContext().setDialog(
                 title = getString(R.string.support_dialog_title, state.title),
                 message = getString(R.string.support_dialog_message, state.message, state.title),
-                R.drawable.img_dialog_study,
+                image = if (state.groupType == GroupType.PROJECT) R.drawable.img_dialog_project else R.drawable.img_dialog_study,
                 confirmAction = {
+                    it.dismiss()
                     lifecycleScope.launch {
                         viewModel.applyForProject(
                             recruitItem = state.recruitItem

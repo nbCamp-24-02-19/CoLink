@@ -28,7 +28,7 @@ class ApplyRequestFragment : Fragment() {
     private val groupBoardListAdapter by lazy {
         GroupBoardListAdapter(
             requireContext(),
-            onClickItem = { _, item ->
+            onClickItem = {item ->
                 when (item) {
                     is GroupBoardItem.MemberItem -> {
                         // TODO 멤버 상세 화면 이동
@@ -41,29 +41,23 @@ class ApplyRequestFragment : Fragment() {
             onClickView = { item, view ->
                 when (view.id) {
                     R.id.bt_approval -> {
-                        when (item) {
-                            is GroupBoardItem.MemberApplicationInfoItem -> {
-                                lifecycleScope.launch {
-                                    viewModel.onClickApproval(item.applicationInfo)
-                                    Log.d("click", "approve")
-                                }
+                        if (item is GroupBoardItem.MemberApplicationInfoItem) {
+                            lifecycleScope.launch {
+                                viewModel.onClickApproval(item.applicationInfo)
                             }
-                            else -> Unit
                         }
                     }
 
                     R.id.bt_refuse -> {
-                        when (item) {
-                            is GroupBoardItem.MemberApplicationInfoItem -> {
-                                lifecycleScope.launch {
-                                    viewModel.onClickRefuse(item.applicationInfo)
-                                }
+                        if (item is GroupBoardItem.MemberApplicationInfoItem) {
+                            lifecycleScope.launch {
+                                viewModel.onClickRefuse(item.applicationInfo)
                             }
-                            else -> Unit
                         }
                     }
                 }
             }
+
         )
     }
 

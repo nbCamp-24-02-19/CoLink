@@ -25,9 +25,9 @@ import com.seven.colink.util.status.ProjectStatus
 class GroupContentListAdapter(
     private val context: Context,
     private val recyclerView: RecyclerView,
-    private val onClickItem: (GroupContentItem, View) -> Unit,
+    private val onClickItem: (View) -> Unit,
     private val onGroupImageClick: (String) -> Unit,
-    private val tagAdapterOnClickItem: (Int, TagListItem) -> Unit,
+    private val tagAdapterOnClickItem: (TagListItem) -> Unit,
     private val onChangeStatus: (ProjectStatus) -> Unit
 ) : ListAdapter<GroupContentItem, GroupContentListAdapter.GroupContentViewHolder>(
     object : DiffUtil.ItemCallback<GroupContentItem>() {
@@ -106,13 +106,13 @@ class GroupContentListAdapter(
     class GroupContentItemViewHolder(
         private val context: Context,
         private val binding: ItemGroupContentBinding,
-        private val onClickItem: (GroupContentItem, View) -> Unit,
+        private val onClickItem: (View) -> Unit,
         private val onGroupImageClick: (String) -> Unit,
-        private val tagAdapterOnClickItem: (Int, TagListItem) -> Unit
+        private val tagAdapterOnClickItem: (TagListItem) -> Unit
     ) : GroupContentViewHolder(binding.root) {
 
         private val tagAdapter =
-            TagListAdapter { item -> tagAdapterOnClickItem(adapterPosition, item) }
+            TagListAdapter { item -> tagAdapterOnClickItem(item) }
 
         init {
             binding.recyclerViewTags.adapter = tagAdapter
@@ -147,7 +147,7 @@ class GroupContentListAdapter(
                 val tagList = item.tags?.map { TagListItem.Item(it) } ?: emptyList()
                 tagAdapter.submitList(tagList)
 
-                binding.ivGroupImage.setOnClickListener { onClickItem(item, it) }
+                binding.ivGroupImage.setOnClickListener { onClickItem(it) }
             }
         }
 

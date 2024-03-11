@@ -1,7 +1,7 @@
 package com.seven.colink.ui.post.register.post.adapter
 
 import android.content.Context
-import android.util.Log
+import com.seven.colink.util.status.PostContentViewTypeItem
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -24,14 +24,12 @@ import com.seven.colink.domain.entity.RecruitInfo
 import com.seven.colink.ui.group.board.board.GroupContentViewType
 import com.seven.colink.ui.post.register.post.model.PostListItem
 import com.seven.colink.ui.post.register.post.model.TagListItem
-import com.seven.colink.util.Constants
 import com.seven.colink.util.Constants.Companion.LIMITED_PEOPLE
 import com.seven.colink.util.applyDarkFilter
 import com.seven.colink.util.highlightNumbers
 import com.seven.colink.util.showToast
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.PostContentViewType
-import kotlin.math.log
 
 class PostListAdapter(
     private val context: Context,
@@ -167,10 +165,11 @@ class PostListAdapter(
     }
 
     override fun getItemViewType(position: Int): Int = when (getItem(position)) {
-        is PostListItem.PostItem -> PostContentViewType.ITEM
+        is PostListItem.PostItem -> PostContentViewTypeItem.ITEM
         is PostListItem.PostOptionItem -> PostContentViewType.OPTION_ITEM
         is PostListItem.RecruitItem -> PostContentViewType.GROUP_TYPE
         is PostListItem.TitleItem -> PostContentViewType.TITLE
+        is PostListItem.ButtonItem -> PostContentViewType.BUTTON_COMPLETE
         else -> GroupContentViewType.UNKNOWN
     }.ordinal
 
@@ -268,6 +267,7 @@ class PostListAdapter(
         private val onChangedFocus: (Int, String, String, PostListItem) -> Unit
     ) : PostViewHolder(binding.root) {
         private var currentItem: PostListItem? = null
+        private var currentPosition: Int = RecyclerView.NO_POSITION
 
         init {
             initializeFocusChangeListeners()
@@ -299,6 +299,7 @@ class PostListAdapter(
                 currentItem = item
                 binding.tvPrecautions.setText(item.precautions)
                 binding.tvDescription.setText(item.recruitInfo)
+                currentPosition = adapterPosition
             }
         }
 
@@ -390,10 +391,12 @@ class PostListAdapter(
         override fun onBind(item: PostListItem) {
             if (item is PostListItem.TitleItem) {
                 binding.tvTitle.text = context.getString(item.message1!!)
-                binding.tvSubTitle.text = context.getString(
-                    item.message2!!,
-                    LIMITED_PEOPLE
-                )
+                binding.tvSubTitle.text = item.message2?.let {
+                    context.getString(
+                        it,
+                        LIMITED_PEOPLE
+                    )
+                }
             }
         }
     }
