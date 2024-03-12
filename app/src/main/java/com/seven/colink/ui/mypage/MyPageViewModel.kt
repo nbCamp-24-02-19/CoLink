@@ -10,7 +10,6 @@ import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.repository.UserRepository
-import com.seven.colink.ui.mypage.MyPagePostModel
 import com.seven.colink.util.convert.convertToDaysAgo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

@@ -3,13 +3,10 @@ package com.seven.colink.ui.post.register.post.viewmodel
 import android.app.Application
 import android.content.Intent
 import android.net.Uri
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seven.colink.R
 import com.seven.colink.domain.entity.GroupEntity
-import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.entity.RecruitInfo
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.GroupRepository
@@ -23,11 +20,13 @@ import com.seven.colink.ui.post.register.post.model.Post
 import com.seven.colink.ui.post.register.post.model.PostListItem
 import com.seven.colink.util.Constants.Companion.LIMITED_TAG_COUNT
 import com.seven.colink.util.status.GroupType
-import com.seven.colink.util.status.LiveDataObserver
 import com.seven.colink.util.status.PostEntryType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -44,59 +43,65 @@ class PostViewModel @Inject constructor(
     private lateinit var entryType: PostEntryType
     private lateinit var entity: Post
 
-    private val _uiState: MutableLiveData<List<PostListItem>> = MutableLiveData()
-    val uiState: LiveData<List<PostListItem>> get() = _uiState
+    private val _uiState: MutableStateFlow<List<PostListItem>> = MutableStateFlow(emptyList())
+    val uiState: StateFlow<List<PostListItem>> get() = _uiState.asStateFlow()
 
-    private val _errorUiState: MutableLiveData<PostErrorUiState> =
-        MutableLiveData(PostErrorUiState.init())
-    val errorUiState: LiveData<PostErrorUiState> get() = _errorUiState
+    private val _errorUiState: MutableStateFlow<PostErrorUiState> =
+        MutableStateFlow(PostErrorUiState.init())
+    val errorUiState: StateFlow<PostErrorUiState> get() = _errorUiState.asStateFlow()
 
     private val _complete = MutableSharedFlow<String>()
     val complete = _complete.asSharedFlow()
+
+    private val postItemDataMap: MutableMap<String, String> = mutableMapOf()
 
     fun setEntryType(type: PostEntryType) {
         entryType = type
     }
 
-    suspend fun setPostItem(entityKey: String? = null, groupType: GroupType? = null) {
-        entity = getPostUseCase(entityKey?:"")?: Post(groupType = groupType)
+    private fun updateUiState(newState: List<PostListItem>) {
+        _uiState.value = newState
+    }
 
-        _uiState.postValue(entity.setUi())
+    suspend fun setPostItem(entityKey: String? = null, groupType: GroupType? = null) {
+        entity = getPostUseCase(entityKey ?: "") ?: Post(groupType = groupType)
+
+        _uiState.value = entity.setUi()
     }
 
     private fun Post.setUi() = listOf(
-            PostListItem.PostItem(
-                key = key,
-                title = title,
-                imageUrl = imageUrl,
-                groupType = groupType ?: GroupType.UNKNOWN,
-                selectedImageUrl = null,
-                description = description,
-                descriptionMessage = groupType?.setDescriptionMessage(),
-                tags = tags,
-                registeredDate = registeredDate,
-                view = views,
-                memberIds = memberIds
-            ),
-            PostListItem.PostOptionItem(
-                key = key,
-                precautions = precautions,
-                recruitInfo = recruitInfo
-            ),
-            PostListItem.TitleItem(
-                R.string.people_recruited,
-                R.string.limited_people,
-            ),
-            PostListItem.RecruitItem(
-                key = key,
-                recruit = recruit,
-                groupType = groupType ?: GroupType.PROJECT,
-                selectedCount = 0
-            ),
-            PostListItem.ButtonItem(
-                text = R.string.bt_complete
-            )
+        PostListItem.PostItem(
+            key = key,
+            title = title,
+            imageUrl = imageUrl,
+            groupType = groupType ?: GroupType.UNKNOWN,
+            selectedImageUrl = null,
+            description = description,
+            descriptionMessage = groupType?.setDescriptionMessage(),
+            tags = tags,
+            registeredDate = registeredDate,
+            view = views,
+            memberIds = memberIds
+        ),
+        PostListItem.PostOptionItem(
+            key = key,
+            precautions = precautions,
+            recruitInfo = recruitInfo
+        ),
+        PostListItem.TitleItem(
+            R.string.people_recruited,
+            R.string.limited_people,
+        ),
+        PostListItem.RecruitItem(
+            key = key,
+            recruit = recruit,
+            groupType = groupType ?: GroupType.PROJECT,
+            selectedCount = recruit?.sumOf { it.maxPersonnel ?: 0 } ?: 0
+        ),
+        PostListItem.ButtonItem(
+            buttonText = R.string.bt_complete
         )
+    )
 
     private fun GroupType.setDescriptionMessage() =
         if (this == GroupType.PROJECT) context.getString(R.string.input_content_project) else context.getString(
@@ -105,30 +110,36 @@ class PostViewModel @Inject constructor(
 
 
     fun checkValidAddTag(tag: String) {
-        _errorUiState.value = errorUiState.value?.copy(tag = getValidAddTag(tag))
+        val validationResult = getValidAddTag(tag)
+        if (validationResult == PostErrorMessage.PASS) {
+            updatePostItem()
+        }
+        _errorUiState.value = errorUiState.value.copy(tag = validationResult)
     }
 
     private fun getValidAddTag(tag: String): PostErrorMessage {
-        uiState.value?.firstOrNull().let {
+        return uiState.value.firstOrNull()?.let {
             val tags = (it as? PostListItem.PostItem)?.tags.orEmpty()
-            return when {
+            when {
                 tags.size >= LIMITED_TAG_COUNT -> PostErrorMessage.TAG_MAX_COUNT
                 tag in tags -> PostErrorMessage.TAG_ALREADY_EXIST
                 else -> {
-                    _uiState.value = uiState.value?.map { uiStateValue ->
+                    updateUiState(uiState.value.map { uiStateValue ->
                         when (uiStateValue) {
                             is PostListItem.PostItem -> uiStateValue.copy(tags = tags + tag)
                             else -> uiStateValue
                         }
-                    }
+                    })
                     PostErrorMessage.PASS
                 }
             }
-        }
+        } ?: PostErrorMessage.PASS
     }
 
     fun removeTagItem(tag: String?) {
-        _uiState.value = uiState.value?.map { uiStateValue ->
+        updatePostItem()
+
+        updateUiState(uiState.value.map { uiStateValue ->
             when (uiStateValue) {
                 is PostListItem.PostItem -> uiStateValue.copy(
                     tags = uiStateValue.tags?.filter { it != tag } ?: emptyList()
@@ -136,7 +147,7 @@ class PostViewModel @Inject constructor(
 
                 else -> uiStateValue
             }
-        }
+        })
     }
 
     private suspend fun getCurrentUser(): String =
@@ -155,75 +166,51 @@ class PostViewModel @Inject constructor(
         groupType = groupType ?: GroupType.UNKNOWN,
         description = description,
         tags = tags,
+        precautions = precautions,
+        recruitInfo = recruitInfo,
         memberIds = memberIds,
         registeredDate = registeredDate
     )
 
     fun setImageResult(data: Intent?) {
-        _uiState.value = uiState.value?.map { uiStateValue ->
+        updatePostItem()
+
+        updateUiState(uiState.value.map { uiStateValue ->
             when (uiStateValue) {
                 is PostListItem.PostItem -> uiStateValue.copy(selectedImageUrl = data?.data)
                 else -> uiStateValue
             }
-        }
+        })
     }
 
     private suspend fun uploadImage(uri: Uri): String =
         imageRepository.uploadImage(uri).getOrThrow().toString()
 
     fun arePostListItemFieldsValid() {
-        val postListItems = uiState.value
+        val title = postItemDataMap["title"]
+        val description = postItemDataMap["description"]
+        val precautions = postItemDataMap["precautions"]
+        val recruitInfo = postItemDataMap["recruitInfo"]
 
-        val postItemsValid = postListItems?.filterIsInstance<PostListItem.PostItem>()
-            ?.all { it.title != null && it.description != null } ?: false
-
-        val postOptionItemsValid = postListItems?.filterIsInstance<PostListItem.PostOptionItem>()
-            ?.all { it.precautions != null && it.recruitInfo != null } ?: false
-
-        if (postItemsValid && postOptionItemsValid) {
-            _errorUiState.value = errorUiState.value?.copy(message = PostErrorMessage.PASS)
-        } else {
-            postListItems?.forEach { postListItem ->
-                when (postListItem) {
-                    is PostListItem.PostItem -> {
-                        checkPostItem(postListItem)
-                    }
-
-                    is PostListItem.PostOptionItem -> {
-                        checkPostOptionItem(postListItem)
-                    }
-
-                    else -> Unit
-                }
-            }
+        val errorMessage = when {
+            title.isNullOrBlank() -> PostErrorMessage.TITLE_BLANK
+            description.isNullOrBlank() -> PostErrorMessage.DESCRIPTION_BLANK
+            precautions.isNullOrBlank() -> PostErrorMessage.PRECAUTIONS_BLANK
+            recruitInfo.isNullOrBlank() -> PostErrorMessage.RECRUIT_INFO_BLANK
+            else -> PostErrorMessage.PASS
         }
+
+        val updatedErrorUiState = _errorUiState.value.copy(
+            message = errorMessage
+        )
+
+        _errorUiState.value = updatedErrorUiState
     }
 
-    private fun checkPostItem(postItem: PostListItem.PostItem) {
-        when {
-            postItem.description != null -> {
-                _errorUiState.value =
-                    errorUiState.value?.copy(message = PostErrorMessage.DESCRIPTION_BLANK)
-            }
-        }
-    }
 
-    private fun checkPostOptionItem(postOptionItem: PostListItem.PostOptionItem) {
-        when {
-            postOptionItem.precautions == null -> {
-                _errorUiState.value =
-                    errorUiState.value?.copy(message = PostErrorMessage.PRECAUTIONS_BLANK)
-            }
-
-            postOptionItem.recruitInfo == null -> {
-                _errorUiState.value =
-                    errorUiState.value?.copy(message = PostErrorMessage.RECRUIT_INFO_BLANK)
-            }
-        }
-    }
 
     fun addRecruitInfo(entity: RecruitInfo) {
-        _uiState.value = uiState.value?.map { uiStateValue ->
+        updateUiState(uiState.value.map { uiStateValue ->
             when (uiStateValue) {
                 is PostListItem.RecruitItem -> {
                     val recruits = uiStateValue.recruit?.toMutableList() ?: mutableListOf()
@@ -233,12 +220,11 @@ class PostViewModel @Inject constructor(
 
                 else -> uiStateValue
             }
-        }
+        })
     }
 
-
     fun removeRecruitInfo(type: String?) {
-        _uiState.value = uiState.value?.map { uiStateValue ->
+        updateUiState(uiState.value.map { uiStateValue ->
             when (uiStateValue) {
                 is PostListItem.RecruitItem -> uiStateValue.copy(
                     recruit = uiStateValue.recruit?.toMutableList()?.apply {
@@ -248,7 +234,7 @@ class PostViewModel @Inject constructor(
 
                 else -> uiStateValue
             }
-        }
+        })
     }
 
     fun createPost(
@@ -256,6 +242,8 @@ class PostViewModel @Inject constructor(
         onError: (Exception) -> Unit
     ) = viewModelScope.launch {
         try {
+            updatePostItem()
+
             val entity = if (entryType == PostEntryType.CREATE) {
                 getCreatePostEntity()
             } else {
@@ -286,7 +274,7 @@ class PostViewModel @Inject constructor(
 
     private suspend fun getCreatePostEntity(): Post {
         val postItem =
-            _uiState.value?.find { it is PostListItem.PostItem } as? PostListItem.PostItem
+            _uiState.value.find { it is PostListItem.PostItem } as? PostListItem.PostItem
 
         return Post(
             authId = getCurrentUser(),
@@ -295,11 +283,11 @@ class PostViewModel @Inject constructor(
             groupType = postItem?.groupType,
             description = postItem?.description,
             tags = postItem?.tags,
-            precautions = _uiState.value?.find { it is PostListItem.PostOptionItem }
+            precautions = _uiState.value.find { it is PostListItem.PostOptionItem }
                 .let { (it as? PostListItem.PostOptionItem)?.precautions },
-            recruitInfo = _uiState.value?.find { it is PostListItem.PostOptionItem }
+            recruitInfo = _uiState.value.find { it is PostListItem.PostOptionItem }
                 .let { (it as? PostListItem.PostOptionItem)?.recruitInfo },
-            recruit = (_uiState.value?.find { it is PostListItem.RecruitItem }
+            recruit = (_uiState.value.find { it is PostListItem.RecruitItem }
                     as? PostListItem.RecruitItem)?.recruit,
             memberIds = listOf(getCurrentUser())
         )
@@ -307,7 +295,7 @@ class PostViewModel @Inject constructor(
 
     private suspend fun getUpdatePostEntity(): Post {
         val postItem =
-            _uiState.value?.find { it is PostListItem.PostItem } as? PostListItem.PostItem
+            _uiState.value.find { it is PostListItem.PostItem } as? PostListItem.PostItem
         val imageUrl = postItem?.selectedImageUrl?.let { uploadImage(it) } ?: postItem?.imageUrl
 
         return entity.copy(
@@ -315,18 +303,18 @@ class PostViewModel @Inject constructor(
             imageUrl = imageUrl,
             description = postItem?.description,
             tags = postItem?.tags,
-            precautions = _uiState.value?.find { it is PostListItem.PostOptionItem }
+            precautions = _uiState.value.find { it is PostListItem.PostOptionItem }
                 .let { (it as? PostListItem.PostOptionItem)?.precautions },
-            recruitInfo = _uiState.value?.find { it is PostListItem.PostOptionItem }
+            recruitInfo = _uiState.value.find { it is PostListItem.PostOptionItem }
                 .let { (it as? PostListItem.PostOptionItem)?.recruitInfo },
-            recruit = (_uiState.value?.find { it is PostListItem.RecruitItem }
+            recruit = (_uiState.value.find { it is PostListItem.RecruitItem }
                     as? PostListItem.RecruitItem)?.recruit,
             memberIds = entity.memberIds
         )
     }
 
     fun incrementCount() {
-        _uiState.value = uiState.value?.map { uiStateValue ->
+        updateUiState(uiState.value.map { uiStateValue ->
             when (uiStateValue) {
                 is PostListItem.RecruitItem -> {
                     val currentCount = uiStateValue.selectedCount ?: 0
@@ -335,13 +323,12 @@ class PostViewModel @Inject constructor(
 
                 else -> uiStateValue
             }
-
-        }
+        })
         updateRecruitBasedOnCount()
     }
 
     fun decrementCount() {
-        _uiState.value = uiState.value?.map { uiStateValue ->
+        updateUiState(uiState.value.map { uiStateValue ->
             when (uiStateValue) {
                 is PostListItem.RecruitItem -> {
                     val currentCount = uiStateValue.selectedCount ?: 0
@@ -350,12 +337,12 @@ class PostViewModel @Inject constructor(
 
                 else -> uiStateValue
             }
-        }
+        })
         updateRecruitBasedOnCount()
     }
 
     private fun updateRecruitBasedOnCount() {
-        _uiState.value = _uiState.value?.map { uiStateValue ->
+        updateUiState(uiState.value.map { uiStateValue ->
             when (uiStateValue) {
                 is PostListItem.RecruitItem -> {
                     val selectedCount = uiStateValue.selectedCount ?: 0
@@ -376,9 +363,9 @@ class PostViewModel @Inject constructor(
 
                 else -> uiStateValue
             }
-        }
+        })
 
-        val updatedRecruit = _uiState.value?.find { it is PostListItem.RecruitItem }?.let {
+        val updatedRecruit = uiState.value.find { it is PostListItem.RecruitItem }?.let {
             val recruitItem = it as? PostListItem.RecruitItem
             recruitItem?.recruit
         }
@@ -386,34 +373,52 @@ class PostViewModel @Inject constructor(
     }
 
     private fun updateRecruit(updatedRecruit: List<RecruitInfo>?) {
-        _uiState.value = _uiState.value?.map { uiStateValue ->
+        updateUiState(uiState.value.map { uiStateValue ->
             when (uiStateValue) {
                 is PostListItem.RecruitItem -> uiStateValue.copy(recruit = updatedRecruit)
                 else -> uiStateValue
             }
-        }
+        })
     }
 
     fun updatePostItemText(position: Int, title: String, description: String) {
-        _uiState.value = _uiState.value?.mapIndexed { index, uiStateValue ->
-            when (uiStateValue) {
+        if (position >= 0 && position < _uiState.value.size) {
+            when (val uiStateValue = _uiState.value[position]) {
                 is PostListItem.PostItem -> {
-                    if (index == position) {
-                        uiStateValue.copy(title = title, description = description)
-                    } else {
-                        uiStateValue
-                    }
+                    postItemDataMap["title"] = title
+                    postItemDataMap["description"] = description
                 }
+
                 is PostListItem.PostOptionItem -> {
-                    if (index == position) {
-                        uiStateValue.copy(precautions = title, recruitInfo = description)
-                    } else {
-                        uiStateValue
-                    }
+                    postItemDataMap["precautions"] = title
+                    postItemDataMap["recruitInfo"] = description
                 }
 
                 else -> uiStateValue
             }
         }
     }
+
+    private fun updatePostItem() {
+        updateUiState(_uiState.value.map { uiStateValue ->
+            when (uiStateValue) {
+                is PostListItem.PostItem -> {
+                    val title = postItemDataMap["title"] ?: uiStateValue.title
+                    val description = postItemDataMap["description"] ?: uiStateValue.description
+                    uiStateValue.copy(title = title, description = description)
+                }
+
+                is PostListItem.PostOptionItem -> {
+                    val precautions =
+                        postItemDataMap["precautions"] ?: uiStateValue.precautions
+                    val recruitInfo =
+                        postItemDataMap["recruitInfo"] ?: uiStateValue.recruitInfo
+                    uiStateValue.copy(precautions = precautions, recruitInfo = recruitInfo)
+                }
+
+                else -> uiStateValue
+            }
+        })
+    }
+
 }
