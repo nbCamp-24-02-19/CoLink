@@ -5,6 +5,7 @@ import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
@@ -13,6 +14,9 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.seven.colink.R
 import com.seven.colink.databinding.ItemGroupBoardTitleBinding
+import com.seven.colink.databinding.ItemPostCommentBinding
+import com.seven.colink.databinding.ItemPostCommentSendBinding
+import com.seven.colink.databinding.ItemPostCommentTitleBinding
 import com.seven.colink.databinding.ItemPostContentBinding
 import com.seven.colink.databinding.ItemPostMemberInfoBinding
 import com.seven.colink.databinding.ItemPostMessageBinding
@@ -36,7 +40,7 @@ class PostContentListAdapter(
     private val onClickItem: (PostContentItem) -> Unit,
     private val onClickButton: (PostContentItem, ContentButtonUiState) -> Unit,
     private val onClickView: (View) -> Unit,
-
+    private val onClickCommentButton: (String) -> Unit,
     ) : ListAdapter<PostContentItem, PostContentListAdapter.PostViewHolder>(
     object : DiffUtil.ItemCallback<PostContentItem>() {
 
@@ -56,6 +60,18 @@ class PostContentListAdapter(
 
                 oldItem is PostContentItem.AdditionalInfo && newItem is PostContentItem.AdditionalInfo -> {
                     oldItem.key == newItem.key
+                }
+
+                oldItem is PostContentItem.CommentTitle && newItem is PostContentItem.CommentTitle -> {
+                    oldItem.count == newItem.count
+                }
+
+                oldItem is PostContentItem.CommentItem && newItem is PostContentItem.CommentItem -> {
+                    oldItem.key == newItem.key
+                }
+
+                oldItem is PostContentItem.CommentSendItem && newItem is PostContentItem.CommentSendItem -> {
+                    oldItem == newItem
                 }
 
                 else -> oldItem == newItem
@@ -81,6 +97,9 @@ class PostContentListAdapter(
         is PostContentItem.SubTitleItem -> PostContentViewTypeItem.SUB_TITLE
         is PostContentItem.MessageItem -> PostContentViewTypeItem.MESSAGE
         is PostContentItem.AdditionalInfo -> PostContentViewTypeItem.ADDITIONAL_INFO
+        is PostContentItem.CommentTitle -> PostContentViewTypeItem.COMMENTTITEL
+        is PostContentItem.CommentItem -> PostContentViewTypeItem.COMMENT
+        is PostContentItem.CommentSendItem -> PostContentViewTypeItem.COMMENTSEND
         else -> PostContentViewTypeItem.UNKNOWN
     }.ordinal
 
@@ -139,6 +158,32 @@ class PostContentListAdapter(
                     parent,
                     false
                 )
+            )
+
+            PostContentViewTypeItem.COMMENTTITEL -> PostCommentTitleViewHolder(
+                context,
+                ItemPostCommentTitleBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+            )
+
+            PostContentViewTypeItem.COMMENT -> PostCommentViewHolder(
+                ItemPostCommentBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+            )
+
+            PostContentViewTypeItem.COMMENTSEND -> PostCommentSendViewHolder(
+                ItemPostCommentSendBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                ),
+                onClickCommentButton
             )
 
             else -> PostUnknownViewHolder(
@@ -317,6 +362,46 @@ class PostContentListAdapter(
             }
         }
     }
+
+    class PostCommentTitleViewHolder(
+        private val context: Context,
+        private val binding: ItemPostCommentTitleBinding
+    ) : PostViewHolder(binding.root) {
+        override fun onBind(item: PostContentItem) {
+            if (item is PostContentItem.CommentTitle){
+                binding.tvPostCommentCount.text = context.getString(item.count)
+            }
+        }
+    }
+
+    class PostCommentViewHolder(
+        private val binding: ItemPostCommentBinding
+    ) : PostViewHolder(binding.root) {
+        override fun onBind(item: PostContentItem) {
+            if (item is PostContentItem.CommentItem){
+                binding.tvPostCommentName.text = item.name
+                binding.tvPostComment.text = item.description
+                binding.tvPostCommentTime.text = item.registeredDate
+                binding.ivPostCommentProfile.load(item.profile)
+                binding.ivPostCommentProfile.clipToOutline = true
+            }
+        }
+    }
+
+    class PostCommentSendViewHolder(
+        private val binding: ItemPostCommentSendBinding,
+        private val onClickCommentButton: (String) -> Unit
+    ) : PostViewHolder(binding.root) {
+        override fun onBind(item: PostContentItem) {
+            if (item is PostContentItem.CommentSendItem){
+                binding.btnPostCommentSend.setOnClickListener {
+                    onClickCommentButton(binding.etPostCommentSend.text.toString())
+                    binding.etPostCommentSend.text.clear()
+                }
+            }
+        }
+    }
+
 
     private fun getButtonUiState(): ContentButtonUiState? {
         val recruitItems = currentList.filterIsInstance<PostContentItem.RecruitItem>()

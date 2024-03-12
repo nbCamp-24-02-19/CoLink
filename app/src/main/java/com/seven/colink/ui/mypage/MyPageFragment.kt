@@ -125,7 +125,6 @@ class MyPageFragment : Fragment() {
             }
 
         }
-
         postadapter.studyClick = object : MyPagePostAdapter.StudyClick{
             override fun onClick(view: View, position: Int, item: MyPostItem.MyPageStudyItem) {
                 lifecycleScope.launch {
@@ -248,6 +247,7 @@ class MyPageFragment : Fragment() {
             binding.ivMypageProfile
         } else{
             binding.ivMypageProfile.load(user.profile)
+            binding.ivMypageProfile.clipToOutline = true
         }
 
         val level = user.level
