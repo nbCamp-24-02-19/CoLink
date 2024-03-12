@@ -7,8 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seven.colink.R
 import com.seven.colink.domain.entity.ApplicationInfo
+import com.seven.colink.domain.entity.CommentEntity
 import com.seven.colink.domain.entity.RecruitInfo
 import com.seven.colink.domain.repository.AuthRepository
+import com.seven.colink.domain.repository.CommentRepository
 import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.repository.UserRepository
@@ -37,6 +39,7 @@ class PostContentViewModel @Inject constructor(
     private val postRepository: PostRepository,
     private val getPostUseCase: GetPostUseCase,
     private val registerApplicationInfoUseCase: RegisterApplicationInfoUseCase,
+    private val commentRepository: CommentRepository,
 ) : ViewModel() {
     private lateinit var entity: Post
     private val _uiState = MutableLiveData<List<PostContentItem>>()
@@ -53,6 +56,9 @@ class PostContentViewModel @Inject constructor(
         MutableLiveData(PostErrorUiState.init())
     val errorUiState: LiveData<PostErrorUiState> get() = _errorUiState
 
+    private val _userComment = MutableLiveData<CommentEntity>()
+    val userComments: LiveData<CommentEntity> = _userComment
+
     suspend fun setEntity(key: String) {
         entity = getPostUseCase(key) ?: return
     }
@@ -61,6 +67,7 @@ class PostContentViewModel @Inject constructor(
         setUserButtonUiState(entity)
         setPostContentItems(entity.recruit)
         incrementPostViews()
+        getComment()
     }
 
     private suspend fun setUserButtonUiState(post: Post) {
@@ -70,6 +77,29 @@ class PostContentViewModel @Inject constructor(
             else -> ContentButtonUiState.User
         }
     }
+
+    fun registerComment(text: String) {
+        viewModelScope.launch {
+            commentRepository.registerComment(
+                getCurrentUser()?.let {
+                    CommentEntity(
+                        authId = it,
+                        postId = entity.key,
+                        description = text
+                    )
+                }?: return@launch
+            )
+        }
+    }
+
+    private suspend fun deleteComment()=
+        commentRepository.deleteComment(
+            entity.key
+        )
+    private suspend fun getComment() =
+            commentRepository.getComment(
+                postId = entity.key
+            ).getOrNull()
 
     private fun setPostContentItems(updatedRecruitList: List<RecruitInfo>?) =
         viewModelScope.launch {
@@ -104,6 +134,26 @@ class PostContentViewModel @Inject constructor(
                 )
                 items.add(PostContentItem.SubTitleItem(R.string.project_team_member))
                 items.addAll(createMember(currentEntity))
+
+                items.add(PostContentItem.CommentTitle(R.string.comment))
+
+                getComment()?.forEach {
+                    userRepository.getUserDetails(it.authId).getOrNull().let {user ->
+                        items.add(
+                            PostContentItem.CommentItem(
+                                key = it.key,
+                                name = user?.name?:"",
+                                profile = user?.photoUrl?: "",
+                                description = it.description,
+                                registeredDate = it.registeredDate,
+                            )
+                        )
+                    }
+                }
+                deleteComment()
+                items.add(
+                    PostContentItem.CommentSendItem
+                )
 
                 _uiState.value = items
             }
