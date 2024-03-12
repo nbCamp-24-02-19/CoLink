@@ -60,6 +60,10 @@ class UserDetailActivity : AppCompatActivity() {
         PostRecyclerView()
         initViewModel()
 
+        binding.ivUserdetailBackArrow.setOnClickListener {
+            finish()
+        }
+
 
 
         viewModel.userDetails.observe(this@UserDetailActivity) { userDetails ->
@@ -140,6 +144,7 @@ class UserDetailActivity : AppCompatActivity() {
             binding.ivUserdetailProfile
         } else {
             binding.ivUserdetailProfile.load(user.userProfile)
+            binding.ivUserdetailProfile.clipToOutline = true
         }
 
         val level = user.userLevel

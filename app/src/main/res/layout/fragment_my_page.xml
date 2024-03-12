@@ -35,6 +35,8 @@
                 android:layout_marginStart="22dp"
                 android:layout_marginTop="33dp"
                 android:src="@drawable/ic_profile"
+                android:scaleType="centerCrop"
+                android:background="@drawable/bg_profile_circle"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
