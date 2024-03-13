@@ -62,6 +62,9 @@ class PostContentFragment : Fragment() {
                     }
                 }
             },
+            onClickCommentButton = {
+                viewModel.registerComment(it)
+            }
         )
     }
 

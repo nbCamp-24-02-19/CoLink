@@ -261,6 +261,7 @@ class MyPageFragment : Fragment() {
             binding.ivMypageProfile
         } else {
             binding.ivMypageProfile.load(user.profile)
+            binding.ivMypageProfile.clipToOutline = true
         }
 
         val level = user.level
