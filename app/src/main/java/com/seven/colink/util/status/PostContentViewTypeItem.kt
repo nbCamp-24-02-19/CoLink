@@ -8,7 +8,10 @@ enum class PostContentViewTypeItem {
     SUB_TITLE,
     UNKNOWN,
     MESSAGE,
-    ADDITIONAL_INFO
+    ADDITIONAL_INFO,
+    COMMENTTITEL,
+    COMMENT,
+    COMMENTSEND
     ;
 
     companion object {

@@ -1,5 +1,6 @@
 package com.seven.colink.ui.userdetail.adapter
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -48,7 +49,10 @@ class UserDetailPostAdapter (var mItems: List<UserPostItem>) : RecyclerView.Adap
             is UserPostItem.UserDetailStudyItem ->{
                 (holder as StudyViewHolder).holderStudying.text = item.userstudying
                 if (holder.holderStudying.text == "참여중"){
+                    holder.holderStudying.setBackgroundResource(R.drawable.bg_mypage_ing_blue)
+                } else if (holder.holderStudying.text == "완료"){
                     holder.holderStudying.setBackgroundResource(R.drawable.bg_mypage_ing_study)
+                    holder.holderStudying.setTextColor(Color.WHITE)
                 }
                 holder.studyname.text = item.userstudyName
                 holder.studytime.text = item.userstudyTime
