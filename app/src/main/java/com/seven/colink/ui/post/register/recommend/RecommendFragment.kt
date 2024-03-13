@@ -108,8 +108,8 @@ class RecommendFragment: Fragment() {
                     is UiState.Error -> {
                         /*TODO 예외 처리 다이얼로그*/
                         hideProgressOverlay()
-                        Toast.makeText(requireContext(), "${uiState.exception.message}", Toast.LENGTH_SHORT).show()
-                        Log.e("RecommendFragment", "${uiState.exception.message}")
+                        Toast.makeText(requireContext(), "${uiState.throwable.message}", Toast.LENGTH_SHORT).show()
+                        Log.e("RecommendFragment", "${uiState.throwable.message}")
                         requireActivity().finish()
                     }
                 }

@@ -225,12 +225,16 @@ class PostListAdapter(
             }
         }
 
+        private var boolean = true
         override fun onBind(item: PostListItem) {
             if (item is PostListItem.PostItem) {
                 currentItem = item
                 with(binding) {
-                    etTitle.setText(item.title)
-                    etDescription.setText(item.description)
+                    if (boolean) {
+                        etTitle.setText(item.title)
+                        etDescription.setText(item.description)
+                        boolean = false
+                    }
                     tvProjectDescriptionInfo.text = item.descriptionMessage
                     ivPostImage.load(item.selectedImageUrl ?: item.imageUrl)
                     ivPostImageBg.load(item.selectedImageUrl ?: item.imageUrl)

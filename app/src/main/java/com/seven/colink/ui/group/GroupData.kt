@@ -42,7 +42,6 @@ sealed interface GroupData {
     ) : GroupData
 
     data class GroupEmpty(
-        var img: Int?,
         var text: String?
     ) : GroupData
 }

@@ -41,6 +41,7 @@ class PostViewModel @Inject constructor(
     private val registerPostUseCase: RegisterPostUseCase,
     private val userRepository: UserRepository,
 ) : ViewModel() {
+
     private lateinit var entryType: PostEntryType
     private lateinit var entity: Post
 

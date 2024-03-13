@@ -4,10 +4,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seven.colink.domain.entity.UserEntity
+import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.domain.usecase.RegisterUserUseCase
 import com.seven.colink.ui.sign.signup.SignUpActivity.Companion.EXTRA_ENTRY_TYPE
 import com.seven.colink.ui.sign.signup.SignUpActivity.Companion.EXTRA_USER_ENTITY
+import com.seven.colink.ui.sign.signup.model.SignUpProfileItem
 import com.seven.colink.ui.sign.signup.model.SignUpUserModel
 import com.seven.colink.ui.sign.signup.type.SignUpEntryType
 import com.seven.colink.ui.sign.signup.type.SignUpUIState
@@ -27,6 +29,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     private val registerUserUseCase: RegisterUserUseCase,
+    private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
     private val handle: SavedStateHandle,
 ) : ViewModel() {
@@ -49,9 +52,37 @@ class SignUpViewModel @Inject constructor(
     private val _skills = MutableStateFlow(emptyList<String>())
     val skills: StateFlow<List<String>> = _skills
 
+    private val _profileItem = MutableSharedFlow<List<SignUpProfileItem>>()
+    val profileItem = _profileItem.asSharedFlow()
     init {
         _entryType.value = handle.get<SignUpEntryType>(EXTRA_ENTRY_TYPE) ?: SignUpEntryType.CREATE
         _userModel.value = handle.get<SignUpUserModel>(EXTRA_USER_ENTITY) ?: SignUpUserModel()
+
+        viewModelScope.launch {
+            setProfile()
+        }
+    }
+
+    private suspend fun setProfile() {
+        _profileItem.emit(
+            userRepository.getUserDetails(
+            authRepository.getCurrentUser().message
+            ).getOrNull()?.let {
+                listOf(
+                    SignUpProfileItem.Category(it.mainSpecialty, it.specialty),
+                    SignUpProfileItem.Skill(it.skill),
+                    SignUpProfileItem.Level(it.level),
+                    SignUpProfileItem.Info(it.info),
+                    SignUpProfileItem.Blog(git = it.git, blog = it.blog, link = it.link),
+                )
+            }?: listOf(
+                SignUpProfileItem.Category(),
+                SignUpProfileItem.Skill(),
+                SignUpProfileItem.Level(),
+                SignUpProfileItem.Info(),
+                SignUpProfileItem.Blog()
+            )
+        )
     }
 
     fun updateUiState(status: SignUpUIState) {
