@@ -31,4 +31,7 @@ enum class DataBaseType(
     APPINFO(
         title = "app_info"
     ),
+    SCHEDULE(
+        title = "schedule"
+    ),
 }
