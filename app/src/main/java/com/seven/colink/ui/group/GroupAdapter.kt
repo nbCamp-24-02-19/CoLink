@@ -199,8 +199,7 @@ class GroupAdapter(
     ) : GroupViewHolder(binding.root) {
         override fun onBind(item: GroupData) {
             if (item is GroupData.GroupEmpty){
-                binding.ivGroupEmptyListThumbnail.load(item.img)
-                binding.tvGroupEmptyList.text = item.text
+                binding.tvEmptyGroup.text = item.text
             }
         }
     }

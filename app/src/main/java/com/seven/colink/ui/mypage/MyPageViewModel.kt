@@ -10,8 +10,9 @@ import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.repository.UserRepository
-import com.seven.colink.ui.mypage.MyPagePostModel
 import com.seven.colink.util.convert.convertToDaysAgo
+import com.seven.colink.util.status.DataResultStatus
+import com.seven.colink.util.status.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,24 +22,47 @@ class MyPageViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
     private val postRepository: PostRepository
-): ViewModel() {
+) : ViewModel() {
 
-    private val _userDetails = MutableLiveData<MyPageUserModel>()
+    private val _userDetails = MutableLiveData<UiState<MyPageUserModel>>()
     private val _userPosts = MutableLiveData<List<MyPagePostModel>>()
-    val userDetails: LiveData<MyPageUserModel> = _userDetails
+    val userDetails: LiveData<UiState<MyPageUserModel>> = _userDetails
     val userPost: LiveData<List<MyPagePostModel>> = _userPosts
+
     init {
         loadUserDetails()
         loadUserPost()
     }
+
     private fun loadUserDetails() {
         viewModelScope.launch {
-            val result = userRepository.getUserDetails(authRepository.getCurrentUser().message)
-            result.onSuccess { user ->
-                _userDetails.postValue(user?.convertUserEntity())
-            }.onFailure { exception ->
-                Log.e("ViewModel", "Error fetching user details", exception)
-            }
+
+            _userDetails.value = UiState.Loading
+            _userDetails.value =
+                try {
+                    when (val currentUser = authRepository.getCurrentUser()) {
+                        DataResultStatus.SUCCESS -> {
+                            try {
+                                val userDetailsResult =
+                                    userRepository.getUserDetails(currentUser.message)
+                                userDetailsResult.fold(
+                                    onSuccess = { user ->
+                                        user?.let { UiState.Success(it.convertUserEntity()) }
+                                    },
+                                    onFailure = { exception ->
+                                        UiState.Error(exception)
+                                    }
+                                )
+                            } catch (exception: Exception) {
+                                UiState.Error(exception)
+                            }
+                        }
+
+                        else -> UiState.Error(Exception(currentUser.message))
+                    }
+                } catch (e: Exception) {
+                    UiState.Error(e)
+                }
         }
     }
 
@@ -46,23 +70,24 @@ class MyPageViewModel @Inject constructor(
         viewModelScope.launch {
             val result = postRepository.getPostByAuthId(authRepository.getCurrentUser().message)
             result.onSuccess { post ->
-                _userPosts.postValue(post.sortedByDescending{ it.registeredDate}.map { it.convertPostEntity() })
+                _userPosts.postValue(post.sortedByDescending { it.registeredDate }
+                    .map { it.convertPostEntity() })
             }
         }
     }
 
-    fun updateSkill(skill: String){
-       viewModelScope.launch {
-           val result = userRepository.getUserDetails(authRepository.getCurrentUser().message)
-           result.onSuccess {
-               it?.copy(skill = it.skill?.plus(skill)?.distinct())
-                   ?.let { it1 -> userRepository.registerUser(it1) }
-               loadUserDetails()
-           }
-       }
+    fun updateSkill(skill: String) {
+        viewModelScope.launch {
+            val result = userRepository.getUserDetails(authRepository.getCurrentUser().message)
+            result.onSuccess {
+                it?.copy(skill = it.skill?.plus(skill)?.distinct())
+                    ?.let { it1 -> userRepository.registerUser(it1) }
+                loadUserDetails()
+            }
+        }
     }
 
-    fun removeSkill(skill: String){
+    fun removeSkill(skill: String) {
 
         viewModelScope.launch {
             val currentUser = authRepository.getCurrentUser().message
@@ -85,11 +110,12 @@ class MyPageViewModel @Inject constructor(
         return postRepository.getPost(key).getOrNull()
     }
 
-    fun logout(){
+    fun logout() {
         viewModelScope.launch {
             authRepository.signOut()
         }
     }
+
     private fun PostEntity.convertPostEntity() = MyPagePostModel(
         key = key,
         title = title,

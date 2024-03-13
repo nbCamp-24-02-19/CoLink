@@ -13,6 +13,7 @@ import com.seven.colink.util.convert.convertToDaysAgo
 import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
+import com.seven.colink.util.status.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,8 +26,8 @@ class SearchViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository
 ) : ViewModel() {
-    private val _searchModel = MutableLiveData<List<SearchModel>>()
-    val searchModel: LiveData<List<SearchModel>> get() = _searchModel
+    private val _searchModel = MutableLiveData<UiState<List<SearchModel>>>()
+    val searchModel: LiveData<UiState<List<SearchModel>>> get() = _searchModel
 
     private val _searchGroupState = MutableLiveData("ALL")
     val searchGroupState: LiveData<String> get() = _searchGroupState
@@ -47,7 +48,7 @@ class SearchViewModel @Inject constructor(
             "PROJECT" -> GroupType.PROJECT
             "STUDY" -> GroupType.STUDY
             else -> {
-                _searchModel.value = emptyList()
+                _searchModel.value = UiState.Loading
                 return
             }
         }
@@ -56,30 +57,33 @@ class SearchViewModel @Inject constructor(
             "RECRUIT" -> ProjectStatus.RECRUIT
             "END" -> ProjectStatus.END
             else -> {
-                _searchModel.value = emptyList()
+                _searchModel.value = UiState.Loading
                 return
             }
         }
 
         viewModelScope.launch {
-            try {
-                val result =
-                    postRepository.searchQuery(query, groupType, recruitType).sortedByDescending {
-                        it.registeredDate
-                    }.map {
-                        it.convertSearchModel()
-                    }
-                _searchModel.postValue(result)
-            } catch (e: Exception) {
-                Log.e("doSearch", "Error during search", e)
-            }
+            _searchModel.value = UiState.Loading
+            _searchModel.value =
+                try {
+                    val result =
+                        postRepository.searchQuery(query, groupType, recruitType)
+                            .sortedByDescending {
+                                it.registeredDate
+                            }.map {
+                            it.convertSearchModel()
+                        }
+                    UiState.Success(result)
+                } catch (e: Exception) {
+                    UiState.Error(e)
+                }
             Log.d("doSearch", "SearchValue = ${groupType} , ${recruitType}")
             Log.d("doSearch", "SearchValueResult = ${_searchModel.value}")
 
         }
     }
 
-    fun getCurrentUser(){
+    fun getCurrentUser() {
         viewModelScope.launch {
             val currentUser = authRepository.getCurrentUser()
             _checkLogin.value = currentUser == DataResultStatus.SUCCESS
