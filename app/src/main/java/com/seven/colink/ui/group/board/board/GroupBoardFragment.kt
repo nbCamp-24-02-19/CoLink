@@ -31,7 +31,6 @@ class GroupBoardFragment : Fragment() {
 
     private val groupBoardListAdapter by lazy {
         GroupBoardListAdapter(
-            requireContext(),
             onClickItem = { item ->
                 when (item) {
                     is GroupBoardItem.GroupItem -> {

@@ -35,8 +35,6 @@ class GroupContentFragment : Fragment() {
 
     private val groupContentListAdapter by lazy {
         GroupContentListAdapter(
-            requireContext(),
-            binding.recyclerViewGroupContent,
             onClickItem = { view ->
                 when (view.id) {
                     R.id.iv_group_image -> {
@@ -59,6 +57,14 @@ class GroupContentFragment : Fragment() {
             },
             onChangeStatus = {
                 viewModel.onChangedStatus(it)
+            },
+            onChangedFocus = { position, title, description, item ->
+                when (item) {
+                    is GroupContentItem.GroupContent, is GroupContentItem.GroupOptionItem -> {
+                        viewModel.updateGroupItemText(position, title, description)
+                    }
+                    else -> Unit
+                }
             }
         )
     }
@@ -105,8 +111,9 @@ class GroupContentFragment : Fragment() {
 
         tvComplete.setOnClickListener {
             showProgressOverlay()
-            val (title, description) = groupContentListAdapter.getEtTitleAndDescription(0)
-            viewModel.handleGroupEntity(title, description)
+            lifecycleScope.launch {
+                viewModel.onClickUpdate()
+            }
         }
     }
 
@@ -135,17 +142,6 @@ class GroupContentFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.complete.collect {
                 hideProgressOverlay()
-                requireContext().showToast(it)
-                if (!parentFragmentManager.isStateSaved) {
-                    parentFragmentManager.popBackStack()
-                }
-            }
-        }
-
-        lifecycleScope.launch {
-            viewModel.complete.collect {
-                hideProgressOverlay()
-                requireContext().showToast(it)
                 if (!parentFragmentManager.isStateSaved) {
                     parentFragmentManager.popBackStack()
                 }
