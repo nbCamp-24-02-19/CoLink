@@ -1,6 +1,5 @@
 package com.seven.colink.ui.mypage
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -9,25 +8,26 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentMyPageBinding
 import com.seven.colink.databinding.ItemSignUpSkillBinding
 import com.seven.colink.databinding.MypageEditDialogBinding
-import com.seven.colink.databinding.UtilCustomBasicDialogBinding
 import com.seven.colink.ui.mypage.MyPageItem.skilItems
 import com.seven.colink.ui.mypage.adapter.MyPagePostAdapter
 import com.seven.colink.ui.mypage.adapter.MyPageSkilAdapter
 import com.seven.colink.ui.post.register.PostActivity
+import com.seven.colink.ui.showmore.MyPageShowMoreActivity
 import com.seven.colink.ui.sign.signin.SignInActivity
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.progress.hideProgressOverlay
@@ -35,12 +35,8 @@ import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.skillCategory
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
-import com.seven.colink.util.status.UiState
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import okhttp3.internal.notify
-import okhttp3.internal.notifyAll
 
 @AndroidEntryPoint
 class MyPageFragment : Fragment() {
@@ -74,6 +70,7 @@ class MyPageFragment : Fragment() {
         SkilRecyclerView()
         PostRecyclerView()
         setLogout()
+        postShowMore()
 
         //스킬 추가
         skiladapter.plusClick = object : MyPageSkilAdapter.PlusClick{
@@ -312,14 +309,13 @@ class MyPageFragment : Fragment() {
         }
     }
 
+    private fun postShowMore(){
+        binding.tvMypagePostShowMore.setOnClickListener {
+            val showMore = Intent(context, MyPageShowMoreActivity::class.java)
+            startActivity(showMore)
+        }
+    }
 
-
-
-//    private fun SkilRecyclerView(){
-//        skiladapter = MyPageSkilAdapter(MyPageSkilItemManager.getAllItem())
-//        binding.reMypageItem.adapter = skiladapter
-//        binding.reMypageItem.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-//    }
     private fun SkilRecyclerView(){
         skiladapter = MyPageSkilAdapter(MyPageSkilItemManager.getAllItem())
         binding.reMypageItem.adapter = skiladapter

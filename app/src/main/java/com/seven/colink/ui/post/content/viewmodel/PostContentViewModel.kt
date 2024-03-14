@@ -1,6 +1,8 @@
 package com.seven.colink.ui.post.content.viewmodel
 
 import android.app.Application
+import android.util.Log
+import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -28,6 +30,7 @@ import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.GroupType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import okhttp3.internal.notify
 import javax.inject.Inject
 
 @HiltViewModel
@@ -90,12 +93,15 @@ class PostContentViewModel @Inject constructor(
                 }?: return@launch
             )
         }
+        setPostContentItems(entity.recruit)
     }
 
-    private suspend fun deleteComment()=
-        commentRepository.deleteComment(
-            entity.key
-        )
+    fun deleteComment(key: String){
+        viewModelScope.launch {
+            commentRepository.deleteComment(key)
+        }
+        setPostContentItems(entity.recruit)
+    }
     private suspend fun getComment() =
             commentRepository.getComment(
                 postId = entity.key
@@ -150,7 +156,6 @@ class PostContentViewModel @Inject constructor(
                         )
                     }
                 }
-                deleteComment()
                 items.add(
                     PostContentItem.CommentSendItem
                 )

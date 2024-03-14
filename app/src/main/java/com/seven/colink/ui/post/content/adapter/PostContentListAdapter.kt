@@ -1,13 +1,18 @@
 package com.seven.colink.ui.post.content.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.text.InputType
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -25,6 +30,7 @@ import com.seven.colink.databinding.ItemPostSelectionTypeBinding
 import com.seven.colink.databinding.ItemPostSubTitleBinding
 import com.seven.colink.databinding.ItemUnknownBinding
 import com.seven.colink.ui.group.board.board.GroupContentViewType
+import com.seven.colink.ui.post.content.PostContentFragment
 import com.seven.colink.ui.post.register.post.adapter.TagListAdapter
 import com.seven.colink.ui.post.register.post.model.TagListItem
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
@@ -41,6 +47,7 @@ class PostContentListAdapter(
     private val onClickButton: (PostContentItem, ContentButtonUiState) -> Unit,
     private val onClickView: (View) -> Unit,
     private val onClickCommentButton: (String) -> Unit,
+    private val onClickCommentDeleteButton: (String) -> Unit,
     ) : ListAdapter<PostContentItem, PostContentListAdapter.PostViewHolder>(
     object : DiffUtil.ItemCallback<PostContentItem>() {
 
@@ -174,10 +181,12 @@ class PostContentListAdapter(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
-                )
+                ),
+                onClickCommentDeleteButton
             )
 
             PostContentViewTypeItem.COMMENTSEND -> PostCommentSendViewHolder(
+                context,
                 ItemPostCommentSendBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
@@ -375,7 +384,8 @@ class PostContentListAdapter(
     }
 
     class PostCommentViewHolder(
-        private val binding: ItemPostCommentBinding
+        private val binding: ItemPostCommentBinding,
+        private val onClickCommentDeleteButton: (String) -> Unit
     ) : PostViewHolder(binding.root) {
         override fun onBind(item: PostContentItem) {
             if (item is PostContentItem.CommentItem){
@@ -384,11 +394,15 @@ class PostContentListAdapter(
                 binding.tvPostCommentTime.text = item.registeredDate
                 binding.ivPostCommentProfile.load(item.profile)
                 binding.ivPostCommentProfile.clipToOutline = true
+                binding.tvPostCommentDelete.setOnClickListener {
+                    onClickCommentDeleteButton(item.key)
+                }
             }
         }
     }
 
     class PostCommentSendViewHolder(
+        private val context: Context,
         private val binding: ItemPostCommentSendBinding,
         private val onClickCommentButton: (String) -> Unit
     ) : PostViewHolder(binding.root) {

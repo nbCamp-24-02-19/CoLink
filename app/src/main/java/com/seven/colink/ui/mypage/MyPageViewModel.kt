@@ -49,6 +49,7 @@ class MyPageViewModel @Inject constructor(
                 _userPosts.postValue(post.sortedByDescending{ it.registeredDate}.map { it.convertPostEntity() })
             }
         }
+        loadUserDetails()
     }
 
     fun updateSkill(skill: String){

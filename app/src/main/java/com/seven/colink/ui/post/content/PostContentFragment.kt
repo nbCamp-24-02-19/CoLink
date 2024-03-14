@@ -1,15 +1,24 @@
 package com.seven.colink.ui.post.content
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentPostContentBinding
+import com.seven.colink.databinding.ItemPostCommentBinding
+import com.seven.colink.databinding.ItemPostCommentSendBinding
 import com.seven.colink.ui.group.board.list.ApplyRequestFragment
 import com.seven.colink.ui.post.content.adapter.PostContentListAdapter
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
@@ -31,6 +40,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class PostContentFragment : Fragment() {
     private var _binding: FragmentPostContentBinding? = null
+    private lateinit var commentBinding: ItemPostCommentBinding
     private val binding: FragmentPostContentBinding get() = _binding!!
 
     private val viewModel: PostContentViewModel by viewModels()
@@ -64,6 +74,9 @@ class PostContentFragment : Fragment() {
             },
             onClickCommentButton = {
                 viewModel.registerComment(it)
+            },
+            onClickCommentDeleteButton = {
+                viewModel.deleteComment(it)
             }
         )
     }
@@ -72,6 +85,7 @@ class PostContentFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        commentBinding = ItemPostCommentBinding.inflate(inflater, container, false)
         _binding = FragmentPostContentBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -81,6 +95,7 @@ class PostContentFragment : Fragment() {
         initView()
         initViewModel()
         initSharedViewModel()
+//        initCommentView()
     }
 
     private fun initView() = with(binding) {

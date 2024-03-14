@@ -256,6 +256,83 @@
 
             </LinearLayout>
 
+<!--            <LinearLayout-->
+<!--                android:id="@+id/constraintLayout3"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="8dp"-->
+<!--                android:layout_marginStart="16dp"-->
+<!--                android:layout_marginEnd="16dp"-->
+<!--                android:orientation="vertical"-->
+<!--                android:background="@drawable/mypage_re_shape"-->
+<!--                android:backgroundTint="@color/white"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/linearLayout2">-->
+
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="horizontal"-->
+<!--                    android:layout_marginTop="16dp">-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_mypage_text2"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="15dp"-->
+<!--                    android:layout_marginTop="16dp"-->
+<!--                    android:layout_gravity="start"-->
+<!--                    android:text="등록글"-->
+<!--                    android:textColor="@color/main_color"-->
+<!--                    android:textSize="14sp"-->
+<!--                    android:textStyle="bold"/>-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_mypage_post_show_more"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="270dp"-->
+<!--                    android:layout_marginTop="16dp"-->
+<!--                    android:layout_gravity="end"-->
+<!--                    android:text="더보기"-->
+<!--                    android:textSize="14sp"/>-->
+
+<!--                </LinearLayout>-->
+
+
+<!--                <include-->
+<!--                    layout="@layout/mypage_recyclerview_item_post"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:visibility="gone"/>-->
+
+<!--                <include-->
+<!--                    layout="@layout/mypage_recyclerview_item_post"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:visibility="gone"/>-->
+
+<!--                <include-->
+<!--                    layout="@layout/mypage_recyclerview_item_post"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:visibility="gone"/>-->
+
+<!--                <include-->
+<!--                    layout="@layout/mypage_recyclerview_item_post"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:visibility="gone"/>-->
+
+<!--                <include-->
+<!--                    layout="@layout/mypage_recyclerview_item_post"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:visibility="gone"/>-->
+
+<!--            </LinearLayout>-->
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout3"
                 android:layout_width="match_parent"
@@ -269,16 +346,26 @@
                 app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
 
                 <TextView
+                    android:id="@+id/tv_mypage_post_show_more"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginTop="16dp"
+                    android:text="더보기"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
                     android:id="@+id/tv_mypage_text2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="14dp"
+                    android:layout_marginStart="24dp"
                     android:layout_marginTop="16dp"
                     android:text="등록글"
                     android:textColor="@color/main_color"
                     android:textSize="14sp"
                     android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.recyclerview.widget.RecyclerView
