@@ -69,6 +69,13 @@ class GroupBoardViewModel @Inject constructor(
                 )
             )
             items.add(
+                GroupBoardItem.GroupOptionItem(
+                    key = entity.key,
+                    precautions = entity.precautions,
+                    recruitInfo = entity.recruitInfo
+                )
+            )
+            items.add(
                 GroupBoardItem.TitleItem(
                     titleRes = R.string.group_post_title,
                     viewType = GroupContentViewType.POST_ITEM,

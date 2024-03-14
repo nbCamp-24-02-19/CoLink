@@ -1,7 +1,6 @@
 package com.seven.colink.ui.group.board.list
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -27,7 +26,6 @@ class ApplyRequestFragment : Fragment() {
 
     private val groupBoardListAdapter by lazy {
         GroupBoardListAdapter(
-            requireContext(),
             onClickItem = {item ->
                 when (item) {
                     is GroupBoardItem.MemberItem -> {

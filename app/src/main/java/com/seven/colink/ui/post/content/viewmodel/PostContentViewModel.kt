@@ -11,7 +11,6 @@ import com.seven.colink.domain.entity.CommentEntity
 import com.seven.colink.domain.entity.RecruitInfo
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.CommentRepository
-import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.domain.usecase.GetPostUseCase
@@ -35,7 +34,6 @@ class PostContentViewModel @Inject constructor(
     private val context: Application,
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository,
-    private val groupRepository: GroupRepository,
     private val postRepository: PostRepository,
     private val getPostUseCase: GetPostUseCase,
     private val registerApplicationInfoUseCase: RegisterApplicationInfoUseCase,
@@ -71,8 +69,8 @@ class PostContentViewModel @Inject constructor(
     }
 
     private suspend fun setUserButtonUiState(post: Post) {
-        _updateButtonUiState.value = when (post.authId) {
-            getCurrentUser() -> ContentButtonUiState.Manager
+        _updateButtonUiState.value = when (getCurrentUser()) {
+            post.authId -> ContentButtonUiState.Manager
             null -> ContentButtonUiState.Unknown
             else -> ContentButtonUiState.User
         }
@@ -171,12 +169,8 @@ class PostContentViewModel @Inject constructor(
     private suspend fun createMember(uiState: Post): List<PostContentItem.MemberItem> {
         return uiState.memberIds.mapNotNull { memberId ->
             val userEntity = userRepository.getUserDetails(memberId).getOrNull()
-            val groupEntity = groupRepository.getGroupDetail(uiState.key).getOrNull()
-
-            if (userEntity != null && groupEntity != null) {
-                PostContentItem.MemberItem(key = groupEntity.key, userInfo = userEntity)
-            } else {
-                null
+            userEntity?.let { user ->
+                PostContentItem.MemberItem(key = uiState.key, userInfo = user)
             }
         }
     }
