@@ -37,6 +37,7 @@ class PostContentListAdapter(
     private val onClickButton: (PostContentItem, ContentButtonUiState) -> Unit,
     private val onClickView: (View) -> Unit,
     private val onClickCommentButton: (String) -> Unit,
+    private val onClickCommentDeleteButton: (String) -> Unit,
     ) : ListAdapter<PostContentItem, PostContentListAdapter.PostViewHolder>(
     object : DiffUtil.ItemCallback<PostContentItem>() {
 
@@ -166,7 +167,8 @@ class PostContentListAdapter(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
-                )
+                ),
+                onClickCommentDeleteButton
             )
 
             PostContentViewTypeItem.COMMENTSEND -> PostCommentSendViewHolder(
@@ -362,7 +364,8 @@ class PostContentListAdapter(
     }
 
     class PostCommentViewHolder(
-        private val binding: ItemPostCommentBinding
+        private val binding: ItemPostCommentBinding,
+        private val onClickCommentDeleteButton: (String) -> Unit
     ) : PostViewHolder(binding.root) {
         override fun onBind(item: PostContentItem) {
             if (item is PostContentItem.CommentItem){
@@ -371,6 +374,9 @@ class PostContentListAdapter(
                 binding.tvPostCommentTime.text = item.registeredDate
                 binding.ivPostCommentProfile.load(item.profile)
                 binding.ivPostCommentProfile.clipToOutline = true
+                binding.tvPostCommentDelete.setOnClickListener {
+                    onClickCommentDeleteButton(item.key)
+                }
             }
         }
     }

@@ -56,7 +56,7 @@ sealed interface PostContentItem {
         val count: Int
     ) : PostContentItem
     data class CommentItem(
-        val key: String?,
+        val key: String,
         val name: String,
         val profile: String,
         val description: String?,
