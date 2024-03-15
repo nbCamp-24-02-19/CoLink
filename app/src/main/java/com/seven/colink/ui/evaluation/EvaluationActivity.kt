@@ -53,7 +53,6 @@ class EvaluationActivity : AppCompatActivity() {
         evalViewModel = ViewModelProvider(this)[EvaluationViewModel::class.java]
 
         initView()
-
     }
 
     private fun initView() {
@@ -63,31 +62,21 @@ class EvaluationActivity : AppCompatActivity() {
                 evalProjectAdapter = EvaluationProjectAdapter(this, projectUserList)
                 binding.vpEvalViewpager.adapter = evalProjectAdapter
                 binding.vpEvalViewpager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+                binding.dotsindicator.attachTo(binding.vpEvalViewpager)
                 setProjectObserve()
-                setProgress()
             }
             1 -> {
                 evalViewModel.getStudyMembers(groupEntity)
                 evalStudyAdapter = EvaluationStudyAdapter(this, studyUserList)
                 binding.vpEvalViewpager.adapter = evalStudyAdapter
                 binding.vpEvalViewpager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+                binding.dotsindicator.attachTo(binding.vpEvalViewpager)
                 setStudyObserve()
-                setProgress()
             }
             else -> throw IllegalArgumentException("Unknown GroupTypeEntity!")
         }
 
         Log.d("Evaluation", "evaluationValue = ${groupTypeEntity}, $groupEntity")
-    }
-
-
-    private fun setProgress(){
-        binding.vpEvalViewpager.registerOnPageChangeCallback(object :
-            ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                binding.pbEvalProgress.progress = position
-            }
-        })
     }
 
     private fun setProjectObserve() {
@@ -96,8 +85,6 @@ class EvaluationActivity : AppCompatActivity() {
                 val nonNullList = list.filterNotNull()
                 evalProjectAdapter.mItems.clear()
                 evalProjectAdapter.mItems.addAll(nonNullList)
-                val pageCount = nonNullList.size
-                binding.pbEvalProgress.max = pageCount - 1
                 evalProjectAdapter.notifyDataSetChanged()
             }
         }
@@ -109,8 +96,6 @@ class EvaluationActivity : AppCompatActivity() {
                 val nonNullList = list.filterNotNull()
                 evalStudyAdapter.mItems.clear()
                 evalStudyAdapter.mItems.addAll(nonNullList)
-                val pageCount = nonNullList.size
-                binding.pbEvalProgress.max = pageCount - 1
                 evalStudyAdapter.notifyDataSetChanged()
             }
         }
