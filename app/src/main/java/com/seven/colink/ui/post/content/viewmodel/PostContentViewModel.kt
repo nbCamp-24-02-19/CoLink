@@ -7,9 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seven.colink.R
 import com.seven.colink.domain.entity.ApplicationInfo
+import com.seven.colink.domain.entity.CommentEntity
 import com.seven.colink.domain.entity.RecruitInfo
 import com.seven.colink.domain.repository.AuthRepository
-import com.seven.colink.domain.repository.GroupRepository
+import com.seven.colink.domain.repository.CommentRepository
 import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.domain.usecase.GetPostUseCase
@@ -33,10 +34,10 @@ class PostContentViewModel @Inject constructor(
     private val context: Application,
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository,
-    private val groupRepository: GroupRepository,
     private val postRepository: PostRepository,
     private val getPostUseCase: GetPostUseCase,
     private val registerApplicationInfoUseCase: RegisterApplicationInfoUseCase,
+    private val commentRepository: CommentRepository,
 ) : ViewModel() {
     private lateinit var entity: Post
     private val _uiState = MutableLiveData<List<PostContentItem>>()
@@ -53,6 +54,9 @@ class PostContentViewModel @Inject constructor(
         MutableLiveData(PostErrorUiState.init())
     val errorUiState: LiveData<PostErrorUiState> get() = _errorUiState
 
+    private val _userComment = MutableLiveData<CommentEntity>()
+    val userComments: LiveData<CommentEntity> = _userComment
+
     suspend fun setEntity(key: String) {
         entity = getPostUseCase(key) ?: return
     }
@@ -61,15 +65,42 @@ class PostContentViewModel @Inject constructor(
         setUserButtonUiState(entity)
         setPostContentItems(entity.recruit)
         incrementPostViews()
+        getComment()
     }
 
     private suspend fun setUserButtonUiState(post: Post) {
-        _updateButtonUiState.value = when (post.authId) {
-            getCurrentUser() -> ContentButtonUiState.Manager
+        _updateButtonUiState.value = when (getCurrentUser()) {
+            post.authId -> ContentButtonUiState.Manager
             null -> ContentButtonUiState.Unknown
             else -> ContentButtonUiState.User
         }
     }
+
+    fun registerComment(text: String) {
+        viewModelScope.launch {
+            commentRepository.registerComment(
+                getCurrentUser()?.let {
+                    CommentEntity(
+                        authId = it,
+                        postId = entity.key,
+                        description = text
+                    )
+                }?: return@launch
+            )
+        }
+        setPostContentItems(entity.recruit)
+    }
+
+    fun deleteComment(key: String){
+        viewModelScope.launch {
+            commentRepository.deleteComment(key)
+        }
+        setPostContentItems(entity.recruit)
+    }
+    private suspend fun getComment() =
+            commentRepository.getComment(
+                postId = entity.key
+            ).getOrNull()
 
     private fun setPostContentItems(updatedRecruitList: List<RecruitInfo>?) =
         viewModelScope.launch {
@@ -105,6 +136,25 @@ class PostContentViewModel @Inject constructor(
                 items.add(PostContentItem.SubTitleItem(R.string.project_team_member))
                 items.addAll(createMember(currentEntity))
 
+                items.add(PostContentItem.CommentTitle(R.string.comment))
+
+                getComment()?.forEach {
+                    userRepository.getUserDetails(it.authId).getOrNull().let {user ->
+                        items.add(
+                            PostContentItem.CommentItem(
+                                key = it.key,
+                                name = user?.name?:"",
+                                profile = user?.photoUrl?: "",
+                                description = it.description,
+                                registeredDate = it.registeredDate,
+                            )
+                        )
+                    }
+                }
+                items.add(
+                    PostContentItem.CommentSendItem
+                )
+
                 _uiState.value = items
             }
         }
@@ -121,12 +171,8 @@ class PostContentViewModel @Inject constructor(
     private suspend fun createMember(uiState: Post): List<PostContentItem.MemberItem> {
         return uiState.memberIds.mapNotNull { memberId ->
             val userEntity = userRepository.getUserDetails(memberId).getOrNull()
-            val groupEntity = groupRepository.getGroupDetail(uiState.key).getOrNull()
-
-            if (userEntity != null && groupEntity != null) {
-                PostContentItem.MemberItem(key = groupEntity.key, userInfo = userEntity)
-            } else {
-                null
+            userEntity?.let { user ->
+                PostContentItem.MemberItem(key = uiState.key, userInfo = user)
             }
         }
     }

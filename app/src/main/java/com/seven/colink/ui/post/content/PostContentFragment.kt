@@ -1,5 +1,6 @@
 package com.seven.colink.ui.post.content
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -19,6 +20,7 @@ import com.seven.colink.ui.post.content.viewmodel.PostContentViewModel
 import com.seven.colink.ui.post.register.post.model.PostErrorMessage
 import com.seven.colink.ui.post.register.post.PostFragment
 import com.seven.colink.ui.post.register.viewmodel.PostSharedViewModel
+import com.seven.colink.ui.sign.signin.SignInActivity
 import com.seven.colink.ui.userdetail.UserDetailActivity
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.showToast
@@ -38,16 +40,37 @@ class PostContentFragment : Fragment() {
 
     private val postContentListAdapter by lazy {
         PostContentListAdapter(
-            requireContext(),
             onClickItem = { item ->
-                when(item) {
+                when (item) {
                     is PostContentItem.MemberItem -> {
-                        startActivity(UserDetailActivity.newIntent(requireActivity(),item.userInfo.uid?: return@PostContentListAdapter))
+                        startActivity(
+                            UserDetailActivity.newIntent(
+                                requireActivity(),
+                                item.userInfo.uid ?: return@PostContentListAdapter
+                            )
+                        )
                     }
+
                     else -> Unit
                 }
             },
-            onClickButton = { item, buttonUiState -> handleButtonClick(item, buttonUiState) },
+            onClickButton = { item, buttonUiState ->
+                when (item) {
+                    is PostContentItem.RecruitItem -> {
+                        when (buttonUiState) {
+                            ContentButtonUiState.User -> viewModel.createDialog(item)
+                            ContentButtonUiState.Unknown -> {
+                                // TODO 로그인 화면으로 이동한다는 메세지 노출
+                                startActivity(Intent(requireContext(), SignInActivity::class.java))
+                            }
+
+                            else -> Unit
+                        }
+                    }
+
+                    else -> Unit
+                }
+            },
             onClickView = { view ->
                 when (view.id) {
                     R.id.tv_apply_request -> {
@@ -62,6 +85,12 @@ class PostContentFragment : Fragment() {
                     }
                 }
             },
+            onClickCommentButton = {
+                viewModel.registerComment(it)
+            },
+            onClickCommentDeleteButton = {
+                viewModel.deleteComment(it)
+            }
         )
     }
 
@@ -82,6 +111,7 @@ class PostContentFragment : Fragment() {
 
     private fun initView() = with(binding) {
         recyclerViewPostContent.adapter = postContentListAdapter
+        recyclerViewPostContent.itemAnimator = null
 
         binding.ivFinish.setOnClickListener {
             activity?.finish()
@@ -145,25 +175,6 @@ class PostContentFragment : Fragment() {
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
-    }
-
-    private fun handleButtonClick(item: PostContentItem, buttonUiState: ContentButtonUiState) {
-        when (item) {
-            is PostContentItem.RecruitItem -> handleRecruitItemClick(item, buttonUiState)
-            else -> throw UnsupportedOperationException("Unhandled type: $item")
-        }
-    }
-
-    private fun handleRecruitItemClick(
-        item: PostContentItem.RecruitItem,
-        buttonUiState: ContentButtonUiState
-    ) {
-        when (buttonUiState) {
-            ContentButtonUiState.User -> {
-                viewModel.createDialog(item)
-            }
-            else -> Unit
-        }
     }
 
     private fun showDialog(state: DialogUiState?) {

@@ -2,7 +2,8 @@ package com.seven.colink.ui.sign.signup.type
 
 enum class SignUpEntryType {
     CREATE,
-    UPDATE
+    UPDATE_PROFILE,
+    UPDATE_PASSWORD
     ;
 
     companion object {

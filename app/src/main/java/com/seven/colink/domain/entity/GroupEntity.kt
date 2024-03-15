@@ -16,6 +16,8 @@ data class GroupEntity (
     val groupType: GroupType = GroupType.UNKNOWN,
     val description: String? = "",
     val tags: List<String>? = emptyList(),
+    val precautions: String? = "",
+    val recruitInfo: String? = "",
     val memberIds: List<String> = emptyList(),
     val registeredDate: String? = LocalDateTime.now().convertLocalDateTime(),
     val startDate: String? = null,

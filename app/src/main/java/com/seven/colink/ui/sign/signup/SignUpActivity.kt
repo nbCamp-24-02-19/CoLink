@@ -39,12 +39,10 @@ class SignUpActivity : AppCompatActivity() {
         fun newIntent(
             context: Context,
             entryType: SignUpEntryType,
-            entity: SignUpUserModel? = null,
         ) = Intent(
             context, SignUpActivity()::class.java
         ).apply {
             putExtra(EXTRA_ENTRY_TYPE, entryType.ordinal)
-            putExtra(EXTRA_USER_ENTITY, entity)
         }
     }
 
@@ -72,8 +70,6 @@ class SignUpActivity : AppCompatActivity() {
         )
     }
 
-    private var skills: MutableList<String> = mutableListOf()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -85,8 +81,9 @@ class SignUpActivity : AppCompatActivity() {
         lifecycleScope.launch {
             entryType.collect {
                 when (it) {
-                    SignUpEntryType.UPDATE -> updateUiState(SignUpUIState.PROFILE)
                     SignUpEntryType.CREATE -> updateUiState(SignUpUIState.NAME)
+                    SignUpEntryType.UPDATE_PROFILE -> updateUiState(SignUpUIState.PROFILE)
+                    SignUpEntryType.UPDATE_PASSWORD -> updateUiState(SignUpUIState.PASSWORD)
                 }
             }
         }
@@ -155,6 +152,12 @@ class SignUpActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
+            profileItem.collect {
+                adapter.submitList(it)
+            }
+        }
+
+        lifecycleScope.launch {
             viewModel.skills.collect{
                 skillAdapter.submitList(it)
             }
@@ -205,16 +208,7 @@ class SignUpActivity : AppCompatActivity() {
 
     private fun setupProfileList() = with(binding.rcSignUpList) {
         layoutManager = LinearLayoutManager(context)
-        adapter = this@SignUpActivity.adapter.apply {
-            submitList(
-                listOf(
-                    SignUpProfileItem.Category,
-                    SignUpProfileItem.Skill,
-                    SignUpProfileItem.Level,
-                    SignUpProfileItem.Info,
-                    SignUpProfileItem.Blog
-                ))
-        }
+        adapter = this@SignUpActivity.adapter
     }
     private fun setButton(state: SignUpUIState) = with(binding){
         btSignUpBtn.setOnClickListener {

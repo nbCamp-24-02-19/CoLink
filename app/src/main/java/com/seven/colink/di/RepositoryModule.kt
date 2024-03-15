@@ -17,6 +17,7 @@ import com.seven.colink.domain.repository.ImageRepository
 import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.repository.ProductRepository
 import com.seven.colink.domain.repository.RecruitRepository
+import com.seven.colink.domain.repository.ScheduleRepository
 import com.seven.colink.domain.repository.UserRepository
 import dagger.Binds
 import dagger.Module
@@ -46,4 +47,7 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun bindRecruitRepository(repository: RecruitRepositoryImpl): RecruitRepository
+
+    @Binds
+    abstract fun bindScheduleRepository(repository: ScheduleRepository): ScheduleRepository
 }
