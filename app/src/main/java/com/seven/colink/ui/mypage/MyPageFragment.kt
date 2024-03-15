@@ -44,10 +44,6 @@ class MyPageFragment : Fragment() {
     private lateinit var skiladapter: MyPageSkilAdapter
     private lateinit var postadapter: MyPagePostAdapter
 
-
-    var imageUri: Uri? = null
-
-
     companion object {
         fun newInstance() = MyPageFragment()
     }
@@ -347,5 +343,9 @@ class MyPageFragment : Fragment() {
             startActivity(Intent(requireContext(), SignInActivity::class.java))
             logout()
         }
+    }
+
+    fun onEditProfile() {
+
     }
 }

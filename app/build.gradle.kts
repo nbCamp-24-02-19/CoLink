@@ -110,4 +110,5 @@ dependencies {
 
     //algolia
     implementation ("com.algolia:algoliasearch-android:3.+")
+    implementation ("com.algolia:algoliasearch-client-kotlin:2.1.9")
 }

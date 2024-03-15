@@ -2,7 +2,6 @@ package com.seven.colink.ui.sign.signin
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -14,9 +13,7 @@ import com.seven.colink.ui.sign.signup.SignUpActivity
 import com.seven.colink.util.convert.convertError
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
-import com.seven.colink.util.snackbar.setSnackBar
 import com.seven.colink.util.status.DataResultStatus
-import com.seven.colink.util.status.SnackType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -73,6 +70,7 @@ class SignInActivity : AppCompatActivity() {
         ivSignInBack.setOnClickListener {
             finish()
         }
+
         btSignInLogin.setOnClickListener {
             showProgressOverlay()
             lifecycleScope.launch {

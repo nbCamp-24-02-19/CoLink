@@ -172,6 +172,7 @@ class PostRepositoryImpl @Inject constructor(
                 put("tags", JSONArray(post.tags))
                 put("groupType", post.groupType)
                 put("status", post.status)
+                put("registeredDate", post.registeredDate)
             }
             algolia.addObjectAsync(postJson) { _, exception ->
                 if (exception != null) {
@@ -179,6 +180,15 @@ class PostRepositoryImpl @Inject constructor(
             }
         } catch (e: Exception){
             Log.e(TAG, "$e")
+        }
+    }
+
+    override suspend fun synchronizeFirestoreToAlgolia() = withContext(Dispatchers.IO) {
+        firebaseFirestore.collection(DataBaseType.POST.title).get().await()
+            .documents.forEach { documentSnapshot ->
+            documentSnapshot.toObject(PostEntity::class.java)?.let { postEntity ->
+                addPostToAlgolia(postEntity)
+            }
         }
     }
 
