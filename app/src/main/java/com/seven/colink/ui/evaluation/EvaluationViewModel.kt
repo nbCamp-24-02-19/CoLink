@@ -20,31 +20,72 @@ class EvaluationViewModel @Inject constructor(
     private val groupRepository: GroupRepository
 ) : ViewModel() {
     private val _evalProjectMembersData = MutableLiveData<List<EvaluationData.EvalProject?>?>()
-    val evalProjectMembersData : LiveData<List<EvaluationData.EvalProject?>?> get() = _evalProjectMembersData
+    val evalProjectMembersData: LiveData<List<EvaluationData.EvalProject?>?> get() = _evalProjectMembersData
 
     private val _evalStudyMembersData = MutableLiveData<List<EvaluationData.EvalStudy?>?>()
-    val evalStudyMembersData : LiveData<List<EvaluationData.EvalStudy?>?> get() = _evalStudyMembersData
+    val evalStudyMembersData: LiveData<List<EvaluationData.EvalStudy?>?> get() = _evalStudyMembersData
 
-    init {
-        evalProjectMembersData
-        evalStudyMembersData
-    }
-
-
-    fun getMembers(groupKey : String?) {
-
+    fun getProjectMembers(groupKey: String?) {
         viewModelScope.launch {
             // 현재 유저
             val currentUser = authRepository.getCurrentUser()
             // 액티비티에서 받은 그룹 키 값으로 GroupEntity의 memberIds를 받아옴
-            val getMembers = groupRepository.getGroupDetail(groupKey?:"")
+            val getMembers = groupRepository.getGroupDetail(groupKey ?: "")
                 .getOrNull()?.memberIds?.filter {
                     it != currentUser.message
-                }?.map{// map으로 해당 그룹에서 속해 있는 UserEntity 받아옴
+                }?.mapNotNull {// map으로 해당 그룹에서 속해 있는 UserEntity 받아옴
                     userRepository.getUserDetails(it).getOrNull()?.convertEvalProjectData()
                 }
             _evalProjectMembersData.value = getMembers
             Log.d("Evaluation", "evalMembersData = ${_evalProjectMembersData.value}")
+        }
+    }
+
+    fun updateProjectMembers(
+        position: Int,
+        q1: Float,
+        q2: Float,
+        q3: Float,
+        q4: Float,
+        q5: Float
+    ) {
+        val projectMembers = _evalProjectMembersData.value?.toMutableList() ?: return
+
+        if (position >= 0 && position < projectMembers.size) {
+            val member = projectMembers[position]
+            member?.let {
+                it.communication = q1
+                it.technic = q2
+                it.diligence = q3
+                it.flexibility = q4
+                it.creativity = q5
+                it.grade = ((q1 + q2 + q3 + q4 + q5) / 5).toDouble()
+            }
+            _evalProjectMembersData.value = projectMembers
+            Log.d("Evaluation", "### updateProjectMembers = $projectMembers")
+        }
+    }
+
+    // 완료 버튼 클릭 시 user의 grade를 계산 후, 저장 시켜주기
+    fun updateProjectUserGrade(position: Int) {
+        viewModelScope.launch {
+            val projectMembers = _evalProjectMembersData.value?.toMutableList() ?: return@launch
+            val member = projectMembers[position]
+            val getUserEntity = userRepository.getUserDetails(member?.uid.toString())
+            if (getUserEntity.getOrNull()?.uid == member?.uid) {
+                if (member != null) {
+                    getUserEntity.map {
+                        member.evalCount++
+                        member.grade =
+                            (((getUserEntity.getOrNull()?.grade)!! * (getUserEntity.getOrNull()?.evaluatedNumber)!!) + ((member.grade)!!) * 2) / member.evalCount
+                        userRepository.updateUserInfo(member.convertProjectUserEntity())
+                    }
+                    Log.d(
+                        "Evaluation",
+                        "@@@ registerUser(member) = ${member.convertProjectUserEntity()}"
+                    )
+                }
+            }
         }
     }
 
@@ -60,5 +101,91 @@ class EvaluationViewModel @Inject constructor(
             flexibility = flexibility,
             creativity = creativity,
             evalCount = evaluatedNumber
+        )
+
+    private fun EvaluationData.EvalProject.convertProjectUserEntity() =
+        UserEntity(
+            uid = uid,
+            name = name,
+            photoUrl = photoUrl,
+            grade = grade,
+            communication = communication,
+            technicalSkill = technic,
+            diligence = diligence,
+            flexibility = flexibility,
+            creativity = creativity,
+            evaluatedNumber = evalCount
+        )
+
+    fun getStudyMembers(groupKey: String?) {
+        viewModelScope.launch {
+            val currentUser = authRepository.getCurrentUser()
+            val getMembers = groupRepository.getGroupDetail(groupKey ?: "")
+                .getOrNull()?.memberIds?.filter {
+                    it != currentUser.message
+                }?.mapNotNull {
+                    userRepository.getUserDetails(it).getOrNull()?.convertEvalStudyData()
+                }
+            _evalStudyMembersData.value = getMembers
+            Log.d("Evaluation", "evalStudyMembersData = ${_evalStudyMembersData.value}")
+        }
+    }
+
+    fun updateStudyMembers(position: Int, q1: Float, q2: Float, q3: Float) {
+        val studyMembers = _evalStudyMembersData.value?.toMutableList() ?: return
+
+        if (position >= 0 && position < studyMembers.size) {
+            val member = studyMembers[position]
+            member?.let {
+                it.diligence = q1
+                it.communication = q2
+                it.flexibility = q3
+                it.grade = ((q1 + q2 + q3) / 3).toDouble()
+            }
+            _evalStudyMembersData.value = studyMembers
+            Log.d("Evaluation", "### updateStudyMembers = $studyMembers")
+        }
+    }
+
+    fun updateStudyUserGrade(position: Int){
+        viewModelScope.launch {
+            val studyMembers = _evalStudyMembersData.value?.toMutableList() ?: return@launch
+            val member = studyMembers[position]
+            val getUserEntity = userRepository.getUserDetails(member?.uid.toString())
+            if (getUserEntity.getOrNull()?.uid == member?.uid){
+                if(member != null){
+                    getUserEntity.map {
+                        member.evalCount ++
+                        member.grade =
+                            (((getUserEntity.getOrNull()?.grade)!! * (getUserEntity.getOrNull()?.evaluatedNumber)!!) + ((member.grade)!!)*2) / member.evalCount
+                        userRepository.updateUserInfo(member.convertStudyUserEntity())
+                    }
+                }
+            }
+        }
+    }
+
+    private fun UserEntity.convertEvalStudyData() =
+        EvaluationData.EvalStudy(
+            uid = uid,
+            name = name,
+            photoUrl = photoUrl,
+            grade = grade,
+            diligence = diligence,
+            communication = communication,
+            flexibility = flexibility,
+            evalCount = evaluatedNumber
+        )
+
+    private fun EvaluationData.EvalStudy.convertStudyUserEntity() =
+        UserEntity(
+            uid = uid,
+            name = name,
+            photoUrl = photoUrl,
+            grade = grade,
+            diligence = diligence,
+            communication = communication,
+            flexibility = flexibility,
+            evaluatedNumber = evalCount
         )
 }

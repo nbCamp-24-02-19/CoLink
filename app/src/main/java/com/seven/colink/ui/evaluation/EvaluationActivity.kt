@@ -1,10 +1,12 @@
 package com.seven.colink.ui.evaluation
 
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.animation.DecelerateInterpolator
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.seven.colink.databinding.ActivityEvaluationBinding
@@ -51,14 +53,13 @@ class EvaluationActivity : AppCompatActivity() {
         evalViewModel = ViewModelProvider(this)[EvaluationViewModel::class.java]
 
         initView()
-        evalViewModel.getMembers(groupEntity)
-
 
     }
 
     private fun initView() {
         when (groupTypeEntity) {
             0 -> {
+                evalViewModel.getProjectMembers(groupEntity)
                 evalProjectAdapter = EvaluationProjectAdapter(this, projectUserList)
                 binding.vpEvalViewpager.adapter = evalProjectAdapter
                 binding.vpEvalViewpager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
@@ -66,10 +67,12 @@ class EvaluationActivity : AppCompatActivity() {
                 setProgress()
             }
             1 -> {
+                evalViewModel.getStudyMembers(groupEntity)
                 evalStudyAdapter = EvaluationStudyAdapter(this, studyUserList)
                 binding.vpEvalViewpager.adapter = evalStudyAdapter
                 binding.vpEvalViewpager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
                 setStudyObserve()
+                setProgress()
             }
             else -> throw IllegalArgumentException("Unknown GroupTypeEntity!")
         }
@@ -93,13 +96,11 @@ class EvaluationActivity : AppCompatActivity() {
                 val nonNullList = list.filterNotNull()
                 evalProjectAdapter.mItems.clear()
                 evalProjectAdapter.mItems.addAll(nonNullList)
-                Log.d("Evaluation", "### Adapter mItems = ${evalProjectAdapter.mItems}")
                 val pageCount = nonNullList.size
                 binding.pbEvalProgress.max = pageCount - 1
                 evalProjectAdapter.notifyDataSetChanged()
             }
         }
-        Log.d("Evaluation", "setProjectObserve ^{^오^} 심규상 왔다감")
     }
 
     private fun setStudyObserve() {
@@ -113,6 +114,5 @@ class EvaluationActivity : AppCompatActivity() {
                 evalStudyAdapter.notifyDataSetChanged()
             }
         }
-        Log.d("Evaluation", "setProjectObserve")
     }
 }
