@@ -8,6 +8,7 @@ import com.seven.colink.data.firebase.repository.ImageRepositoryImpl
 import com.seven.colink.data.firebase.repository.PostRepositoryImpl
 import com.seven.colink.data.firebase.repository.ProductRepositoryImpl
 import com.seven.colink.data.firebase.repository.RecruitRepositoryImpl
+import com.seven.colink.data.firebase.repository.ScheduleRepositoryImpl
 import com.seven.colink.data.firebase.repository.UserRepositoryImpl
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.ChatRepository
@@ -44,10 +45,8 @@ abstract class RepositoryModule {
     abstract fun bindPostRepository(repository: PostRepositoryImpl): PostRepository
     @Binds
     abstract fun bindProductRepository(repository: ProductRepositoryImpl): ProductRepository
-
     @Binds
     abstract fun bindRecruitRepository(repository: RecruitRepositoryImpl): RecruitRepository
-
     @Binds
-    abstract fun bindScheduleRepository(repository: ScheduleRepository): ScheduleRepository
+    abstract fun bindScheduleRepository(repository: ScheduleRepositoryImpl): ScheduleRepository
 }

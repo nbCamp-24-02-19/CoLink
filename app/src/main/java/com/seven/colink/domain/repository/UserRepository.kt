@@ -9,4 +9,5 @@ interface UserRepository {
     suspend fun deleteUser(uid: String): DataResultStatus
     suspend fun checkUserEmail(email: String): Boolean
     suspend fun getUserBySpecialty(specialty: String): Result<List<UserEntity>>
+    suspend fun updateUserInfo(user: UserEntity): DataResultStatus
 }

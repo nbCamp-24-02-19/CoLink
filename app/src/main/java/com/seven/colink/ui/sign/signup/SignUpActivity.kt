@@ -42,7 +42,7 @@ class SignUpActivity : AppCompatActivity() {
         ) = Intent(
             context, SignUpActivity()::class.java
         ).apply {
-            putExtra(EXTRA_ENTRY_TYPE, entryType.ordinal)
+            putExtra(EXTRA_ENTRY_TYPE, entryType)
         }
     }
 

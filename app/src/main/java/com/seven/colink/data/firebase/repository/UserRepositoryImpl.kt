@@ -31,6 +31,20 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun updateUserInfo(user: UserEntity) = suspendCoroutine { continuation ->
+        user.uid?.let {
+            firestore.collection(DataBaseType.USER.title).document(it).set(user)
+                .addOnSuccessListener {
+                    continuation.resume(DataResultStatus.SUCCESS)
+                }
+                .addOnFailureListener { e ->
+                    continuation.resume(DataResultStatus.FAIL.apply {
+                        this.message = e.message ?: "Unknown Error"
+                    })
+                }
+        }
+    }
+
     override suspend fun getUserDetails(uid: String) = runCatching {
         firestore.collection(DataBaseType.USER.title).document(uid).get().await()
             .toObject(UserEntity::class.java)
