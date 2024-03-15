@@ -65,10 +65,12 @@ class SignUpViewModel @Inject constructor(
     }
 
     private suspend fun setProfile() {
+        val currentUser = userRepository.getUserDetails(
+            authRepository.getCurrentUser().message
+        ).getOrNull()
+
         _profileItem.emit(
-            userRepository.getUserDetails(
-                authRepository.getCurrentUser().message
-            ).getOrNull()?.let {
+            currentUser?.let {
                 listOf(
                     SignUpProfileItem.Category(it.mainSpecialty, it.specialty),
                     SignUpProfileItem.Skill(it.skill),
@@ -84,6 +86,8 @@ class SignUpViewModel @Inject constructor(
                 SignUpProfileItem.Blog()
             )
         )
+
+        _skills.value = currentUser?.skill?: return
     }
 
     fun updateUiState(status: SignUpUIState) {
@@ -180,14 +184,14 @@ class SignUpViewModel @Inject constructor(
         }
         if (_errorMessage.value == SignUpErrorMessage.DUMMY) {
             _errorMessage.value = SignUpErrorMessage.PASS
-            userModel.value.password?.let { registerUser(it) }
+            userModel.value.password.let { registerUser(it) }
         }
     }
 
-    private fun registerUser(password: String) = viewModelScope.launch {
+    private fun registerUser(password: String?) = viewModelScope.launch {
         when (entryType.value) {
             SignUpEntryType.CREATE -> {
-                when (registerUserUseCase(userModel.value.convertUserEntity(), password)) {
+                when (registerUserUseCase(userModel.value.convertUserEntity(), password?: return@launch)) {
                     DataResultStatus.SUCCESS -> _registrationResult.emit("등록 성공")
                     DataResultStatus.FAIL -> _registrationResult.emit("등록 실패")
                 }
