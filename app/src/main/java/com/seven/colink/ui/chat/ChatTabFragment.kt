@@ -1,12 +1,11 @@
 package com.seven.colink.ui.chat
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -15,17 +14,14 @@ import com.seven.colink.databinding.FragmentChatTabBinding
 import com.seven.colink.ui.chat.adapter.ChatListAdapter
 import com.seven.colink.ui.chat.type.ChatTabType
 import com.seven.colink.ui.chat.viewmodel.ChatTabViewModel
-import com.seven.colink.ui.sign.signup.SignUpActivity
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.status.UiState
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class ChatTabFragment: Fragment() {
+class ChatTabFragment : Fragment() {
 
     companion object {
         const val CHAT_TYPE = "chatType"
@@ -45,10 +41,11 @@ class ChatTabFragment: Fragment() {
     private val adapter by lazy {
         ChatListAdapter(
             onClick = {
-                startActivity(ChatRoomActivity.newIntent(requireContext(),it.key, it.title))
+                startActivity(ChatRoomActivity.newIntent(requireContext(), it.key, it.title))
             }
         )
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -64,7 +61,7 @@ class ChatTabFragment: Fragment() {
         initViewModel()
     }
 
-    private fun initViewModel() = with(viewModel){
+    private fun initViewModel() = with(viewModel) {
         lifecycleScope.launch {
             chatType.collect {
                 setChat()
@@ -72,14 +69,21 @@ class ChatTabFragment: Fragment() {
         }
 
         lifecycleScope.launch {
-            chatList.collect{ state ->
-                when(state) {
+            chatList.collect { state ->
+                when (state) {
                     is UiState.Loading -> showProgressOverlay()
                     is UiState.Success -> {
+                        binding.clEmptyChat.isVisible = state.data.isNullOrEmpty()
+                        binding.rcChatList.isVisible = state.data.isNullOrEmpty().not()
                         adapter.submitList(state.data)
                         hideProgressOverlay()
                     }
-                    is UiState.Error -> Toast.makeText(context, "${state.exception}", Toast.LENGTH_SHORT).show()
+
+                    is UiState.Error -> Toast.makeText(
+                        context,
+                        "${state.throwable}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
@@ -90,7 +94,7 @@ class ChatTabFragment: Fragment() {
         setList()
     }
 
-    private fun setList() = with(binding){
+    private fun setList() = with(binding) {
         rcChatList.adapter = adapter
         rcChatList.layoutManager = LinearLayoutManager(requireContext())
     }

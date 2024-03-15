@@ -3,20 +3,28 @@ package com.seven.colink.ui.main
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.seven.colink.R
 import com.seven.colink.databinding.ActivityMainBinding
+import com.seven.colink.ui.main.viewmodel.MainViewModel
 import com.seven.colink.util.Constants
+import com.seven.colink.util.snackbar.setSnackBar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+
+    private val viewModel: MainViewModel by viewModels()
 
     private val navHostFragment by lazy {
         supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
@@ -33,6 +41,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         initView()
+        initViewModel()
+    }
+
+    private fun initViewModel() = with(viewModel) {
+        lifecycleScope.launch {
+            userCheck.collect {
+                if (it != null) binding.navHostFragmentActivityMain.setSnackBar(image = it.second, message = "환영합니다 ${it.first}님")
+            }
+        }
     }
 
     private fun initView() {

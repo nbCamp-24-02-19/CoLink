@@ -34,11 +34,11 @@ sealed interface PostListItem {
     ) : PostListItem
 
     data class TitleItem(
-        val message1: Int?,
-        val message2: Int? = null
+        val firstMessage: Int?,
+        val secondMessage: Int? = null
     ) : PostListItem
 
     data class ButtonItem(
-        val text: Int?
+        val buttonText: Int?
     ) : PostListItem
 }
