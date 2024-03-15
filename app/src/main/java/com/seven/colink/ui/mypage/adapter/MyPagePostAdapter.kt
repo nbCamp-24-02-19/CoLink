@@ -85,7 +85,8 @@ class MyPagePostAdapter(var mItems: List<MyPostItem>) : RecyclerView.Adapter<Rec
     }
 
     override fun getItemCount(): Int {
-        return mItems.size
+        val limit = 5
+        return Math.min(mItems.size, limit)
     }
 
     override fun getItemViewType(position: Int): Int {

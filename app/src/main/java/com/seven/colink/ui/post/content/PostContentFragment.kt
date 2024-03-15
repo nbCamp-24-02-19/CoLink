@@ -87,6 +87,9 @@ class PostContentFragment : Fragment() {
             },
             onClickCommentButton = {
                 viewModel.registerComment(it)
+            },
+            onClickCommentDeleteButton = {
+                viewModel.deleteComment(it)
             }
         )
     }
