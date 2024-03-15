@@ -119,10 +119,10 @@ class SearchFragment : Fragment() {
         }
 
 
-        val query = binding.etSearchSearch.text.toString()
 
         // 프로젝트 필터버튼
         binding.tvSearchProject.setOnClickListener {
+            val query = binding.etSearchSearch.text.toString()
             if (project) {
                 project = false
                 offColor(binding.tvSearchProject)
@@ -144,6 +144,7 @@ class SearchFragment : Fragment() {
 
         // 스터디 필터버튼
         binding.tvSearchStudy.setOnClickListener {
+            val query = binding.etSearchSearch.text.toString()
             if (study) {
                 study = false
                 offColor(binding.tvSearchStudy)
@@ -165,6 +166,7 @@ class SearchFragment : Fragment() {
 
         // 모집완료 필터버튼
         binding.tvSearchRecruitEnd.setOnClickListener {
+            val query = binding.etSearchSearch.text.toString()
             if (recruitEnd) {
                 recruitEnd = false
                 offColor(binding.tvSearchRecruitEnd)
@@ -186,6 +188,7 @@ class SearchFragment : Fragment() {
 
         // 모집중 필터버튼
         binding.tvSearchRecruit.setOnClickListener {
+            val query = binding.etSearchSearch.text.toString()
             if (recruit) {
                 recruit = false
                 offColor(binding.tvSearchRecruit)
@@ -204,6 +207,7 @@ class SearchFragment : Fragment() {
                 }
             }
         }
+
 
         showProgressOverlay()
         initRecyclerView()
