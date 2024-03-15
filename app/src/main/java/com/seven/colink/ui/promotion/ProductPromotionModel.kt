@@ -38,12 +38,19 @@ sealed class ProductPromotionItems {
         val key : String?,
         val title : String?,
         val date : String?,
-        var link : MutableList<String> = mutableListOf()
+        val des : String?
     ) : ProductPromotionItems()
 
-    data class Des(
+    data class MiddleImg(
         val key : String?,
-        val des : String?
+        val img : String?
+    ) : ProductPromotionItems()
+
+    data class Link(
+        val key : String?,
+        val webLink : String?,
+        val iosLink : String?,
+        val aosLink : String?
     ) : ProductPromotionItems()
 
     data class ProjectHeader(
@@ -54,9 +61,10 @@ sealed class ProductPromotionItems {
         val header: String
     ) : ProductPromotionItems()
 
-    data class ProjectMemberItem(     // 로그인 되어있는, 작성하는 사람 정보 가져오기
-        val key : String?,
-        val userInfo : UserEntity
+    data class ProjectLeaderItem(     // 로그인 되어있는, 작성하는 사람 정보 가져오기
+//        val key : String?,
+        val userInfo: Result<UserEntity?>?
+//        val userInfo: UserEntity
     ) : ProductPromotionItems()
 
 //    data class ProjectMemberItem(
@@ -80,10 +88,10 @@ sealed class ProductPromotionItems {
 //        val grade : Double?,
 //        val info : String?
 //    ) : ProductPromotionItems()
-    data class ProjectMember (      // 프로젝트의 멤버를 가져와서 작성한 본인은 빼기
-        val key : String?,
-//        val userInfo : UserEntity
-        val userInfo : List<UserEntity>
+    data class ProjectMember(      // 프로젝트의 멤버를 가져와서 작성한 본인은 빼기
+//        val key : String?,
+//    val userInfo: Result<UserEntity?>
+    val userInfo: MutableList<Result<UserEntity?>>
     ) : ProductPromotionItems()
 
 }
