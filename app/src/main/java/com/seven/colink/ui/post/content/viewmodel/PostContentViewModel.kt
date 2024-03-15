@@ -88,12 +88,15 @@ class PostContentViewModel @Inject constructor(
                 }?: return@launch
             )
         }
+        setPostContentItems(entity.recruit)
     }
 
-    private suspend fun deleteComment()=
-        commentRepository.deleteComment(
-            entity.key
-        )
+    fun deleteComment(key: String){
+        viewModelScope.launch {
+            commentRepository.deleteComment(key)
+        }
+        setPostContentItems(entity.recruit)
+    }
     private suspend fun getComment() =
             commentRepository.getComment(
                 postId = entity.key
@@ -148,7 +151,6 @@ class PostContentViewModel @Inject constructor(
                         )
                     }
                 }
-                deleteComment()
                 items.add(
                     PostContentItem.CommentSendItem
                 )
