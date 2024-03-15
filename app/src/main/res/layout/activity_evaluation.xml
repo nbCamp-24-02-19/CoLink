@@ -9,27 +9,30 @@
     android:background="@color/bg"
     tools:context=".ui.evaluation.EvaluationActivity">
 
-    <ProgressBar
-        android:id="@+id/pb_eval_progress"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:layout_marginStart="24dp"
+    <com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
+        android:id="@+id/dotsindicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
-        android:scaleY="2"
+        app:dotsColor="@color/main_color"
+        app:dotsCornerRadius="8dp"
+        app:dotsSize="16dp"
+        app:dotsSpacing="4dp"
+        app:dotsStrokeColor="@color/typo_color"
+        app:dotsWidthFactor="2.5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:progressMode="true" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_viewPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pb_eval_progress"
-        android:id="@+id/cl_viewPager">
+        app:layout_constraintTop_toBottomOf="@+id/dotsindicator">
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/vp_eval_viewpager"
@@ -40,7 +43,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -54,6 +54,11 @@ android {
     }
 }
 
+repositories {
+    google()
+    mavenCentral()
+}
+
 dependencies {
 
     implementation("androidx.core:core-ktx:1.12.0")
@@ -110,4 +115,7 @@ dependencies {
 
     //algolia
     implementation ("com.algolia:algoliasearch-android:3.+")
+
+    // Indicator
+    implementation("com.tbuonomo:dotsindicator:5.0")
 }
