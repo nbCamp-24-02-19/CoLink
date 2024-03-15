@@ -8,7 +8,6 @@ import android.view.inputmethod.InputMethodManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.load
 import com.seven.colink.databinding.ItemPostMemberInfoBinding
 import com.seven.colink.databinding.ItemProductImgBinding
@@ -19,7 +18,7 @@ import com.seven.colink.databinding.ItemProductTitleBinding
 import com.seven.colink.ui.promotion.ProductPromotionItems
 import com.seven.colink.util.setLevelIcon
 
-class ProductPromotionEditAdapter(private val context: Context) : ListAdapter<ProductPromotionItems, RecyclerView.ViewHolder>(
+class ProductPromotionViewAdapter : ListAdapter<ProductPromotionItems, RecyclerView.ViewHolder>(
     ProductPromotionDiffUtil
 ) {
     object ProductPromotionDiffUtil : DiffUtil.ItemCallback<ProductPromotionItems>() {
@@ -65,7 +64,7 @@ class ProductPromotionEditAdapter(private val context: Context) : ListAdapter<Pr
     }
 
     interface ItemClick {
-        fun onClick(view: View,position: Int)
+        fun onClick(view: View, position: Int)
     }
 
     var itemClick : ItemClick? = null
@@ -129,33 +128,46 @@ class ProductPromotionEditAdapter(private val context: Context) : ListAdapter<Pr
         if (item is ProductPromotionItems.Img) {
             holder as FirstViewHolder
             holder.img.load(item.img)
-
-            holder.img.setOnClickListener {
-                itemClick?.onClick(it,position)
-            }
         }
 
         if (item is ProductPromotionItems.Title) {
             holder as SecondViewHolder
             with(holder) {
-                viewDes.visibility = View.GONE
-                viewTitle.visibility = View.GONE
+                viewDes.visibility = View.VISIBLE
+                viewTitle.visibility = View.VISIBLE
+                editDes.visibility = View.GONE
+                editTitle.visibility = View.GONE
+
+                date.text = item.date
+                viewDes.text = item.des
+                viewTitle.text = item.title
             }
         }
 
         if (item is ProductPromotionItems.MiddleImg) {
             holder as ThirdViewHolder
             holder.img.load(item.img)
-
-            holder.img.setOnClickListener {
-                itemClick?.onClick(it,position)
-            }
         }
 
         if (item is ProductPromotionItems.Link) {
             holder as ForthViewHolder
             with(holder) {
-                viewLink.visibility = View.GONE
+                viewLink.visibility = View.VISIBLE
+
+                viewWebLink.text = item.webLink
+
+                if (item.aosLink?.isNotEmpty() == true) {
+                    viewPlayStore.visibility = View.VISIBLE
+                }else {
+                    viewPlayStore.visibility = View.INVISIBLE
+                }
+
+                if (item.iosLink?.isNotEmpty() == true) {
+                    viewAppStore.visibility = View.VISIBLE
+                }else {
+                    viewAppStore.visibility = View.INVISIBLE
+                }
+
             }
         }
 
@@ -205,23 +217,23 @@ class ProductPromotionEditAdapter(private val context: Context) : ListAdapter<Pr
                     level.text = member.onSuccess { it?.level }.toString()
                     member.onSuccess {
                         it?.level?.let { color ->
-                        levelColor.setLevelIcon(color)
+                            levelColor.setLevelIcon(color)
                         }
                     }
                 }
             }
 
-            with(holder) {
+//            with(holder) {
 //                item.userInfo.forEach {
 //                    img.load(it.photoUrl)
 //                    name.text = it.name
-//                intro.text = it.info
-//                grade.text = it.grade?.toString()
-//                level.text = it.level?.toString()
-//                it.level?.let { color ->
-//                    levelColor.setLevelIcon(color) }
+//                    intro.text = it.info
+//                    grade.text = it.grade?.toString()
+//                    level.text = it.level?.toString()
+//                    it.level?.let { color ->
+//                        levelColor.setLevelIcon(color) }
 //                }
-            }
+//            }
         }
     }
 
@@ -241,16 +253,11 @@ class ProductPromotionEditAdapter(private val context: Context) : ListAdapter<Pr
         }
     }
 
-    private fun hideKeyboard(view : View) {
-        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(view.windowToken,0)
-    }
-
-    inner class FirstViewHolder(binding: ItemProductImgBinding) : ViewHolder(binding.root) {
+    inner class FirstViewHolder(binding: ItemProductImgBinding) : RecyclerView.ViewHolder(binding.root) {
         val img = binding.ivProductPromotion
     }
 
-    inner class SecondViewHolder(binding : ItemProductTitleBinding) : ViewHolder(binding.root) {
+    inner class SecondViewHolder(binding : ItemProductTitleBinding) : RecyclerView.ViewHolder(binding.root) {
         val editTitle = binding.etProductTitle
         val date = binding.tvProductDate
         val editDes = binding.etProductDes
@@ -259,28 +266,29 @@ class ProductPromotionEditAdapter(private val context: Context) : ListAdapter<Pr
 
     }
 
-    inner class ThirdViewHolder(binding: ItemProductImgBinding) : ViewHolder(binding.root) {
+    inner class ThirdViewHolder(binding: ItemProductImgBinding) : RecyclerView.ViewHolder(binding.root) {
         val img = binding.ivProductPromotion
     }
 
-    inner class ForthViewHolder(binding : ItemProductLinkBinding) : ViewHolder(binding.root) {
+    inner class ForthViewHolder(binding : ItemProductLinkBinding) : RecyclerView.ViewHolder(binding.root) {
         val viewLink = binding.layProductViewLink
         val viewPlayStore = binding.ivPlaystore
         val viewAppStore = binding.ivAppstore
+        val viewWebLink = binding.tvProductWebLink
         val etWebLink = binding.etProductWebLink
         val etPlayStore = binding.etProductPlaystoreLink
         val etAppStore = binding.etProductAppstoreLink
     }
 
-    inner class FifthViewHolder(binding: ItemProductProjectHeaderBinding) : ViewHolder(binding.root) {
+    inner class FifthViewHolder(binding: ItemProductProjectHeaderBinding) : RecyclerView.ViewHolder(binding.root) {
         val header = binding.tvProductPromotionHeader
     }
 
-    inner class SixthViewHolder(binding: ItemProductMemberHeaderBinding) : ViewHolder(binding.root) {
+    inner class SixthViewHolder(binding: ItemProductMemberHeaderBinding) : RecyclerView.ViewHolder(binding.root) {
         val header = binding.tvProductPromotionLeaderHeader
     }
 
-    inner class SeventhViewHolder(binding: ItemPostMemberInfoBinding) : ViewHolder(binding.root) {
+    inner class SeventhViewHolder(binding: ItemPostMemberInfoBinding) : RecyclerView.ViewHolder(binding.root) {
         val img = binding.ivUser
         val name = binding.tvUserName
         val intro = binding.tvUserIntroduction
@@ -289,11 +297,11 @@ class ProductPromotionEditAdapter(private val context: Context) : ListAdapter<Pr
         val level = binding.tvLevelDiaIcon
     }
 
-    inner class EighthViewHolder(binding : ItemProductMemberHeaderBinding) : ViewHolder(binding.root) {
+    inner class EighthViewHolder(binding : ItemProductMemberHeaderBinding) : RecyclerView.ViewHolder(binding.root) {
         val header = binding.tvProductPromotionLeaderHeader
     }
 
-    inner class NinethViewHolder(binding : ItemPostMemberInfoBinding) : ViewHolder(binding.root) {
+    inner class NinethViewHolder(binding : ItemPostMemberInfoBinding) : RecyclerView.ViewHolder(binding.root) {
         val img = binding.ivUser
         val name = binding.tvUserName
         val intro = binding.tvUserIntroduction
