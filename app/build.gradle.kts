@@ -27,6 +27,7 @@ android {
 
         buildConfigField("String", "ALGOLIA_API_KEY", properties.getProperty("ALGOLIA_API_KEY"))
         buildConfigField("String", "ALGOLIA_APP_ID", properties.getProperty("ALGOLIA_APP_ID"))
+        buildConfigField("String", "FCM_KEY", properties.getProperty("FCM_KEY"))
     }
     packagingOptions {
         exclude ("META-INF/DEPENDENCIES")
