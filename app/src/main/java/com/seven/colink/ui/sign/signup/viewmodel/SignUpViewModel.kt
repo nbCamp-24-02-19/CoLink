@@ -31,7 +31,7 @@ class SignUpViewModel @Inject constructor(
     private val registerUserUseCase: RegisterUserUseCase,
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
-    private val handle: SavedStateHandle,
+    handle: SavedStateHandle,
 ) : ViewModel() {
 
     private val _entryType = MutableStateFlow(SignUpEntryType.CREATE)

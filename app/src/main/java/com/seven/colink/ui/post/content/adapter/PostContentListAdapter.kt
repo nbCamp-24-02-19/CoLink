@@ -206,6 +206,7 @@ class PostContentListAdapter(
     ) : PostViewHolder(binding.root) {
         override fun onBind(item: PostContentItem) {
             if (item is PostContentItem.MemberItem) {
+                binding.ivUser.load(item.userInfo.photoUrl)
                 binding.tvUserName.text = item.userInfo.name
                 binding.tvUserGrade.text = item.userInfo.grade.toString()
                 item.userInfo.level?.let { binding.ivLevelDiaIcon.setLevelIcon(it) }
