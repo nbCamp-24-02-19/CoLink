@@ -5,7 +5,6 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
-import com.seven.colink.infrastructure.notify.FirebaseMessagingService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

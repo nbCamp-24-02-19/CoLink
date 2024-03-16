@@ -8,7 +8,6 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.seven.colink.data.firebase.type.DataBaseType
 import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.domain.repository.UserRepository
-import com.seven.colink.infrastructure.notify.FirebaseMessagingService
 import com.seven.colink.util.status.DataResultStatus
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
