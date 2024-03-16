@@ -16,9 +16,9 @@ import androidx.core.graphics.drawable.IconCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.seven.colink.R
+import com.seven.colink.domain.model.NotifyType
 import com.seven.colink.ui.main.MainActivity
 import com.seven.colink.util.convert.convertTime
-import com.seven.colink.util.convert.convertToDaysAgo
 import com.seven.colink.util.loadImageBitmap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,6 +27,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class FirebaseMessagingService : FirebaseMessagingService() {
+
 
     // 메세지가 수신되면 호출
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
@@ -41,14 +42,39 @@ class FirebaseMessagingService : FirebaseMessagingService() {
         else if (remoteMessage.data.isNotEmpty()) {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                remoteMessage.data["title"]?.let { title ->
-                    remoteMessage.data["name"]?.let { name ->
+                remoteMessage.data["type"]?.let { type ->
+                    remoteMessage.data["title"]?.let { title ->
                         remoteMessage.data["message"]?.let { message ->
-                            remoteMessage.data["img"]?.let { img ->
-                                remoteMessage.data["type"]?.let { type ->
-                                    remoteMessage.data["registeredDate"]?.let { registeredDate ->
-                                        sendNotification(title, name, message, img, type, registeredDate)
+                            when (NotifyType.fromTitle(type)) {
+                                NotifyType.CHAT -> {
+                                    remoteMessage.data["name"]?.let { name ->
+                                        remoteMessage.data["img"]?.let { img ->
+                                            remoteMessage.data["registeredDate"]?.let { registeredDate ->
+                                                sendNotification(
+                                                    title = title,
+                                                    name = name,
+                                                    message = message,
+                                                    img = img,
+                                                    channelId = "channel_$type",
+                                                    registeredDate = registeredDate
+                                                )
+                                            }
+                                        }
                                     }
+                                }
+
+                                NotifyType.INVITE ->
+                                    sendNotification(
+                                        title = title,
+                                        channelId = "channel_$type",
+                                        message = message,
+                                    )
+
+                                else -> {
+                                    sendNotification(
+                                        remoteMessage.notification?.title,
+                                        remoteMessage.notification?.body!!
+                                    )
                                 }
                             }
                         }
@@ -69,7 +95,7 @@ class FirebaseMessagingService : FirebaseMessagingService() {
         name: String,
         message: String,
         img: String,
-        type: String,
+        channelId: String,
         registeredDate: String
     ) {
         val intent = Intent(this, MainActivity::class.java)
@@ -91,8 +117,6 @@ class FirebaseMessagingService : FirebaseMessagingService() {
 
         val messageStyle = NotificationCompat.MessagingStyle(user)
             .addMessage(notifyMessage)
-
-        val channelId = "channel_$type"
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION) // 소리
 
         val notificationManager =
@@ -146,6 +170,32 @@ class FirebaseMessagingService : FirebaseMessagingService() {
                 notificationManager.notify(0, notificationBuilder.build()) // 알림 생성
             }
         }
+    }
+
+    private fun sendNotification(
+        title: String,
+        channelId: String,
+        message: String,
+    ) {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val pendingIntent = PendingIntent.getActivity(
+            this, 0, intent,
+            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        val notificationBuilder = NotificationCompat.Builder(this, channelId)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setSmallIcon(R.drawable.logo_co_link)
+            .setAutoCancel(true)
+            .setSound(defaultSoundUri)
+            .setContentIntent(pendingIntent)
+
+        (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).notify(
+            0, notificationBuilder.build()
+        )
     }
 
     private fun sendNotification(title: String?, body: String) {

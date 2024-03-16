@@ -1,4 +1,4 @@
-package com.seven.colink.data.firebase.repository
+package com.seven.colink.data.remote.repository
 
 import com.seven.colink.data.remote.dto.NotificationDTO
 import com.seven.colink.data.remote.retrofit.FcmInterface

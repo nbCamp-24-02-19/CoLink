@@ -5,7 +5,7 @@ import com.seven.colink.data.firebase.repository.ChatRepositoryImpl
 import com.seven.colink.data.firebase.repository.CommentRepositoryImpl
 import com.seven.colink.data.firebase.repository.GroupRepositoryImpl
 import com.seven.colink.data.firebase.repository.ImageRepositoryImpl
-import com.seven.colink.data.firebase.repository.NotifyRepositoryImpl
+import com.seven.colink.data.remote.repository.NotifyRepositoryImpl
 import com.seven.colink.data.firebase.repository.PostRepositoryImpl
 import com.seven.colink.data.firebase.repository.ProductRepositoryImpl
 import com.seven.colink.data.firebase.repository.RecruitRepositoryImpl

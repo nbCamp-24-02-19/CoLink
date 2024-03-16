@@ -6,4 +6,15 @@ enum class NotifyType(
     CHAT(
         title = "chat"
     ),
+    INVITE(
+        title = "invite"
+    ),
+
+    ;
+
+    companion object {
+        fun fromTitle (title: String) = entries.find {
+            it.title == title
+        }
+    }
 }

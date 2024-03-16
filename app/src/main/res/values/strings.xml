@@ -8,4 +8,5 @@
     <string name="util_dialog_confirm">확인</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="group_invitation_title">그룹으로 초대</string>
 </resources>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="group_invitation_message">\"%1$s\"로 부터 그룹 초대를 받았습니다</string>
+</resources>
