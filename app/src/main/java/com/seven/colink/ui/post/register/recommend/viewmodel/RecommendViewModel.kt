@@ -76,7 +76,7 @@ class RecommendViewModel @Inject constructor(
                     if (members.isNotEmpty()) {
                         UiState.Success(
                             listOfNotNull(
-                                RecommendType.Title(title),
+                                RecommendType.Title(title,key),
                                 RecommendType.Card(members.first().convertCard()),
                                 members.first().name?.let { RecommendType.Middle(it) },
                             ) + members.drop(1).map {
@@ -91,6 +91,10 @@ class RecommendViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun invitePost(uid: String) {
+
     }
 
     fun setChatRoom(uid: String) {
