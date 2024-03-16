@@ -19,5 +19,8 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
     init {
+        viewModelScope.launch {
+            userRepository.registerToken()
+        }
     }
 }

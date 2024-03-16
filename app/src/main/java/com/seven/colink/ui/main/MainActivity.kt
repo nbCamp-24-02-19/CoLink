@@ -52,6 +52,7 @@ class MainActivity : AppCompatActivity() {
         initBottomNav()
         initPermission()
         onMyProfileEdit()
+        viewModel
     }
 
     private fun initBottomNav() = with(binding) {
