@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.seven.colink"
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -27,7 +28,7 @@
         android:theme="@style/Theme.CoLink"
         tools:targetApi="31">
         <service
-            android:name="com.seven.colink.infrastructure.notify.FirebaseMessagingService"
+            android:name=".infrastructure.notify.FirebaseMessagingService"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

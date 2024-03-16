@@ -8,6 +8,7 @@ data class NotificationDTO(
         val title: String?,
         val type: String?,
         val name: String?,
+        val img: String?,
         val message: String?,
         val registeredDate: String?,
     )
