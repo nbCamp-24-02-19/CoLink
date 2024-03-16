@@ -1,6 +1,7 @@
 package com.seven.colink.domain.entity
 
 import com.seven.colink.domain.model.NotifyType
+import com.seven.colink.util.convert.convertLocalDateTime
 import java.time.LocalDateTime
 
 data class NotificationEntity(
@@ -10,5 +11,6 @@ data class NotificationEntity(
     val title: String?,
     val name: String?,
     val message: String?,
-    val registeredDate: String = LocalDateTime.now().toString()
+    val thumbnail: String?,
+    val registeredDate: String = LocalDateTime.now().convertLocalDateTime()
 )

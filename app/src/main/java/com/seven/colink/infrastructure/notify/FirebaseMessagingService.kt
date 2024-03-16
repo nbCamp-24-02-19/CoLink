@@ -7,6 +7,8 @@ import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
 import android.os.Build
+import android.view.View
+import android.widget.RemoteViews
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.Person
@@ -15,8 +17,16 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.seven.colink.R
 import com.seven.colink.ui.main.MainActivity
+import com.seven.colink.util.convert.convertTime
+import com.seven.colink.util.convert.convertToDaysAgo
+import com.seven.colink.util.loadImageBitmap
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class FirebaseMessagingService: FirebaseMessagingService() {
+class FirebaseMessagingService : FirebaseMessagingService() {
 
     // 메세지가 수신되면 호출
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
@@ -28,13 +38,19 @@ class FirebaseMessagingService: FirebaseMessagingService() {
             )
         }
         //다른 기기에서 서버로 보낼때
-        else if(remoteMessage.data.isNotEmpty()){
+        else if (remoteMessage.data.isNotEmpty()) {
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){
-            remoteMessage.data["title"]?.let { title ->
-                remoteMessage.data["name"]?.let { name ->
-                    remoteMessage.data["message"]?.let { message ->
-                        sendNotification(title,name,message)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                remoteMessage.data["title"]?.let { title ->
+                    remoteMessage.data["name"]?.let { name ->
+                        remoteMessage.data["message"]?.let { message ->
+                            remoteMessage.data["img"]?.let { img ->
+                                remoteMessage.data["type"]?.let { type ->
+                                    remoteMessage.data["registeredDate"]?.let { registeredDate ->
+                                        sendNotification(title, name, message, img, type, registeredDate)
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -48,52 +64,97 @@ class FirebaseMessagingService: FirebaseMessagingService() {
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
-    private fun sendNotification(title: String, name:String, body: String) {
+    private fun sendNotification(
+        title: String,
+        name: String,
+        message: String,
+        img: String,
+        type: String,
+        registeredDate: String
+    ) {
         val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        val pendingIntent = PendingIntent.getActivity(this, 0, intent,
-            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE)
-
+        val pendingIntent = PendingIntent.getActivity(
+            this, 0, intent,
+            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+        )
         val user: Person = Person.Builder()
             .setName(name)
-            .setIcon(IconCompat.createWithResource(this, R.drawable.ic_notify))
+            .setIcon(IconCompat.createWithResource(this, R.drawable.ic_colink_chat))
             .build()
 
-        val message = NotificationCompat.MessagingStyle.Message(
-            body,
+        val notifyMessage = NotificationCompat.MessagingStyle.Message(
+            message,
             System.currentTimeMillis(),
             user
         )
 
         val messageStyle = NotificationCompat.MessagingStyle(user)
-            .addMessage(message)
+            .addMessage(notifyMessage)
 
-        val channelId = "channel"
+        val channelId = "channel_$type"
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION) // 소리
-        val notificationBuilder = NotificationCompat.Builder(this, channelId)
-            .setContentTitle(title) // 제목
-            .setContentText(body) // 내용
-            .setStyle(messageStyle)
-            .setSmallIcon(R.drawable.ic_notify) // 아이콘
-            .setAutoCancel(true)
-            .setSound(defaultSoundUri)
-            .setContentIntent(pendingIntent)
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationLayout =
+            RemoteViews("com.seven.colink", R.layout.util_custom_chat_notify_small)
+        val notificationLayoutExpanded =
+            RemoteViews("com.seven.colink", R.layout.util_custom_chat_notify_large)
 
-        val channel = NotificationChannel(channelId,
-            "알림 메세지",
-            NotificationManager.IMPORTANCE_LOW) // 소리없앰
-        notificationManager.createNotificationChannel(channel)
+        notificationLayout.apply {
+            setTextViewText(R.id.notification_title, name)
+            setTextViewText(R.id.notification_description, message)
+        }
 
-        notificationManager.notify(0 , notificationBuilder.build()) // 알림 생성
+        notificationLayoutExpanded.apply {
+            if (title == name) setViewVisibility(R.id.notification_chat_title, View.GONE)
+            setTextViewText(R.id.notification_chat_title, title)
+            setTextViewText(R.id.notification_chat_name, name)
+            setTextViewText(R.id.notification_chat_description, message)
+            setTextViewText(R.id.notification_chat_time, registeredDate.convertTime())
+        }
+
+        CoroutineScope(SupervisorJob()).launch(Dispatchers.IO) {
+            val bitmap = this@FirebaseMessagingService.loadImageBitmap(img)
+            withContext(Dispatchers.Main) {
+                notificationLayoutExpanded.setImageViewBitmap(
+                    R.id.notification_thumbnail,
+                    bitmap
+                )
+
+                val notificationBuilder =
+                    NotificationCompat.Builder(this@FirebaseMessagingService, channelId)
+                        .setContentTitle(title) // 제목
+                        .setContentText(message) // 내용
+                        .setStyle(messageStyle)
+                        .setSmallIcon(R.drawable.ic_colink_chat) // 아이콘
+                        .setAutoCancel(true)
+                        .setSound(defaultSoundUri)
+                        .setContentIntent(pendingIntent)
+                        .setCustomContentView(notificationLayout)
+                        .setCustomBigContentView(notificationLayoutExpanded)
+
+
+                val channel = NotificationChannel(
+                    channelId,
+                    "알림 메세지",
+                    NotificationManager.IMPORTANCE_HIGH
+                )
+                notificationManager.createNotificationChannel(channel)
+
+                notificationManager.notify(0, notificationBuilder.build()) // 알림 생성
+            }
+        }
     }
 
-    private fun sendNotification(title: String?, body: String){
+    private fun sendNotification(title: String?, body: String) {
         val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP) // 액티비티 중복 생성 방지
-        val pendingIntent = PendingIntent.getActivity(this, 0 , intent,
-            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE) // 일회성
+        val pendingIntent = PendingIntent.getActivity(
+            this, 0, intent,
+            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+        ) // 일회성
 
         val channelId = "channel" // 채널 아이디
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION) // 소리
@@ -104,14 +165,17 @@ class FirebaseMessagingService: FirebaseMessagingService() {
             .setSound(defaultSoundUri)
             .setContentIntent(pendingIntent)
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        val channel = NotificationChannel(channelId,
+        val channel = NotificationChannel(
+            channelId,
             "Channel human readable title",
-            NotificationManager.IMPORTANCE_DEFAULT)
+            NotificationManager.IMPORTANCE_DEFAULT
+        )
         notificationManager.createNotificationChannel(channel)
 
-        notificationManager.notify(0 , notificationBuilder.build()) // 알림 생성
+        notificationManager.notify(0, notificationBuilder.build()) // 알림 생성
     }
 }
 

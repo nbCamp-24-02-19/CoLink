@@ -29,6 +29,11 @@ class SendNotificationUseCase @Inject constructor(
                                             .not()
                                     ) chatRoom.title else currentUser?.name,
                                     type = NotifyType.CHAT,
+                                    thumbnail = if (chatRoom.thumbnail.isNullOrEmpty().not())
+                                        chatRoom.thumbnail
+                                    else {
+                                        currentUser?.photoUrl
+                                    }
                                 )
                             )
                         }

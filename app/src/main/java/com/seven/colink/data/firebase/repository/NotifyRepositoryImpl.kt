@@ -21,6 +21,7 @@ class NotifyRepositoryImpl @Inject constructor(
             name = name,
             message = message,
             registeredDate = registeredDate,
+            img = thumbnail,
         )
     )
 }
