@@ -84,7 +84,7 @@ class GroupBoardListAdapter(
                     parent,
                     false
                 ),
-                onClickItem
+                onClickView
             )
 
             GroupContentViewType.OPTION_ITEM -> GroupOptionItemViewHolder(
@@ -176,7 +176,7 @@ class GroupBoardListAdapter(
 
     class GroupItemViewHolder(
         private val binding: ItemGroupBoardContentBinding,
-        private val onClickItem: (GroupBoardItem) -> Unit
+        private val onClickView: (GroupBoardItem, View) -> Unit,
     ) : GroupViewHolder(binding.root) {
         private val tagAdapter = TagListAdapter { _ -> }
 
@@ -195,10 +195,11 @@ class GroupBoardListAdapter(
                 btStatus.visibility =
                     if (item.status != ProjectStatus.END) View.GONE else View.VISIBLE
                 btStatus.isEnabled = item.isOwner ?: false
-                btStatus.setOnClickListener { onClickItem(item) }
+                btStatus.setOnClickListener { onClickView(item, it) }
+                ivCalendar.setOnClickListener { onClickView(item, it) }
 
                 tvTeamName.text = item.teamName
-                tvDescription.text = item.description
+                etDescription.text = item.description
 
                 var days = ""
                 if (item.status == ProjectStatus.START) {

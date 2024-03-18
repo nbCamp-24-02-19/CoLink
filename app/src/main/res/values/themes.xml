@@ -37,4 +37,9 @@
     <style name="BoldTextStyle">
         <item name="android:textStyle">bold</item>
     </style>
+
+    <style name="DialogSlide" parent="@android:style/Animation.Dialog">
+        <item name="android:windowEnterAnimation">@anim/slide_in_up</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_down</item>
+    </style>
 </resources>
