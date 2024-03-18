@@ -29,7 +29,7 @@ class ChatRoomActivity : AppCompatActivity() {
         fun newIntent(
             context: Context,
             roomId: String,
-            title: String,
+            title: String? = null,
             ) = Intent(context, ChatRoomActivity()::class.java).apply {
             putExtra(CHAT_ID, roomId)
             putExtra(CHAT_TITLE, title)
@@ -55,9 +55,9 @@ class ChatRoomActivity : AppCompatActivity() {
 
     private fun initViewModel() = with(viewModel){
         lifecycleScope.launch {
-            chatRoom.collect{
-                observeMessage(it)
-                binding.tvChatRoomTitle.text = intent.getStringExtra(CHAT_TITLE)
+            chatRoom.collect{ chatRoomEntity ->
+                observeMessage(chatRoomEntity)
+                binding.tvChatRoomTitle.text = intent.getStringExtra(CHAT_TITLE) ?: chatRoomEntity.title
             }
         }
 

@@ -1,6 +1,7 @@
 package com.seven.colink.data.source.repository
 
 import android.content.Context
+import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.appcompat.content.res.AppCompatResources
@@ -17,4 +18,7 @@ class ResourceRepositoryImpl (
 
     override fun getDrawable(@DrawableRes resId: Int) =
         AppCompatResources.getDrawable(context,resId)
+
+    override fun getColor(@ColorRes resId: Int) =
+        context.getColor(resId)
 }

@@ -24,14 +24,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="새로운 메시지"
+        android:text="@string/notify_new_message"
         android:textColor="@color/black"
         style="@style/BoldTextStyle"
         android:textSize="14sp"
         app:layout_constraintStart_toEndOf="@id/iv_notify_icon"
         app:layout_constraintTop_toTopOf="@id/iv_notify_icon"
         app:layout_constraintBottom_toBottomOf="@id/iv_notify_icon"/>
-
+<!--
     <TextView
         android:id="@+id/tv_notify_registered_date"
         android:layout_width="wrap_content"
@@ -41,7 +41,7 @@
         android:textColor="@color/typo_color"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/tv_notify_title"/>
+        app:layout_constraintBottom_toBottomOf="@id/tv_notify_title"/>-->
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

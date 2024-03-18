@@ -34,4 +34,7 @@ enum class DataBaseType(
     SCHEDULE(
         title = "schedule"
     ),
+    NOTIFICATION(
+        title = "notify"
+    )
 }

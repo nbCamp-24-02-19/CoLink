@@ -7,7 +7,7 @@ import com.seven.colink.domain.repository.NotifyRepository
 import javax.inject.Inject
 
 class NotifyRepositoryImpl @Inject constructor(
-    private val fcmInterface: FcmInterface
+    private val fcmInterface: FcmInterface,
 ): NotifyRepository {
     override suspend fun sendNotification(notification: NotificationEntity) {
         fcmInterface.sendNotification(notification.convert())

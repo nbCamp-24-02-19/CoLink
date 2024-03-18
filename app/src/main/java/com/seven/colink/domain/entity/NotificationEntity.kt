@@ -7,6 +7,7 @@ import java.time.LocalDateTime
 data class NotificationEntity(
     val key: String = "NF_" + LocalDateTime.now().toString(),
     val toUserToken: String? = null,
+    val toUserId: String? = null,
     val type: NotifyType? = null,
     val title: String? = null,
     val name: String? = null,

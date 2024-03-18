@@ -1,7 +1,7 @@
 package com.seven.colink.di
 
 import android.content.Context
-import com.google.android.datatransport.runtime.dagger.Provides
+import dagger.Provides
 import com.seven.colink.data.source.repository.ResourceRepositoryImpl
 import com.seven.colink.domain.repository.ResourceRepository
 import dagger.Module

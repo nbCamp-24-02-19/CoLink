@@ -9,6 +9,9 @@ enum class NotifyType(
     INVITE(
         title = "invite"
     ),
+    APPLY(
+        title = "apply"
+    ),
 
     ;
 

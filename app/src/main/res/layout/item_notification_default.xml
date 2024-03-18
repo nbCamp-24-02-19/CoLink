@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="지원 요청"
+        android:text="@string/notify_new_invite"
         android:textColor="@color/black"
         style="@style/BoldTextStyle"
         android:textSize="14sp"
@@ -45,6 +45,7 @@
         app:layout_constraintBottom_toBottomOf="@id/tv_notify_title"/>
 
     <TextView
+        android:id="@+id/tv_notify_body"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
