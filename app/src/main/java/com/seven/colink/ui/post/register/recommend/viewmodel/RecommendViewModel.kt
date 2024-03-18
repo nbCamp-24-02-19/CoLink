@@ -6,6 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seven.colink.domain.entity.ChatRoomEntity
+import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.PostRepository
@@ -13,6 +14,7 @@ import com.seven.colink.domain.repository.RecruitRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.domain.usecase.GetChatRoomUseCase
 import com.seven.colink.domain.usecase.GetPostUseCase
+import com.seven.colink.domain.usecase.SendNotificationInviteUseCase
 import com.seven.colink.ui.post.register.recommend.type.RecommendType
 import com.seven.colink.util.model.MemberCard
 import com.seven.colink.util.model.MemberInfo
@@ -34,7 +36,7 @@ class RecommendViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository,
     private val recruitRepository: RecruitRepository,
-    private val getPostUseCase: GetPostUseCase,
+    private val sendNotificationInviteUseCase: SendNotificationInviteUseCase,
 ) : ViewModel() {
 
     private val _chatRoomEvent = MutableSharedFlow<ChatRoomEntity>()
@@ -42,6 +44,8 @@ class RecommendViewModel @Inject constructor(
 
     private val _recommendList = MutableStateFlow<UiState<List<RecommendType>>>(UiState.Loading)
     val recommendList: StateFlow<UiState<List<RecommendType>>> = _recommendList
+
+    private var postEntity: PostEntity = PostEntity()
     fun loadList(key: String) {
         viewModelScope.launch {
             val titleDeferred = async {
@@ -90,11 +94,14 @@ class RecommendViewModel @Inject constructor(
                     UiState.Error(e)
                 }
             }
+            postRepository.getPost(key).getOrNull()?.also { postEntity = it }
         }
     }
 
     fun invitePost(uid: String) {
-
+        viewModelScope.launch {
+            sendNotificationInviteUseCase(postEntity, uid)
+        }
     }
 
     fun setChatRoom(uid: String) {

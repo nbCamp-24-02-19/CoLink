@@ -26,6 +26,7 @@ import com.seven.colink.ui.mypage.adapter.MyPagePostAdapter
 import com.seven.colink.ui.mypage.adapter.MyPageSkilAdapter
 import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.ui.sign.signin.SignInActivity
+import com.seven.colink.util.convert.convertError
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
@@ -162,7 +163,8 @@ class MyPageFragment : Fragment() {
 
                 is UiState.Error -> {
                     hideProgressOverlay()
-                    Toast.makeText(requireContext(), "${userDetails.throwable}", Toast.LENGTH_SHORT)
+                    if (userDetails.throwable.message == "No user") startActivity(Intent(requireContext(),SignInActivity::class.java))
+                    Toast.makeText(requireContext(), "${userDetails.throwable.message}", Toast.LENGTH_SHORT)
                         .show()
                 }
             }
