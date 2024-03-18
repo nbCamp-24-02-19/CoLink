@@ -149,6 +149,37 @@
             </com.google.android.material.appbar.CollapsingToolbarLayout>
 
         </com.google.android.material.appbar.AppBarLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_search_empty"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/iv_empty_search"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="?attr/actionBarSize"
+                android:src="@drawable/widget_empty_search"
+                app:tint="@color/enable_stroke"
+                app:layout_constraintWidth_percent="0.3"
+                app:layout_constraintHeight_percent="0.2"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="검색된 결과가 없습니다."
+                android:textColor="@color/typo_color"
+                android:fontFamily="@font/roboto_bold"
+                app:layout_constraintTop_toBottomOf="@+id/iv_empty_search"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_search_recyclerView"

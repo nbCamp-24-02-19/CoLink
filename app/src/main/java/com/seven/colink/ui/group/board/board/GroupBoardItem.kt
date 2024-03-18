@@ -23,6 +23,12 @@ sealed interface GroupBoardItem {
         val isOwner: Boolean?,
     ) : GroupBoardItem
 
+    data class GroupOptionItem(
+        val key: String?,
+        val precautions: String?,
+        val recruitInfo: String?,
+    ) : GroupBoardItem
+
     data class PostItem(
         val post: Post
     ) : GroupBoardItem

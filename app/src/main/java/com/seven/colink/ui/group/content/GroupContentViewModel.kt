@@ -2,7 +2,6 @@ package com.seven.colink.ui.group.content
 
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seven.colink.domain.entity.GroupEntity
@@ -33,6 +32,7 @@ class GroupContentViewModel @Inject constructor(
 
     private val _complete = MutableSharedFlow<String>()
     val complete = _complete.asSharedFlow()
+    private val postItemDataMap: MutableMap<String, String> = mutableMapOf()
 
     fun setEntryType(type: PostEntryType) {
         entryType = type
@@ -57,50 +57,38 @@ class GroupContentViewModel @Inject constructor(
                     )
                 )
 
+                items.add(
+                    GroupContentItem.GroupOptionItem(
+                        key = it.key,
+                        precautions = it.precautions,
+                        recruitInfo = it.recruitInfo
+                    )
+                )
+
                 items.add(GroupContentItem.GroupProjectStatus(key = it.key, status = it.status))
                 items
             } ?: emptyList()
         }
     }
 
-    fun handleGroupEntity(title: String, description: String) {
-        when (entryType) {
-            PostEntryType.CREATE -> onClickCreate(title, description)
-            PostEntryType.UPDATE -> onClickUpdate(title, description)
-        }
-    }
-
-    private fun onClickCreate(teamName: String, description: String) = viewModelScope.launch {
-        val imageUrl = when (val uiStateValue = uiState.value.firstOrNull()) {
-            is GroupContentItem.GroupContent -> uiStateValue.selectedImageUrl?.let { uploadImage(it) }
-                .orEmpty()
-
-            is GroupContentItem.GroupProjectStatus -> ""
-            else -> ""
-        }
-
-        val newGroupEntity =
-            createGroupEntity(teamName, description, imageUrl, uiState.value.firstOrNull())
-        resultPerformance(groupRepository.registerGroup(newGroupEntity))
-    }
-
-    private fun onClickUpdate(teamName: String, description: String) = viewModelScope.launch {
+    fun onClickUpdate() = viewModelScope.launch {
+        updateGroupContentItem()
         val projectStatus =
             uiState.value.find { it is GroupContentItem.GroupProjectStatus } as? GroupContentItem.GroupProjectStatus
         val groupContent =
             uiState.value.find { it is GroupContentItem.GroupContent } as? GroupContentItem.GroupContent
 
-        val key = projectStatus?.key
-        val updatedGroupEntity = createGroupEntity(
-            teamName, description,
-            groupContent?.selectedImageUrl?.let { uploadImage(it) }
-                ?: groupContent?.imageUrl.orEmpty(),
-            groupContent
-        )
+        val key = groupContent?.key
+        val updatedGroupEntity = updateGroupItem()
 
         if (key != null) {
             resultPerformance(groupRepository.updateGroupSection(key, updatedGroupEntity))
-            resultPerformance(groupRepository.updateGroupStatus(key, projectStatus.status ?: ProjectStatus.RECRUIT))
+            resultPerformance(
+                groupRepository.updateGroupStatus(
+                    key,
+                    projectStatus?.status ?: ProjectStatus.RECRUIT
+                )
+            )
         }
     }
 
@@ -111,36 +99,20 @@ class GroupContentViewModel @Inject constructor(
         }
     }
 
-    private fun createGroupEntity(
-        teamName: String,
-        description: String,
-        imageUrl: String,
-        uiStateValue: GroupContentItem?
-    ): GroupEntity {
-        return when (uiStateValue) {
-            is GroupContentItem.GroupContent -> GroupEntity(
-                teamName = teamName,
-                description = description,
-                tags = uiStateValue.tags,
-                imageUrl = imageUrl,
-            )
+    private suspend fun updateGroupItem(): GroupEntity {
+        val groupItem = _uiState.value.find { it is GroupContentItem.GroupContent} as? GroupContentItem.GroupContent
+        val textItem = _uiState.value.find { it is GroupContentItem.GroupOptionItem} as? GroupContentItem.GroupOptionItem
 
-            is GroupContentItem.GroupProjectStatus -> GroupEntity(
-                teamName = teamName,
-                description = description,
-                tags = emptyList(),
-                imageUrl = imageUrl,
-                status = uiStateValue.status ?: ProjectStatus.RECRUIT
-            )
-
-            else -> GroupEntity(
-                teamName = teamName,
-                description = description,
-                tags = emptyList(),
-                imageUrl = imageUrl,
-                status = ProjectStatus.RECRUIT
-            )
-        }
+        val imageUrl = groupItem?.selectedImageUrl?.let { uploadImage(it) }
+            ?: groupItem?.imageUrl.orEmpty()
+        return GroupEntity(
+            teamName = groupItem?.teamName,
+            description = groupItem?.description,
+            tags = groupItem?.tags,
+            imageUrl = imageUrl,
+            precautions = textItem?.precautions,
+            recruitInfo = textItem?.recruitInfo
+        )
     }
 
     fun onChangedStatus(status: ProjectStatus) {
@@ -153,13 +125,16 @@ class GroupContentViewModel @Inject constructor(
     }
 
     fun checkValidAddTag(tag: String) {
-        _errorUiState.value = errorUiState.value?.copy(tag = getValidAddTag(tag))
+        val validationResult = getValidAddTag(tag)
+        if (validationResult == GroupErrorMessage.PASS) {
+            updateGroupContentItem()
+        }
+        _errorUiState.value = errorUiState.value?.copy(tag = validationResult)
     }
 
     private fun getValidAddTag(tag: String): GroupErrorMessage {
         val list = when (val uiStateValue = uiState.value.firstOrNull()) {
             is GroupContentItem.GroupContent -> uiStateValue.tags.orEmpty()
-            is GroupContentItem.GroupProjectStatus -> emptyList()
             else -> emptyList()
         }
 
@@ -170,7 +145,7 @@ class GroupContentViewModel @Inject constructor(
                 _uiState.value = uiState.value.map { uiStateValue ->
                     when (uiStateValue) {
                         is GroupContentItem.GroupContent -> uiStateValue.copy(tags = list + tag)
-                        is GroupContentItem.GroupProjectStatus -> uiStateValue
+                        else -> uiStateValue
                     }
                 }
                 GroupErrorMessage.PASS
@@ -179,13 +154,14 @@ class GroupContentViewModel @Inject constructor(
     }
 
     fun removeTagItem(tag: String?) {
+        updateGroupContentItem()
         _uiState.value = uiState.value.map { uiStateValue ->
             when (uiStateValue) {
                 is GroupContentItem.GroupContent -> uiStateValue.copy(
                     tags = uiStateValue.tags?.filter { it != tag } ?: emptyList()
                 )
 
-                is GroupContentItem.GroupProjectStatus -> uiStateValue
+                else -> uiStateValue
             }
         }
     }
@@ -194,10 +170,51 @@ class GroupContentViewModel @Inject constructor(
         imageRepository.uploadImage(uri).getOrNull().toString()
 
     fun setImageResult(data: Intent?) {
+        updateGroupContentItem()
         _uiState.value = uiState.value.map { uiStateValue ->
             when (uiStateValue) {
                 is GroupContentItem.GroupContent -> uiStateValue.copy(selectedImageUrl = data?.data)
-                is GroupContentItem.GroupProjectStatus -> uiStateValue
+                else -> uiStateValue
+            }
+        }
+    }
+
+    fun updateGroupItemText(position: Int, title: String, description: String) {
+        if (position >= 0 && position < _uiState.value.size) {
+            when (val uiStateValue = _uiState.value[position]) {
+                is GroupContentItem.GroupContent -> {
+                    postItemDataMap["title"] = title
+                    postItemDataMap["description"] = description
+                }
+
+                is GroupContentItem.GroupOptionItem -> {
+                    postItemDataMap["precautions"] = title
+                    postItemDataMap["recruitInfo"] = description
+                }
+
+                else -> uiStateValue
+            }
+        }
+    }
+
+    private fun updateGroupContentItem() {
+        _uiState.value = uiState.value.map { uiStateValue ->
+            when (uiStateValue) {
+                is GroupContentItem.GroupContent -> {
+                    val title = postItemDataMap["title"] ?: uiStateValue.teamName
+                    val description = postItemDataMap["description"] ?: uiStateValue.description
+                    uiStateValue.copy(teamName = title, description = description)
+                }
+
+                is GroupContentItem.GroupOptionItem -> {
+                    val precautions =
+                        postItemDataMap["precautions"] ?: uiStateValue.precautions
+                    val recruitInfo =
+                        postItemDataMap["recruitInfo"] ?: uiStateValue.recruitInfo
+                    uiStateValue.copy(precautions = precautions, recruitInfo = recruitInfo)
+                }
+
+                else -> uiStateValue
             }
         }
     }

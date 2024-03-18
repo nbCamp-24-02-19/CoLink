@@ -7,5 +7,5 @@ enum class DataResultStatus(
         message = "success"
     ), FAIL (
         message = "Unknown error"
-    )
+    ),
 }

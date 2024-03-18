@@ -124,12 +124,10 @@ class GroupViewModel @Inject constructor(
     )
 
     private fun getEmptyJoinList() = GroupData.GroupEmpty(
-        img = R.drawable.img_temporary,
         text = "참여 중인 그룹이 없습니다."
     )
 
     private fun getEmptyWantList() = GroupData.GroupEmpty(
-        img = R.drawable.img_dialog_study,
         text = "지원한 그룹이 없습니다."
     )
 }

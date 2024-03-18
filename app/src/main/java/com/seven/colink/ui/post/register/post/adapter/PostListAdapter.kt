@@ -1,6 +1,5 @@
 package com.seven.colink.ui.post.register.post.adapter
 
-import android.content.Context
 import com.seven.colink.util.status.PostContentViewTypeItem
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -9,6 +8,8 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -32,7 +33,6 @@ import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.PostContentViewType
 
 class PostListAdapter(
-    private val context: Context,
     private val onChangedFocus: (Int, String, String, PostListItem) -> Unit,
     private val onClickView: (View, PostListItem) -> Unit,
     private val onGroupImageClick: (String) -> Unit,
@@ -76,7 +76,6 @@ class PostListAdapter(
     ): PostViewHolder =
         when (PostContentViewType.from(viewType)) {
             PostContentViewType.ITEM -> PostItemViewHolder(
-                context,
                 ItemPostEditBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
@@ -89,7 +88,6 @@ class PostListAdapter(
             )
 
             PostContentViewType.OPTION_ITEM -> PostOptionItemViewHolder(
-                context,
                 ItemPostSelectionTypeBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
@@ -104,7 +102,6 @@ class PostListAdapter(
                 if (recruitItem != null) {
                     when (recruitItem.groupType) {
                         GroupType.PROJECT -> ProjectItemViewHolder(
-                            context,
                             ItemPostRecruitTypeBinding.inflate(
                                 LayoutInflater.from(parent.context),
                                 parent,
@@ -115,7 +112,6 @@ class PostListAdapter(
                         )
 
                         GroupType.STUDY -> StudyItemViewHolder(
-                            context,
                             ItemPersonnelComponentBinding.inflate(
                                 LayoutInflater.from(parent.context),
                                 parent,
@@ -132,7 +128,6 @@ class PostListAdapter(
             }
 
             PostContentViewType.TITLE -> TitleItemViewHolder(
-                context,
                 ItemPostRecruitTitleBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
@@ -175,7 +170,6 @@ class PostListAdapter(
 
 
     class PostItemViewHolder(
-        private val context: Context,
         private val binding: ItemPostEditBinding,
         private val onChangedFocus: (Int, String, String, PostListItem) -> Unit,
         private val onClickView: (View, PostListItem) -> Unit,
@@ -183,15 +177,27 @@ class PostListAdapter(
         private val tagAdapterOnClickItem: (Int, TagListItem) -> Unit
     ) : PostViewHolder(binding.root) {
         private var currentItem: PostListItem? = null
-        private val tagAdapter = TagListAdapter { item -> tagAdapterOnClickItem(adapterPosition, item) }
+        private val tagAdapter =
+            TagListAdapter { item -> tagAdapterOnClickItem(adapterPosition, item) }
+        private val editTexts
+            get() = with(binding) {
+                listOf(
+                    etTitle,
+                    etDescription
+                )
+            }
 
         init {
-            binding.recyclerViewTags.adapter = tagAdapter
-            initializeEditorActionListener()
-            initializeFocusChangeListeners()
+            setupTagAdapter()
+            setOnEditorActionListener()
+            setTextChangeListener()
         }
 
-        private fun initializeEditorActionListener() {
+        private fun setupTagAdapter() {
+            binding.recyclerViewTags.adapter = tagAdapter
+        }
+
+        private fun setOnEditorActionListener() {
             binding.etGroupTag.setOnEditorActionListener { _, actionId, event ->
                 if ((actionId == EditorInfo.IME_ACTION_DONE || (event?.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER))
                     && binding.etGroupTag.text.toString().trim().isNotBlank()
@@ -204,18 +210,9 @@ class PostListAdapter(
             }
         }
 
-        private fun initializeFocusChangeListeners() {
-            binding.etTitle.setOnFocusChangeListener { _, hasFocus ->
-                if (!hasFocus) {
-                    notifyTextChange(
-                        binding.etTitle.text.toString(),
-                        binding.etDescription.text.toString(),
-                        currentItem
-                    )
-                }
-            }
-            binding.etDescription.setOnFocusChangeListener { _, hasFocus ->
-                if (!hasFocus) {
+        private fun setTextChangeListener() {
+            editTexts.forEach { editText ->
+                editText.addTextChangedListener {
                     notifyTextChange(
                         binding.etTitle.text.toString(),
                         binding.etDescription.text.toString(),
@@ -225,12 +222,17 @@ class PostListAdapter(
             }
         }
 
+        private var boolean = true
         override fun onBind(item: PostListItem) {
+            val context = binding.root.context
             if (item is PostListItem.PostItem) {
                 currentItem = item
                 with(binding) {
-                    etTitle.setText(item.title)
-                    etDescription.setText(item.description)
+                    if (boolean) {
+                        etTitle.setText(item.title)
+                        etDescription.setText(item.description)
+                        boolean = false
+                    }
                     tvProjectDescriptionInfo.text = item.descriptionMessage
                     ivPostImage.load(item.selectedImageUrl ?: item.imageUrl)
                     ivPostImageBg.load(item.selectedImageUrl ?: item.imageUrl)
@@ -239,19 +241,17 @@ class PostListAdapter(
                         binding.ivPostImageBg.applyDarkFilter()
                     }
 
-                    if (item.groupType == GroupType.PROJECT) {
-                        binding.tvTitle.text = context.getString(R.string.title_project_name)
-                        binding.tvProjectDescription.text =
-                            context.getString(R.string.title_project_description)
-                    } else {
-                        binding.tvTitle.text = context.getString(R.string.title_study_name)
-                        binding.tvProjectDescription.text =
-                            context.getString(R.string.title_study_description)
-                    }
+                    val titleRes =
+                        if (item.groupType == GroupType.PROJECT) R.string.title_project_name else R.string.title_study_name
+                    val descriptionRes =
+                        if (item.groupType == GroupType.PROJECT) R.string.title_project_description else R.string.title_study_description
+
+                    tvTitle.text = context.getString(titleRes)
+                    tvProjectDescription.text = context.getString(descriptionRes)
 
                     val tagList = item.tags?.map { TagListItem.Item(it) } ?: emptyList()
                     tagAdapter.submitList(tagList)
-                    binding.ivPostImage.setOnClickListener { onClickView(it, item) }
+                    ivPostImage.setOnClickListener { onClickView(it, item) }
                 }
             }
         }
@@ -262,32 +262,28 @@ class PostListAdapter(
     }
 
     class PostOptionItemViewHolder(
-        private val context: Context,
         private val binding: ItemPostSelectionTypeBinding,
         private val onChangedFocus: (Int, String, String, PostListItem) -> Unit
     ) : PostViewHolder(binding.root) {
         private var currentItem: PostListItem? = null
-        private var currentPosition: Int = RecyclerView.NO_POSITION
+        private val editTexts
+            get() = with(binding) {
+                listOf(
+                    etPrecautions,
+                    etRecruitInfo
+                )
+            }
 
         init {
-            initializeFocusChangeListeners()
+            setTextChangeListener()
         }
 
-        private fun initializeFocusChangeListeners() {
-            binding.tvPrecautions.setOnFocusChangeListener { _, hasFocus ->
-                if (!hasFocus) {
+        private fun setTextChangeListener() {
+            editTexts.forEach { editText ->
+                editText.addTextChangedListener {
                     notifyTextChange(
-                        binding.tvPrecautions.text.toString(),
-                        binding.tvDescription.text.toString(),
-                        currentItem
-                    )
-                }
-            }
-            binding.tvDescription.setOnFocusChangeListener { _, hasFocus ->
-                if (!hasFocus) {
-                    notifyTextChange(
-                        binding.tvPrecautions.text.toString(),
-                        binding.tvDescription.text.toString(),
+                        binding.etPrecautions.text.toString(),
+                        binding.etRecruitInfo.text.toString(),
                         currentItem
                     )
                 }
@@ -297,20 +293,24 @@ class PostListAdapter(
         override fun onBind(item: PostListItem) {
             if (item is PostListItem.PostOptionItem) {
                 currentItem = item
-                binding.tvPrecautions.setText(item.precautions)
-                binding.tvDescription.setText(item.recruitInfo)
-                currentPosition = adapterPosition
+                binding.etPrecautions.setText(item.precautions)
+                binding.etRecruitInfo.setText(item.recruitInfo)
+                binding.tvTitleAsterisk.isVisible = true
+                binding.tvDescriptionAsterisk.isVisible = true
             }
         }
 
-        private fun notifyTextChange(precautions: String, description: String, item: PostListItem?) {
+        private fun notifyTextChange(
+            precautions: String,
+            description: String,
+            item: PostListItem?
+        ) {
             item?.let { onChangedFocus(adapterPosition, precautions, description, it) }
         }
     }
 
 
     class ProjectItemViewHolder(
-        private val context: Context,
         private val binding: ItemPostRecruitTypeBinding,
         private val onClickView: (View, PostListItem) -> Unit,
         private val recruitAdapterOnClickItem: (Int, RecruitInfo) -> Unit
@@ -326,40 +326,50 @@ class PostListAdapter(
 
         override fun onBind(item: PostListItem) {
             if (item is PostListItem.RecruitItem) {
-                val maxPersonnel = item.recruit?.sumOf { it.maxPersonnel ?: 0 } ?: 0
-                val mainColor = ContextCompat.getColor(context, R.color.main_color)
-                val coloredText = highlightNumbers(
-                    context.getString(R.string.total_personnel, maxPersonnel),
-                    mainColor
-                )
-                binding.tvTotalRecruit.setText(coloredText, TextView.BufferType.SPANNABLE)
-                val recruitList = item.recruit
-                recruitAdapter.submitList(recruitList)
-                binding.ivAddRecruit.setOnClickListener {
+                setupRecruitItem(item)
+                setAddRecruitClickListener(item)
+            }
+        }
 
-                    if (maxPersonnel < LIMITED_PEOPLE) {
-                        onClickView(it, item)
-                    } else {
-                        context.showToast(
-                            context.getString(
-                                R.string.limited_people,
-                                LIMITED_PEOPLE
-                            )
-                        )
-                    }
+        private fun setupRecruitItem(item: PostListItem.RecruitItem) {
+            val context = binding.root.context
+            val maxPersonnel = item.recruit?.sumOf { it.maxPersonnel ?: 0 } ?: 0
+            val mainColor = ContextCompat.getColor(context, R.color.main_color)
+            val coloredText = highlightNumbers(
+                context.getString(R.string.total_personnel, maxPersonnel),
+                mainColor
+            )
+            binding.tvTotalRecruit.setText(coloredText, TextView.BufferType.SPANNABLE)
+
+            val recruitList = item.recruit
+            recruitAdapter.submitList(recruitList)
+        }
+
+        private fun setAddRecruitClickListener(item: PostListItem.RecruitItem) {
+            val context = binding.root.context
+            binding.ivAddRecruit.setOnClickListener {
+                if (item.canAddRecruit()) {
+                    onClickView(it, item)
+                } else {
+                    context.showToast(context.getString(R.string.limited_people, LIMITED_PEOPLE))
                 }
             }
+        }
+
+        private fun PostListItem.RecruitItem.canAddRecruit(): Boolean {
+            val maxPersonnel = recruit?.sumOf { it.maxPersonnel ?: 0 } ?: 0
+            return maxPersonnel < LIMITED_PEOPLE
         }
     }
 
 
     class StudyItemViewHolder(
-        private val context: Context,
         private val binding: ItemPersonnelComponentBinding,
         private val onClickView: (View, PostListItem) -> Unit
     ) :
         PostViewHolder(binding.root) {
         override fun onBind(item: PostListItem) {
+            val context = binding.root.context
             if (item is PostListItem.RecruitItem) {
                 binding.ivMinusPersonnel.setOnClickListener {
                     onClickView(it, item)
@@ -384,14 +394,14 @@ class PostListAdapter(
     }
 
     class TitleItemViewHolder(
-        private val context: Context,
         private val binding: ItemPostRecruitTitleBinding,
     ) :
         PostViewHolder(binding.root) {
         override fun onBind(item: PostListItem) {
+            val context = binding.root.context
             if (item is PostListItem.TitleItem) {
-                binding.tvTitle.text = context.getString(item.message1!!)
-                binding.tvSubTitle.text = item.message2?.let {
+                binding.tvTitle.text = context.getString(item.firstMessage!!)
+                binding.tvSubTitle.text = item.secondMessage?.let {
                     context.getString(
                         it,
                         LIMITED_PEOPLE
