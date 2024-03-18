@@ -25,6 +25,7 @@ import com.seven.colink.ui.mypage.MyPageItem.skilItems
 import com.seven.colink.ui.mypage.adapter.MyPagePostAdapter
 import com.seven.colink.ui.mypage.adapter.MyPageSkilAdapter
 import com.seven.colink.ui.post.register.PostActivity
+import com.seven.colink.ui.showmore.MyPageShowMoreActivity
 import com.seven.colink.ui.sign.signin.SignInActivity
 import com.seven.colink.util.convert.convertError
 import com.seven.colink.util.dialog.setDialog
@@ -65,6 +66,7 @@ class MyPageFragment : Fragment() {
         SkilRecyclerView()
         PostRecyclerView()
         setLogout()
+        postShowMore()
 
         //스킬 추가
         skiladapter.plusClick = object : MyPageSkilAdapter.PlusClick {
@@ -320,12 +322,13 @@ class MyPageFragment : Fragment() {
         }
     }
 
+    private fun postShowMore(){
+        binding.tvMypagePostShowMore.setOnClickListener {
+            val showMore = Intent(context, MyPageShowMoreActivity::class.java)
+            startActivity(showMore)
+        }
+    }
 
-//    private fun SkilRecyclerView(){
-//        skiladapter = MyPageSkilAdapter(MyPageSkilItemManager.getAllItem())
-//        binding.reMypageItem.adapter = skiladapter
-//        binding.reMypageItem.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-//    }
     private fun SkilRecyclerView() {
         skiladapter = MyPageSkilAdapter(MyPageSkilItemManager.getAllItem())
         binding.reMypageItem.adapter = skiladapter

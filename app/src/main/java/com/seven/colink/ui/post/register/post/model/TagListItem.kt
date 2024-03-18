@@ -9,10 +9,15 @@ sealed interface TagListItem {
     data class ContentItem(
         val name: String?
     ) : TagListItem
+
+    data class CustomItem(
+        val name: String?,
+        val customColor: Int?
+    ) : TagListItem
 }
 
 enum class TagListViewType {
-    LIST_ITEM, CONTENT_ITEM, UNKNOWN
+    LIST_ITEM, CONTENT_ITEM, CUSTOM_ITEM, UNKNOWN
     ;
 
     companion object {

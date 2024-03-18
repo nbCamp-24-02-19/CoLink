@@ -1,12 +1,12 @@
 package com.seven.colink.ui.group.content.adapter
 
-import android.content.Context
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +14,7 @@ import coil.load
 import com.seven.colink.R
 import com.seven.colink.databinding.ItemGroupContentBinding
 import com.seven.colink.databinding.ItemGroupProjectStatusBinding
+import com.seven.colink.databinding.ItemPostSelectionTypeBinding
 import com.seven.colink.databinding.ItemUnknownBinding
 import com.seven.colink.ui.group.board.board.GroupContentViewType
 import com.seven.colink.ui.group.content.GroupContentItem
@@ -23,12 +24,11 @@ import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
 
 class GroupContentListAdapter(
-    private val context: Context,
-    private val recyclerView: RecyclerView,
     private val onClickItem: (View) -> Unit,
     private val onGroupImageClick: (String) -> Unit,
     private val tagAdapterOnClickItem: (TagListItem) -> Unit,
-    private val onChangeStatus: (ProjectStatus) -> Unit
+    private val onChangeStatus: (ProjectStatus) -> Unit,
+    private val onChangedFocus: (Int, String, String, GroupContentItem) -> Unit,
 ) : ListAdapter<GroupContentItem, GroupContentListAdapter.GroupContentViewHolder>(
     object : DiffUtil.ItemCallback<GroupContentItem>() {
         override fun areItemsTheSame(
@@ -37,6 +37,10 @@ class GroupContentListAdapter(
         ): Boolean =
             when {
                 oldItem is GroupContentItem.GroupContent && newItem is GroupContentItem.GroupContent -> {
+                    oldItem.key == newItem.key
+                }
+
+                oldItem is GroupContentItem.GroupOptionItem && newItem is GroupContentItem.GroupOptionItem -> {
                     oldItem.key == newItem.key
                 }
 
@@ -60,6 +64,7 @@ class GroupContentListAdapter(
 
     override fun getItemViewType(position: Int): Int = when (getItem(position)) {
         is GroupContentItem.GroupContent -> GroupContentViewType.GROUP_ITEM.ordinal
+        is GroupContentItem.GroupOptionItem -> GroupContentViewType.OPTION_ITEM.ordinal
         is GroupContentItem.GroupProjectStatus -> GroupContentViewType.PROJECT_STATUS.ordinal
         else -> GroupContentViewType.UNKNOWN.ordinal
     }
@@ -70,7 +75,6 @@ class GroupContentListAdapter(
     ): GroupContentViewHolder =
         when (GroupContentViewType.from(viewType)) {
             GroupContentViewType.GROUP_ITEM -> GroupContentItemViewHolder(
-                context,
                 ItemGroupContentBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
@@ -78,11 +82,20 @@ class GroupContentListAdapter(
                 ),
                 onClickItem,
                 onGroupImageClick,
-                tagAdapterOnClickItem
+                tagAdapterOnClickItem,
+                onChangedFocus
+            )
+
+            GroupContentViewType.OPTION_ITEM -> GroupOptionItemViewHolder(
+                ItemPostSelectionTypeBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                ),
+                onChangedFocus
             )
 
             GroupContentViewType.PROJECT_STATUS -> ProjectStatusItemViewHolder(
-                context,
                 ItemGroupProjectStatusBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
@@ -104,22 +117,29 @@ class GroupContentListAdapter(
     }
 
     class GroupContentItemViewHolder(
-        private val context: Context,
         private val binding: ItemGroupContentBinding,
         private val onClickItem: (View) -> Unit,
         private val onGroupImageClick: (String) -> Unit,
-        private val tagAdapterOnClickItem: (TagListItem) -> Unit
+        private val tagAdapterOnClickItem: (TagListItem) -> Unit,
+        private val onChangedFocus: (Int, String, String, GroupContentItem) -> Unit,
     ) : GroupContentViewHolder(binding.root) {
-
+        private var currentItem: GroupContentItem? = null
         private val tagAdapter =
             TagListAdapter { item -> tagAdapterOnClickItem(item) }
-
+        private val editTexts
+            get() = with(binding) {
+                listOf(
+                    etTitle,
+                    etDescription
+                )
+            }
         init {
             binding.recyclerViewTags.adapter = tagAdapter
-            initializeEditorActionListener()
+            setEditorActionListener()
+            setTextChangeListener()
         }
 
-        private fun initializeEditorActionListener() {
+        private fun setEditorActionListener() {
             binding.etGroupTag.setOnEditorActionListener { _, actionId, event ->
                 if ((actionId == EditorInfo.IME_ACTION_DONE || (event?.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER))
                     && binding.etGroupTag.text.toString().trim().isNotBlank()
@@ -131,27 +151,33 @@ class GroupContentListAdapter(
                 false
             }
         }
-
-        fun getEtTitleText(): String = binding.etTitle.text.toString().trim()
-
-        fun getEtDescriptionText(): String = binding.etDescription.text.toString().trim()
+        private fun setTextChangeListener() {
+            editTexts.forEach { editText ->
+                editText.addTextChangedListener {
+                    notifyTextChange(
+                        binding.etTitle.text.toString(),
+                        binding.etDescription.text.toString(),
+                        currentItem
+                    )
+                }
+            }
+        }
 
         override fun onBind(item: GroupContentItem) {
             if (item is GroupContentItem.GroupContent) {
+                currentItem = item
                 setupGroupTypeView(item.groupType ?: GroupType.UNKNOWN)
-
                 binding.ivGroupImage.load(item.selectedImageUrl ?: item.imageUrl)
                 binding.etTitle.setText(item.teamName)
                 binding.etDescription.setText(item.description)
-
                 val tagList = item.tags?.map { TagListItem.Item(it) } ?: emptyList()
                 tagAdapter.submitList(tagList)
-
                 binding.ivGroupImage.setOnClickListener { onClickItem(it) }
             }
         }
 
         private fun setupGroupTypeView(groupType: GroupType) {
+            val context = binding.root.context
             val (backgroundTint, typeNameResId) = when (groupType) {
                 GroupType.PROJECT -> Pair(R.color.forth_color, R.string.bt_project)
                 GroupType.STUDY -> Pair(R.color.study_color, R.string.bt_study)
@@ -161,22 +187,75 @@ class GroupContentListAdapter(
                 ContextCompat.getColorStateList(context, backgroundTint)
             binding.tvGroupType.text = context.getString(typeNameResId)
         }
+        private fun notifyTextChange(title: String, description: String, item: GroupContentItem?) {
+            item?.let { onChangedFocus(adapterPosition, title, description, it) }
+        }
+    }
+
+    class GroupOptionItemViewHolder(
+        private val binding: ItemPostSelectionTypeBinding,
+        private val onChangedFocus: (Int, String, String, GroupContentItem) -> Unit
+    ) : GroupContentViewHolder(binding.root) {
+        private var currentItem: GroupContentItem? = null
+        private val editTexts
+            get() = with(binding) {
+                listOf(
+                    etPrecautions,
+                    etRecruitInfo
+                )
+            }
+
+        init {
+            setTextChangeListener()
+        }
+
+        private fun setTextChangeListener() {
+            editTexts.forEach { editText ->
+                editText.addTextChangedListener {
+                    notifyTextChange(
+                        binding.etPrecautions.text.toString(),
+                        binding.etRecruitInfo.text.toString(),
+                        currentItem
+                    )
+                }
+            }
+        }
+
+        override fun onBind(item: GroupContentItem) {
+            if (item is GroupContentItem.GroupOptionItem) {
+                currentItem = item
+                binding.etPrecautions.setText(item.precautions)
+                binding.etRecruitInfo.setText(item.recruitInfo)
+            }
+        }
+
+        private fun notifyTextChange(
+            precautions: String,
+            description: String,
+            item: GroupContentItem?
+        ) {
+            item?.let { onChangedFocus(adapterPosition, precautions, description, it) }
+        }
     }
 
     class ProjectStatusItemViewHolder(
-        private val context: Context,
         private val binding: ItemGroupProjectStatusBinding,
         private val onChangeStatus: (ProjectStatus) -> Unit
     ) :
         GroupContentViewHolder(binding.root) {
         override fun onBind(item: GroupContentItem) {
+            val context = binding.root.context
             if (item is GroupContentItem.GroupProjectStatus) {
                 when (item.status) {
                     ProjectStatus.RECRUIT -> {
+                        binding.btGroupProjectStatus.setBackgroundResource(R.drawable.bg_round_corner_8dp_stroke)
+                        binding.btGroupProjectStatus.setTextColor(context.getColor(R.color.main_color))
                         binding.btGroupProjectStatus.text = "프로젝트 시작하기"
                     }
 
                     ProjectStatus.START -> {
+                        binding.btGroupProjectStatus.setBackgroundResource(R.drawable.bg_round_corner_8dp_stroke)
+                        binding.btGroupProjectStatus.setTextColor(context.getColor(R.color.main_color))
                         binding.btGroupProjectStatus.text = "프로젝트 종료하기"
                     }
 
@@ -184,7 +263,6 @@ class GroupContentListAdapter(
                         binding.btGroupProjectStatus.text = "프로젝트 종료하기"
                         binding.btGroupProjectStatus.setBackgroundResource(R.drawable.bg_round_corner_8dp_stroke_enabled)
                         binding.btGroupProjectStatus.setTextColor(context.getColor(R.color.enable_stroke))
-                        binding.btGroupProjectStatus.isEnabled = false
                     }
 
                     else -> Unit
@@ -214,15 +292,5 @@ class GroupContentListAdapter(
     class GroupUnknownViewHolder(binding: ItemUnknownBinding) :
         GroupContentViewHolder(binding.root) {
         override fun onBind(item: GroupContentItem) = Unit
-    }
-
-    fun getEtTitleAndDescription(position: Int): Pair<String, String> {
-        val viewHolder =
-            recyclerView.findViewHolderForAdapterPosition(position) as? GroupContentItemViewHolder
-        return if (viewHolder != null) {
-            Pair(viewHolder.getEtTitleText(), viewHolder.getEtDescriptionText())
-        } else {
-            Pair("", "")
-        }
     }
 }
