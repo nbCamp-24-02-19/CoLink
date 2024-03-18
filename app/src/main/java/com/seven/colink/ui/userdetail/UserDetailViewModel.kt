@@ -38,10 +38,19 @@ class UserDetailViewModel @Inject constructor(
 
     private val _chatRoom = MutableSharedFlow<ChatRoomEntity>()
     val chatRoom = _chatRoom.asSharedFlow()
+
+    private val _detailEvent = MutableSharedFlow<String>()
+    val detailEvent = _detailEvent.asSharedFlow()
     init {
         userId = handle.get<String>(EXTRA_USER_KEY)?: ""
         loadUserDetails()
         loadUserPost()
+    }
+
+     fun detailEvent(){
+        viewModelScope.launch {
+            _detailEvent.emit(userId)
+        }
     }
 
     private fun loadUserDetails(){
@@ -66,6 +75,10 @@ class UserDetailViewModel @Inject constructor(
         viewModelScope.launch{
             _chatRoom.emit(getChatRoomUseCase(userId))
         }
+    }
+
+    suspend fun getPost(key: String) : PostEntity? {
+        return postRepository.getPost(key).getOrNull()
     }
 
 

@@ -128,7 +128,7 @@ class MyPageFragment : Fragment() {
                 lifecycleScope.launch {
                     var key = item.studyKey
                     Log.d("postClick", "key = ${key}")
-                    val post = key?.let { viewModel.getPost(it) }
+                    val post = key.let { viewModel.getPost(it) }
                     Log.d("postClick", "post = ${post}")
                     if (post != null) {
                         startActivity(

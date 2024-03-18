@@ -9,6 +9,7 @@ import com.seven.colink.R
 import com.seven.colink.domain.entity.ApplicationInfo
 import com.seven.colink.domain.entity.CommentEntity
 import com.seven.colink.domain.entity.RecruitInfo
+import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.CommentRepository
 import com.seven.colink.domain.repository.PostRepository
@@ -147,6 +148,8 @@ class PostContentViewModel @Inject constructor(
                                 profile = user?.photoUrl?: "",
                                 description = it.description,
                                 registeredDate = it.registeredDate,
+                                authId = it.authId,
+                                buttonUiState = updateButtonUiState.value ?: ContentButtonUiState.User
                             )
                         )
                     }
