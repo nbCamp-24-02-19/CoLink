@@ -14,6 +14,7 @@ import com.seven.colink.databinding.FragmentApplyRequestBinding
 import com.seven.colink.ui.group.board.board.GroupBoardItem
 import com.seven.colink.ui.group.board.board.adapter.GroupBoardListAdapter
 import com.seven.colink.ui.group.viewmodel.GroupSharedViewModel
+import com.seven.colink.ui.userdetail.UserDetailActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -31,8 +32,7 @@ class ApplyRequestFragment : Fragment() {
             onClickItem = {item ->
                 when (item) {
                     is GroupBoardItem.MemberItem -> {
-                        // TODO 멤버 상세 화면 이동
-
+                        startActivity(UserDetailActivity.newIntent(requireContext(),item.userInfo.uid?: ""))
                     }
 
                     else -> Unit
@@ -44,6 +44,7 @@ class ApplyRequestFragment : Fragment() {
                         if (item is GroupBoardItem.MemberApplicationInfoItem) {
                             lifecycleScope.launch {
                                 viewModel.onClickApproval(item.applicationInfo)
+                                viewModel.setNotify(item.userInfo.uid)
                             }
                         }
                     }
@@ -57,7 +58,6 @@ class ApplyRequestFragment : Fragment() {
                     }
                 }
             }
-
         )
     }
 

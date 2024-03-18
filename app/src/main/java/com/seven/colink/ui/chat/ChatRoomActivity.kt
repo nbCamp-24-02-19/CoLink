@@ -68,6 +68,7 @@ class ChatRoomActivity : AppCompatActivity() {
                     is UiState.Success -> {
                         adapter.submitList(state.data)
                         hideProgressOverlay()
+                        binding.rcChatRoom.scrollToPosition(adapter.itemCount - 1)
                     }
                     is UiState.Error -> Toast.makeText(this@ChatRoomActivity, "${state.throwable}", Toast.LENGTH_SHORT).show()
                 }
