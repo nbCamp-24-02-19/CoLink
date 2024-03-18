@@ -1,6 +1,7 @@
 package com.seven.colink.ui.group.board.board
 
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -17,6 +18,8 @@ import com.seven.colink.ui.group.content.GroupContentFragment
 import com.seven.colink.ui.group.viewmodel.GroupSharedViewModel
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.register.PostActivity
+import com.seven.colink.ui.promotion.ProductPromotionActivity
+import com.seven.colink.util.Constants
 import com.seven.colink.util.status.PostEntryType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -35,7 +38,10 @@ class GroupBoardFragment : Fragment() {
             onClickItem = { item ->
                 when (item) {
                     is GroupBoardItem.GroupItem -> {
-                        viewModel.onClickStatusButton()
+//                        viewModel.onClickStatusButton()
+                        val intent = Intent(requireContext(), ProductPromotionActivity::class.java)
+                        intent.putExtra(Constants.EXTRA_ENTITY_KEY,item.key)
+                        startActivity(intent)
                     }
 
                     is GroupBoardItem.PostItem -> {

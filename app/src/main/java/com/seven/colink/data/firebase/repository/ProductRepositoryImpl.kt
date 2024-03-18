@@ -26,7 +26,7 @@ class ProductRepositoryImpl @Inject constructor(
 
     override suspend fun getProductDetail(key: String) = runCatching {
         firestore.collection(DataBaseType.PRODUCT.title).document(key).get().await()
-            .toObject(GroupEntity::class.java)
+            .toObject(ProductEntity::class.java)
     }
 
     override suspend fun getProductsByAuthId(authId: String) = runCatching {

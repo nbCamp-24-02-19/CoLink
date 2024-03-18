@@ -70,6 +70,7 @@
             android:layout_height="wrap_content"
             android:text="@string/product_edit_date"
             android:textColor="@color/date_color"
+            android:visibility="visible"
             android:fontFamily="@font/inter_bold"
             app:layout_constraintTop_toBottomOf="@id/tv_product_title"
             app:layout_constraintStart_toStartOf="parent"
