@@ -208,32 +208,32 @@ class ProductPromotionViewAdapter : ListAdapter<ProductPromotionItems, RecyclerV
         if (item is ProductPromotionItems.ProjectMember) {
             holder as NinethViewHolder
             val items = item.userInfo
-            with(holder) {
-                items?.forEach { member ->
-                    img.load(member?.onSuccess { it?.photoUrl })
-                    name.text = member?.onSuccess { it?.name }.toString()
-                    intro.text = member?.onSuccess { it?.info }.toString()
-                    grade.text = member?.onSuccess { it?.grade }.toString()
-                    level.text = member?.onSuccess { it?.level }.toString()
-                    member?.onSuccess {
-                        it?.level?.let { color ->
-                            levelColor.setLevelIcon(color)
-                        }
-                    }
-                }
-            }
-
 //            with(holder) {
-//                item.userInfo.forEach {
-//                    img.load(it.photoUrl)
-//                    name.text = it.name
-//                    intro.text = it.info
-//                    grade.text = it.grade?.toString()
-//                    level.text = it.level?.toString()
-//                    it.level?.let { color ->
-//                        levelColor.setLevelIcon(color) }
+//                items?.forEach { member ->
+//                    img.load(member?.onSuccess { it?.photoUrl })
+//                    name.text = member?.onSuccess { it?.name }.toString()
+//                    intro.text = member?.onSuccess { it?.info }.toString()
+//                    grade.text = member?.onSuccess { it?.grade }.toString()
+//                    level.text = member?.onSuccess { it?.level }.toString()
+//                    member?.onSuccess {
+//                        it?.level?.let { color ->
+//                            levelColor.setLevelIcon(color)
+//                        }
+//                    }
 //                }
 //            }
+
+            with(holder) {
+//                item.userInfo?.forEach {
+//                    img.load(it?.photoUrl)
+//                    name.text = it?.name
+//                    intro.text = it?.info
+//                    grade.text = it?.grade?.toString()
+//                    level.text = it?.level?.toString()
+//                    it?.level?.let { color ->
+//                        levelColor.setLevelIcon(color) }
+//                }
+            }
         }
     }
 
