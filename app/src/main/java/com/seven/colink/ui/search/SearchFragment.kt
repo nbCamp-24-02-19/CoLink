@@ -4,14 +4,14 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toolbar
+import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -21,13 +21,13 @@ import com.seven.colink.R
 import com.seven.colink.R.color.main_color
 import com.seven.colink.R.color.white
 import com.seven.colink.databinding.FragmentSearchBinding
-import com.seven.colink.ui.evaluation.EvaluationActivity
 import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.ui.sign.signin.SignInActivity
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.status.GroupType
+import com.seven.colink.util.status.UiState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -122,6 +122,7 @@ class SearchFragment : Fragment() {
 
         // 프로젝트 필터버튼
         binding.tvSearchProject.setOnClickListener {
+            binding.etSearchSearch.text.toString().let { query ->
             if (project) {
                 project = false
                 offColor(binding.tvSearchProject)
@@ -139,6 +140,7 @@ class SearchFragment : Fragment() {
                     searchViewModel.setGroupBoth(query)
                 }
             }
+        }
         }
 
         // 스터디 필터버튼
@@ -204,7 +206,6 @@ class SearchFragment : Fragment() {
             }
         }
 
-        showProgressOverlay()
         initRecyclerView()
         setObserve()
         goDetail()
@@ -220,11 +221,23 @@ class SearchFragment : Fragment() {
     }
 
     private fun setObserve() {
-        searchViewModel.searchModel.observe(viewLifecycleOwner) {
-            searchAdapter.mItems.clear()
-            searchAdapter.mItems.addAll(it)
-            searchAdapter.notifyDataSetChanged()
-            hideProgressOverlay()
+        searchViewModel.searchModel.observe(viewLifecycleOwner) {state ->
+            when(state) {
+                is UiState.Loading -> {
+                    searchAdapter.mItems.clear()
+                    showProgressOverlay()
+                }
+                is UiState.Success -> {
+                    hideProgressOverlay()
+                    binding.clSearchEmpty.isVisible = state.data.isNullOrEmpty()
+                    searchAdapter.mItems.addAll(state.data)
+                    searchAdapter.notifyDataSetChanged()
+                }
+                is UiState.Error -> {
+                    hideProgressOverlay()
+                    Toast.makeText(requireContext(), "${state.throwable}", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 

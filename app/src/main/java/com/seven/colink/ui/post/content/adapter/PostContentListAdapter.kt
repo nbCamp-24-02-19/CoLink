@@ -1,6 +1,5 @@
 package com.seven.colink.ui.post.content.adapter
 
-import android.content.Context
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +12,9 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.seven.colink.R
 import com.seven.colink.databinding.ItemGroupBoardTitleBinding
+import com.seven.colink.databinding.ItemPostCommentBinding
+import com.seven.colink.databinding.ItemPostCommentSendBinding
+import com.seven.colink.databinding.ItemPostCommentTitleBinding
 import com.seven.colink.databinding.ItemPostContentBinding
 import com.seven.colink.databinding.ItemPostMemberInfoBinding
 import com.seven.colink.databinding.ItemPostMessageBinding
@@ -29,14 +31,13 @@ import com.seven.colink.util.setLevelIcon
 import com.seven.colink.util.status.ApplicationStatus
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.PostContentViewTypeItem
-import kotlin.math.log
 
 class PostContentListAdapter(
-    private val context: Context,
     private val onClickItem: (PostContentItem) -> Unit,
     private val onClickButton: (PostContentItem, ContentButtonUiState) -> Unit,
     private val onClickView: (View) -> Unit,
-
+    private val onClickCommentButton: (String) -> Unit,
+    private val onClickCommentDeleteButton: (String) -> Unit,
     ) : ListAdapter<PostContentItem, PostContentListAdapter.PostViewHolder>(
     object : DiffUtil.ItemCallback<PostContentItem>() {
 
@@ -56,6 +57,18 @@ class PostContentListAdapter(
 
                 oldItem is PostContentItem.AdditionalInfo && newItem is PostContentItem.AdditionalInfo -> {
                     oldItem.key == newItem.key
+                }
+
+                oldItem is PostContentItem.CommentTitle && newItem is PostContentItem.CommentTitle -> {
+                    oldItem.count == newItem.count
+                }
+
+                oldItem is PostContentItem.CommentItem && newItem is PostContentItem.CommentItem -> {
+                    oldItem.key == newItem.key
+                }
+
+                oldItem is PostContentItem.CommentSendItem && newItem is PostContentItem.CommentSendItem -> {
+                    oldItem == newItem
                 }
 
                 else -> oldItem == newItem
@@ -81,13 +94,15 @@ class PostContentListAdapter(
         is PostContentItem.SubTitleItem -> PostContentViewTypeItem.SUB_TITLE
         is PostContentItem.MessageItem -> PostContentViewTypeItem.MESSAGE
         is PostContentItem.AdditionalInfo -> PostContentViewTypeItem.ADDITIONAL_INFO
+        is PostContentItem.CommentTitle -> PostContentViewTypeItem.COMMENTTITEL
+        is PostContentItem.CommentItem -> PostContentViewTypeItem.COMMENT
+        is PostContentItem.CommentSendItem -> PostContentViewTypeItem.COMMENTSEND
         else -> PostContentViewTypeItem.UNKNOWN
     }.ordinal
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder =
         when (PostContentViewTypeItem.from(viewType)) {
             PostContentViewTypeItem.ITEM -> PostItemViewHolder(
-                context,
                 ItemPostContentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             )
 
@@ -106,7 +121,6 @@ class PostContentListAdapter(
             )
 
             PostContentViewTypeItem.TITLE -> PostTitleViewHolder(
-                context,
                 ItemGroupBoardTitleBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
@@ -117,7 +131,6 @@ class PostContentListAdapter(
             )
 
             PostContentViewTypeItem.SUB_TITLE -> PostSubTitleViewHolder(
-                context,
                 ItemPostSubTitleBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
@@ -139,6 +152,32 @@ class PostContentListAdapter(
                     parent,
                     false
                 )
+            )
+
+            PostContentViewTypeItem.COMMENTTITEL -> PostCommentTitleViewHolder(
+                ItemPostCommentTitleBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+            )
+
+            PostContentViewTypeItem.COMMENT -> PostCommentViewHolder(
+                ItemPostCommentBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                ),
+                onClickCommentDeleteButton
+            )
+
+            PostContentViewTypeItem.COMMENTSEND -> PostCommentSendViewHolder(
+                ItemPostCommentSendBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                ),
+                onClickCommentButton
             )
 
             else -> PostUnknownViewHolder(
@@ -180,31 +219,30 @@ class PostContentListAdapter(
     ) : PostViewHolder(binding.root) {
         override fun onBind(item: PostContentItem) {
             if (item is PostContentItem.RecruitItem) {
-                binding.tvRecruitType.text = item.recruit.type
-                binding.tvRecruitType.isVisible = item.recruit.type?.isNotEmpty() ?: false
+                with(binding) {
+                    tvRecruitType.apply {
+                        text = item.recruit.type
+                        isVisible = item.recruit.type?.isNotEmpty() == true
+                    }
 
-                binding.tvNowPersonnel.text = "${item.recruit.nowPersonnel}"
-                binding.tvMaxPersonnel.text = "${item.recruit.maxPersonnel}"
+                    tvNowPersonnel.text = "${item.recruit.nowPersonnel}"
+                    tvMaxPersonnel.text = "${item.recruit.maxPersonnel}"
 
-                if (item.buttonUiState == ContentButtonUiState.User) {
-                    binding.btRecruit.isEnabled =
-                        item.recruit.nowPersonnel < (item.recruit.maxPersonnel ?: -1)
-                    binding.btRecruit.alpha = if (binding.btRecruit.isEnabled) 1.0f else 0.5f
+                    if (item.buttonUiState == ContentButtonUiState.User) {
+                        btRecruit.isEnabled = item.recruit.nowPersonnel < (item.recruit.maxPersonnel ?: -1)
+                        btRecruit.alpha = if (btRecruit.isEnabled) 1.0f else 0.5f
+                    }
+
+                    btRecruit.visibility = if (item.buttonUiState == ContentButtonUiState.Manager) View.GONE else View.VISIBLE
+
+                    btRecruit.setOnClickListener { onClickButton(item, item.buttonUiState) }
                 }
 
-                binding.btRecruit.visibility =
-                    if (item.buttonUiState == ContentButtonUiState.User) View.VISIBLE
-                    else View.GONE
-
-                binding.btRecruit.setOnClickListener {
-                    onClickButton(item, item.buttonUiState)
-                }
             }
         }
     }
 
     class PostItemViewHolder(
-        private val context: Context,
         private val binding: ItemPostContentBinding
     ) : PostViewHolder(binding.root) {
         private val tagAdapter = TagListAdapter(onClickItem = { _ -> })
@@ -214,65 +252,60 @@ class PostContentListAdapter(
         }
 
         override fun onBind(item: PostContentItem) {
+            val context = binding.root.context
             if (item is PostContentItem.Item) {
-                binding.tvTitle.text = item.title
-                binding.tvRegisterDatetime.text = item.registeredDate
-                binding.tvHits.text = item.views.toString()
-                binding.tvContent.text = item.description
-                binding.ivAddImage.load(item.imageUrl)
-                binding.ivImageBackground.load(item.imageUrl)
+                with(binding) {
+                    tvTitle.text = item.title
+                    tvRegisterDatetime.text = item.registeredDate
+                    tvHits.text = item.views.toString()
+                    tvContent.text = item.description
+                    ivAddImage.load(item.imageUrl)
+                    ivImageBackground.load(item.imageUrl)
 
-                val textColorResId = when (item.groupType) {
-                    GroupType.PROJECT -> {
-                        binding.tvGroupType.setText(R.string.bt_project)
-                        R.color.forth_color
+                    val (groupTypeTextRes, textColorResId) = when (item.groupType) {
+                        GroupType.PROJECT -> R.string.bt_project to R.color.forth_color
+                        else -> R.string.bt_study to R.color.study_color
                     }
 
-                    else -> {
-                        binding.tvGroupType.setText(R.string.bt_study)
-                        R.color.study_color
+                    tvGroupType.apply {
+                        setText(groupTypeTextRes)
+                        backgroundTintList = ContextCompat.getColorStateList(context, textColorResId)
                     }
+
+                    val tagListItems = item.tags?.map { TagListItem.ContentItem(name = it) } ?: emptyList()
+                    tagAdapter.submitList(tagListItems)
                 }
 
-                binding.tvGroupType.backgroundTintList =
-                    ContextCompat.getColorStateList(context, textColorResId)
-
-                val tagListItems = mutableListOf<TagListItem>()
-                tagListItems.addAll(item.tags?.map { TagListItem.ContentItem(name = it) }
-                    ?: emptyList())
-                tagAdapter.submitList(tagListItems)
             }
         }
     }
 
     class PostTitleViewHolder(
-        private val context: Context,
         private val binding: ItemGroupBoardTitleBinding,
         private val adapter: PostContentListAdapter,
         private val onClickView: (View) -> Unit,
     ) : PostViewHolder(binding.root) {
         override fun onBind(item: PostContentItem) {
+            val context = binding.root.context
             if (item is PostContentItem.TitleItem) {
                 binding.tvTitle.text = context.getString(item.titleRes)
 
                 when (item.viewType) {
                     GroupContentViewType.POST_ITEM -> {
-                        binding.ivApplyRequest.visibility = View.INVISIBLE
-                        binding.tvApplyRequest.visibility = View.INVISIBLE
+                        binding.ivApplyRequest.isVisible = false
+                        binding.tvApplyRequest.isVisible = false
                     }
 
                     GroupContentViewType.MEMBER_ITEM -> {
                         val buttonState = adapter.getButtonUiState()
-                        binding.ivApplyRequest.isVisible =
-                            buttonState == ContentButtonUiState.Manager
-                        binding.tvApplyRequest.isVisible =
-                            buttonState == ContentButtonUiState.Manager
+                        val isManager = buttonState == ContentButtonUiState.Manager
 
-                        binding.ivNotify.isVisible = buttonState == ContentButtonUiState.Manager &&
-                                adapter.countPostApplyRequester() > 0
+                        binding.ivApplyRequest.isVisible = isManager
+                        binding.tvApplyRequest.isVisible = isManager
 
+                        binding.ivNotify.isVisible = isManager && adapter.countPostApplyRequester() > 0
                         binding.tvApplyRequest.setOnClickListener {
-                            if (buttonState == ContentButtonUiState.Manager) {
+                            if (isManager) {
                                 onClickView(it)
                             }
                         }
@@ -280,15 +313,16 @@ class PostContentListAdapter(
 
                     else -> Unit
                 }
+
             }
         }
     }
 
     class PostSubTitleViewHolder(
-        private val context: Context,
         private val binding: ItemPostSubTitleBinding
     ) : PostViewHolder(binding.root) {
         override fun onBind(item: PostContentItem) {
+            val context = binding.root.context
             if (item is PostContentItem.SubTitleItem) {
                 binding.tvSubTitle.text = context.getString(item.titleRes)
             }
@@ -310,13 +344,57 @@ class PostContentListAdapter(
     ) : PostViewHolder(binding.root) {
         override fun onBind(item: PostContentItem) {
             if (item is PostContentItem.AdditionalInfo) {
-                binding.tvPrecautions.setText(item.precautions)
-                binding.tvDescription.setText(item.recruitInfo)
-                binding.tvPrecautions.inputType = InputType.TYPE_NULL
-                binding.tvDescription.inputType = InputType.TYPE_NULL
+                binding.etPrecautions.setText(item.precautions)
+                binding.etRecruitInfo.setText(item.recruitInfo)
+                binding.etPrecautions.inputType = InputType.TYPE_NULL
+                binding.etRecruitInfo.inputType = InputType.TYPE_NULL
             }
         }
     }
+
+    class PostCommentTitleViewHolder(
+        private val binding: ItemPostCommentTitleBinding
+    ) : PostViewHolder(binding.root) {
+        override fun onBind(item: PostContentItem) {
+            if (item is PostContentItem.CommentTitle){
+                val context = binding.root.context
+                binding.tvPostCommentCount.text = context.getString(item.count)
+            }
+        }
+    }
+
+    class PostCommentViewHolder(
+        private val binding: ItemPostCommentBinding,
+        private val onClickCommentDeleteButton: (String) -> Unit
+    ) : PostViewHolder(binding.root) {
+        override fun onBind(item: PostContentItem) {
+            if (item is PostContentItem.CommentItem){
+                binding.tvPostCommentName.text = item.name
+                binding.tvPostComment.text = item.description
+                binding.tvPostCommentTime.text = item.registeredDate
+                binding.ivPostCommentProfile.load(item.profile)
+                binding.ivPostCommentProfile.clipToOutline = true
+                binding.tvPostCommentDelete.setOnClickListener {
+                    onClickCommentDeleteButton(item.key)
+                }
+            }
+        }
+    }
+
+    class PostCommentSendViewHolder(
+        private val binding: ItemPostCommentSendBinding,
+        private val onClickCommentButton: (String) -> Unit
+    ) : PostViewHolder(binding.root) {
+        override fun onBind(item: PostContentItem) {
+            if (item is PostContentItem.CommentSendItem){
+                binding.btnPostCommentSend.setOnClickListener {
+                    onClickCommentButton(binding.etPostCommentSend.text.toString())
+                    binding.etPostCommentSend.text.clear()
+                }
+            }
+        }
+    }
+
 
     private fun getButtonUiState(): ContentButtonUiState? {
         val recruitItems = currentList.filterIsInstance<PostContentItem.RecruitItem>()

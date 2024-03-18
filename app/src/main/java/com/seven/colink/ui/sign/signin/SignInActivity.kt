@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.seven.colink.databinding.ActivitySignInBinding
 import com.seven.colink.ui.main.MainActivity
@@ -13,7 +14,9 @@ import com.seven.colink.ui.sign.signup.SignUpActivity
 import com.seven.colink.util.convert.convertError
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
+import com.seven.colink.util.snackbar.setSnackBar
 import com.seven.colink.util.status.DataResultStatus
+import com.seven.colink.util.status.SnackType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -36,16 +39,24 @@ class SignInActivity : AppCompatActivity() {
     private fun initViewModel() = with(viewModel) {
         lifecycleScope.launch {
             entryType.collect {
-                if (it) finish()
+                if (it) {
+                    val intent = Intent(this@SignInActivity, MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                    finish()
+                }
             }
         }
 
         lifecycleScope.launch {
             result.collect{
                 when(it) {
-                    DataResultStatus.SUCCESS -> Toast.makeText(this@SignInActivity, "로그인 성공", Toast.LENGTH_SHORT).show()
-                    else -> {
-                        Toast.makeText(this@SignInActivity, it.message.convertError(), Toast.LENGTH_SHORT).show()
+                    DataResultStatus.SUCCESS -> binding.tvSignError.isVisible = false
+                    DataResultStatus.FAIL -> {
+                        with(binding.tvSignError) {
+                            isVisible = true
+                            text = it.message.convertError()
+                        }
                     }
                 }
                 this@SignInActivity.hideProgressOverlay()
@@ -60,7 +71,6 @@ class SignInActivity : AppCompatActivity() {
 
     private fun setButton() = with(binding) {
         ivSignInBack.setOnClickListener {
-            startActivity(Intent(this@SignInActivity, MainActivity::class.java))
             finish()
         }
         btSignInLogin.setOnClickListener {

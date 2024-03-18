@@ -3,14 +3,58 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     android:paddingHorizontal="24dp"
     tools:context=".ui.chat.ChatTabFragment">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_empty_chat"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/iv_chat_empty"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintWidth_percent="0.3"
+            app:layout_constraintHeight_percent="0.12"
+            app:layout_constraintVertical_bias="0.4"
+            android:src="@drawable/widget_empty_chat"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:tint="@color/enable_stroke" />
 
+        <TextView
+            android:id="@+id/tv_empty_chat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="채팅 내역이 없습니다"
+            android:textColor="@color/typo_color"
+            android:textSize= "20sp"
+            android:fontFamily="@font/roboto_bold"
+            app:layout_constraintTop_toBottomOf="@+id/iv_chat_empty"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="다른 유저들과 채팅을 시작해 보세요"
+            android:textColor="@color/typo_color"
+            android:textSize= "12sp"
+            app:layout_constraintTop_toBottomOf="@+id/tv_empty_chat"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rc_chat_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="gone"
         tools:listitem="@layout/item_chat_list"/>
 
 </FrameLayout>

@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,7 +21,7 @@ class SignInViewModel @Inject constructor(
     val entryType: StateFlow<Boolean> = _entryType
 
     private val _result = MutableSharedFlow<DataResultStatus>()
-    val result = _result
+    val result = _result.asSharedFlow()
     init {
         viewModelScope.launch {
             _entryType.value = authRepository.getCurrentUser() == DataResultStatus.SUCCESS

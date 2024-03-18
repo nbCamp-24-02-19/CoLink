@@ -21,4 +21,6 @@
     <string name="project_status">프로젝트 시작여부</string>
     <string name="project_start">프로젝트 시작하기</string>
     <string name="project_end">프로젝트 종료하기</string>
+    <string name="participating_group_empty">참여중인 그룹이 없습니다</string>
+    <string name="apply_group_empty">지원한 그룹이 없습니다</string>
 </resources>

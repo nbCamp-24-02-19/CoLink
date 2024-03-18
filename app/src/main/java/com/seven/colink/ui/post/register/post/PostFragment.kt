@@ -39,12 +39,12 @@ class PostFragment : Fragment() {
 
     private val postListAdapter: PostListAdapter by lazy {
         PostListAdapter(
-            requireContext(),
             onChangedFocus = { position, title, description, item ->
                 when (item) {
                     is PostListItem.PostItem, is PostListItem.PostOptionItem -> {
                         viewModel.updatePostItemText(position, title, description)
                     }
+
                     else -> Unit
                 }
             },
@@ -175,13 +175,15 @@ class PostFragment : Fragment() {
 
     private fun setListAdapter() = with(binding) {
         recyclerViewPost.adapter = postListAdapter
+        recyclerViewPost.itemAnimator = null
     }
 
     private fun initViewModel() = with(viewModel) {
-        uiState.observe(viewLifecycleOwner) {
-            postListAdapter.submitList(it)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.uiState.collect {
+                postListAdapter.submitList(it)
+            }
         }
-
 
         lifecycleScope.launch {
             complete.collect { newKey ->
@@ -189,31 +191,36 @@ class PostFragment : Fragment() {
             }
         }
 
-        errorUiState.observe(viewLifecycleOwner) {
-            if (it == null) {
-                return@observe
-            }
-            if (it.message == PostErrorMessage.PASS) {
 
-                viewModel.createPost(
-                    onSuccess = {
-                        hideProgressOverlay()
-                        parentFragmentManager.beginTransaction().apply {
-                            replace(R.id.fg_activity_post, RecommendFragment())
-                            commit()
+        lifecycleScope.launch {
+            viewModel.errorUiState.collect { errorUiState ->
+                when {
+                    errorUiState.message == PostErrorMessage.PASS -> viewModel.createPost(
+                        onSuccess = {
+                            hideProgressOverlay()
+                            parentFragmentManager.beginTransaction().apply {
+                                replace(R.id.fg_activity_post, RecommendFragment())
+                                commit()
+                            }
+                        },
+                        onError = { exception ->
+                            hideProgressOverlay()
+                            requireContext().showToast(
+                                exception.message ?: getString(R.string.post_register_fail)
+                            )
                         }
-                    },
-                    onError = { exception ->
-                        hideProgressOverlay()
-                        requireContext().showToast(
-                            exception.message ?: getString(R.string.post_register_fail)
-                        )
-                    })
-            }
+                    )
 
-            if (it.tag != PostErrorMessage.PASS) {
-                requireContext().showToast(getString(it.tag.message1, it.tag.message2))
+                    errorUiState.message != PostErrorMessage.PASS &&  errorUiState.message != PostErrorMessage.EMPTY-> requireContext().showToast(
+                        getString(errorUiState.message.message1)
+                    )
+
+                    errorUiState.tag != PostErrorMessage.PASS -> requireContext().showToast(
+                        getString(errorUiState.tag.message1, errorUiState.tag.message2)
+                    )
+                }
             }
         }
+
     }
 }

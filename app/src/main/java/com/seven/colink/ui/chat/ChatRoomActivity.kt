@@ -69,7 +69,7 @@ class ChatRoomActivity : AppCompatActivity() {
                         adapter.submitList(state.data)
                         hideProgressOverlay()
                     }
-                    is UiState.Error -> Toast.makeText(this@ChatRoomActivity, "${state.exception}", Toast.LENGTH_SHORT).show()
+                    is UiState.Error -> Toast.makeText(this@ChatRoomActivity, "${state.throwable}", Toast.LENGTH_SHORT).show()
                 }
             }
         }
