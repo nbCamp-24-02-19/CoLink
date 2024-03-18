@@ -1,6 +1,7 @@
 package com.seven.colink.ui.promotion
 
 import android.app.Application
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,8 +11,6 @@ import com.seven.colink.R
 import com.seven.colink.domain.entity.ProductEntity
 import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.domain.repository.GroupRepository
-import com.seven.colink.domain.repository.ImageRepository
-import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.repository.ProductRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.util.convert.convertLocalDateTime
@@ -52,12 +51,6 @@ class ProductPromotionEditViewModel @Inject constructor(
         }else {
             initProduct(key)
         }
-        initViews()
-    }
-
-    private fun initViews(){
-
-
     }
 
     private fun updateAdapterData(data: ProductPromotionItems) {
@@ -95,35 +88,75 @@ class ProductPromotionEditViewModel @Inject constructor(
 
     fun getMemberDetail(key: String) {
         val viewList = mutableListOf<ProductEntity>()
-        val memberList = mutableListOf<ProductPromotionItems.ProjectMember>()
+        var memberList = mutableListOf<ProductPromotionItems.ProjectMember>()
 
         viewModelScope.launch {
             val ids = groupRepository.getGroupDetail(key)
 
-            ids.onSuccess { id ->
-//                val viewItem = id?.memberIds?.let { member -> ProductEntity("",id.authId, member) }
-                val viewItem = id?.memberIds?.let { member -> entity?.copy(authId = id.authId, memberIds = member) }
-                if (viewItem != null) {
-                    viewList.add(viewItem)
-                }
-                val getLeaderDetail = id?.authId?.let { authId -> userRepository.getUserDetails(authId) }
-                val setLeaderItem = ProductPromotionItems.ProjectLeaderItem(getLeaderDetail)
+            val viewItem = ids.getOrNull()?.memberIds?.let { member -> entity?.copy(authId = ids.getOrNull()?.authId, memberIds = member) }
+            Log.d("Viewmodel","#aaa postUser Id = ${ids.getOrNull()?.authId}")
+            Log.d("Viewmodel","#aaa postMember Id = ${ids.getOrNull()?.memberIds}")
+            if (viewItem != null) {
+                viewList.add(viewItem)
+            }
+            val getLeaderDetail = ids.getOrNull()?.authId?.let { authId -> userRepository.getUserDetails(authId) }
+            val setLeaderItem = ProductPromotionItems.ProjectLeaderItem(getLeaderDetail)
 
-                val mIds = id?.memberIds
-                if (mIds != null) {
-                    val memberDetailList = mutableListOf<Result<UserEntity?>?>()
-                    for (member in mIds) {
-                        val detail = userRepository.getUserDetails(member)
-                        memberDetailList.add(detail)
+            val memIds = ids.getOrNull()?.memberIds
+            if (memIds != null) {
+                var memberDetailList = mutableListOf<ProductPromotionItems.ProjectMember>()
+                memIds.forEach { id ->
+                    val detail = userRepository.getUserDetails(id)
+                    val userNt = detail.getOrNull()
+                    val user = userNt?.registeredDate?.let { date ->
+                        userNt.evaluatedNumber.let { evaluted ->
+                            UserEntity().copy(
+                                uid = userNt.uid,
+                                email = userNt.email,
+                                name = userNt.name,
+                                photoUrl = userNt.photoUrl,
+                                phoneNumber = userNt.phoneNumber,
+                                level = userNt.level,
+                                mainSpecialty = userNt.mainSpecialty,
+                                specialty = userNt.specialty,
+                                grade = userNt.grade,
+                                skill = userNt.skill,
+                                git = userNt.git,
+                                blog = userNt.blog,
+                                link = userNt.link,
+                                info = userNt.info,
+                                registeredDate = date,
+                                communication = userNt.communication,
+                                technicalSkill = userNt.technicalSkill,
+                                diligence = userNt.diligence,
+                                flexibility = userNt.flexibility,
+                                creativity = userNt.creativity,
+                                evaluatedNumber = evaluted,
+                                participantsChatRoomIds = userNt.participantsChatRoomIds,
+                                chatRoomKeyList = userNt.chatRoomKeyList
+                            )
+                        }
                     }
-                    val setMemberItem = ProductPromotionItems.ProjectMember(memberDetailList)
-                    memberList.add(setMemberItem)
+                    memberDetailList.add(ProductPromotionItems.ProjectMember(user))
+                    val delAuth = ids.getOrNull()?.authId
+                    val delList = memberDetailList.filterNot { member ->
+                        member.userInfo?.uid == delAuth
+                    }.toMutableList()
+                    memberDetailList = delList
+
                 }
-                _setLeader.value = setLeaderItem
-                _setMember.value = memberList
+                    val setMemberItem = memberDetailList
+                    Log.d("Viewmodel","#aaa 디테일 = $memberDetailList")
+                    Log.d("Viewmodel","#aaa set 아이템 = $setMemberItem")
+                    memberList.plus(setMemberItem)
+                    Log.d("Viewmodel","#aaa 멤버리스트 = $setMemberItem")
+                memberList = memberList.plus(setMemberItem).toMutableList()
+                }
+            _setMember.value = memberList
+            _setLeader.value = setLeaderItem
             }
         }
-    }
+
 
     fun saveImgUrl(mainUrl : String?, desUrl : String?) : ProductEntity? {
         if (mainUrl?.isEmpty() == true) {

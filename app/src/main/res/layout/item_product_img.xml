@@ -16,7 +16,8 @@
             android:id="@+id/iv_product_promotion"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"/>
+            android:scaleType="centerCrop"
+            android:background="@drawable/bg_post_image_background"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
