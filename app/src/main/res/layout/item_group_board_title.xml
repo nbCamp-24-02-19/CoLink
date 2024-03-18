@@ -50,6 +50,7 @@
         android:layout_width="6dp"
         android:layout_height="6dp"
         android:background="@drawable/bg_background_circle"
+        android:backgroundTint="@color/red"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/tv_apply_request" />
