@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="schedule_title">일정</string>
+    <string name="schedule_register">등록</string>
+    <string name="input_schedule">일정을 입력하세요.</string>
+    <string name="schedule_noti">알림</string>
+    <string name="schedule_color">색상</string>
+    <string name="schedule_description">설명</string>
+</resources>
