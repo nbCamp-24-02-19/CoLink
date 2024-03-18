@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="12dp"
+    android:background="@drawable/bg_round_corner_8dp"
+    android:backgroundTint="@color/white"
+    android:layout_marginVertical="8dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/iv_notify_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:padding="4dp"
+        android:background="@drawable/bg_background_circle"
+        android:backgroundTint="@color/third_color"
+        android:src="@drawable/ic_invite"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/white" />
+
+    <TextView
+        android:id="@+id/tv_notify_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="지원 요청"
+        android:textColor="@color/black"
+        style="@style/BoldTextStyle"
+        android:textSize="14sp"
+        app:layout_constraintStart_toEndOf="@id/iv_notify_icon"
+        app:layout_constraintTop_toTopOf="@id/iv_notify_icon"
+        app:layout_constraintBottom_toBottomOf="@id/iv_notify_icon"/>
+
+    <TextView
+        android:id="@+id/tv_notify_registered_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="02.20 09:30"
+        android:textColor="@color/typo_color"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/tv_notify_title"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="`잠자지않는 안드로이드 스터디 모집해요`로 부터 그룹 초대를 받았습니다."
+        android:textColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@id/iv_notify_icon"
+        app:layout_constraintStart_toStartOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
