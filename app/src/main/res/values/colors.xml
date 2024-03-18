@@ -57,5 +57,17 @@
     <!-- home -->
     <color name="home_top_bottom">#C8C8C8</color>
 
+    <!-- calender -->
+    <color name="selected_color">#D7D7D9</color>
+    <color name="calender_fab">#727272</color>
+    <color name="calender_color_red">#CD4517</color>
+    <color name="calender_color_orange">#E19F02</color>
+    <color name="calender_color_green">#14A989</color>
+    <color name="calender_color_blue">#6DA4FF</color>
+    <color name="calender_color_purple">#B07FFC</color>
+    <color name="calender_color_gray">#9EA9AD</color>
+    <color name="enabled_color">#7B7C80</color>
+    <color name="today_color">#C9EFE8</color>
+
 
 </resources>

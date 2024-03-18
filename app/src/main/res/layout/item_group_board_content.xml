@@ -34,6 +34,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/iv_group_image" />
 
+    <ImageView
+        android:id="@+id/iv_calendar"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_calendar_today_24"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tv_group_type"
+        app:layout_constraintBottom_toBottomOf="@id/tv_group_type"
+        app:tint="@color/calender_fab" />
+
     <TextView
         android:id="@+id/tv_teamName"
         android:layout_width="match_parent"
@@ -54,9 +65,8 @@
         android:id="@+id/recycler_view_tags"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
+        android:layout_marginHorizontal="24dp"
         android:layout_marginTop="4dp"
-        android:layout_marginEnd="12dp"
         android:orientation="horizontal"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintEnd_toStartOf="@id/bt_status"
@@ -82,32 +92,25 @@
         android:id="@+id/view_title_line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_marginHorizontal="24dp"
         android:layout_marginTop="12dp"
         android:background="@color/bg"
         app:layout_constraintTop_toBottomOf="@id/recycler_view_tags" />
 
     <TextView
-        android:id="@+id/tv_description"
+        android:id="@+id/et_description"
         style="@style/PostEditTextStyle"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="24dp"
         android:gravity="top"
         android:hint="@string/group_content_description"
         android:minHeight="250dp"
         android:textColor="@color/black"
         android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/view_title_line" />
-
-    <View
-        android:id="@+id/view_description_line"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginVertical="12dp"
-        android:background="@color/bg"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_description" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

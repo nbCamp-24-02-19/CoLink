@@ -1,6 +1,6 @@
 package com.seven.colink.ui.group.board.board.adapter
 
-import android.content.Context
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +16,7 @@ import com.seven.colink.databinding.ItemGroupBoardTitleBinding
 import com.seven.colink.databinding.ItemPostMemberInfoBinding
 import com.seven.colink.databinding.ItemPostMessageBinding
 import com.seven.colink.databinding.ItemPostPaddingBinding
+import com.seven.colink.databinding.ItemPostSelectionTypeBinding
 import com.seven.colink.databinding.ItemPostSubTitleBinding
 import com.seven.colink.databinding.ItemPostTitleBinding
 import com.seven.colink.databinding.ItemUnknownBinding
@@ -30,10 +31,8 @@ import com.seven.colink.util.setLevelIcon
 import com.seven.colink.util.status.ApplicationStatus
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
-import kotlin.math.log
 
 class GroupBoardListAdapter(
-    private val context: Context,
     private val onClickItem: (GroupBoardItem) -> Unit,
     private val onClickView: (GroupBoardItem, View) -> Unit,
 ) : ListAdapter<GroupBoardItem, GroupBoardListAdapter.GroupViewHolder>(
@@ -44,6 +43,10 @@ class GroupBoardListAdapter(
         ): Boolean =
             when {
                 oldItem is GroupBoardItem.GroupItem && newItem is GroupBoardItem.GroupItem -> {
+                    oldItem.key == newItem.key
+                }
+
+                oldItem is GroupBoardItem.GroupOptionItem && newItem is GroupBoardItem.GroupOptionItem -> {
                     oldItem.key == newItem.key
                 }
 
@@ -76,13 +79,20 @@ class GroupBoardListAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupViewHolder =
         when (GroupContentViewType.from(viewType)) {
             GroupContentViewType.GROUP_ITEM -> GroupItemViewHolder(
-                context,
                 ItemGroupBoardContentBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
                 ),
-                onClickItem
+                onClickView
+            )
+
+            GroupContentViewType.OPTION_ITEM -> GroupOptionItemViewHolder(
+                ItemPostSelectionTypeBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                ),
             )
 
             GroupContentViewType.MEMBER_ITEM -> MemberItemViewHolder(
@@ -109,7 +119,6 @@ class GroupBoardListAdapter(
             )
 
             GroupContentViewType.TITLE -> GroupTitleViewHolder(
-                context,
                 ItemGroupBoardTitleBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
@@ -120,7 +129,6 @@ class GroupBoardListAdapter(
             )
 
             GroupContentViewType.SINGLE_TITLE -> GroupTitleSingleViewHolder(
-                context,
                 ItemPostTitleBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
@@ -155,6 +163,7 @@ class GroupBoardListAdapter(
 
     override fun getItemViewType(position: Int): Int = when (getItem(position)) {
         is GroupBoardItem.GroupItem -> GroupContentViewType.GROUP_ITEM
+        is GroupBoardItem.GroupOptionItem -> GroupContentViewType.OPTION_ITEM
         is GroupBoardItem.PostItem -> GroupContentViewType.POST_ITEM
         is GroupBoardItem.MemberItem -> GroupContentViewType.MEMBER_ITEM
         is GroupBoardItem.MemberApplicationInfoItem -> GroupContentViewType.APPLICATION_INFO
@@ -166,9 +175,8 @@ class GroupBoardListAdapter(
     }.ordinal
 
     class GroupItemViewHolder(
-        private val context: Context,
         private val binding: ItemGroupBoardContentBinding,
-        private val onClickItem: (GroupBoardItem) -> Unit
+        private val onClickView: (GroupBoardItem, View) -> Unit,
     ) : GroupViewHolder(binding.root) {
         private val tagAdapter = TagListAdapter { _ -> }
 
@@ -178,7 +186,7 @@ class GroupBoardListAdapter(
 
         override fun onBind(item: GroupBoardItem) {
             if (item !is GroupBoardItem.GroupItem) return
-
+            val context = binding.root.context
             with(binding) {
                 ivGroupImage.load(item.imageUrl)
                 tagAdapter.submitList(item.tags?.map { TagListItem.ContentItem(name = it) }
@@ -187,10 +195,11 @@ class GroupBoardListAdapter(
                 btStatus.visibility =
                     if (item.status != ProjectStatus.END) View.GONE else View.VISIBLE
                 btStatus.isEnabled = item.isOwner ?: false
-                btStatus.setOnClickListener { onClickItem(item) }
+                btStatus.setOnClickListener { onClickView(item, it) }
+                ivCalendar.setOnClickListener { onClickView(item, it) }
 
                 tvTeamName.text = item.teamName
-                tvDescription.text = item.description
+                etDescription.text = item.description
 
                 var days = ""
                 if (item.status == ProjectStatus.START) {
@@ -206,6 +215,19 @@ class GroupBoardListAdapter(
                 tvGroupType.backgroundTintList =
                     ContextCompat.getColorStateList(context, backgroundTint)
                 tvGroupType.text = "$groupTypeString$days"
+            }
+        }
+    }
+
+    class GroupOptionItemViewHolder(
+        private val binding: ItemPostSelectionTypeBinding,
+    ) : GroupViewHolder(binding.root) {
+        override fun onBind(item: GroupBoardItem) {
+            if (item is GroupBoardItem.GroupOptionItem) {
+                binding.etPrecautions.setText(item.precautions)
+                binding.etRecruitInfo.setText(item.recruitInfo)
+                binding.etPrecautions.inputType = InputType.TYPE_NULL
+                binding.etRecruitInfo.inputType = InputType.TYPE_NULL
             }
         }
     }
@@ -284,13 +306,13 @@ class GroupBoardListAdapter(
     }
 
     class GroupTitleViewHolder(
-        private val context: Context,
         private val binding: ItemGroupBoardTitleBinding,
         private val adapter: GroupBoardListAdapter,
         private val onClickView: (GroupBoardItem, View) -> Unit,
     ) : GroupViewHolder(binding.root) {
 
         override fun onBind(item: GroupBoardItem) {
+            val context = binding.root.context
             if (item is GroupBoardItem.TitleItem) {
                 binding.tvTitle.text = context.getString(item.titleRes)
 
@@ -344,10 +366,10 @@ class GroupBoardListAdapter(
     }
 
     class GroupTitleSingleViewHolder(
-        private val context: Context,
         private val binding: ItemPostTitleBinding
     ) : GroupViewHolder(binding.root) {
         override fun onBind(item: GroupBoardItem) {
+            val context = binding.root.context
             if (item is GroupBoardItem.TitleSingleItem) {
                 binding.tvTitle.text = context.getString(item.titleRes)
             }

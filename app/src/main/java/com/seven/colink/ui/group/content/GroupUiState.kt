@@ -1,8 +1,6 @@
 package com.seven.colink.ui.group.content
 
 import android.net.Uri
-import com.seven.colink.domain.entity.GroupEntity
-import com.seven.colink.domain.entity.TagEntity
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
 
@@ -28,6 +26,12 @@ sealed interface GroupContentItem {
         val groupTypeUiState: GroupTypeUiState?,
         val buttonUiState: ContentButtonUiState?,
     ): GroupContentItem
+
+    data class GroupOptionItem(
+        val key: String?,
+        val precautions: String?,
+        val recruitInfo: String?,
+    ) : GroupContentItem
 
     data class GroupProjectStatus(
         val key: String?,
