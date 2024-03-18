@@ -11,6 +11,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentPostContentBinding
+import com.seven.colink.databinding.ItemPostCommentBinding
+import com.seven.colink.domain.entity.CommentEntity
+import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.ui.group.board.list.ApplyRequestFragment
 import com.seven.colink.ui.post.content.adapter.PostContentListAdapter
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
@@ -34,6 +37,8 @@ import kotlinx.coroutines.launch
 class PostContentFragment : Fragment() {
     private var _binding: FragmentPostContentBinding? = null
     private val binding: FragmentPostContentBinding get() = _binding!!
+
+    private lateinit var commentBinding: ItemPostCommentBinding
 
     private val viewModel: PostContentViewModel by viewModels()
     private val sharedViewModel: PostSharedViewModel by activityViewModels()
@@ -88,8 +93,12 @@ class PostContentFragment : Fragment() {
             onClickCommentButton = {
                 viewModel.registerComment(it)
             },
-            onClickCommentDeleteButton = {
-                viewModel.deleteComment(it)
+            onClickCommentDeleteButton = {item, buttonUiState ->
+                when(buttonUiState) {
+                    ContentButtonUiState.Manager -> viewModel.deleteComment(item)
+                    ContentButtonUiState.User -> commentBinding.tvPostCommentDelete.visibility = View.GONE
+                    ContentButtonUiState.Unknown -> commentBinding.tvPostCommentDelete.visibility = View.GONE
+                }
             }
         )
     }
@@ -98,6 +107,7 @@ class PostContentFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        commentBinding = ItemPostCommentBinding.inflate(layoutInflater)
         _binding = FragmentPostContentBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -159,6 +169,7 @@ class PostContentFragment : Fragment() {
 
             requireContext().showToast(getString(messageResId))
         }
+
     }
 
     private fun initSharedViewModel() = with(sharedViewModel) {

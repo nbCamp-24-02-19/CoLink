@@ -26,6 +26,9 @@
         android:theme="@style/Theme.CoLink"
         tools:targetApi="31">
         <activity
+            android:name=".ui.userdetailshowmore.UserDetailShowmoreActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.showmore.MyPageShowMoreActivity"
             android:exported="false" />
         <activity
