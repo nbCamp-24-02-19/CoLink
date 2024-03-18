@@ -30,24 +30,21 @@ data class MembersItem(
 
 sealed class ProductPromotionItems {
     data class Img(
-        val key : String?,
+//        val key : String?,
         val img : String?
     ) : ProductPromotionItems()
 
     data class Title(
-        val key : String?,
         val title : String?,
         val date : String?,
         val des : String?
     ) : ProductPromotionItems()
 
     data class MiddleImg(
-        val key : String?,
         val img : String?
     ) : ProductPromotionItems()
 
     data class Link(
-        val key : String?,
         val webLink : String?,
         val iosLink : String?,
         val aosLink : String?
@@ -91,7 +88,7 @@ sealed class ProductPromotionItems {
     data class ProjectMember(      // 프로젝트의 멤버를 가져와서 작성한 본인은 빼기
 //        val key : String?,
 //    val userInfo: Result<UserEntity?>
-    val userInfo: MutableList<Result<UserEntity?>>
+    val userInfo: MutableList<Result<UserEntity?>?>?
     ) : ProductPromotionItems()
 
 }

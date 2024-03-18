@@ -19,7 +19,7 @@ import com.seven.colink.databinding.ItemProductTitleBinding
 import com.seven.colink.ui.promotion.ProductPromotionItems
 import com.seven.colink.util.setLevelIcon
 
-class ProductPromotionEditAdapter(private val context: Context) : ListAdapter<ProductPromotionItems, RecyclerView.ViewHolder>(
+class ProductPromotionEditAdapter() : ListAdapter<ProductPromotionItems, RecyclerView.ViewHolder>(
     ProductPromotionDiffUtil
 ) {
     object ProductPromotionDiffUtil : DiffUtil.ItemCallback<ProductPromotionItems>() {
@@ -28,11 +28,11 @@ class ProductPromotionEditAdapter(private val context: Context) : ListAdapter<Pr
         ): Boolean {
             return when {
                 oldItem is ProductPromotionItems.Img && newItem is ProductPromotionItems.Img -> {
-                    oldItem.key == newItem.key
+                    oldItem == newItem
                 }
 
                 oldItem is ProductPromotionItems.Title && newItem is ProductPromotionItems.Title -> {
-                    oldItem.key == newItem.key
+                    oldItem == newItem
                 }
 
                 oldItem is ProductPromotionItems.ProjectLeaderItem && newItem is ProductPromotionItems.ProjectLeaderItem -> {
@@ -44,7 +44,7 @@ class ProductPromotionEditAdapter(private val context: Context) : ListAdapter<Pr
                 }
 
                 oldItem is ProductPromotionItems.Link && newItem is ProductPromotionItems.Link -> {
-                    oldItem.key == newItem.key
+                    oldItem == newItem
                 }
 
                 oldItem is ProductPromotionItems.ProjectMember && newItem is ProductPromotionItems.ProjectMember -> {
@@ -140,6 +140,9 @@ class ProductPromotionEditAdapter(private val context: Context) : ListAdapter<Pr
             with(holder) {
                 viewDes.visibility = View.GONE
                 viewTitle.visibility = View.GONE
+                date.visibility = View.INVISIBLE
+                editTitle.visibility = View.VISIBLE
+                editDes.visibility = View.VISIBLE
             }
         }
 
@@ -156,6 +159,10 @@ class ProductPromotionEditAdapter(private val context: Context) : ListAdapter<Pr
             holder as ForthViewHolder
             with(holder) {
                 viewLink.visibility = View.GONE
+                viewWebLink.visibility = View.GONE
+                etAppStore.visibility = View.VISIBLE
+                etPlayStore.visibility = View.VISIBLE
+                etWebLink.visibility = View.VISIBLE
             }
         }
 
@@ -197,13 +204,13 @@ class ProductPromotionEditAdapter(private val context: Context) : ListAdapter<Pr
             holder as NinethViewHolder
             val items = item.userInfo
             with(holder) {
-                items.forEach { member ->
-                    img.load(member.onSuccess { it?.photoUrl })
-                    name.text = member.onSuccess { it?.name }.toString()
-                    intro.text = member.onSuccess { it?.info }.toString()
-                    grade.text = member.onSuccess { it?.grade }.toString()
-                    level.text = member.onSuccess { it?.level }.toString()
-                    member.onSuccess {
+                items?.forEach { member ->
+                    img.load(member?.onSuccess { it?.photoUrl })
+                    name.text = member?.onSuccess { it?.name }.toString()
+                    intro.text = member?.onSuccess { it?.info }.toString()
+                    grade.text = member?.onSuccess { it?.grade }.toString()
+                    level.text = member?.onSuccess { it?.level }.toString()
+                    member?.onSuccess {
                         it?.level?.let { color ->
                         levelColor.setLevelIcon(color)
                         }
@@ -241,10 +248,10 @@ class ProductPromotionEditAdapter(private val context: Context) : ListAdapter<Pr
         }
     }
 
-    private fun hideKeyboard(view : View) {
-        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(view.windowToken,0)
-    }
+//    private fun hideKeyboard(view : View) {
+//        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+//        imm.hideSoftInputFromWindow(view.windowToken,0)
+//    }
 
     inner class FirstViewHolder(binding: ItemProductImgBinding) : ViewHolder(binding.root) {
         val img = binding.ivProductPromotion
@@ -267,6 +274,7 @@ class ProductPromotionEditAdapter(private val context: Context) : ListAdapter<Pr
         val viewLink = binding.layProductViewLink
         val viewPlayStore = binding.ivPlaystore
         val viewAppStore = binding.ivAppstore
+        val viewWebLink = binding.tvProductWebLink
         val etWebLink = binding.etProductWebLink
         val etPlayStore = binding.etProductPlaystoreLink
         val etAppStore = binding.etProductAppstoreLink

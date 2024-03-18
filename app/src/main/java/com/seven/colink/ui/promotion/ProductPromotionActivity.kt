@@ -6,10 +6,12 @@ import androidx.fragment.app.Fragment
 import com.seven.colink.R
 import com.seven.colink.databinding.ActivityProductPromotionBinding
 import com.seven.colink.util.Constants
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ProductPromotionActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityProductPromotionBinding
+    private val binding by lazy { ActivityProductPromotionBinding.inflate(layoutInflater) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)

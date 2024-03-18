@@ -5,6 +5,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 data class ProductEntity (
+    val key: String = "PRD_" + UUID.randomUUID().toString(),
     val projectId: String = "",
     val authId: String? = "",
     val memberIds: List<String> = emptyList(),
@@ -17,5 +18,4 @@ data class ProductEntity (
     val referenceUrl: String? = null,
     val aosUrl: String? = null,
     val iosUrl: String? = null,
-    val key: String = "PRD_" + UUID.randomUUID().toString(),
 )

@@ -27,11 +27,11 @@ class ProductPromotionViewAdapter : ListAdapter<ProductPromotionItems, RecyclerV
         ): Boolean {
             return when {
                 oldItem is ProductPromotionItems.Img && newItem is ProductPromotionItems.Img -> {
-                    oldItem.key == newItem.key
+                    oldItem == newItem
                 }
 
                 oldItem is ProductPromotionItems.Title && newItem is ProductPromotionItems.Title -> {
-                    oldItem.key == newItem.key
+                    oldItem == newItem
                 }
 
                 oldItem is ProductPromotionItems.ProjectLeaderItem && newItem is ProductPromotionItems.ProjectLeaderItem -> {
@@ -43,7 +43,7 @@ class ProductPromotionViewAdapter : ListAdapter<ProductPromotionItems, RecyclerV
                 }
 
                 oldItem is ProductPromotionItems.Link && newItem is ProductPromotionItems.Link -> {
-                    oldItem.key == newItem.key
+                    oldItem == newItem
                 }
 
                 oldItem is ProductPromotionItems.ProjectMember && newItem is ProductPromotionItems.ProjectMember -> {
@@ -209,13 +209,13 @@ class ProductPromotionViewAdapter : ListAdapter<ProductPromotionItems, RecyclerV
             holder as NinethViewHolder
             val items = item.userInfo
             with(holder) {
-                items.forEach { member ->
-                    img.load(member.onSuccess { it?.photoUrl })
-                    name.text = member.onSuccess { it?.name }.toString()
-                    intro.text = member.onSuccess { it?.info }.toString()
-                    grade.text = member.onSuccess { it?.grade }.toString()
-                    level.text = member.onSuccess { it?.level }.toString()
-                    member.onSuccess {
+                items?.forEach { member ->
+                    img.load(member?.onSuccess { it?.photoUrl })
+                    name.text = member?.onSuccess { it?.name }.toString()
+                    intro.text = member?.onSuccess { it?.info }.toString()
+                    grade.text = member?.onSuccess { it?.grade }.toString()
+                    level.text = member?.onSuccess { it?.level }.toString()
+                    member?.onSuccess {
                         it?.level?.let { color ->
                             levelColor.setLevelIcon(color)
                         }
