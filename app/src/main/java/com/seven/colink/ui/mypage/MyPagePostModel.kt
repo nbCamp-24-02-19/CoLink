@@ -2,7 +2,6 @@ package com.seven.colink.ui.mypage
 
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
-import java.util.UUID
 
 data class MyPagePostModel(
     val key: String? = null,

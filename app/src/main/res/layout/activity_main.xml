@@ -21,6 +21,15 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/logo_co_link"/>
 
+            <ImageView
+                android:id="@+id/btn_mypage_edit"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="16dp"
+                android:visibility="gone"
+                android:src="@drawable/ic_mypage_edit"
+                android:layout_gravity="end"/>
+
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 

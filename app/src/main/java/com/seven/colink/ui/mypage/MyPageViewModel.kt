@@ -124,7 +124,6 @@ class MyPageViewModel @Inject constructor(
         time = registeredDate?.convertToDaysAgo()
     )
 
-    // TODO: Implement the ViewModel
 
     private fun UserEntity.convertUserEntity() = MyPageUserModel(
         name = name,

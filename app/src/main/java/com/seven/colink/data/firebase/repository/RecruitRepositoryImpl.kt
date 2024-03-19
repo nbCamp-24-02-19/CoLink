@@ -68,4 +68,14 @@ class RecruitRepositoryImpl @Inject constructor(
                     })
                 }
         }
+
+    override suspend fun getApplicationInfoByUid(uid: String) = runCatching {
+        firestore.collection(DataBaseType.APPINFO.title).whereEqualTo("userId", uid)
+            .whereEqualTo("applicationStatus","PENDING")
+            .get().await()
+            .documents.mapNotNull {
+                it.toObject(ApplicationInfoEntity::class.java)
+            }
+    }
+
 }

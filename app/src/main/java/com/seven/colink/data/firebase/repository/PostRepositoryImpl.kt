@@ -6,6 +6,7 @@ import com.algolia.search.saas.Index
 import com.algolia.search.saas.Query
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.toObject
 import com.seven.colink.data.firebase.type.DataBaseType
 import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.repository.PostRepository
@@ -172,6 +173,7 @@ class PostRepositoryImpl @Inject constructor(
                 put("tags", JSONArray(post.tags))
                 put("groupType", post.groupType)
                 put("status", post.status)
+                put("registeredDate", post.registeredDate)
             }
             algolia.addObjectAsync(postJson) { _, exception ->
                 if (exception != null) {
@@ -182,5 +184,13 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun synchronizeFirestoreToAlgolia() = withContext(Dispatchers.IO) {
+        firebaseFirestore.collection(DataBaseType.POST.title).get().await()
+            .documents.forEach { documentSnapshot ->
+            documentSnapshot.toObject(PostEntity::class.java)?.let { postEntity ->
+                addPostToAlgolia(postEntity)
+            }
+        }
+    }
 }
 

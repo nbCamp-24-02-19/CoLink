@@ -74,12 +74,17 @@ class GroupFragment : Fragment() {
         groupViewModel.getCurrentUser()
         lifecycleScope.launch {
             groupViewModel.getInPost()
+            groupViewModel.getInApplicationInfo()
         }
     }
 
     private fun setObserve() {
 
         groupViewModel.joinList.observe(viewLifecycleOwner) {
+            groupViewModel.itemUpdate()
+        }
+
+        groupViewModel.wantList.observe(viewLifecycleOwner) {
             groupViewModel.itemUpdate()
         }
 
