@@ -48,4 +48,9 @@ enum class LevelEnum (
         info = R.string.unknown,
         num = 0
     )
+    ;
+
+    companion object {
+        fun fromNum(num: Int) = entries.find { it.num == num } ?: UNKNOWN
+    }
 }

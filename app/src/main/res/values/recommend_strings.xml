@@ -8,4 +8,5 @@
     <string name="recommend_send_message"> 님 에게 메세지를 보내보세요!</string>
     <string name="recommend_other_member"> 님 외 추천 멤버</string>
     <string name="recommend_next">다음</string>
+    <string name="recommend_edit_group"><![CDATA[그룹 꾸미러 가기 >]]></string>
 </resources>

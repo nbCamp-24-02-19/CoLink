@@ -1,5 +1,6 @@
 package com.seven.colink.ui.main
 
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -7,14 +8,17 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.seven.colink.R
 import com.seven.colink.databinding.ActivityMainBinding
 import com.seven.colink.ui.main.viewmodel.MainViewModel
+import com.seven.colink.ui.mypageedit.MyPageEditDetailActivity
 import com.seven.colink.util.Constants
 import com.seven.colink.util.snackbar.setSnackBar
+import com.seven.colink.util.status.SnackType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -41,26 +45,29 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         initView()
-        initViewModel()
     }
 
-    private fun initViewModel() = with(viewModel) {
-        lifecycleScope.launch {
-            userCheck.collect {
-                if (it != null) binding.navHostFragmentActivityMain.setSnackBar(image = it.second, message = "환영합니다 ${it.first}님")
-            }
-        }
-    }
 
     private fun initView() {
         initBottomNav()
         initPermission()
+        onMyProfileEdit()
+        viewModel
     }
 
     private fun initBottomNav() = with(binding) {
         navView.setupWithNavController(navController)
     }
 
+    private fun onMyProfileEdit() = with(binding){
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            btnMypageEdit.isVisible = destination.id == R.id.navigation_my_page
+        }
+
+        btnMypageEdit.setOnClickListener {
+            startActivity(Intent(this@MainActivity ,MyPageEditDetailActivity::class.java))
+        }
+    }
 
     // permission
     private fun initPermission() {

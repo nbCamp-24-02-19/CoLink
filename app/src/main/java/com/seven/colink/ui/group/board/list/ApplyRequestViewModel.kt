@@ -13,6 +13,7 @@ import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.repository.RecruitRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.domain.usecase.GetPostUseCase
+import com.seven.colink.domain.usecase.SendNotificationUseCase
 import com.seven.colink.ui.group.board.board.GroupBoardItem
 import com.seven.colink.ui.group.board.board.GroupContentViewType
 import com.seven.colink.util.status.ApplicationStatus
@@ -27,7 +28,8 @@ class ApplyRequestViewModel @Inject constructor(
     val postRepository: PostRepository,
     val userRepository: UserRepository,
     val postUseCase: GetPostUseCase,
-    private val recruitRepository: RecruitRepository
+    private val recruitRepository: RecruitRepository,
+    private val sendNotificationUseCase: SendNotificationUseCase,
 ) : ViewModel() {
     private lateinit var entity: GroupEntity
 
@@ -121,6 +123,14 @@ class ApplyRequestViewModel @Inject constructor(
                         groupRepository.updateGroupMemberIds(entity.key, entity)
                     }
                 }
+            }
+        }
+    }
+
+    suspend fun setNotify(uid: String?) {
+        postRepository.getPost(entity.postKey).getOrNull()?.let { post ->
+            if (uid != null) {
+                sendNotificationUseCase(post, uid)
             }
         }
     }

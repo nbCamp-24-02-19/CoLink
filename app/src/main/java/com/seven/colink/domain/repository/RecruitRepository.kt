@@ -12,4 +12,5 @@ interface RecruitRepository {
     suspend fun getRecruit(key: String): RecruitEntity?
     suspend fun getApplicationInfo(key: String): ApplicationInfoEntity?
     suspend fun updateStatusApplicationInfo(applicationInfo: ApplicationInfo): DataResultStatus
+    suspend fun getApplicationInfoByUid(uid: String): Result<List<ApplicationInfoEntity>>
 }

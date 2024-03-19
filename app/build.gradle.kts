@@ -27,6 +27,7 @@ android {
 
         buildConfigField("String", "ALGOLIA_API_KEY", properties.getProperty("ALGOLIA_API_KEY"))
         buildConfigField("String", "ALGOLIA_APP_ID", properties.getProperty("ALGOLIA_APP_ID"))
+        buildConfigField("String", "FCM_KEY", properties.getProperty("FCM_KEY"))
     }
     packagingOptions {
         exclude ("META-INF/DEPENDENCIES")
@@ -71,6 +72,7 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore-ktx:24.10.3")
     implementation("com.google.firebase:firebase-auth-ktx:22.3.1")
     implementation("com.google.firebase:firebase-firestore:24.10.3")
+    implementation("androidx.activity:activity:1.8.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -97,9 +99,12 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
 
     //firebase
-    implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
+    implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
     implementation("com.google.firebase:firebase-analytics")
-
+    //FCM 라이브러리
+    implementation ("com.google.firebase:firebase-messaging:23.4.1")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     //mock
@@ -110,4 +115,5 @@ dependencies {
 
     //algolia
     implementation ("com.algolia:algoliasearch-android:3.+")
+    implementation ("com.algolia:algoliasearch-client-kotlin:2.1.9")
 }
