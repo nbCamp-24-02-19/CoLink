@@ -67,10 +67,10 @@ class ProductPromotionEditFragment : Fragment() {
         viewList.clear()
         viewList.addAll(listOf(
             ProductPromotionItems.Img(null),
-            ProductPromotionItems.Title(editViewModel.entity?.title,editViewModel.entity?.registeredDate,editViewModel.entity?.description),
+            ProductPromotionItems.Title("","",""),
             ProductPromotionItems.MiddleImg(null),
             ProductPromotionItems.Link("","",""),
-            ProductPromotionItems.ProjectHeader("dd"),
+            ProductPromotionItems.ProjectHeader(""),
             ProductPromotionItems.ProjectLeaderHeader(""),
             ProductPromotionItems.ProjectLeaderItem(null),
             ProductPromotionItems.ProjectMemberHeader(""),
@@ -79,7 +79,6 @@ class ProductPromotionEditFragment : Fragment() {
         editAdapter = ProductPromotionEditAdapter(binding.rvPromotionEdit,viewList)
         binding.rvPromotionEdit.adapter = editAdapter
         binding.rvPromotionEdit.layoutManager = LinearLayoutManager(requireContext())
-        key?.let { editViewModel.init(it) }
         setObserve()
     }
 
@@ -91,7 +90,7 @@ class ProductPromotionEditFragment : Fragment() {
 
         editViewModel.setLeader.observe(viewLifecycleOwner) { leader ->
             editAdapter.setLeader(leader)
-            editViewModel.entity = ProductEntity(authId = leader.userInfo?.getOrNull()?.uid)
+//            editViewModel.entity = ProductEntity(authId = leader.userInfo?.getOrNull()?.uid)
         }
 
         editViewModel.setMember.observe(viewLifecycleOwner) { memberItem ->
@@ -109,10 +108,14 @@ class ProductPromotionEditFragment : Fragment() {
     }
 
     private fun saveDataToViewModel(){
-        val mainImg = editAdapter.getMainImageView(0).toString()
-        val titleEdit = editAdapter.getTitleEditText(1)?.text.toString()
-        val desEdit = editAdapter.getDesEditText(1)?.text.toString()
-        val middleImg = editAdapter.getMiddleImageView(2).toString()
+        val mainImg = editAdapter.getMainImageView(0)?.toString()
+        val titleEdit = editAdapter.getTitleEditText(1)?.let {
+            if (it.text.isNotEmpty()) it.text.toString() else ""
+        }
+        val desEdit = editAdapter.getDesEditText(1)?.let {
+            if (it.text.isNotEmpty()) it.text.toString() else ""
+        }
+        val middleImg = editAdapter.getMiddleImageView(2)?.toString()
         val webEdit = editAdapter.getWebLink(3)?.text.toString()
         val aosEdit = editAdapter.getAosLink(3)?.text.toString()
         val iosEdit = editAdapter.getIosLink(3)?.text.toString()
@@ -121,8 +124,19 @@ class ProductPromotionEditFragment : Fragment() {
             saveTitleAndDes(titleEdit,desEdit)
             Log.d("Frag","#bbb title = $titleEdit")
             Log.d("Frag","#bbb des = $desEdit")
-            saveImgUrl(mainImg,middleImg)
+            saveImgUrl(mainImg.toString(),middleImg.toString())
+//            saveDes(desEdit)
+//            Log.d("Frag","#bbb title = $titleEdit")
+//            Log.d("Frag","#bbb des = $desEdit")
+//            saveTitle(titleEdit)
+//            saveDesImg(middleImg)
+//            saveMainImg(mainImg)
+            Log.d("Frag","#bbb main = $mainImg")
+            Log.d("Frag","#bbb middle = $middleImg")
             saveLink(webEdit,aosEdit,iosEdit)
+            Log.d("Frag","#bbb web = $webEdit")
+            Log.d("Frag","#bbb aos = $aosEdit")
+            Log.d("Frag","#bbb ios = $iosEdit")
             registerProduct()
         }
     }

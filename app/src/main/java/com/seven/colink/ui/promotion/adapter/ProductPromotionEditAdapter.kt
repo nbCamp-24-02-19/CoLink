@@ -395,10 +395,9 @@ class ProductPromotionEditAdapter (private val recyclerView: RecyclerView, priva
             editTitle.visibility = View.VISIBLE
             editDes.visibility = View.VISIBLE
 
-            editTitle.setText(item.title)
-            editDes.setText(item.des)
+//            editTitle.setText(item.title)
+//            editDes.setText(item.des)
         }
-
     }
 
     inner class ThirdViewHolder(binding: ItemProductImgBinding) : ViewHolder(binding.root) {
@@ -652,6 +651,7 @@ class ProductPromotionEditAdapter (private val recyclerView: RecyclerView, priva
             viewHolder.editTitle
         }else{
             null
+//            val itemView = LayoutInflater.from()
         }
     }
 
