@@ -1,10 +1,12 @@
 package com.seven.colink.util.convert
 
+import com.seven.colink.util.status.ScheduleDateType
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -51,4 +53,20 @@ fun String.convertCalculateDays(): String {
     val diff = now.time - (date?.time ?: 0)
     val days = diff / (24 * 60 * 60 * 1000)
     return "+ ${days}일째"
+}
+
+fun getDateByState(scheduleDateType: ScheduleDateType): String {
+    val now = LocalDateTime.now()
+
+    val adjustedTime = when (scheduleDateType) {
+        ScheduleDateType.CURRENT -> now.plusHours(1)
+        ScheduleDateType.NEXT_DAY -> now.plusHours(2)
+    }
+
+    return formatDate(adjustedTime)
+}
+
+fun formatDate(date: LocalDateTime): String {
+    val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")
+    return date.format(formatter)
 }

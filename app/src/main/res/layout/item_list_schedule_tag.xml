@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_schedule"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="18dp"
+    android:background="@drawable/bg_tag"
+    android:paddingStart="8dp"
+    android:paddingTop="4dp"
+    android:paddingEnd="8dp"
+    android:paddingBottom="4dp">
+
+    <TextView
+        android:id="@+id/tv_tag_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/enable_stroke"
+        android:textSize="11sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/iv_tag_delete"
+        android:layout_width="11dp"
+        android:layout_height="11dp"
+        android:layout_marginStart="4dp"
+        android:src="@drawable/ic_delete_24dp"
+        app:layout_constraintBottom_toBottomOf="@id/tv_tag_name"
+        app:layout_constraintStart_toEndOf="@id/tv_tag_name"
+        app:layout_constraintTop_toTopOf="@id/tv_tag_name"
+        app:tint="@color/enable_stroke" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
