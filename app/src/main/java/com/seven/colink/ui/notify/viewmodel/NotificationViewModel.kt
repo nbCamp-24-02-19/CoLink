@@ -9,6 +9,7 @@ import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.NotificationStoreRepository
 import com.seven.colink.domain.repository.ResourceRepository
 import com.seven.colink.ui.notify.NotifyItem
+import com.seven.colink.util.convert.convertTime
 import com.seven.colink.util.status.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,7 +48,7 @@ class NotificationViewModel @Inject constructor(
                 NotifyItem.ChatItem(
                     key = key,
                     name = name,
-                    registeredDate = registeredDate,
+                    registeredDate = registeredDate.convertTime(),
                     profileUrl = thumbnail,
                     description = message,
                 )
@@ -55,7 +56,7 @@ class NotificationViewModel @Inject constructor(
             else -> NotifyItem.DefaultItem(
                 key = key,
                 body = message,
-                registeredDate = registeredDate,
+                registeredDate = registeredDate.convertTime(),
                 icon = getIconResByType(type),
                 title = getTitleResByType(type),
                 iconBackground = getIconBackgroundByType(type)

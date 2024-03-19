@@ -84,12 +84,25 @@ class ChatRoomAdapter(
     ) : ViewHolder(binding.root) {
         override fun onBind(item: ChatRoomItem) = with(binding) {
             if (item !is ChatRoomItem.OtherMessage) return@with
+            tvChatMessage.isVisible = item.text?.isNotEmpty() ?: false
+            tvChatMessage.isVisible = item.text != "사진"
             ivChatProfile.load(item.profileUrl?: R.drawable.ic_profile)
             tvChatAuthName.text = item.name
             tvChatViewCount.text = item.viewCount.toString()
             tvChatViewCount.isVisible = item.viewCount != 0
             tvChatMessage.text = item.text
             tvChatRegisterTime.text = item.time
+
+            if (item.img != null) {
+                ivChatMessageImg.apply {
+                    load(item.img){
+                        size(600)
+                    }
+                    isVisible = true
+                }
+            } else {
+                ivChatMessageImg.isVisible = false
+            }
         }
 
         override fun setState(state: MessageState) = with(binding){
@@ -117,10 +130,24 @@ class ChatRoomAdapter(
     ): ViewHolder(binding.root) {
         override fun onBind(item: ChatRoomItem) = with(binding){
             if (item !is ChatRoomItem.MyMessage) return@with
+            tvChatMyMessage.isVisible = item.text?.isNotEmpty() ?: false
+            tvChatMyMessage.isVisible = item.text != "사진"
             tvChatMyMessage.text = item.text
             tvChatMyRegisterTime.text = item.time
             tvChatMyViewCount.text = item.viewCount.toString()
             tvChatMyViewCount.isVisible = item.viewCount != 0
+
+            if (item.img != null) {
+                tvChatMyMessage.isVisible = false
+                ivChatMyMessageImg.apply {
+                    load(item.img) {
+                        size(600)
+                    }
+                    isVisible = true
+                }
+            }else {
+                ivChatMyMessageImg.isVisible = false
+            }
         }
 
         override fun setState(state: MessageState) = with(binding) {
