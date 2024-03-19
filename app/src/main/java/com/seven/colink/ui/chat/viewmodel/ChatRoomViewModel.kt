@@ -8,6 +8,7 @@ import com.seven.colink.domain.entity.MessageEntity
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.ChatRepository
 import com.seven.colink.domain.repository.UserRepository
+import com.seven.colink.domain.usecase.SendNotificationUseCase
 import com.seven.colink.ui.chat.ChatRoomActivity.Companion.CHAT_ID
 import com.seven.colink.ui.chat.model.ChatRoomItem
 import com.seven.colink.util.convert.convertTime
@@ -26,6 +27,7 @@ class ChatRoomViewModel @Inject constructor(
     private val chatRepository: ChatRepository,
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
+    private val sendNotificationUseCase: SendNotificationUseCase,
     private val handle: SavedStateHandle,
 ) : ViewModel() {
     private val _messageList = MutableStateFlow<UiState<List<ChatRoomItem>?>>(UiState.Loading)
@@ -82,14 +84,15 @@ class ChatRoomViewModel @Inject constructor(
 
     fun sendMessage(text: String) {
         viewModelScope.launch {
-            chatRepository.sendMessage(
-                MessageEntity(
-                    chatRoomId = chatRoom.value.key,
-                    text = text,
-                    authId = uid,
-                    viewUsers = listOf(uid)
-                )
-            )
+            MessageEntity(
+                chatRoomId = chatRoom.value.key,
+                text = text,
+                authId = uid,
+                viewUsers = listOf(uid)
+            ).let {
+            chatRepository.sendMessage(it)
+                sendNotificationUseCase(it, chatRoom.value)
+            }
         }
     }
 

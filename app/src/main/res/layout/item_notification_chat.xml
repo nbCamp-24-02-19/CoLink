@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="12dp"
+    android:background="@drawable/bg_round_corner_8dp"
+    android:backgroundTint="@color/white"
+    android:layout_marginVertical="8dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/iv_notify_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:padding="4dp"
+        android:background="@drawable/bg_background_circle"
+        android:backgroundTint="@color/main_color"
+        android:src="@drawable/ic_colink_chat"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_notify_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/notify_new_message"
+        android:textColor="@color/black"
+        style="@style/BoldTextStyle"
+        android:textSize="14sp"
+        app:layout_constraintStart_toEndOf="@id/iv_notify_icon"
+        app:layout_constraintTop_toTopOf="@id/iv_notify_icon"
+        app:layout_constraintBottom_toBottomOf="@id/iv_notify_icon"/>
+<!--
+    <TextView
+        android:id="@+id/tv_notify_registered_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="02.20 09:30"
+        android:textColor="@color/typo_color"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/tv_notify_title"/>-->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/cl_notify_message"
+        app:layout_constraintTop_toBottomOf="@id/iv_notify_icon"
+        app:layout_constraintStart_toStartOf="parent">
+    <ImageView
+        android:id="@+id/iv_notify_profile"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="8dp"
+        android:src="@drawable/dummy"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/bg_background_circle"
+        android:clipToOutline="true"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_notify_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="꼬링크"
+        android:textSize="14sp"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toTopOf="@id/iv_notify_profile"
+        app:layout_constraintStart_toEndOf="@id/iv_notify_profile"/>
+
+    <TextView
+        android:id="@+id/tv_notify_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:text="오후 3:07"
+        android:textSize="12sp"
+        android:textColor="@color/typo_color"
+        app:layout_constraintStart_toEndOf="@id/tv_notify_name"
+        app:layout_constraintBottom_toBottomOf="@id/tv_notify_name"/>
+
+    <TextView
+        android:id="@+id/tv_notify_description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="딱 오늘까지만, 처갓집 슈프림 4천원 할인 퀴즈 정답 맞히면 5원 받아요 내일배움 캠"
+        android:textColor="@color/typo_color"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/tv_notify_name"
+        app:layout_constraintStart_toStartOf="@id/tv_notify_name"
+        app:layout_constraintEnd_toEndOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

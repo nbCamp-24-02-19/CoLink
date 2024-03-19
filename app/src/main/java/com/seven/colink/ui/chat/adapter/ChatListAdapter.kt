@@ -47,7 +47,11 @@ class ChatListAdapter(
         private val onClick: (ChatListItem) -> Unit,
     ): ChatListViewHolder(binding.root) {
         override fun onBind(item: ChatListItem) = with(binding){
-            ivChatListProfile.load(item.thumbnail?: R.drawable.ic_profile)
+            ivChatListProfile.load(item.thumbnail?: R.drawable.ic_profile){
+                crossfade(true)
+                placeholder(R.drawable.ic_profile)
+                memoryCacheKey(item.thumbnail)
+            }
             tvChatListName.text = item.title
             tvChatListMessage.text = item.message
             tvChatListTime.text = item.recentTime

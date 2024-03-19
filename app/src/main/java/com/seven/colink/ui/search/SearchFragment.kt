@@ -53,10 +53,6 @@ class SearchFragment : Fragment() {
             getString(R.string.study_kor)
         )
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

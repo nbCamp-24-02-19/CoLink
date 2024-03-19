@@ -11,9 +11,12 @@ import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.domain.repository.PostRepository
+import com.seven.colink.domain.repository.RecruitRepository
 import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.GroupType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,7 +24,8 @@ import javax.inject.Inject
 class GroupViewModel @Inject constructor(
     private val postRepository: PostRepository,
     private val authRepository: AuthRepository,
-    private val groupRepository: GroupRepository
+    private val groupRepository: GroupRepository,
+    private val recruitRepository: RecruitRepository,
 ) : ViewModel() {
 
     private val _groupData = MutableLiveData<List<GroupData>?>()
@@ -80,6 +84,24 @@ class GroupViewModel @Inject constructor(
             it.convertGroupList()
         }
         _joinList.value = result
+    }
+
+    suspend fun getInApplicationInfo() {
+        viewModelScope.launch {
+            _wantList.value = recruitRepository.getApplicationInfoByUid(
+                authRepository.getCurrentUser().message
+            ).getOrNull()?.map {
+                async {
+                    it.recruitId?.let { recruitId ->
+                        recruitRepository.getRecruit(recruitId)?.postId?.let { postId ->
+                            postRepository.getPost(
+                                postId
+                            ).getOrNull()?.convertGroupWant()
+                        }
+                    }
+                }
+            }?.awaitAll()?.filterNotNull()
+        }
     }
 
     private fun GroupEntity.convertGroupList() =
