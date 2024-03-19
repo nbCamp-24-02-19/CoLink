@@ -60,14 +60,13 @@ class SendNotificationUseCase @Inject constructor(
 
 
     suspend operator fun invoke(data: PostEntity, uid: String) = withContext(Dispatchers.IO) {
-        userRepository.getUserDetails(authRepository.getCurrentUser().message).getOrNull().let { currentUser ->
             userRepository.getUserDetails(uid).getOrNull().let { auth ->
                 NotificationEntity(
                     key = data.key,
                     toUserToken = auth?.token,
                     toUserId = auth?.uid,
-                    message = resourceRepository.getString(R.string.group_apply_message, data.title!! ,currentUser!!.name!!),
-                    title = resourceRepository.getString(R.string.notify_new_apply),
+                    message = resourceRepository.getString(R.string.group_join_message, data.title!!),
+                    title = resourceRepository.getString(R.string.notify_join_group),
                     type = NotifyType.APPLY
                 ).let { notificationEntity ->
                     notifyRepository.sendNotification(
@@ -79,5 +78,6 @@ class SendNotificationUseCase @Inject constructor(
                 }
             }
         }
-    }
+
+
 }

@@ -23,7 +23,7 @@ class NotificationViewModel @Inject constructor(
     private val resourceRepository: ResourceRepository,
 ): ViewModel() {
     private val _notifyList = MutableStateFlow<UiState<List<NotifyItem>>>(UiState.Loading)
-    val notifyItem = _notifyList.asStateFlow()
+    val notifyList = _notifyList.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -63,18 +63,42 @@ class NotificationViewModel @Inject constructor(
             )
         }
 
+    private fun deleteNotify(key: String) {
+        viewModelScope.launch {
+            notificationStoreRepository.deleteNotification(key)
+        }
+    }
+
+    private fun deleteAll() {
+        val list = notifyList.value
+        list as UiState.Success
+        list.data.forEach {
+            when(it) {
+                is NotifyItem.ChatItem -> deleteNotify(it.key!!)
+                is NotifyItem.DefaultItem -> deleteNotify(it.key!!)
+                else -> Unit
+            }
+        }
+    }
+
     private fun getIconResByType(type: NotifyType?) = when(type) {
         NotifyType.INVITE -> resourceRepository.getDrawable(R.drawable.ic_invite)
-        else -> resourceRepository.getDrawable(R.drawable.ic_edit_mypage)
+        NotifyType.APPLY -> resourceRepository.getDrawable(R.drawable.ic_apply_request)
+        NotifyType.JOIN -> resourceRepository.getDrawable(R.drawable.ic_join)
+        else -> null
     }
 
     private fun getTitleResByType(type: NotifyType?) = when(type) {
         NotifyType.INVITE -> resourceRepository.getString(R.string.notify_new_invite)
-        else -> resourceRepository.getString(R.string.notify_new_apply)
+        NotifyType.APPLY -> resourceRepository.getString(R.string.notify_new_apply)
+        NotifyType.JOIN -> resourceRepository.getString(R.string.notify_join_group)
+        else -> null
     }
 
     private fun getIconBackgroundByType(type: NotifyType?) = when(type) {
         NotifyType.INVITE -> resourceRepository.getColor(R.color.third_color)
-        else -> resourceRepository.getColor(R.color.forth_color)
+        NotifyType.APPLY -> resourceRepository.getColor(R.color.sub_color)
+        NotifyType.JOIN -> resourceRepository.getColor(R.color.forth_color)
+        else -> null
     }
 }

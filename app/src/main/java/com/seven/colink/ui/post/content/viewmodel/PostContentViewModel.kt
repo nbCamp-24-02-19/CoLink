@@ -15,6 +15,7 @@ import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.domain.usecase.GetPostUseCase
 import com.seven.colink.domain.usecase.RegisterApplicationInfoUseCase
+import com.seven.colink.domain.usecase.SendNotificationJoinUseCase
 import com.seven.colink.ui.group.board.board.GroupContentViewType
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.content.model.DialogUiState
@@ -38,6 +39,7 @@ class PostContentViewModel @Inject constructor(
     private val getPostUseCase: GetPostUseCase,
     private val registerApplicationInfoUseCase: RegisterApplicationInfoUseCase,
     private val commentRepository: CommentRepository,
+    private val sendNotificationJoinUseCase: SendNotificationJoinUseCase,
 ) : ViewModel() {
     private lateinit var entity: Post
     private val _uiState = MutableLiveData<List<PostContentItem>>()
@@ -190,6 +192,7 @@ class PostContentViewModel @Inject constructor(
             applicationStatus = ApplicationStatus.PENDING,
         )
         updateRecruitList(recruitItem, newApplicationInfo)
+        sendNotificationJoinUseCase(entity,getCurrentUser()?: return)
     }
 
     // 지원한 회원 데이터 추가
