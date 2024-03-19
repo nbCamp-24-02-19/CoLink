@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -95,9 +96,9 @@ class PostContentFragment : Fragment() {
             },
             onClickCommentDeleteButton = {item, buttonUiState ->
                 when(buttonUiState) {
-                    ContentButtonUiState.Manager -> viewModel.deleteComment(item)
                     ContentButtonUiState.User -> commentBinding.tvPostCommentDelete.visibility = View.GONE
                     ContentButtonUiState.Unknown -> commentBinding.tvPostCommentDelete.visibility = View.GONE
+                    ContentButtonUiState.Manager -> viewModel.deleteComment(item)
                 }
             }
         )
