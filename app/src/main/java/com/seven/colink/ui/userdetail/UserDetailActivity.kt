@@ -67,12 +67,6 @@ class UserDetailActivity : AppCompatActivity() {
 
         binding.tvUserdetailShowmore.setOnClickListener {
             viewModel.detailEvent()
-//            val showMore = Intent(this, UserDetailShowmoreActivity::class.java)
-//            startActivity(showMore)
-//            startActivity(UserDetailShowmoreActivity.newIntent(
-//                this@UserDetailActivity,
-//
-//            ))
 
         }
 
