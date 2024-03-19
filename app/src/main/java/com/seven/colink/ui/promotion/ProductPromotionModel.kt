@@ -57,7 +57,7 @@ sealed class ProductPromotionItems {
         val header: String
     ) : ProductPromotionItems()
 
-    data class ProjectLeaderItem(     // 로그인 되어있는, 작성하는 사람 정보 가져오기
+    data class ProjectLeaderItem(
         val userInfo: Result<UserEntity?>?
     ) : ProductPromotionItems()
 
@@ -67,8 +67,6 @@ sealed class ProductPromotionItems {
     ) : ProductPromotionItems()
 
     data class ProjectMember(
-//        val userInfo: MutableList<Result<UserEntity?>?>?
-//        val userInfo: MutableList<UserEntity?>?
         val userInfo: UserEntity?
     ) : ProductPromotionItems()
 }

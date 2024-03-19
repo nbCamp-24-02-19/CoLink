@@ -6,12 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
+import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.load
-import com.google.firebase.firestore.memoryEagerGcSettings
 import com.seven.colink.databinding.ItemPostMemberInfoBinding
 import com.seven.colink.databinding.ItemProductImgBinding
 import com.seven.colink.databinding.ItemProductLinkBinding
@@ -355,7 +356,7 @@ import com.seven.colink.util.setLevelIcon
 //    }
 //}
 
-class ProductPromotionEditAdapter (private val dItem : MutableList<ProductPromotionItems>) : RecyclerView.Adapter<RecyclerView.ViewHolder> () {
+class ProductPromotionEditAdapter (private val recyclerView: RecyclerView, private val dItem : MutableList<ProductPromotionItems>) : RecyclerView.Adapter<RecyclerView.ViewHolder> () {
     interface ItemClick {
         fun onClick(view: View, pos : Int)
     }
@@ -643,5 +644,68 @@ class ProductPromotionEditAdapter (private val dItem : MutableList<ProductPromot
         }
         dItem.addAll(insert,member)
         notifyItemRangeInserted(insert, member.size)
+    }
+
+    fun getTitleEditText(position: Int) : EditText? {
+        val viewHolder = recyclerView.findViewHolderForAdapterPosition(position)
+        return if (viewHolder is SecondViewHolder) {
+            viewHolder.editTitle
+        }else{
+            null
+        }
+    }
+
+    fun getDesEditText(position: Int) : EditText? {
+        val viewHolder = recyclerView.findViewHolderForAdapterPosition(position)
+        return if (viewHolder is SecondViewHolder) {
+            viewHolder.editDes
+        }else{
+            null
+        }
+    }
+
+    fun getMainImageView(position: Int) : ImageView? {
+        val viewHolder = recyclerView.findViewHolderForAdapterPosition(position)
+        return if (viewHolder is FirstViewHolder) {
+            viewHolder.img
+        }else{
+            null
+        }
+    }
+
+    fun getMiddleImageView(position: Int) : ImageView? {
+        val viewHolder = recyclerView.findViewHolderForAdapterPosition(position)
+        return if (viewHolder is ThirdViewHolder) {
+            viewHolder.img
+        }else{
+            null
+        }
+    }
+
+    fun getWebLink(position: Int) : EditText? {
+        val viewHolder = recyclerView.findViewHolderForAdapterPosition(position)
+        return if (viewHolder is ForthViewHolder) {
+            viewHolder.etWebLink
+        }else{
+            null
+        }
+    }
+
+    fun getAosLink(position: Int) : EditText? {
+        val viewHolder = recyclerView.findViewHolderForAdapterPosition(position)
+        return if (viewHolder is ForthViewHolder) {
+            viewHolder.etPlayStore
+        }else{
+            null
+        }
+    }
+
+    fun getIosLink(position: Int) : EditText? {
+        val viewHolder = recyclerView.findViewHolderForAdapterPosition(position)
+        return if (viewHolder is ForthViewHolder) {
+            viewHolder.etAppStore
+        }else{
+            null
+        }
     }
 }
