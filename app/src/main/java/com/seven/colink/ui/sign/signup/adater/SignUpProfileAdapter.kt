@@ -31,10 +31,9 @@ import com.seven.colink.util.skillCategory
 
 class SignUpProfileAdapter(
     private val skillAdapter: SkillAdapter,
-    private val skills: MutableList<String> = mutableListOf(),
     private val onPlusSkill: (String) -> Unit,
     private val onClickEnd: (Map<String, Any?>) -> Unit,
-): ListAdapter<SignUpProfileItem, SignUpProfileAdapter.SignUpProfileViewHolder>(
+) : ListAdapter<SignUpProfileItem, SignUpProfileAdapter.SignUpProfileViewHolder>(
     object : DiffUtil.ItemCallback<SignUpProfileItem>() {
         override fun areItemsTheSame(
             oldItem: SignUpProfileItem,
@@ -49,17 +48,18 @@ class SignUpProfileAdapter(
     }
 ) {
 
-    private val storage = mutableMapOf<String,Any?>()
+    private val storage = mutableMapOf<String, Any?>()
 
     private fun update(key: String, value: Any?) {
         storage[key] = value
     }
-    abstract class SignUpProfileViewHolder(view: View): RecyclerView.ViewHolder(view) {
+
+    abstract class SignUpProfileViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         abstract fun onBind(item: SignUpProfileItem)
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when (getItem(position)){
+        return when (getItem(position)) {
             is SignUpProfileItem.Category -> SignUpProfileViewType.CATEGORY
             is SignUpProfileItem.Skill -> SignUpProfileViewType.SKILL
             is SignUpProfileItem.Level -> SignUpProfileViewType.LEVEL
@@ -67,41 +67,63 @@ class SignUpProfileAdapter(
             is SignUpProfileItem.Blog -> SignUpProfileViewType.BLOG
         }.ordinal
     }
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when(SignUpProfileViewType.from(viewType)){
-        SignUpProfileViewType.CATEGORY -> CategoryViewHolder(
-            ItemSignUpCategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        ) { key, value -> update(key, value) }
 
-        SignUpProfileViewType.SKILL -> SkillViewHolder(
-            binding = ItemSignUpSkillBinding.inflate(LayoutInflater.from(parent.context), parent, false),
-            skillAdapter = skillAdapter,
-            onPlusSkill = onPlusSkill,
-        )
-        SignUpProfileViewType.LEVEL -> LevelViewHolder(
-            ItemSignUpLevelBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        ) { key, value -> update(key, value) }
-        SignUpProfileViewType.INFO -> InfoViewHolder(
-            ItemSignUpInfoBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        ) { key, value -> update(key, value) }
-        SignUpProfileViewType.BLOG -> BlogViewHolder(
-            ItemSignUpBlogBinding.inflate(LayoutInflater.from(parent.context), parent, false),
-            update = { key, value -> update(key, value) },
-            storage = storage,
-            onClickEnd = onClickEnd,
-        )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        when (SignUpProfileViewType.from(viewType)) {
+            SignUpProfileViewType.CATEGORY -> CategoryViewHolder(
+                ItemSignUpCategoryBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+            ) { key, value -> update(key, value) }
 
-        else -> UnknownViewHolder(
-            UnknownItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        )
-    }
+            SignUpProfileViewType.SKILL -> SkillViewHolder(
+                binding = ItemSignUpSkillBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                ),
+                skillAdapter = skillAdapter,
+                onPlusSkill = onPlusSkill,
+            )
+
+            SignUpProfileViewType.LEVEL -> LevelViewHolder(
+                ItemSignUpLevelBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            ) { key, value -> update(key, value) }
+
+            SignUpProfileViewType.INFO -> InfoViewHolder(
+                ItemSignUpInfoBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            ) { key, value -> update(key, value) }
+
+            SignUpProfileViewType.BLOG -> BlogViewHolder(
+                ItemSignUpBlogBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                update = { key, value -> update(key, value) },
+                storage = storage,
+                onClickEnd = onClickEnd,
+            )
+
+            else -> UnknownViewHolder(
+                UnknownItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            )
+        }
 
     class CategoryViewHolder(
         private val binding: ItemSignUpCategoryBinding,
         private val update: (String, Any?) -> Unit,
     ) : SignUpProfileViewHolder(binding.root) {
         override fun onBind(item: SignUpProfileItem) = with(binding) {
+            item as SignUpProfileItem.Category
+
+            if (item.mainSpecialty.isNullOrEmpty().not()) {
+                btSignUpMainCategoryBtn.text = item.mainSpecialty
+                btSignUpSubCategoryBtn.text = item.specialty ?: "선택"
+                update("mainSpecialty", item.mainSpecialty)
+                update("specialty", item.specialty)
+            }
+
             btSignUpMainCategoryBtn.setOnClickListener {
-                mainCategory.setDialog(root.context, "대분류"){
+                mainCategory.setDialog(root.context, "대분류") {
                     btSignUpMainCategoryBtn.text = it
                     btSignUpSubCategoryBtn.text = "선택"
                     update("mainSpecialty", it)
@@ -109,13 +131,15 @@ class SignUpProfileAdapter(
             }
 
             btSignUpSubCategoryBtn.setOnClickListener {
-                when(btSignUpMainCategoryBtn.text) {
+                when (btSignUpMainCategoryBtn.text) {
                     "기획" -> managerCategory
                     "디자인" -> designCategory
                     "프론트엔드 개발" -> frontCategory
                     "백엔드 개발" -> backendCategory
                     "게임 개발" -> gameCategory
-                    else -> { emptyList() }
+                    else -> {
+                        emptyList()
+                    }
                 }.setDialog(root.context, btSignUpMainCategoryBtn.text.toString()) {
                     btSignUpSubCategoryBtn.text = it
                     update("specialty", it)
@@ -131,9 +155,11 @@ class SignUpProfileAdapter(
         private val onPlusSkill: (String) -> Unit,
     ) : SignUpProfileViewHolder(binding.root) {
         override fun onBind(item: SignUpProfileItem) = with(binding) {
+            item as SignUpProfileItem.Skill
+
             rcSignUpSkills.adapter = skillAdapter
             btSignUpSubCategoryBtn.setOnClickListener {
-                skillCategory.setDialog(root.context, "사용가능한 언어/툴을 선택해주세요"){
+                skillCategory.setDialog(root.context, "사용가능한 언어/툴을 선택해주세요") {
                     btSignUpSubCategoryBtn.text = it
                     onPlusSkill(it)
                 }.show()
@@ -147,15 +173,23 @@ class SignUpProfileAdapter(
         private val update: (String, Any?) -> Unit,
     ) : SignUpProfileViewHolder(binding.root) {
         override fun onBind(item: SignUpProfileItem) = with(binding) {
+            item as SignUpProfileItem.Level
+
+            LevelEnum.fromNum(item.level ?: 1).setLeveL()
+
             clLevelDia.setOnClickListener {
                 binding.root.context.setLevelDialog {
-                    ivLevelDiaIcon.setLevelIcon(it.num?: 0)
-                    tvLevelDiaIcon.text = it.num.toString()
-                    tvLevelDiaTitle.setText(it.title?: LevelEnum.UNKNOWN.title!!)
-                    tvLevelDiaInfo.setText(it.info?: LevelEnum.UNKNOWN.info!!)
-                    update("level", it.num)
+                    it.setLeveL()
                 }.show()
             }
+        }
+
+        private fun LevelEnum.setLeveL() = with(binding) {
+            ivLevelDiaIcon.setLevelIcon(num ?: 0)
+            tvLevelDiaIcon.text = num.toString()
+            tvLevelDiaTitle.setText(title ?: LevelEnum.UNKNOWN.title!!)
+            tvLevelDiaInfo.setText(info ?: LevelEnum.UNKNOWN.info!!)
+            update("level", num)
         }
 
     }
@@ -165,14 +199,29 @@ class SignUpProfileAdapter(
         private val update: (String, Any?) -> Unit,
     ) : SignUpProfileViewHolder(binding.root) {
         override fun onBind(item: SignUpProfileItem) = with(binding) {
-            etSignUpInfo.addTextChangedListener (object : TextWatcher{
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
+            item as SignUpProfileItem.Info
+
+            if (item.info.isNullOrEmpty().not()) {
+                etSignUpInfo.setText(item.info)
+                update("info", item.info)
+            }
+
+            etSignUpInfo.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) = Unit
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) =
+                    Unit
+
                 override fun afterTextChanged(s: Editable?) {
                     update("info", s?.toString().takeIf { it?.isNotEmpty() == true })
                 }
             })
-            }
+        }
     }
 
     class BlogViewHolder(
@@ -182,14 +231,19 @@ class SignUpProfileAdapter(
         private val onClickEnd: (Map<String, Any?>) -> Unit,
     ) : SignUpProfileViewHolder(binding.root) {
         override fun onBind(item: SignUpProfileItem) = with(binding) {
+            item as SignUpProfileItem.Blog
+
+            etSignUpGit.setText(item.git)
+            etSignUpBlog.setText(item.blog)
+            etSignUpLink.setText(item.link)
+
             btSignUpEnd.setOnClickListener {
-                update("git",etSignUpGit.text.takeIf { it.isNotEmpty() }?.toString())
+                update("git", etSignUpGit.text.takeIf { it.isNotEmpty() }?.toString())
                 update("blog", etSignUpBlog.text.takeIf { it.isNotEmpty() }?.toString())
                 update("link", etSignUpLink.text.takeIf { it.isNotEmpty() }?.toString())
                 onClickEnd(storage)
             }
         }
-
     }
 
     class UnknownViewHolder(
