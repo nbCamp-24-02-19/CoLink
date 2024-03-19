@@ -15,7 +15,6 @@ import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.domain.usecase.GetPostUseCase
 import com.seven.colink.domain.usecase.SendNotificationUseCase
 import com.seven.colink.ui.group.board.board.GroupBoardItem
-import com.seven.colink.ui.group.board.board.GroupContentViewType
 import com.seven.colink.util.status.ApplicationStatus
 import com.seven.colink.util.status.DataResultStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,13 +30,14 @@ class ApplyRequestViewModel @Inject constructor(
     private val recruitRepository: RecruitRepository,
     private val sendNotificationUseCase: SendNotificationUseCase,
 ) : ViewModel() {
-    private lateinit var entity: GroupEntity
+    private var _entity: GroupEntity? = null
+    private val entity get() = _entity!!
 
     private val _uiState = MutableLiveData<List<GroupBoardItem>?>()
     val uiState: LiveData<List<GroupBoardItem>?> get() = _uiState
 
     suspend fun setEntity(key: String) {
-        entity = groupRepository.getGroupDetail(key).getOrNull() ?: return
+        _entity = groupRepository.getGroupDetail(key).getOrNull() ?: return
         initViewState()
     }
 
@@ -119,7 +119,7 @@ class ApplyRequestViewModel @Inject constructor(
                     _uiState.postValue(updatedUiState)
 
                     if (newStatus == ApplicationStatus.APPROVE) {
-                        entity = entity.copy(memberIds = entity.memberIds + listOf(applicationInfo.userId.orEmpty()))
+                        _entity = entity.copy(memberIds = entity.memberIds + listOf(applicationInfo.userId.orEmpty()))
                         groupRepository.updateGroupMemberIds(entity.key, entity)
                     }
                 }
