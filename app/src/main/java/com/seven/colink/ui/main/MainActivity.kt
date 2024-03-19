@@ -16,6 +16,7 @@ import com.seven.colink.R
 import com.seven.colink.databinding.ActivityMainBinding
 import com.seven.colink.ui.main.viewmodel.MainViewModel
 import com.seven.colink.ui.mypageedit.MyPageEditDetailActivity
+import com.seven.colink.ui.notify.NotificationActivity
 import com.seven.colink.util.Constants
 import com.seven.colink.util.snackbar.setSnackBar
 import com.seven.colink.util.status.SnackType
@@ -40,7 +41,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -52,7 +52,14 @@ class MainActivity : AppCompatActivity() {
         initBottomNav()
         initPermission()
         onMyProfileEdit()
+        onNotify()
         viewModel
+    }
+
+    private fun onNotify() = with(binding) {
+        btnNotify.setOnClickListener {
+            startActivity(Intent(this@MainActivity, NotificationActivity::class.java))
+        }
     }
 
     private fun initBottomNav() = with(binding) {
