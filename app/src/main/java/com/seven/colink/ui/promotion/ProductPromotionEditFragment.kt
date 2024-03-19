@@ -6,9 +6,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.seven.colink.R
 import com.seven.colink.databinding.FragmentProductPromotionEditBinding
+import com.seven.colink.domain.entity.ProductEntity
 import com.seven.colink.ui.promotion.adapter.ProductPromotionEditAdapter
 import com.seven.colink.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
@@ -56,6 +59,8 @@ class ProductPromotionEditFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         Log.d("Edit","Edit으로 뜨니?")
         initView()
+        clickComplete()
+        clickBackButton()
     }
 
     private fun initView() {
@@ -71,7 +76,7 @@ class ProductPromotionEditFragment : Fragment() {
             ProductPromotionItems.ProjectMemberHeader(""),
             ProductPromotionItems.ProjectMember(null)
         ))
-        editAdapter = ProductPromotionEditAdapter(viewList)
+        editAdapter = ProductPromotionEditAdapter(binding.rvPromotionEdit,viewList)
         binding.rvPromotionEdit.adapter = editAdapter
         binding.rvPromotionEdit.layoutManager = LinearLayoutManager(requireContext())
         key?.let { editViewModel.init(it) }
@@ -86,11 +91,45 @@ class ProductPromotionEditFragment : Fragment() {
 
         editViewModel.setLeader.observe(viewLifecycleOwner) { leader ->
             editAdapter.setLeader(leader)
+            editViewModel.entity = ProductEntity(authId = leader.userInfo?.getOrNull()?.uid)
         }
 
         editViewModel.setMember.observe(viewLifecycleOwner) { memberItem ->
             editAdapter.setMember(memberItem)
+        }
+    }
 
+    private fun clickComplete(){
+        binding.tvPromotionEditComplete.visibility = View.VISIBLE
+        binding.tvPromotionEditComplete.setTextColor(ContextCompat.getColor(requireContext(),R.color.forth_color))
+        binding.tvPromotionEditComplete.text = "완료"
+        binding.tvPromotionEditComplete.setOnClickListener {
+            saveDataToViewModel()
+        }
+    }
+
+    private fun saveDataToViewModel(){
+        val mainImg = editAdapter.getMainImageView(0).toString()
+        val titleEdit = editAdapter.getTitleEditText(1)?.text.toString()
+        val desEdit = editAdapter.getDesEditText(1)?.text.toString()
+        val middleImg = editAdapter.getMiddleImageView(2).toString()
+        val webEdit = editAdapter.getWebLink(3)?.text.toString()
+        val aosEdit = editAdapter.getAosLink(3)?.text.toString()
+        val iosEdit = editAdapter.getIosLink(3)?.text.toString()
+
+        with(editViewModel) {
+            saveTitleAndDes(titleEdit,desEdit)
+            Log.d("Frag","#bbb title = $titleEdit")
+            Log.d("Frag","#bbb des = $desEdit")
+            saveImgUrl(mainImg,middleImg)
+            saveLink(webEdit,aosEdit,iosEdit)
+            registerProduct()
+        }
+    }
+
+    private fun clickBackButton() {
+        binding.ivPromotionEditFinish.setOnClickListener {
+            activity?.finish()
         }
     }
 

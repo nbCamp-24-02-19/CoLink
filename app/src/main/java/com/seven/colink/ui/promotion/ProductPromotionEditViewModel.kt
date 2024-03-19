@@ -40,13 +40,10 @@ class ProductPromotionEditViewModel @Inject constructor(
 
     private val _adapterData = MutableLiveData<ProductPromotionItems?>()
     val adapterData: LiveData<ProductPromotionItems?> get() = _adapterData
-//    var list = mutableListOf<ProductPromotionItems>()
-    private lateinit var list : MutableList<ProductPromotionItems>
-
 
 
     fun init(key: String) {
-        if (entity?.title?.isNullOrEmpty() == true) {
+        if (entity?.title?.isEmpty() == true) {
             initPostToProduct(key)
         }else {
             initProduct(key)
@@ -137,6 +134,8 @@ class ProductPromotionEditViewModel @Inject constructor(
                             )
                         }
                     }
+                    entity = ProductEntity(authId = user?.uid)
+
                     memberDetailList.add(ProductPromotionItems.ProjectMember(user))
                     val delAuth = ids.getOrNull()?.authId
                     val delList = memberDetailList.filterNot { member ->
@@ -162,18 +161,24 @@ class ProductPromotionEditViewModel @Inject constructor(
         if (mainUrl?.isEmpty() == true) {
             Toast.makeText(context,R.string.product_necessary_img,Toast.LENGTH_SHORT).show()
         }
-        return entity?.copy(imageUrl = mainUrl, desImg = desUrl)
+        entity = ProductEntity(imageUrl = mainUrl, desImg = desUrl)
+//        return entity?.copy(imageUrl = mainUrl, desImg = desUrl)
+        return entity
     }
 
     fun saveTitleAndDes(title : String?, des : String?) : ProductEntity? {
         if (title?.isEmpty() == true || des?.isEmpty() == true) {
             Toast.makeText(context,R.string.product_necessary_title_des,Toast.LENGTH_SHORT).show()
         }
-        return entity?.copy(title = title, description = des)
+        entity = ProductEntity(title = title, description = des)
+//        return entity?.copy(title = title, description = des)
+        return entity
     }
 
     fun saveLink(web : String?, aos : String?, ios : String?) : ProductEntity? {
-        return entity?.copy(referenceUrl = web, aosUrl = aos, iosUrl = ios)
+        entity = ProductEntity(referenceUrl = web, aosUrl = aos, iosUrl = ios)
+//        return entity?.copy(referenceUrl = web, aosUrl = aos, iosUrl = ios)
+        return entity
     }
 
     fun registerProduct() {
@@ -182,6 +187,7 @@ class ProductPromotionEditViewModel @Inject constructor(
             entity?.let { productRepository.registerProduct(it) }
         }
         entity?.let { saveProduct(it) }
+        Log.d("ViewModel","#bbb entitiy = $entity")
     }
 
     private fun saveProduct(nt : ProductEntity) {

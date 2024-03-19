@@ -23,11 +23,43 @@ class ScheduleRepositoryImpl @Inject constructor(
             }
     }
 
-    override suspend fun getScheduleByPostId(postId: String) = run {
-        firestore.collection(DataBaseType.SCHEDULE.title).whereEqualTo("postId", postId).get()
+    override suspend fun getScheduleListByPostId(postId: String) = run {
+        firestore.collection(DataBaseType.SCHEDULE.title).whereEqualTo("groupId", postId).get()
             .await()
             .documents.mapNotNull {
                 it.toObject(ScheduleEntity::class.java)
             }
     }
+
+    override suspend fun getScheduleDetail(key: String) = runCatching {
+        firestore.collection(DataBaseType.SCHEDULE.title).document(key)
+            .get().await()
+            .toObject(ScheduleEntity::class.java)
+    }
+
+    override suspend fun deleteSchedule(key: String) = suspendCoroutine { continuation ->
+        firestore.collection(DataBaseType.SCHEDULE.title).document(key).delete()
+            .addOnSuccessListener {
+                continuation.resume(DataResultStatus.SUCCESS)
+            }
+            .addOnFailureListener { e ->
+                continuation.resume(DataResultStatus.FAIL.apply {
+                    message = e.message ?: "Unknown error"
+                })
+            }
+    }
+
+    override suspend fun updateSchedule(key: String, updatedSchedule: ScheduleEntity) =
+        suspendCoroutine { continuation ->
+            firestore.collection(DataBaseType.SCHEDULE.title).document(key)
+                .set(updatedSchedule, com.google.firebase.firestore.SetOptions.merge())
+                .addOnSuccessListener {
+                    continuation.resume(DataResultStatus.SUCCESS)
+                }
+                .addOnFailureListener { e ->
+                    continuation.resume(DataResultStatus.FAIL.apply {
+                        message = e.message ?: "Unknown error"
+                    })
+                }
+        }
 }

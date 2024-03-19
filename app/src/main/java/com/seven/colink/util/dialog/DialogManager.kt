@@ -5,9 +5,11 @@ import android.graphics.Typeface
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.seven.colink.R
@@ -15,12 +17,16 @@ import com.seven.colink.databinding.UtilCustomBasicDialogBinding
 import com.seven.colink.databinding.UtilCustomGroupDialogBinding
 import com.seven.colink.databinding.UtilCustomLevelDialogBinding
 import com.seven.colink.databinding.UtilCustomListDialogBinding
+import com.seven.colink.databinding.UtilCustomScheduleColorDialogBinding
 import com.seven.colink.databinding.UtilMemberInfoDialogBinding
 import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.util.dialog.adapter.DialogAdapter
 import com.seven.colink.util.dialog.adapter.LevelDialogAdapter
 import com.seven.colink.util.dialog.adapter.MemberListAdapter
+import com.seven.colink.util.dialog.adapter.ScheduleColorAdapter
+import com.seven.colink.util.dialog.enum.ColorEnum
 import com.seven.colink.util.dialog.enum.LevelEnum
+import com.seven.colink.util.scheduleAlarm
 import com.seven.colink.util.status.GroupType
 
 fun Context.setDialog(
@@ -202,6 +208,94 @@ fun setUpGroupDialog(
 
     binding.btMoveGroupPage.setOnClickListener { confirmAction(dialog) }
     binding.btFinish.setOnClickListener { cancelAction(dialog) }
+
+    return dialog
+}
+
+fun Context.setScheduleColor(
+    nowColor: Int = 5,
+    action: (ColorEnum) -> Unit,
+): AlertDialog {
+    val binding = UtilCustomScheduleColorDialogBinding.inflate(LayoutInflater.from(this))
+    val dialog = AlertDialog.Builder(this, R.style.RoundedDialogTheme)
+        .setView(binding.root)
+        .create()
+
+    val window = dialog.window
+    window?.attributes?.windowAnimations = R.style.DialogSlide
+    window?.setGravity(Gravity.BOTTOM)
+    dialog.show()
+
+    val displayMetrics = resources.displayMetrics
+    dialog.window?.setLayout(
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        displayMetrics.heightPixels
+    )
+
+    val adapter = ScheduleColorAdapter(
+        selected = nowColor,
+        onClick = action,
+        dialog = dialog
+    )
+    adapter.submitList(
+        listOf(
+            ColorEnum.UNKNOWN,
+            ColorEnum.RED,
+            ColorEnum.ORANGE,
+            ColorEnum.GREEN,
+            ColorEnum.BLUE,
+            ColorEnum.PURPLE,
+            ColorEnum.GRAY
+        )
+    )
+    binding.rcScheduleColor.adapter = adapter
+    binding.rcScheduleColor.layoutManager = LinearLayoutManager(this)
+    binding.tvDialogTitle.text = "색상"
+
+    val nowColorEnum = ColorEnum.values().find { it.color == nowColor }
+    if (nowColorEnum != null) {
+        val colorResId = nowColorEnum.color ?: R.color.main_color
+        binding.toolBar.setBackgroundColor(ContextCompat.getColor(this, colorResId))
+    }
+
+    return dialog
+}
+
+fun Context.setScheduleAlarm(
+    nowColor: Int,
+    action: (String) -> Unit,
+): AlertDialog {
+    val binding = UtilCustomScheduleColorDialogBinding.inflate(LayoutInflater.from(this))
+    val dialog = AlertDialog.Builder(this, R.style.RoundedDialogTheme)
+        .setView(binding.root)
+        .create()
+
+    val window = dialog.window
+    window?.attributes?.windowAnimations = R.style.DialogSlide
+    window?.setGravity(Gravity.BOTTOM)
+    dialog.show()
+
+    val displayMetrics = resources.displayMetrics
+    dialog.window?.setLayout(
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        displayMetrics.heightPixels
+    )
+
+    val adapter = DialogAdapter(
+        onClick = action,
+        dialog = dialog
+    )
+
+    adapter.submitList(scheduleAlarm)
+    binding.rcScheduleColor.adapter = adapter
+    binding.rcScheduleColor.layoutManager = LinearLayoutManager(this)
+    binding.tvDialogTitle.text = "알림"
+
+    val nowColorEnum = ColorEnum.values().find { it.color == nowColor }
+    if (nowColorEnum != null) {
+        val colorResId = nowColorEnum.color ?: R.color.main_color
+        binding.toolBar.setBackgroundColor(ContextCompat.getColor(this, colorResId))
+    }
 
     return dialog
 }

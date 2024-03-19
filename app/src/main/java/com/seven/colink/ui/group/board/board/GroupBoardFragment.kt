@@ -14,6 +14,7 @@ import com.seven.colink.R
 import com.seven.colink.databinding.FragmentGroupBoardBinding
 import com.seven.colink.ui.group.board.board.adapter.GroupBoardListAdapter
 import com.seven.colink.ui.group.board.list.ApplyRequestFragment
+import com.seven.colink.ui.group.calendar.CalendarFragment
 import com.seven.colink.ui.group.content.GroupContentFragment
 import com.seven.colink.ui.group.viewmodel.GroupSharedViewModel
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
@@ -36,12 +37,12 @@ class GroupBoardFragment : Fragment() {
         GroupBoardListAdapter(
             onClickItem = { item ->
                 when (item) {
-                    is GroupBoardItem.GroupItem -> {
-//                        viewModel.onClickStatusButton()
-                        val intent = Intent(requireContext(), ProductPromotionActivity::class.java)
-                        intent.putExtra(Constants.EXTRA_ENTITY_KEY,item.key)
-                        startActivity(intent)
-                    }
+//                    is GroupBoardItem.GroupItem -> {
+////                        viewModel.onClickStatusButton()
+//                        val intent = Intent(requireContext(), ProductPromotionActivity::class.java)
+//                        intent.putExtra(Constants.EXTRA_ENTITY_KEY,item.key)
+//                        startActivity(intent)
+//                    }
 
                     is GroupBoardItem.PostItem -> {
                         startActivity(
@@ -72,8 +73,22 @@ class GroupBoardFragment : Fragment() {
                             commit()
                         }
                     }
-                }
 
+                    R.id.bt_status -> {
+                        // TODO 홍보 하기 버튼
+                    }
+
+                    R.id.iv_calendar -> {
+                        parentFragmentManager.beginTransaction().apply {
+                            replace(
+                                R.id.fg_activity_group,
+                                CalendarFragment()
+                            )
+                            addToBackStack(null)
+                            commit()
+                        }
+                    }
+                }
             }
         )
     }
