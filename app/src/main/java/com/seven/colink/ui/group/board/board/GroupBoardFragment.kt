@@ -3,6 +3,7 @@ package com.seven.colink.ui.group.board.board
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -37,13 +38,6 @@ class GroupBoardFragment : Fragment() {
         GroupBoardListAdapter(
             onClickItem = { item ->
                 when (item) {
-//                    is GroupBoardItem.GroupItem -> {
-////                        viewModel.onClickStatusButton()
-//                        val intent = Intent(requireContext(), ProductPromotionActivity::class.java)
-//                        intent.putExtra(Constants.EXTRA_ENTITY_KEY,item.key)
-//                        startActivity(intent)
-//                    }
-
                     is GroupBoardItem.PostItem -> {
                         startActivity(
                             PostActivity.newIntent(
@@ -61,7 +55,7 @@ class GroupBoardFragment : Fragment() {
                     else -> Unit
                 }
             },
-            onClickView = { _, view ->
+            onClickView = { item, view ->
                 when (view.id) {
                     R.id.tv_apply_request -> {
                         parentFragmentManager.beginTransaction().apply {
@@ -76,6 +70,15 @@ class GroupBoardFragment : Fragment() {
 
                     R.id.bt_status -> {
                         // TODO 홍보 하기 버튼
+                        when(item) {
+                            is GroupBoardItem.GroupItem -> {
+                                Log.d("Frag","#bbb key = ${item.key}")
+                                val intent = Intent(requireContext(), ProductPromotionActivity::class.java)
+                                intent.putExtra(Constants.EXTRA_ENTITY_KEY,item.key)
+                                startActivity(intent)
+                            }else -> Unit
+                        }
+
                     }
 
                     R.id.iv_calendar -> {

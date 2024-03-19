@@ -27,7 +27,8 @@ class ProductPromotionEditViewModel @Inject constructor(
     private val productRepository : ProductRepository,
     private val userRepository: UserRepository
 ) : ViewModel() {
-    var entity : ProductEntity? = null
+//    var entity : ProductEntity? = null
+    var entity = ProductEntity()
 
     private val _product = MutableLiveData<ProductEntity>()
     private val _setView = MutableLiveData<ProductPromotionItems>()
@@ -43,7 +44,7 @@ class ProductPromotionEditViewModel @Inject constructor(
 
 
     fun init(key: String) {
-        if (entity?.title?.isEmpty() == true) {
+        if (entity.title?.isEmpty() == true) {
             initPostToProduct(key)
         }else {
             initProduct(key)
@@ -70,7 +71,7 @@ class ProductPromotionEditViewModel @Inject constructor(
             aosUrl = null,
             iosUrl = null
         )
-        _product.value = entity
+//        _product.value = entity
         getMemberDetail(key)
     }
 
@@ -105,43 +106,30 @@ class ProductPromotionEditViewModel @Inject constructor(
                 memIds.forEach { id ->
                     val detail = userRepository.getUserDetails(id)
                     val userNt = detail.getOrNull()
-                    val user = userNt?.registeredDate?.let { date ->
-                        userNt.evaluatedNumber.let { evaluted ->
-                            UserEntity().copy(
-                                uid = userNt.uid,
-                                email = userNt.email,
-                                name = userNt.name,
-                                photoUrl = userNt.photoUrl,
-                                phoneNumber = userNt.phoneNumber,
-                                level = userNt.level,
-                                mainSpecialty = userNt.mainSpecialty,
-                                specialty = userNt.specialty,
-                                grade = userNt.grade,
-                                skill = userNt.skill,
-                                git = userNt.git,
-                                blog = userNt.blog,
-                                link = userNt.link,
-                                info = userNt.info,
-                                registeredDate = date,
-                                communication = userNt.communication,
-                                technicalSkill = userNt.technicalSkill,
-                                diligence = userNt.diligence,
-                                flexibility = userNt.flexibility,
-                                creativity = userNt.creativity,
-                                evaluatedNumber = evaluted,
-                                participantsChatRoomIds = userNt.participantsChatRoomIds,
-                                chatRoomKeyList = userNt.chatRoomKeyList
+                    val user = UserEntity().copy(
+                                uid = userNt?.uid,
+                                name = userNt?.name,
+                                photoUrl = userNt?.photoUrl,
+                                level = userNt?.level,
+                                grade = userNt?.grade,
+                                skill = userNt?.skill,
+                                info = userNt?.info,
+                                participantsChatRoomIds = userNt?.participantsChatRoomIds,
+                                chatRoomKeyList = userNt?.chatRoomKeyList
                             )
-                        }
-                    }
-                    entity = ProductEntity(authId = user?.uid)
+                    entity = ProductEntity(authId = user.uid)
 
                     memberDetailList.add(ProductPromotionItems.ProjectMember(user))
                     val delAuth = ids.getOrNull()?.authId
                     val delList = memberDetailList.filterNot { member ->
                         member.userInfo?.uid == delAuth
-                    }.toMutableList()
-                    memberDetailList = delList
+                    }
+                    val list = mutableListOf<String>()
+                    delList.forEach {
+                        it.userInfo?.uid?.let { uid -> list.add(uid) }
+                    }
+                    memberDetailList = delList.toMutableList()
+                    entity = entity.copy(memberIds = list)
 
                 }
                     val setMemberItem = memberDetailList
@@ -157,37 +145,66 @@ class ProductPromotionEditViewModel @Inject constructor(
         }
 
 
-    fun saveImgUrl(mainUrl : String?, desUrl : String?) : ProductEntity? {
+    fun saveImgUrl(mainUrl : String?, desUrl : String?) {
         if (mainUrl?.isEmpty() == true) {
             Toast.makeText(context,R.string.product_necessary_img,Toast.LENGTH_SHORT).show()
         }
-        entity = ProductEntity(imageUrl = mainUrl, desImg = desUrl)
-//        return entity?.copy(imageUrl = mainUrl, desImg = desUrl)
-        return entity
+        entity = entity.copy(imageUrl = mainUrl, desImg = desUrl)
+        Log.d("ViewModel","#bbb img entity = $entity")
     }
 
-    fun saveTitleAndDes(title : String?, des : String?) : ProductEntity? {
+//    fun saveMainImg(mainUrl: String?) {
+//        if (mainUrl?.isEmpty() == true){
+//            Toast.makeText(context,R.string.product_necessary_img,Toast.LENGTH_SHORT).show()
+//        }
+//        entity = entity.copy(imageUrl = mainUrl)
+//        Log.d("ViewModel","#bbb img entity = $entity")
+//
+//    }
+//
+//    fun saveDesImg(desUrl: String?) {
+//        entity = entity.copy(desImg = desUrl)
+//        Log.d("ViewModel","#bbb desImg entity = $entity")
+//    }
+//
+//    fun saveTitle(title: String?) {
+//        if (title?.isEmpty() == true) {
+//            Toast.makeText(context,R.string.product_necessary_title_des,Toast.LENGTH_SHORT).show()
+//        }
+//        entity = entity.copy(title = title)
+//    }
+//
+//    fun saveDes(des: String?) {
+//        if (des?.isEmpty() == true) {
+//            Toast.makeText(context,R.string.product_necessary_title_des,Toast.LENGTH_SHORT).show()
+//        }
+//        entity = entity.copy(description = des)
+//    }
+
+    fun saveTitleAndDes(title : String?, des : String?) {
         if (title?.isEmpty() == true || des?.isEmpty() == true) {
             Toast.makeText(context,R.string.product_necessary_title_des,Toast.LENGTH_SHORT).show()
         }
-        entity = ProductEntity(title = title, description = des)
-//        return entity?.copy(title = title, description = des)
-        return entity
+        entity = entity.copy(title = title, description = des)
+        Log.d("ViewModel","#bbb string entity = $entity")
     }
 
-    fun saveLink(web : String?, aos : String?, ios : String?) : ProductEntity? {
-        entity = ProductEntity(referenceUrl = web, aosUrl = aos, iosUrl = ios)
+    fun saveLink(web : String?, aos : String?, ios : String?) {
+        entity = entity.copy(referenceUrl = web, aosUrl = aos, iosUrl = ios)
+//        entity = ProductEntity(referenceUrl = web, aosUrl = aos, iosUrl = ios)
+        Log.d("ViewModel","#bbb link entity = $entity")
 //        return entity?.copy(referenceUrl = web, aosUrl = aos, iosUrl = ios)
-        return entity
     }
 
     fun registerProduct() {
         _product.value = entity
+
+        saveProduct(entity)
+        Log.d("ViewModel","#bbb save entity = $entity")
         viewModelScope.launch {
-            entity?.let { productRepository.registerProduct(it) }
+            productRepository.registerProduct(entity)
+            Log.d("ViewModel","#bbb firebase entity = $entity")
         }
-        entity?.let { saveProduct(it) }
-        Log.d("ViewModel","#bbb entitiy = $entity")
     }
 
     private fun saveProduct(nt : ProductEntity) {
