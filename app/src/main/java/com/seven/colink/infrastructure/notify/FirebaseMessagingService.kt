@@ -70,10 +70,17 @@ class FirebaseMessagingService : FirebaseMessagingService() {
                                         message = message,
                                     )
 
+                                NotifyType.APPLY ->
+                                    sendNotification(
+                                        title = title,
+                                        channelId = "channel_$type",
+                                        message = message,
+                                    )
+
                                 else -> {
                                     sendNotification(
                                         remoteMessage.notification?.title,
-                                        remoteMessage.notification?.body!!
+                                        remoteMessage.notification?.body?: return
                                     )
                                 }
                             }
@@ -163,7 +170,7 @@ class FirebaseMessagingService : FirebaseMessagingService() {
                 val channel = NotificationChannel(
                     channelId,
                     "알림 메세지",
-                    NotificationManager.IMPORTANCE_HIGH
+                    NotificationManager.IMPORTANCE_LOW
                 )
                 notificationManager.createNotificationChannel(channel)
 
