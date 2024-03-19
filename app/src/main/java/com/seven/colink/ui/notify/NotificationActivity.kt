@@ -1,15 +1,10 @@
 package com.seven.colink.ui.notify
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView.LayoutManager
-import com.seven.colink.R
 import com.seven.colink.databinding.ActivityNotificationBinding
 import com.seven.colink.ui.chat.ChatRoomActivity
 import com.seven.colink.ui.notify.adapter.NotificationAdapter
@@ -18,10 +13,8 @@ import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.snackbar.setSnackBar
 import com.seven.colink.util.status.SnackType
-import com.seven.colink.util.status.UiState
 import com.seven.colink.util.status.UiState.*
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -37,7 +30,11 @@ class NotificationActivity : AppCompatActivity() {
                 startActivity(
                     ChatRoomActivity.newIntent(this,it)
                 )
-            }
+            },
+            selectedAll = {},
+            selectedChat = {},
+            selectedRecruit = {},
+            deleteAll = {}
         )
     }
 
@@ -68,7 +65,7 @@ class NotificationActivity : AppCompatActivity() {
 
     private fun initViewModel() = with(viewmodel) {
         lifecycleScope.launch {
-            notifyItem.collect {
+            notifyList.collect {
                 when(it) {
                     is Loading -> showProgressOverlay()
                     is Success -> {

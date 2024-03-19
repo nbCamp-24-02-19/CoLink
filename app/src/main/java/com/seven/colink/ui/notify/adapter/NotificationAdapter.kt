@@ -22,6 +22,10 @@ import com.seven.colink.ui.notify.type.NotifyType.FILTER
 
 class NotificationAdapter (
     private val onChat: (String) -> Unit,
+    private val selectedAll: (String) -> Unit,
+    private val selectedChat: (String) -> Unit,
+    private val selectedRecruit: (String) -> Unit,
+    private val deleteAll: () -> Unit
 ): ListAdapter<NotifyItem, ViewHolder>(
     object : DiffUtil.ItemCallback<NotifyItem>() {
         override fun areItemsTheSame(oldItem: NotifyItem, newItem: NotifyItem) = when {
@@ -47,7 +51,11 @@ class NotificationAdapter (
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (NotifyType.from(viewType)) {
         FILTER -> {
             FilterViewHolder(
-                ItemNotificationFilterBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ItemNotificationFilterBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                selectedAll,
+                selectedChat,
+                selectedRecruit,
+                deleteAll
             )
         }
         CHAT -> {
@@ -64,10 +72,15 @@ class NotificationAdapter (
     }
 
     class FilterViewHolder(
-        private val binding: ItemNotificationFilterBinding
+        private val binding: ItemNotificationFilterBinding,
+        private val selectedAll: (String) -> Unit,
+        private val selectedChat: (String) -> Unit,
+        private val selectedRecruit: (String) -> Unit,
+        private val deleteAll: () -> Unit,
     ): ViewHolder(binding.root) {
         override fun onBind(item: NotifyItem) = with(binding) {
-            cvNotifyAll.setOnClickListener {  }
+            cvNotifyAll.setOnClickListener { selectedAll("all") }
+            tvNotifyDelete.setOnClickListener { deleteAll }
         }
     }
 
@@ -95,7 +108,7 @@ class NotificationAdapter (
         ViewHolder(binding.root) {
         override fun onBind(item: NotifyItem) = with(binding) {
             if (item !is DefaultItem) return@with
-            ivNotifyIcon.background.setTint(item.iconBackground)
+            ivNotifyIcon.background.setTint(item.iconBackground?: return@with)
             ivNotifyIcon.load(item.icon)
             tvNotifyTitle.text = item.title
             tvNotifyBody.text = item.body

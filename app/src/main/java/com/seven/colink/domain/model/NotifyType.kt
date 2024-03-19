@@ -12,6 +12,9 @@ enum class NotifyType(
     APPLY(
         title = "apply"
     ),
+    JOIN(
+        title = "join"
+    )
 
     ;
 
