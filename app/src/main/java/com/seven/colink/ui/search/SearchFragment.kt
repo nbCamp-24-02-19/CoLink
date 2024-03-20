@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -250,6 +251,7 @@ class SearchFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         setSearchAppbar()
+        searchViewModel.doSearch("")
     }
 
     override fun onPause() {
