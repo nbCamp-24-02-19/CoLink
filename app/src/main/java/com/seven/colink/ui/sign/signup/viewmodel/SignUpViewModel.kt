@@ -41,7 +41,7 @@ class SignUpViewModel @Inject constructor(
     val uiStatus: StateFlow<SignUpUIState> = _uiStatus
 
     private val _userModel = MutableStateFlow(SignUpUserModel())
-    private val userModel: StateFlow<SignUpUserModel> = _userModel
+    val userModel: StateFlow<SignUpUserModel> = _userModel
 
     private val _errorMessage = MutableStateFlow(SignUpErrorMessage.DUMMY)
     val errorMessage: StateFlow<SignUpErrorMessage> = _errorMessage
@@ -87,7 +87,7 @@ class SignUpViewModel @Inject constructor(
             )
         )
 
-        _skills.value = currentUser?.skill?: return
+        _skills.value = currentUser?.skill ?: return
     }
 
     fun updateUiState(status: SignUpUIState) {
@@ -191,7 +191,10 @@ class SignUpViewModel @Inject constructor(
     private fun registerUser(password: String?) = viewModelScope.launch {
         when (entryType.value) {
             SignUpEntryType.CREATE -> {
-                when (registerUserUseCase(userModel.value.convertUserEntity(), password?: return@launch)) {
+                when (registerUserUseCase(
+                    userModel.value.convertUserEntity(),
+                    password ?: return@launch
+                )) {
                     DataResultStatus.SUCCESS -> _registrationResult.emit("등록 성공")
                     DataResultStatus.FAIL -> _registrationResult.emit("등록 실패")
                 }
@@ -219,7 +222,17 @@ class SignUpViewModel @Inject constructor(
                     DataResultStatus.FAIL -> _registrationResult.emit("등록 실패")
                 }
             }
+
             SignUpEntryType.UPDATE_PASSWORD -> _registrationResult.emit("잘못된 접근입니다.")
+        }
+    }
+
+    fun backState(state: SignUpUIState) {
+        _uiStatus.value = when (state) {
+            SignUpUIState.NAME -> return
+            SignUpUIState.EMAIL -> SignUpUIState.NAME
+            SignUpUIState.PASSWORD -> SignUpUIState.EMAIL
+            SignUpUIState.PROFILE -> SignUpUIState.PASSWORD
         }
     }
 

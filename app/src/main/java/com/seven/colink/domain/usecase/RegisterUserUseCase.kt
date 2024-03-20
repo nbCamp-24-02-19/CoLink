@@ -14,7 +14,9 @@ class RegisterUserUseCase @Inject constructor(
         if (user.email != null) {
             var result = authRepository.register(user.email, password)
             if (result == DataResultStatus.SUCCESS) {
-                result = userRepository.registerUser(user)
+                result = userRepository.registerUser(user.copy(
+                    uid = result.message
+                ))
             }
             result
         } else DataResultStatus.FAIL.apply { message = "email or password is null" }
