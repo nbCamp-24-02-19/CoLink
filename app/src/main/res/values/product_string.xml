@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="product_link">Google Play</string>
+    <string name="product_header">프로젝트 멤버</string>
+    <string name="product_des">이건 무슨 약이더라? [Ari]는 단순 복약 알림 앱이 아닙니다. 이미지 인식으로 처방된 약의 상세한 정보를 전달할 뿐만 아니라 개인별 병력 및 투약 이력에 따른 맞춤 주의 사항을 알려주는 앱입니다. \n
+
+안전하게 복용하는 약: [Ari]는 약 봉투를 스캔해서 약을 인식합니다. \n이전에 복약 기록을 참고하여 개인별 주의 사항을 안내합니다. \n더불어, 식사 시간을 기준으로 복약 알림을 띄워 규칙적인 약 복용이 가능합니다. \n복약 이후 효과와 부작용도 입력할 수 있어요.
+
+\n폐의약품 처리까지: 남은 약은 보관 후, 유효기간에 맞춰 알람을 설정할 수 있습니다. 지금까지 모은 약 카테고리에서는 모인 약의 양을 알려주고, 보건소나 약국으로 폐의약품을 보내는 것까지 안내받을 수 있습니다. 처리 방법까지 신경 쓰는 이유는 매년 많은 양의 의약품이 쓰레기로 배출되어 생태계 파괴에 영향을 미치고 있기 때문이라고 합니다.</string>
+    <string name="product_links">링크는 3개까지만 입력 가능합니다.</string>
+    <string name="product_edit_links">링크를 입력하세요.</string>
+
+    <string name="product_edit_date">홍보글을 올린 시간이 표시됩니다.</string>
+    <string name="product_edit_title">홍보글에 올릴 제목을 입력해주세요.</string>
+    <string name="product_edit_des">홍보글에 올릴 내용을 입력해주세요.</string>
+    <string name="product_edit_link_header">프로젝트 링크</string>
+    <string name="product_edit_store_link_header">스토어 링크</string>
+    <string name="product_edit_store_link">https://</string>
+    <string name="product_necessary_img">이미지를 등록 해 주세요</string>
+    <string name="product_necessary_title_des">제목과 설명은 필수 등록 사항입니다.</string>
+
+</resources>
