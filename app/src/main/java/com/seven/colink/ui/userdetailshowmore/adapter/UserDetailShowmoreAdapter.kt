@@ -1,4 +1,4 @@
-package com.seven.colink.ui.showmore.adapter
+package com.seven.colink.ui.userdetailshowmore.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,30 +6,29 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.seven.colink.databinding.ItemSearchPostBinding
-import com.seven.colink.ui.showmore.ShowMoreItem
+import com.seven.colink.ui.userdetailshowmore.UserDetailShowmoreItem
 
-class MyPageShowMoreAdapter(var mItem: List<ShowMoreItem>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
+class UserDetailShowmoreAdapter(var mItems: List<UserDetailShowmoreItem>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     companion object{
         private const val VIEW_TYPE_PROJECT = 1
         private const val VIEW_TYPE_STUDY = 2
     }
 
-    interface PostClick{
-        fun onClick(view: View, position: Int, item: ShowMoreItem.ShowMoreProjectItem)
+    interface ProjectClick{
+        fun onClick(view: View, position: Int, item: UserDetailShowmoreItem.ShowMoreProjectItem)
     }
 
     interface StudyClick{
-        fun onClick(view: View, position: Int, item: ShowMoreItem.ShowMoreStudyItem)
+        fun onClick(view: View, position: Int, item: UserDetailShowmoreItem.ShowMoreStudyItem)
     }
 
+    var projectClick: ProjectClick? = null
     var studyClick: StudyClick? = null
 
-    var postClick: PostClick? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return when(viewType){
-            VIEW_TYPE_PROJECT ->{
+            VIEW_TYPE_PROJECT -> {
                 val binding = ItemSearchPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 ProjectViewHolder(binding)
             } else -> {
@@ -39,30 +38,30 @@ class MyPageShowMoreAdapter(var mItem: List<ShowMoreItem>) : RecyclerView.Adapte
         }
     }
 
-    fun changeDataset(newDataSet: List<ShowMoreItem>){
-        mItem = newDataSet
+    fun changeDataset(newDataSet: List<UserDetailShowmoreItem>){
+        mItems = newDataSet
         notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int {
-        return mItem.size
+        return mItems.size
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when(val item = mItem[position]){
-            is ShowMoreItem.ShowMoreProjectItem ->{
-                (holder as ProjectViewHolder).projecttitle.text = item.showmoreprojectTitle
+        when(val item = mItems[position]){
+            is UserDetailShowmoreItem.ShowMoreProjectItem ->{
+                (holder as UserDetailShowmoreAdapter.ProjectViewHolder).projecttitle.text = item.showmoreprojectTitle
                 holder.projectname.text = item.showmoreprojectName
                 holder.projectdescription.text = item.showmoreprojectDescription
                 holder.projecttime.text = item.showmoreprojectTime
                 holder.viewCount.text = item.showmoreprojectViewCount.toString()
                 holder.projectImage.load(item.showmoreprojectImage)
                 holder.itemView.setOnClickListener {
-                    postClick?.onClick(it, position, item)
+                    projectClick?.onClick(it, position, item)
                 }
             }
-            is ShowMoreItem.ShowMoreStudyItem ->{
-                (holder as StudyViewHolder).studytitle.text = item.showmorestudytitle
+            is UserDetailShowmoreItem.ShowMoreStudyItem ->{
+                (holder as UserDetailShowmoreAdapter.StudyViewHolder).studytitle.text = item.showmorestudytitle
                 holder.studyname.text = item.showmorestudyName
                 holder.studydescription.text = item.showmorestudyDescription
                 holder.studytime.text = item.showmorestudyTime
@@ -76,9 +75,9 @@ class MyPageShowMoreAdapter(var mItem: List<ShowMoreItem>) : RecyclerView.Adapte
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when(mItem[position]){
-            is ShowMoreItem.ShowMoreProjectItem -> VIEW_TYPE_PROJECT
-            is ShowMoreItem.ShowMoreStudyItem -> VIEW_TYPE_STUDY
+        return when(mItems[position]){
+            is UserDetailShowmoreItem.ShowMoreProjectItem -> VIEW_TYPE_PROJECT
+            is UserDetailShowmoreItem.ShowMoreStudyItem -> VIEW_TYPE_STUDY
         }
     }
 
@@ -99,6 +98,4 @@ class MyPageShowMoreAdapter(var mItem: List<ShowMoreItem>) : RecyclerView.Adapte
         val studyviewcount = binding.tvSearchItemViewCount
         val studyImage = binding.ivSearchItemThumbnail
     }
-
-
 }

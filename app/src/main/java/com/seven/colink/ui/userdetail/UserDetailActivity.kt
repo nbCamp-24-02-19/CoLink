@@ -19,7 +19,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import com.seven.colink.R
 import com.seven.colink.databinding.ActivityUserDetailBinding
+import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.ui.chat.ChatRoomActivity
+import com.seven.colink.ui.post.register.PostActivity
+import com.seven.colink.ui.showmore.MyPageShowMoreActivity
 import com.seven.colink.ui.sign.signup.SignUpActivity
 import com.seven.colink.ui.sign.signup.model.SignUpUserModel
 import com.seven.colink.ui.sign.signup.type.SignUpEntryType
@@ -27,6 +30,7 @@ import com.seven.colink.ui.userdetail.adapter.UserDetailPostAdapter
 import com.seven.colink.ui.userdetail.adapter.UserSkillAdapter
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.snackbar.setSnackBar
+import com.seven.colink.ui.userdetailshowmore.UserDetailShowmoreActivity
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
 import com.seven.colink.util.status.SnackType
@@ -64,6 +68,50 @@ class UserDetailActivity : AppCompatActivity() {
         PostRecyclerView()
         initViewModel()
 
+        binding.tvUserdetailShowmore.setOnClickListener {
+            viewModel.detailEvent()
+
+        }
+
+        postadapter.postClick = object : UserDetailPostAdapter.PostClick {
+            override fun onClick(view: View, position: Int, item: UserPostItem.UserDetailPostItem) {
+                lifecycleScope.launch {
+                    var key = item.userprojectKey
+                    val post = key.let { viewModel.getPost(it)}
+                    if (post != null){
+                        startActivity(
+                            PostActivity.newIntent(
+                                context = this@UserDetailActivity,
+                                key = key
+                            )
+                        )
+                    } else {
+                        Toast.makeText(this@UserDetailActivity, "다음에 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+
+        postadapter.studyClick = object : UserDetailPostAdapter.StudyClick {
+            override fun onClick(view: View, position: Int, item: UserPostItem.UserDetailStudyItem) {
+                lifecycleScope.launch{
+                    var key = item.userstudykey
+                    val post = key.let { viewModel.getPost(it) }
+                    if (post != null ){
+                        startActivity(
+                            PostActivity.newIntent(
+                                context = this@UserDetailActivity,
+                                key = key
+                            )
+                        )
+                    } else {
+                        Toast.makeText(this@UserDetailActivity, "다음에 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+            }
+        }
+
         binding.ivUserdetailBackArrow.setOnClickListener {
             finish()
         }
@@ -80,15 +128,24 @@ class UserDetailActivity : AppCompatActivity() {
                 if (post.grouptype == GroupType.PROJECT){
                     UserPostItem.UserDetailPostItem(if (post.ing != ProjectStatus.END){
                         "참여중"
-                    } else "완료", userprojectName = post.title.toString(), userprojectTime = post.time.toString())
+                    } else "완료", userprojectName = post.title.toString(), userprojectTime = post.time.toString(), userprojectKey = post.key.toString())
                 } else {
                     UserPostItem.UserDetailStudyItem(if(post.ing != ProjectStatus.END){
                         "참여중"
-                    } else "완료",  post.title.toString(), post.time.toString()
+                    } else "완료",  post.title.toString(), post.time.toString(), post.key.toString()
                     )
 
                 }}?.let { it1 -> postadapter.changeDataset(it1) }
             Log.e("Tag","${it}")
+        }
+
+        lifecycleScope.launch {
+            viewModel.detailEvent.collect{
+                startActivity(UserDetailShowmoreActivity.newIntent(
+                this@UserDetailActivity,
+                        it
+            ))
+            }
         }
     }
 
@@ -199,7 +256,6 @@ class UserDetailActivity : AppCompatActivity() {
         Log.d("Tag","user = ${user}")
     }
 
-//    private fun userSkill(){
 
     private fun userSkill(){
         adapter = UserSkillAdapter(UserSkillItemManager.getItem())
@@ -213,10 +269,6 @@ class UserDetailActivity : AppCompatActivity() {
         binding.reUserdetailProject.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
     }
 
-    //    }
-//        binding.reUserdetailItem.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-//        binding.reUserdetailItem.adapter = adapter
-//        adapter = UserSkillAdapter(UserSkillItemManager.getItem())
 
     private fun initViewModel() = with(viewModel) {
         lifecycleScope.launch {

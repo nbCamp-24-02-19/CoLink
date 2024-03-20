@@ -9,6 +9,7 @@ import com.seven.colink.R
 import com.seven.colink.domain.entity.ApplicationInfo
 import com.seven.colink.domain.entity.CommentEntity
 import com.seven.colink.domain.entity.RecruitInfo
+import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.CommentRepository
 import com.seven.colink.domain.repository.PostRepository
@@ -17,6 +18,8 @@ import com.seven.colink.domain.usecase.GetPostUseCase
 import com.seven.colink.domain.usecase.RegisterApplicationInfoUseCase
 import com.seven.colink.domain.usecase.SendNotificationJoinUseCase
 import com.seven.colink.ui.group.board.board.GroupContentViewType
+import com.seven.colink.ui.post.content.model.Comment
+import com.seven.colink.ui.post.content.model.CommentButtonUiState
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.content.model.DialogUiState
 import com.seven.colink.ui.post.content.model.PostContentItem
@@ -42,6 +45,7 @@ class PostContentViewModel @Inject constructor(
     private val sendNotificationJoinUseCase: SendNotificationJoinUseCase,
 ) : ViewModel() {
     private lateinit var entity: Post
+//    private lateinit var comment: Comment
     private val _uiState = MutableLiveData<List<PostContentItem>>()
     val uiState: LiveData<List<PostContentItem>> get() = _uiState
 
@@ -58,6 +62,9 @@ class PostContentViewModel @Inject constructor(
 
     private val _userComment = MutableLiveData<CommentEntity>()
     val userComments: LiveData<CommentEntity> = _userComment
+
+//    private val _updateCommentButtonUiState = MutableLiveData<CommentButtonUiState>()
+//    val updateCommentButtonUiState: LiveData<CommentButtonUiState>  get() = _updateCommentButtonUiState
 
     suspend fun setEntity(key: String) {
         entity = getPostUseCase(key) ?: return
@@ -77,6 +84,14 @@ class PostContentViewModel @Inject constructor(
             else -> ContentButtonUiState.User
         }
     }
+
+//    private suspend fun setCommentButtonUiState(comment: Comment) {
+//        _updateCommentButtonUiState.value = when (getCurrentUser()) {
+//            comment.authId -> CommentButtonUiState.Manager
+//            null -> CommentButtonUiState.Unknown
+//            else -> CommentButtonUiState.User
+//        }
+//    }
 
     fun registerComment(text: String) {
         viewModelScope.launch {
@@ -149,6 +164,8 @@ class PostContentViewModel @Inject constructor(
                                 profile = user?.photoUrl?: "",
                                 description = it.description,
                                 registeredDate = it.registeredDate,
+                                authId = it.authId,
+                                buttonUiState = updateButtonUiState.value ?: ContentButtonUiState.User
                             )
                         )
                     }
