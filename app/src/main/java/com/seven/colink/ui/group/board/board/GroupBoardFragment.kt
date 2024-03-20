@@ -1,7 +1,9 @@
 package com.seven.colink.ui.group.board.board
 
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +20,8 @@ import com.seven.colink.ui.group.content.GroupContentFragment
 import com.seven.colink.ui.group.viewmodel.GroupSharedViewModel
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.register.PostActivity
+import com.seven.colink.ui.promotion.ProductPromotionActivity
+import com.seven.colink.util.Constants
 import com.seven.colink.util.status.PostEntryType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -51,7 +55,7 @@ class GroupBoardFragment : Fragment() {
                     else -> Unit
                 }
             },
-            onClickView = { _, view ->
+            onClickView = { item, view ->
                 when (view.id) {
                     R.id.tv_apply_request -> {
                         parentFragmentManager.beginTransaction().apply {
@@ -66,6 +70,15 @@ class GroupBoardFragment : Fragment() {
 
                     R.id.bt_status -> {
                         // TODO 홍보 하기 버튼
+                        when(item) {
+                            is GroupBoardItem.GroupItem -> {
+                                Log.d("Frag","#bbb key = ${item.key}")
+                                val intent = Intent(requireContext(), ProductPromotionActivity::class.java)
+                                intent.putExtra(Constants.EXTRA_ENTITY_KEY,item.key)
+                                startActivity(intent)
+                            }else -> Unit
+                        }
+
                     }
 
                     R.id.iv_calendar -> {

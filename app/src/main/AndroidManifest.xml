@@ -49,6 +49,9 @@
             android:name=".ui.mypageedit.MyPageEditDetailActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.promotion.ProductPromotionActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.group.GroupActivity"
             android:exported="false" />
         <activity
