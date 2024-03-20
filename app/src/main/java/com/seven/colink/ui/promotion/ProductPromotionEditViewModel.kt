@@ -1,16 +1,17 @@
 package com.seven.colink.ui.promotion
 
 import android.app.Application
+import android.net.Uri
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.seven.colink.R
 import com.seven.colink.domain.entity.ProductEntity
+import com.seven.colink.domain.entity.TempProductEntity
 import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.domain.repository.GroupRepository
+import com.seven.colink.domain.repository.ImageRepository
 import com.seven.colink.domain.repository.ProductRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.util.convert.convertLocalDateTime
@@ -25,23 +26,21 @@ class ProductPromotionEditViewModel @Inject constructor(
     private val context: Application,
     private val groupRepository: GroupRepository,
     private val productRepository : ProductRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val imageRepository: ImageRepository
 ) : ViewModel() {
-//    var entity : ProductEntity? = null
     var entity = ProductEntity()
 
     private val _product = MutableLiveData<ProductEntity>()
-    private val _setView = MutableLiveData<ProductPromotionItems>()
+    private val _setMainImg = MutableLiveData<ProductPromotionItems.Img>()
+    private val _setMiddleImg = MutableLiveData<ProductPromotionItems.MiddleImg>()
     private val _setLeader = MutableLiveData<ProductPromotionItems.ProjectLeaderItem>()
     private val _setMember = MutableLiveData<MutableList<ProductPromotionItems.ProjectMember>>()
     val product : LiveData<ProductEntity> get() = _product
-    val setView : LiveData<ProductPromotionItems> get() = _setView
+    val setMainImg : LiveData<ProductPromotionItems.Img> get() = _setMainImg
+    val setMiddleImg : LiveData<ProductPromotionItems.MiddleImg> get() = _setMiddleImg
     val setLeader : LiveData<ProductPromotionItems.ProjectLeaderItem> get() = _setLeader
     val setMember : MutableLiveData<MutableList<ProductPromotionItems.ProjectMember>> get() = _setMember
-
-    private val _adapterData = MutableLiveData<ProductPromotionItems?>()
-    val adapterData: LiveData<ProductPromotionItems?> get() = _adapterData
-
 
     fun init(key: String) {
         if (entity.title?.isEmpty() == true) {
@@ -49,10 +48,6 @@ class ProductPromotionEditViewModel @Inject constructor(
         }else {
             initProduct(key)
         }
-    }
-
-    private fun updateAdapterData(data: ProductPromotionItems) {
-        _adapterData.value = data
     }
 
     private fun initPostToProduct(key: String) {  //포스트에서 프로덕트로 만들때
@@ -71,7 +66,6 @@ class ProductPromotionEditViewModel @Inject constructor(
             aosUrl = null,
             iosUrl = null
         )
-//        _product.value = entity
         getMemberDetail(key)
     }
 
@@ -91,7 +85,7 @@ class ProductPromotionEditViewModel @Inject constructor(
         viewModelScope.launch {
             val ids = groupRepository.getGroupDetail(key)
 
-            val viewItem = ids.getOrNull()?.memberIds?.let { member -> entity?.copy(authId = ids.getOrNull()?.authId, memberIds = member) }
+            val viewItem = ids.getOrNull()?.memberIds?.let { member -> entity.copy(authId = ids.getOrNull()?.authId, memberIds = member) }
             Log.d("Viewmodel","#aaa postUser Id = ${ids.getOrNull()?.authId}")
             Log.d("Viewmodel","#aaa postMember Id = ${ids.getOrNull()?.memberIds}")
             if (viewItem != null) {
@@ -155,6 +149,23 @@ class ProductPromotionEditViewModel @Inject constructor(
             iosUrl = nt.iosUrl
         )
         Log.d("Edit","#ccc viewModel save entity = $entity")
+    }
+
+    suspend fun uploadImage(uri: Uri): String =
+        imageRepository.uploadImage(uri).getOrThrow().toString()
+
+    fun changeType(temp: TempProductEntity, nt:ProductEntity){
+        viewModelScope.launch {
+            entity = entity.copy(
+                title = nt.title,
+                imageUrl = temp.selectMainImgUri?.let { uploadImage(it) } ?: "",
+                description = nt.description,
+                desImg = temp.selectMiddleImgUri?.let { uploadImage(it) } ?: "",
+                referenceUrl = nt.referenceUrl,
+                aosUrl = nt.aosUrl,
+                iosUrl = nt.iosUrl
+            )
+        }
     }
 
     fun registerProduct() {

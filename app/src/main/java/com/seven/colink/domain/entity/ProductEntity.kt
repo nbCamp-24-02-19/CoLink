@@ -1,5 +1,6 @@
 package com.seven.colink.domain.entity
 
+import android.net.Uri
 import com.seven.colink.util.convert.convertLocalDateTime
 import java.time.LocalDateTime
 import java.util.UUID
@@ -27,5 +28,7 @@ data class TempProductEntity(
     var desImg : String? = "",
     var web : String? = "",
     var aos : String? = "",
-    var ios : String? = ""
+    var ios : String? = "",
+    var selectMainImgUri : Uri? = null,
+    var selectMiddleImgUri : Uri? = null
 )
