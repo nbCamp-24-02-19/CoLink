@@ -14,7 +14,7 @@ class ResourceRepositoryImpl (
         context.getString(resId)
 
     override fun getString(@StringRes resId: Int, vararg formatArgs: Any) =
-        context.getString(resId, formatArgs)
+        context.getString(resId, *formatArgs)
 
     override fun getDrawable(@DrawableRes resId: Int) =
         AppCompatResources.getDrawable(context,resId)

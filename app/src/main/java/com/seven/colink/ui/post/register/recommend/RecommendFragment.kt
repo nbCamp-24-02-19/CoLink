@@ -21,8 +21,10 @@ import com.seven.colink.ui.post.register.viewmodel.PostSharedViewModel
 import com.seven.colink.ui.userdetail.UserDetailActivity
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
+import com.seven.colink.util.snackbar.setSnackBar
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.PostEntryType
+import com.seven.colink.util.status.SnackType
 import com.seven.colink.util.status.UiState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -126,6 +128,12 @@ class RecommendFragment : Fragment() {
                         requireActivity().finish()
                     }
                 }
+            }
+        }
+
+        lifecycleScope.launch {
+            inviteEvent.collect {
+                binding.root.setSnackBar(SnackType.Success, it)
             }
         }
     }

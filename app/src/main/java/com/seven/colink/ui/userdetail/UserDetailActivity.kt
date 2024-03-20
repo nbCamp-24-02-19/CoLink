@@ -28,9 +28,12 @@ import com.seven.colink.ui.sign.signup.model.SignUpUserModel
 import com.seven.colink.ui.sign.signup.type.SignUpEntryType
 import com.seven.colink.ui.userdetail.adapter.UserDetailPostAdapter
 import com.seven.colink.ui.userdetail.adapter.UserSkillAdapter
+import com.seven.colink.util.dialog.setDialog
+import com.seven.colink.util.snackbar.setSnackBar
 import com.seven.colink.ui.userdetailshowmore.UserDetailShowmoreActivity
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
+import com.seven.colink.util.status.SnackType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -162,7 +165,7 @@ class UserDetailActivity : AppCompatActivity() {
         }
 
         binding.btnUserdetailGroup.setOnClickListener {
-            //그룹으로 초대하기
+            viewModel.setPostList()
         }
 
         binding.tvUserdetailName.text = user.userName
@@ -268,9 +271,20 @@ class UserDetailActivity : AppCompatActivity() {
 
 
     private fun initViewModel() = with(viewModel) {
-        viewModelScope.launch {
+        lifecycleScope.launch {
             chatRoom.collect {
                 startActivity(ChatRoomActivity.newIntent(this@UserDetailActivity,it.key, it.title?: ""))
+            }
+        }
+
+        lifecycleScope.launch {
+            currentUserPostList.collect{ list ->
+                if (list.isEmpty()) binding.root.setSnackBar(SnackType.Error, "초대 가능한 그룹이 없습니다")
+                else {
+                    list.mapNotNull { it.title }.setDialog(this@UserDetailActivity, "그룹을 선택 해주세요") { title ->
+                        list.find { it.title == title }.let { post -> viewModel.inviteGroup(post!!) }
+                    }
+                }
             }
         }
     }

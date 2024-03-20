@@ -16,7 +16,7 @@ sealed interface NotifyItem {
     data class DefaultItem(
         val key: String?,
         val icon: Drawable?,
-        val iconBackground: Int,
+        val iconBackground: Int?,
         val title: String?,
         val body: String?,
         val registeredDate: String?,
