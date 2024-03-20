@@ -149,6 +149,7 @@ class SearchViewModel @Inject constructor(
             description = description,
             tags = tags,
             registeredDate = registeredDate?.convertToDaysAgo(),
-            views = views
+            views = views,
+            likes = like
         )
 }

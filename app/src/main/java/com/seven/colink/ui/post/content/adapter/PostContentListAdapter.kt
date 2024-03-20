@@ -1,6 +1,7 @@
 package com.seven.colink.ui.post.content.adapter
 
 import android.text.InputType
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -108,7 +109,8 @@ class PostContentListAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder =
         when (PostContentViewTypeItem.from(viewType)) {
             PostContentViewTypeItem.ITEM -> PostItemViewHolder(
-                ItemPostContentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ItemPostContentBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                onClickItem
             )
 
             PostContentViewTypeItem.RECRUIT -> PostRecruitItemViewHolder(
@@ -250,7 +252,8 @@ class PostContentListAdapter(
     }
 
     class PostItemViewHolder(
-        private val binding: ItemPostContentBinding
+        private val binding: ItemPostContentBinding,
+        private val onClickItem: (PostContentItem) -> Unit,
     ) : PostViewHolder(binding.root) {
         private val tagAdapter = TagListAdapter(onClickItem = { _ -> })
 
@@ -262,6 +265,14 @@ class PostContentListAdapter(
             val context = binding.root.context
             if (item is PostContentItem.Item) {
                 with(binding) {
+                    ivLike.setOnClickListener{
+                        onClickItem(item)
+                        if (!item.isLike) {
+                            ivLike.setImageResource(R.drawable.ic_heart)
+                        } else {
+                            ivLike.setImageResource(R.drawable.ic_heart_clicked)
+                        }
+                    }
                     tvTitle.text = item.title
                     tvRegisterDatetime.text = item.registeredDate
                     tvHits.text = item.views.toString()

@@ -16,5 +16,6 @@ data class SearchModel(
     val description: String? = "",
     val tags: List<String>? = emptyList(),
     val registeredDate: String?,
-    val views: Int? = -1
+    val views: Int? = -1,
+    val likes: Int? = 0
 )
