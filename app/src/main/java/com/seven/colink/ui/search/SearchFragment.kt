@@ -36,15 +36,20 @@ class SearchFragment : Fragment() {
 
     private var _binding: FragmentSearchBinding? = null
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
+
     private lateinit var searchAdapter: SearchAdapter
+
     private var postList = mutableListOf<SearchModel>()
+
     private lateinit var searchViewModel: SearchViewModel
+
     private var project = true
+
     private var study = true
+
     private var recruit = true
+
     private var recruitEnd = true
 
     private val groupTypeOptions: List<String>
@@ -58,7 +63,7 @@ class SearchFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        searchViewModel = ViewModelProvider(this).get(SearchViewModel::class.java)
+        searchViewModel = ViewModelProvider(this)[SearchViewModel::class.java]
 
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -114,7 +119,6 @@ class SearchFragment : Fragment() {
         }
 
 
-        val query = binding.etSearchSearch.text.toString()
 
         // 프로젝트 필터버튼
         binding.tvSearchProject.setOnClickListener {
@@ -141,63 +145,69 @@ class SearchFragment : Fragment() {
 
         // 스터디 필터버튼
         binding.tvSearchStudy.setOnClickListener {
-            if (study) {
-                study = false
-                offColor(binding.tvSearchStudy)
-                if (!study && project) {
-                    searchViewModel.setProjectFilter(query)
+            binding.etSearchSearch.text.toString().let { query ->
+                if (study) {
+                    study = false
+                    offColor(binding.tvSearchStudy)
+                    if (!study && project) {
+                        searchViewModel.setProjectFilter(query)
+                    } else {
+                        searchViewModel.setGroupNone(query)
+                    }
                 } else {
-                    searchViewModel.setGroupNone(query)
-                }
-            } else {
-                study = true
-                onColor(binding.tvSearchStudy)
-                if (study && !project) {
-                    searchViewModel.setStudyFilter(query)
-                } else {
-                    searchViewModel.setGroupBoth(query)
+                    study = true
+                    onColor(binding.tvSearchStudy)
+                    if (study && !project) {
+                        searchViewModel.setStudyFilter(query)
+                    } else {
+                        searchViewModel.setGroupBoth(query)
+                    }
                 }
             }
         }
 
         // 모집완료 필터버튼
         binding.tvSearchRecruitEnd.setOnClickListener {
-            if (recruitEnd) {
-                recruitEnd = false
-                offColor(binding.tvSearchRecruitEnd)
-                if (!recruitEnd && recruit) {
-                    searchViewModel.setRecruitFilter(query)
+            binding.etSearchSearch.text.toString().let { query ->
+                if (recruitEnd) {
+                    recruitEnd = false
+                    offColor(binding.tvSearchRecruitEnd)
+                    if (!recruitEnd && recruit) {
+                        searchViewModel.setRecruitFilter(query)
+                    } else {
+                        searchViewModel.setRecruitNone(query)
+                    }
                 } else {
-                    searchViewModel.setRecruitNone(query)
-                }
-            } else {
-                recruitEnd = true
-                onColor(binding.tvSearchRecruitEnd)
-                if (recruitEnd && !recruit) {
-                    searchViewModel.setRecruitEndFilter(query)
-                } else {
-                    searchViewModel.setRecruitBoth(query)
+                    recruitEnd = true
+                    onColor(binding.tvSearchRecruitEnd)
+                    if (recruitEnd && !recruit) {
+                        searchViewModel.setRecruitEndFilter(query)
+                    } else {
+                        searchViewModel.setRecruitBoth(query)
+                    }
                 }
             }
         }
 
         // 모집중 필터버튼
         binding.tvSearchRecruit.setOnClickListener {
-            if (recruit) {
-                recruit = false
-                offColor(binding.tvSearchRecruit)
-                if (!recruit && recruitEnd) {
-                    searchViewModel.setRecruitEndFilter(query)
+            binding.etSearchSearch.text.toString().let { query ->
+                if (recruit) {
+                    recruit = false
+                    offColor(binding.tvSearchRecruit)
+                    if (!recruit && recruitEnd) {
+                        searchViewModel.setRecruitEndFilter(query)
+                    } else {
+                        searchViewModel.setRecruitNone(query)
+                    }
                 } else {
-                    searchViewModel.setRecruitNone(query)
-                }
-            } else {
-                recruit = true
-                onColor(binding.tvSearchRecruit)
-                if (recruit && !recruitEnd) {
-                    searchViewModel.setRecruitFilter(query)
-                } else {
-                    searchViewModel.setRecruitBoth(query)
+                    recruit = true
+                    onColor(binding.tvSearchRecruit)
+                    if (recruit && !recruitEnd) {
+                        searchViewModel.setRecruitFilter(query)
+                    } else {
+                        searchViewModel.setRecruitBoth(query)
+                    }
                 }
             }
         }
