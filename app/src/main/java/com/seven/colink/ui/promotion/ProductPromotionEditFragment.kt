@@ -103,40 +103,44 @@ class ProductPromotionEditFragment : Fragment() {
         binding.tvPromotionEditComplete.setTextColor(ContextCompat.getColor(requireContext(),R.color.forth_color))
         binding.tvPromotionEditComplete.text = "완료"
         binding.tvPromotionEditComplete.setOnClickListener {
+            editAdapter.editTextViewAllFocusOut()
             saveDataToViewModel()
         }
     }
 
     private fun saveDataToViewModel(){
-        val mainImg = editAdapter.getMainImageView(0)?.toString()
-        val titleEdit = editAdapter.getTitleEditText(1)?.let {
-            if (it.text.isNotEmpty()) it.text.toString() else ""
-        }
-        val desEdit = editAdapter.getDesEditText(1)?.let {
-            if (it.text.isNotEmpty()) it.text.toString() else ""
-        }
-        val middleImg = editAdapter.getMiddleImageView(2)?.toString()
-        val webEdit = editAdapter.getWebLink(3)?.text.toString()
-        val aosEdit = editAdapter.getAosLink(3)?.text.toString()
-        val iosEdit = editAdapter.getIosLink(3)?.text.toString()
+//        val mainImg = editAdapter.getMainImageView(0)?.toString()
+//        val titleEdit = editAdapter.getTitleEditText(1)?.let {
+//            if (it.text.isNotEmpty()) it.text.toString() else ""
+//        }
+//        val desEdit = editAdapter.getDesEditText(1)?.let {
+//            if (it.text.isNotEmpty()) it.text.toString() else ""
+//        }
+//        val middleImg = editAdapter.getMiddleImageView(2)?.toString()
+//        val webEdit = editAdapter.getWebLink(3)?.text.toString()
+//        val aosEdit = editAdapter.getAosLink(3)?.text.toString()
+//        val iosEdit = editAdapter.getIosLink(3)?.text.toString()
+//        Log.d("Edit","#ccc title = $titleEdit")
+//        Log.d("Edit","#ccc mainImg = $mainImg")
+//        Log.d("Edit","#ccc desEdit = $desEdit")
+//        Log.d("Edit","#ccc middleImg = $middleImg")
+//        Log.d("Edit","#ccc webEdit = $webEdit")
+//        Log.d("Edit","#ccc aosEdit = $aosEdit")
+//        Log.d("Edit","#ccc iosEdit = $iosEdit")
+        val tempData = editAdapter.getTempData()
+        Log.d("Temp","#ddd temp = $tempData")
 
+        val entity = ProductEntity(
+            title = tempData?.title,
+            imageUrl = tempData?.mainImg,
+            description = tempData?.des,
+            desImg = tempData?.desImg,
+            referenceUrl = tempData?.web,
+            aosUrl = tempData?.aos,
+            iosUrl = tempData?.ios
+        )
         with(editViewModel) {
-            saveTitleAndDes(titleEdit,desEdit)
-            Log.d("Frag","#bbb title = $titleEdit")
-            Log.d("Frag","#bbb des = $desEdit")
-            saveImgUrl(mainImg.toString(),middleImg.toString())
-//            saveDes(desEdit)
-//            Log.d("Frag","#bbb title = $titleEdit")
-//            Log.d("Frag","#bbb des = $desEdit")
-//            saveTitle(titleEdit)
-//            saveDesImg(middleImg)
-//            saveMainImg(mainImg)
-            Log.d("Frag","#bbb main = $mainImg")
-            Log.d("Frag","#bbb middle = $middleImg")
-            saveLink(webEdit,aosEdit,iosEdit)
-            Log.d("Frag","#bbb web = $webEdit")
-            Log.d("Frag","#bbb aos = $aosEdit")
-            Log.d("Frag","#bbb ios = $iosEdit")
+            saveEntity(entity)
             registerProduct()
         }
     }
