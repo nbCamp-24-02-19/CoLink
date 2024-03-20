@@ -1,11 +1,16 @@
 package com.seven.colink.ui.promotion
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,17 +20,22 @@ import com.seven.colink.domain.entity.ProductEntity
 import com.seven.colink.ui.promotion.adapter.ProductPromotionEditAdapter
 import com.seven.colink.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class ProductPromotionEditFragment : Fragment() {
 
     private var _binding : FragmentProductPromotionEditBinding? = null
     private val binding get() = _binding!!
-//    private lateinit var mContext: Context
-//    private val editAdapter by lazy { ProductPromotionEditAdapter() }
     private lateinit var editAdapter : ProductPromotionEditAdapter
+    private lateinit var getResultMainImg : ActivityResultLauncher<Intent>
+    private lateinit var getResultDesImg : ActivityResultLauncher<Intent>
     private val editViewModel : ProductPromotionEditViewModel by viewModels()
     private var key : String? = null
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
     private var viewList = mutableListOf(
         ProductPromotionItems.Img(null),
         ProductPromotionItems.Title("","",""),
@@ -37,7 +47,6 @@ class ProductPromotionEditFragment : Fragment() {
         ProductPromotionItems.ProjectMemberHeader(""),
         ProductPromotionItems.ProjectMember(null)
     )
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,6 +70,7 @@ class ProductPromotionEditFragment : Fragment() {
         initView()
         clickComplete()
         clickBackButton()
+        initLauncher()
     }
 
     private fun initView() {
@@ -82,6 +92,24 @@ class ProductPromotionEditFragment : Fragment() {
         setObserve()
     }
 
+    private fun initLauncher() {
+        getResultMainImg = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data: Intent? = result.data
+                val selectUri: Uri? = data?.data
+                editAdapter.updateImage(selectUri)
+            }
+        }
+        getResultDesImg = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data: Intent? = result.data
+                val selectUri: Uri? = data?.data
+                editAdapter.updateDesImage(selectUri)
+            }
+        }
+        editAdapter.initResult(getResultMainImg,getResultDesImg)
+    }
+
     private fun setObserve(){
         key?.let { editViewModel.getMemberDetail(it) }
         editViewModel.product.observe(viewLifecycleOwner) {
@@ -90,7 +118,6 @@ class ProductPromotionEditFragment : Fragment() {
 
         editViewModel.setLeader.observe(viewLifecycleOwner) { leader ->
             editAdapter.setLeader(leader)
-//            editViewModel.entity = ProductEntity(authId = leader.userInfo?.getOrNull()?.uid)
         }
 
         editViewModel.setMember.observe(viewLifecycleOwner) { memberItem ->
@@ -109,39 +136,37 @@ class ProductPromotionEditFragment : Fragment() {
     }
 
     private fun saveDataToViewModel(){
-//        val mainImg = editAdapter.getMainImageView(0)?.toString()
-//        val titleEdit = editAdapter.getTitleEditText(1)?.let {
-//            if (it.text.isNotEmpty()) it.text.toString() else ""
-//        }
-//        val desEdit = editAdapter.getDesEditText(1)?.let {
-//            if (it.text.isNotEmpty()) it.text.toString() else ""
-//        }
-//        val middleImg = editAdapter.getMiddleImageView(2)?.toString()
-//        val webEdit = editAdapter.getWebLink(3)?.text.toString()
-//        val aosEdit = editAdapter.getAosLink(3)?.text.toString()
-//        val iosEdit = editAdapter.getIosLink(3)?.text.toString()
-//        Log.d("Edit","#ccc title = $titleEdit")
-//        Log.d("Edit","#ccc mainImg = $mainImg")
-//        Log.d("Edit","#ccc desEdit = $desEdit")
-//        Log.d("Edit","#ccc middleImg = $middleImg")
-//        Log.d("Edit","#ccc webEdit = $webEdit")
-//        Log.d("Edit","#ccc aosEdit = $aosEdit")
-//        Log.d("Edit","#ccc iosEdit = $iosEdit")
-        val tempData = editAdapter.getTempData()
-        Log.d("Temp","#ddd temp = $tempData")
 
-        val entity = ProductEntity(
-            title = tempData?.title,
-            imageUrl = tempData?.mainImg,
-            description = tempData?.des,
-            desImg = tempData?.desImg,
-            referenceUrl = tempData?.web,
-            aosUrl = tempData?.aos,
-            iosUrl = tempData?.ios
-        )
-        with(editViewModel) {
-            saveEntity(entity)
-            registerProduct()
+
+        coroutineScope.launch {
+            val tempData = editAdapter.getTempData()
+
+            val mainImg = withContext(Dispatchers.Main) {
+                val imgItem = editAdapter.getTempData()
+                imgItem.selectMainImgUri?.let { editViewModel.uploadImage(it) }
+            }
+
+            val desImg = withContext(Dispatchers.Main) {
+                val imgItem = editAdapter.getTempData()
+                imgItem.selectMiddleImgUri?.let { editViewModel.uploadImage(it) }
+            }
+
+            editAdapter.tempEntity.mainImg = mainImg
+            editAdapter.tempEntity.desImg = desImg
+
+            val entity = ProductEntity(
+                title = tempData.title,
+                imageUrl = tempData.mainImg,
+                description = tempData.des,
+                desImg = tempData.desImg,
+                referenceUrl = tempData.web,
+                aosUrl = tempData.aos,
+                iosUrl = tempData.ios
+            )
+            with(editViewModel) {
+                saveEntity(entity)
+                registerProduct()
+            }
         }
     }
 
