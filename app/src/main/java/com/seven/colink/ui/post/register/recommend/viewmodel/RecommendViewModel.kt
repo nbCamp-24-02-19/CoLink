@@ -1,8 +1,5 @@
 package com.seven.colink.ui.post.register.recommend.viewmodel
 
-import android.content.ContentValues.TAG
-import android.util.Log
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seven.colink.domain.entity.ChatRoomEntity
@@ -13,7 +10,6 @@ import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.repository.RecruitRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.domain.usecase.GetChatRoomUseCase
-import com.seven.colink.domain.usecase.GetPostUseCase
 import com.seven.colink.domain.usecase.SendNotificationInviteUseCase
 import com.seven.colink.ui.post.register.recommend.type.RecommendType
 import com.seven.colink.util.model.MemberCard
@@ -26,6 +22,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -45,7 +42,10 @@ class RecommendViewModel @Inject constructor(
     private val _recommendList = MutableStateFlow<UiState<List<RecommendType>>>(UiState.Loading)
     val recommendList: StateFlow<UiState<List<RecommendType>>> = _recommendList
 
-    private var postEntity: PostEntity = PostEntity()
+    private val _inviteEvent = MutableSharedFlow<String>()
+    val inviteEvent = _inviteEvent.asSharedFlow()
+    private var _postEntity: PostEntity? = null
+    private val postEntity get() = _postEntity!!
     fun loadList(key: String) {
         viewModelScope.launch {
             val titleDeferred = async {
@@ -94,13 +94,14 @@ class RecommendViewModel @Inject constructor(
                     UiState.Error(e)
                 }
             }
-            postRepository.getPost(key).getOrNull()?.also { postEntity = it }
+            postRepository.getPost(key).getOrNull()?.also { _postEntity = it }
         }
     }
 
     fun invitePost(uid: String) {
         viewModelScope.launch {
             sendNotificationInviteUseCase(postEntity, uid)
+            _inviteEvent.emit("그룹으로 초대 하였습니다.")
         }
     }
 

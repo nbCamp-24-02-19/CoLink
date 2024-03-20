@@ -15,7 +15,7 @@
         android:textColor="@color/typo_color"
         android:fontFamily="@font/inter_thin"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/tv_chat_message"/>
+        app:layout_constraintEnd_toEndOf="@+id/fl_chat_content"/>
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cv_chat_profile_view"
@@ -56,25 +56,42 @@
         android:textSize="10sp"
         android:visibility="invisible"
         android:textColor="@color/typo_color"
-        app:layout_constraintStart_toEndOf="@+id/tv_chat_message"
-        app:layout_constraintBottom_toBottomOf="@id/tv_chat_message"/>
-    <TextView
-        android:id="@+id/tv_chat_message"
+        app:layout_constraintStart_toEndOf="@+id/fl_chat_content"
+        app:layout_constraintBottom_toBottomOf="@id/fl_chat_content"/>
+    <FrameLayout
+        android:id="@+id/fl_chat_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingVertical="8dp"
-        android:paddingHorizontal="12dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginBottom="8dp"
-        android:maxWidth="300dp"
-        android:background="@drawable/chat_bubble_other"
-        android:backgroundTint="@color/user_color"
-        android:text="안녕하세요"
-        android:textSize="14sp"
-        android:fontFamily="@font/roboto_regular"
-        android:textColor="@color/black"
         app:layout_constraintTop_toBottomOf="@+id/tv_chat_auth_name"
         app:layout_constraintStart_toEndOf="@+id/cv_chat_profile_view"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent">
 
+        <TextView
+            android:id="@+id/tv_chat_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingVertical="8dp"
+            android:paddingHorizontal="12dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            android:maxWidth="300dp"
+            android:background="@drawable/chat_bubble_other"
+            android:backgroundTint="@color/user_color"
+            android:text="안녕하세요"
+            android:textSize="14sp"
+            android:fontFamily="@font/roboto_regular"
+            android:textColor="@color/black"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_chat_message_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="300dp"
+            android:paddingVertical="8dp"
+            android:paddingHorizontal="12dp"
+            android:background="@drawable/chat_bubble_other"
+            android:backgroundTint="@color/user_color"
+            android:src="@drawable/dummy"
+            android:visibility="gone"/>
+    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
