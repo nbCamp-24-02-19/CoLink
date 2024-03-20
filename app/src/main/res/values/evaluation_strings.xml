@@ -18,4 +18,9 @@
     <string name="eval_study_active">스터디에 적극적으로 참여하고 학습활동에 집중했나요?</string>
     <string name="eval_study_name_communication">스터디 내에서 정보를 주고받고 의견을 나누며 \n원활한 소통을 했나요?</string>
     <string name="eval_study_name_respect">팀원을 존중하고 협력적으로 스터디에 임했나요?</string>
+    <string name="eval_project_title">프로젝트를 함께 진행하신</string>
+    <string name="eval_study_title">스터디를 함께 진행하신</string>
+    <string name="eval_request">님을 평가해주세요</string>
+    <string name="eval_dialog_title">팀원 평가</string>
+    <string name="eval_dialog_des">팀원 평가를 완료하시겠습니까?</string>
 </resources>
