@@ -1,6 +1,10 @@
 package com.seven.colink.ui.promotion.adapter
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -8,19 +12,26 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
+import androidx.core.view.doOnLayout
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.load
+import coil.request.ImageRequest
 import com.seven.colink.databinding.ItemPostMemberInfoBinding
 import com.seven.colink.databinding.ItemProductImgBinding
 import com.seven.colink.databinding.ItemProductLinkBinding
 import com.seven.colink.databinding.ItemProductMemberHeaderBinding
 import com.seven.colink.databinding.ItemProductProjectHeaderBinding
 import com.seven.colink.databinding.ItemProductTitleBinding
+import com.seven.colink.domain.entity.ProductEntity
+import com.seven.colink.domain.entity.TempProductEntity
+import com.seven.colink.ui.post.register.post.model.PostListItem
 import com.seven.colink.ui.promotion.ProductPromotionItems
 import com.seven.colink.util.setLevelIcon
+import okhttp3.internal.addHeaderLenient
 
 //class ProductPromotionEditAdapter() : ListAdapter<ProductPromotionItems, RecyclerView.ViewHolder>(
 //    ProductPromotionDiffUtil
@@ -362,6 +373,7 @@ class ProductPromotionEditAdapter (private val recyclerView: RecyclerView, priva
     }
 
     private var itemClick : ItemClick? = null
+    private var tempEntity = TempProductEntity()
 
     private val FIRST_TYPE = 0
     private val SECOND_TYPE = 1
@@ -372,6 +384,27 @@ class ProductPromotionEditAdapter (private val recyclerView: RecyclerView, priva
     private val SEVENTH_TYPE = 6
     private val EIGHTH_TYPE = 7
     private val NINETH_TYPE = 8
+
+    fun editTextViewAllFocusOut() {  //포커스 아웃 시키기
+        for (i in 0 until itemCount) {
+            val viewHolder = recyclerView.findViewHolderForAdapterPosition(i)
+            if (viewHolder is SecondViewHolder) {
+                viewHolder.editDes.clearFocus()
+                viewHolder.editTitle.clearFocus()
+            }else if (viewHolder is ForthViewHolder) {
+                viewHolder.etAppStore.clearFocus()
+                viewHolder.etWebLink.clearFocus()
+                viewHolder.etPlayStore.clearFocus()
+            }
+        }
+    }
+
+    fun updateTempData(position: Int, temp: TempProductEntity) {
+        tempEntity = temp
+        recyclerView.post {
+            notifyItemChanged(position)
+        }
+    }
 
     inner class FirstViewHolder(binding: ItemProductImgBinding) : ViewHolder(binding.root) {
         val img = binding.ivProductPromotion
@@ -388,6 +421,38 @@ class ProductPromotionEditAdapter (private val recyclerView: RecyclerView, priva
         val viewTitle = binding.tvProductTitle
         val viewDes = binding.tvProductDes
 
+        private fun saveData(position: Int) {
+            val title = editTitle.text.toString()
+            val des = editDes.text.toString()
+
+            if (tempEntity.title != title || tempEntity.des != des) {
+                tempEntity.title = title
+                tempEntity.des = des
+                Log.d("temp","#eee title = $title")
+                Log.d("temp","#eee des = $des")
+                Log.d("temp","#eee tempTitle = ${tempEntity.title}")
+                Log.d("temp","#eee tempDes = ${tempEntity.des}")
+                updateTempData(position,tempEntity)
+                Log.d("temp","#eee temp = ${tempEntity}")
+            }
+        }
+
+        init {
+            editTitle.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    saveData(adapterPosition)
+                }
+            }
+
+            editDes.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    saveData(adapterPosition)
+                }
+            }
+            editTitle.setText(tempEntity.title)
+            editDes.setText(tempEntity.des)
+        }
+
         fun bind(item: ProductPromotionItems.Title) {
             viewDes.visibility = View.GONE
             viewTitle.visibility = View.GONE
@@ -395,8 +460,20 @@ class ProductPromotionEditAdapter (private val recyclerView: RecyclerView, priva
             editTitle.visibility = View.VISIBLE
             editDes.visibility = View.VISIBLE
 
-//            editTitle.setText(item.title)
-//            editDes.setText(item.des)
+            if (adapterPosition != RecyclerView.NO_POSITION) {
+                if (item.title?.isNotEmpty() == true) {
+                    editTitle.setText(item.title)
+                    Log.d("item","#eee item = ${item.title}")
+                }else {
+                    editTitle.setText(tempEntity.title)
+                }
+
+                if (item.des?.isNotEmpty() == true) {
+                    editDes.setText(item.des)
+                }else {
+                    editDes.setText(tempEntity.des)
+                }
+            }
         }
     }
 
@@ -417,12 +494,76 @@ class ProductPromotionEditAdapter (private val recyclerView: RecyclerView, priva
         val etPlayStore = binding.etProductPlaystoreLink
         val etAppStore = binding.etProductAppstoreLink
 
+        private fun saveData(position: Int) {
+            val web = etWebLink.text.toString()
+            val aos = etPlayStore.text.toString()
+            val ios = etAppStore.text.toString()
+
+            if (tempEntity.web != web || tempEntity.aos != aos || tempEntity.ios != ios) {
+                tempEntity.web = web
+                tempEntity.aos = aos
+                tempEntity.ios = ios
+                Log.d("temp","#eee web = $web")
+                Log.d("temp","#eee aos = $aos")
+                Log.d("temp","#eee ios = $ios")
+                Log.d("temp","#eee tempWeb = ${tempEntity.web}")
+                Log.d("temp","#eee tempAos = ${tempEntity.aos}")
+                Log.d("temp","#eee tempIos = ${tempEntity.ios}")
+                updateTempData(position,tempEntity)
+                Log.d("temp","#eee temp = ${tempEntity}")
+            }
+        }
+
+        init {
+            etWebLink.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    saveData(adapterPosition)
+                }
+            }
+
+            etPlayStore.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    saveData(adapterPosition)
+                }
+            }
+
+            etAppStore.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    saveData(adapterPosition)
+                }
+            }
+            etPlayStore.setText(tempEntity.aos)
+            etWebLink.setText(tempEntity.web)
+            etAppStore.setText(tempEntity.ios)
+        }
+
         fun bind (item: ProductPromotionItems.Link) {
             viewLink.visibility = View.GONE
             viewWebLink.visibility = View.GONE
             etAppStore.visibility = View.VISIBLE
             etPlayStore.visibility = View.VISIBLE
             etWebLink.visibility = View.VISIBLE
+
+            if (adapterPosition != RecyclerView.NO_POSITION) {
+                if (item.webLink?.isNotEmpty() == true) {
+                    etWebLink.setText(item.webLink)
+                    Log.d("item","#eee item = ${item.webLink}")
+                }else {
+                    etWebLink.setText(tempEntity.web)
+                }
+
+                if (item.aosLink?.isNotEmpty() == true) {
+                    etPlayStore.setText(item.aosLink)
+                }else {
+                    etPlayStore.setText(tempEntity.aos)
+                }
+
+                if (item.iosLink?.isNotEmpty() == true) {
+                    etAppStore.setText(item.iosLink)
+                }else{
+                    etAppStore.setText(tempEntity.ios)
+                }
+            }
         }
     }
 
@@ -497,18 +638,6 @@ class ProductPromotionEditAdapter (private val recyclerView: RecyclerView, priva
                         levelColor.setLevelIcon(color)
                     }
                 }
-//            items?.forEach { member ->
-//                img.load(member?.photoUrl)
-//                name.text = member?.name
-//                intro.text = member?.info
-//                grade.text = member?.grade.toString()
-//                level.text = member?.level.toString()
-//                member?.level.let { color ->
-//                    if (color != null) {
-//                        levelColor.setLevelIcon(color)
-//                    }
-//                }
-//            }
             }
         }
     }
@@ -645,67 +774,71 @@ class ProductPromotionEditAdapter (private val recyclerView: RecyclerView, priva
         notifyItemRangeInserted(insert, member.size)
     }
 
-    fun getTitleEditText(position: Int) : EditText? {
-        val viewHolder = recyclerView.findViewHolderForAdapterPosition(position)
-        return if (viewHolder is SecondViewHolder) {
-            viewHolder.editTitle
-        }else{
-            null
-//            val itemView = LayoutInflater.from()
-        }
+    fun getTempData() : TempProductEntity {
+        return tempEntity
     }
 
-    fun getDesEditText(position: Int) : EditText? {
-        val viewHolder = recyclerView.findViewHolderForAdapterPosition(position)
-        return if (viewHolder is SecondViewHolder) {
-            viewHolder.editDes
-        }else{
-            null
-        }
-    }
-
-    fun getMainImageView(position: Int) : ImageView? {
-        val viewHolder = recyclerView.findViewHolderForAdapterPosition(position)
-        return if (viewHolder is FirstViewHolder) {
-            viewHolder.img
-        }else{
-            null
-        }
-    }
-
-    fun getMiddleImageView(position: Int) : ImageView? {
-        val viewHolder = recyclerView.findViewHolderForAdapterPosition(position)
-        return if (viewHolder is ThirdViewHolder) {
-            viewHolder.img
-        }else{
-            null
-        }
-    }
-
-    fun getWebLink(position: Int) : EditText? {
-        val viewHolder = recyclerView.findViewHolderForAdapterPosition(position)
-        return if (viewHolder is ForthViewHolder) {
-            viewHolder.etWebLink
-        }else{
-            null
-        }
-    }
-
-    fun getAosLink(position: Int) : EditText? {
-        val viewHolder = recyclerView.findViewHolderForAdapterPosition(position)
-        return if (viewHolder is ForthViewHolder) {
-            viewHolder.etPlayStore
-        }else{
-            null
-        }
-    }
-
-    fun getIosLink(position: Int) : EditText? {
-        val viewHolder = recyclerView.findViewHolderForAdapterPosition(position)
-        return if (viewHolder is ForthViewHolder) {
-            viewHolder.etAppStore
-        }else{
-            null
-        }
-    }
+//    fun getTitleEditText(position: Int) : EditText? {
+//        val viewHolder = recyclerView.findViewHolderForAdapterPosition(position)
+//        Log.d("adapter","#ccc title viewHolder = $viewHolder")
+//        return if (viewHolder is SecondViewHolder) {
+//            viewHolder.editTitle
+//        }else{
+//            null
+//        }
+//    }
+//
+//    fun getDesEditText(position: Int) : EditText? {
+//        val viewHolder = recyclerView.findViewHolderForAdapterPosition(position)
+//        return if (viewHolder is SecondViewHolder) {
+//            viewHolder.editDes
+//        }else{
+//            null
+//        }
+//    }
+//
+//    fun getMainImageView(position: Int) : ImageView? {
+//        val viewHolder = recyclerView.findViewHolderForAdapterPosition(position)
+//        return if (viewHolder is FirstViewHolder) {
+//            viewHolder.img
+//        }else{
+//            null
+//        }
+//    }
+//
+//    fun getMiddleImageView(position: Int) : ImageView? {
+//        val viewHolder = recyclerView.findViewHolderForAdapterPosition(position)
+//        return if (viewHolder is ThirdViewHolder) {
+//            viewHolder.img
+//        }else{
+//            null
+//        }
+//    }
+//
+//    fun getWebLink(position: Int) : EditText? {
+//        val viewHolder = recyclerView.findViewHolderForAdapterPosition(position)
+//        return if (viewHolder is ForthViewHolder) {
+//            viewHolder.etWebLink
+//        }else{
+//            null
+//        }
+//    }
+//
+//    fun getAosLink(position: Int) : EditText? {
+//        val viewHolder = recyclerView.findViewHolderForAdapterPosition(position)
+//        return if (viewHolder is ForthViewHolder) {
+//            viewHolder.etPlayStore
+//        }else{
+//            null
+//        }
+//    }
+//
+//    fun getIosLink(position: Int) : EditText? {
+//        val viewHolder = recyclerView.findViewHolderForAdapterPosition(position)
+//        return if (viewHolder is ForthViewHolder) {
+//            viewHolder.etAppStore
+//        }else{
+//            null
+//        }
+//    }
 }

@@ -144,56 +144,17 @@ class ProductPromotionEditViewModel @Inject constructor(
             }
         }
 
-
-    fun saveImgUrl(mainUrl : String?, desUrl : String?) {
-        if (mainUrl?.isEmpty() == true) {
-            Toast.makeText(context,R.string.product_necessary_img,Toast.LENGTH_SHORT).show()
-        }
-        entity = entity.copy(imageUrl = mainUrl, desImg = desUrl)
-        Log.d("ViewModel","#bbb img entity = $entity")
-    }
-
-//    fun saveMainImg(mainUrl: String?) {
-//        if (mainUrl?.isEmpty() == true){
-//            Toast.makeText(context,R.string.product_necessary_img,Toast.LENGTH_SHORT).show()
-//        }
-//        entity = entity.copy(imageUrl = mainUrl)
-//        Log.d("ViewModel","#bbb img entity = $entity")
-//
-//    }
-//
-//    fun saveDesImg(desUrl: String?) {
-//        entity = entity.copy(desImg = desUrl)
-//        Log.d("ViewModel","#bbb desImg entity = $entity")
-//    }
-//
-//    fun saveTitle(title: String?) {
-//        if (title?.isEmpty() == true) {
-//            Toast.makeText(context,R.string.product_necessary_title_des,Toast.LENGTH_SHORT).show()
-//        }
-//        entity = entity.copy(title = title)
-//    }
-//
-//    fun saveDes(des: String?) {
-//        if (des?.isEmpty() == true) {
-//            Toast.makeText(context,R.string.product_necessary_title_des,Toast.LENGTH_SHORT).show()
-//        }
-//        entity = entity.copy(description = des)
-//    }
-
-    fun saveTitleAndDes(title : String?, des : String?) {
-        if (title?.isEmpty() == true || des?.isEmpty() == true) {
-            Toast.makeText(context,R.string.product_necessary_title_des,Toast.LENGTH_SHORT).show()
-        }
-        entity = entity.copy(title = title, description = des)
-        Log.d("ViewModel","#bbb string entity = $entity")
-    }
-
-    fun saveLink(web : String?, aos : String?, ios : String?) {
-        entity = entity.copy(referenceUrl = web, aosUrl = aos, iosUrl = ios)
-//        entity = ProductEntity(referenceUrl = web, aosUrl = aos, iosUrl = ios)
-        Log.d("ViewModel","#bbb link entity = $entity")
-//        return entity?.copy(referenceUrl = web, aosUrl = aos, iosUrl = ios)
+    fun saveEntity(nt: ProductEntity) {
+        entity = entity.copy(
+            title = nt.title,
+            imageUrl = nt.imageUrl,
+            description = nt.description,
+            desImg = nt.desImg,
+            referenceUrl = nt.referenceUrl,
+            aosUrl = nt.aosUrl,
+            iosUrl = nt.iosUrl
+        )
+        Log.d("Edit","#ccc viewModel save entity = $entity")
     }
 
     fun registerProduct() {

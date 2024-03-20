@@ -19,3 +19,13 @@ data class ProductEntity (
     val aosUrl: String? = null,
     val iosUrl: String? = null,
 )
+
+data class TempProductEntity(
+    var mainImg : String? = "",
+    var title : String? = "",
+    var des : String? = "",
+    var desImg : String? = "",
+    var web : String? = "",
+    var aos : String? = "",
+    var ios : String? = ""
+)
