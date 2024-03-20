@@ -17,6 +17,7 @@ import com.seven.colink.domain.entity.CommentEntity
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.ui.group.board.list.ApplyRequestFragment
 import com.seven.colink.ui.post.content.adapter.PostContentListAdapter
+import com.seven.colink.ui.post.content.model.CommentButtonUiState
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.content.model.DialogUiState
 import com.seven.colink.ui.post.content.model.PostContentItem
@@ -94,11 +95,17 @@ class PostContentFragment : Fragment() {
             onClickCommentButton = {
                 viewModel.registerComment(it)
             },
-            onClickCommentDeleteButton = {item, buttonUiState ->
+            onClickCommentDeleteButton = {item, buttonUiState->
+//                when(commentButtonUistate){
+//                    CommentButtonUiState.Manager -> viewModel.deleteComment(item)
+//                    CommentButtonUiState.User -> commentBinding.tvPostCommentDelete.visibility = View.GONE
+//                    CommentButtonUiState.Unknown -> commentBinding.tvPostCommentDelete.visibility = View.GONE
+//                }
+
                 when(buttonUiState) {
+                    ContentButtonUiState.Manager -> viewModel.deleteComment(item)
                     ContentButtonUiState.User -> commentBinding.tvPostCommentDelete.visibility = View.GONE
                     ContentButtonUiState.Unknown -> commentBinding.tvPostCommentDelete.visibility = View.GONE
-                    ContentButtonUiState.Manager -> viewModel.deleteComment(item)
                 }
             }
         )
@@ -170,6 +177,11 @@ class PostContentFragment : Fragment() {
 
             requireContext().showToast(getString(messageResId))
         }
+
+//        updateCommentButtonUiState.observe(viewLifecycleOwner){
+//            commentBinding.tvPostCommentDelete.visibility =
+//                if(it == CommentButtonUiState.Manager) View.VISIBLE else View.GONE
+//        }
 
     }
 

@@ -25,7 +25,7 @@
         android:id="@+id/tv_mypage_post_item_project_name"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="9dp"
+        android:layout_marginStart="10dp"
         android:text=" ㅁㅁ 프로젝트"
         android:textColor="@color/black"
         android:textSize="12sp"
@@ -33,7 +33,6 @@
         android:maxLines="1"
         android:ellipsize="end"
         app:layout_constraintBottom_toBottomOf="@+id/tv_mypage_post_item_ing_text"
-        app:layout_constraintEnd_toStartOf="@+id/tv_mypage_post_item_time"
         app:layout_constraintStart_toEndOf="@+id/tv_mypage_post_item_ing_text"
         app:layout_constraintTop_toTopOf="@+id/tv_mypage_post_item_ing_text" />
 
