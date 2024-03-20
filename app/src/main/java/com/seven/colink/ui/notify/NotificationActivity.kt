@@ -16,6 +16,7 @@ import com.seven.colink.util.status.SnackType
 import com.seven.colink.util.status.UiState.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import okhttp3.internal.notifyAll
 
 @AndroidEntryPoint
 class NotificationActivity : AppCompatActivity() {
@@ -30,11 +31,10 @@ class NotificationActivity : AppCompatActivity() {
                 startActivity(
                     ChatRoomActivity.newIntent(this,it)
                 )
+                viewmodel.deleteNotify(it)
             },
-            selectedAll = {},
-            selectedChat = {},
-            selectedRecruit = {},
-            deleteAll = {}
+            selectedFilter = { viewmodel.filterNotifications(it)},
+            deleteAll = { viewmodel.deleteAll() }
         )
     }
 
@@ -70,13 +70,19 @@ class NotificationActivity : AppCompatActivity() {
                     is Loading -> showProgressOverlay()
                     is Success -> {
                         hideProgressOverlay()
-                        adapter.submitList(it.data)
+                        setList()
                     }
                     is Error -> {
                         hideProgressOverlay()
                         binding.root.setSnackBar(SnackType.Error, "${it.throwable.message}")
                     }
                 }
+            }
+        }
+
+        lifecycleScope.launch {
+            observingList.collect {
+                adapter.submitList(it)
             }
         }
     }
