@@ -28,7 +28,7 @@ class SendNotificationInviteUseCase @Inject constructor(
                     key = data.key,
                     toUserToken = user.token,
                     toUserId = user.uid,
-                    message = resourceRepository.getString(R.string.group_invitation_message, data.title?: return@let),
+                    message = resourceRepository.getString(R.string.group_invitation_message, data.title!!),
                     title = resourceRepository.getString(R.string.group_invitation_title),
                     type = NotifyType.INVITE,
                 ).let { notificationEntity ->

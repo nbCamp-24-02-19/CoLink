@@ -1,15 +1,10 @@
 package com.seven.colink.ui.notify
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView.LayoutManager
-import com.seven.colink.R
 import com.seven.colink.databinding.ActivityNotificationBinding
 import com.seven.colink.ui.chat.ChatRoomActivity
 import com.seven.colink.ui.notify.adapter.NotificationAdapter
@@ -18,11 +13,10 @@ import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.snackbar.setSnackBar
 import com.seven.colink.util.status.SnackType
-import com.seven.colink.util.status.UiState
 import com.seven.colink.util.status.UiState.*
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import okhttp3.internal.notifyAll
 
 @AndroidEntryPoint
 class NotificationActivity : AppCompatActivity() {
@@ -37,7 +31,10 @@ class NotificationActivity : AppCompatActivity() {
                 startActivity(
                     ChatRoomActivity.newIntent(this,it)
                 )
-            }
+                viewmodel.deleteNotify(it)
+            },
+            selectedFilter = { viewmodel.filterNotifications(it)},
+            deleteAll = { viewmodel.deleteAll() }
         )
     }
 
@@ -68,18 +65,24 @@ class NotificationActivity : AppCompatActivity() {
 
     private fun initViewModel() = with(viewmodel) {
         lifecycleScope.launch {
-            notifyItem.collect {
+            notifyList.collect {
                 when(it) {
                     is Loading -> showProgressOverlay()
                     is Success -> {
                         hideProgressOverlay()
-                        adapter.submitList(it.data)
+                        setList()
                     }
                     is Error -> {
                         hideProgressOverlay()
                         binding.root.setSnackBar(SnackType.Error, "${it.throwable.message}")
                     }
                 }
+            }
+        }
+
+        lifecycleScope.launch {
+            observingList.collect {
+                adapter.submitList(it)
             }
         }
     }
