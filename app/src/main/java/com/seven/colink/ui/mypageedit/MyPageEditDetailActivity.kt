@@ -34,16 +34,17 @@ class MyPageEditDetailActivity : AppCompatActivity() {
         ActivityMyPageEditDetailBinding.inflate(layoutInflater)
     }
 
-    private val viewModel: MyPageEditDetailViewModel by viewModels ()
+    private val viewModel: MyPageEditDetailViewModel by viewModels()
 
     private val galleryResultLauncher =
         registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-               viewModel.updateProfileImg(result.data?.data?: return@registerForActivityResult)
+                viewModel.updateProfileImg(result.data?.data ?: return@registerForActivityResult)
             }
         }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -53,14 +54,16 @@ class MyPageEditDetailActivity : AppCompatActivity() {
     }
 
     private fun initViewModel() = with(viewModel) {
+        loadUserDetails()
         lifecycleScope.launch {
             userDetail.collect { state ->
-                when(state) {
+                when (state) {
                     is UiState.Loading -> showProgressOverlay()
                     is UiState.Success -> {
                         hideProgressOverlay()
                         setUi(state.data)
                     }
+
                     is UiState.Error -> {
                         hideProgressOverlay()
                         binding.root.setSnackBar(SnackType.Error, "저장을 실패하였습니다. ${state.throwable}")
@@ -70,22 +73,27 @@ class MyPageEditDetailActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-                uploadState.collect { state ->
-                    with(binding.root) {
+            uploadState.collect { state ->
+                with(binding.ivMypageEditProfile) {
                     when (state) {
                         SnackType.Success -> {
                             setSnackBar(state, "성공적으로 저장되었습니다")
                         }
-                        else -> Unit
+
+                        else -> {
+                            setSnackBar(state, "갱신 실패하였습니다.")
+                        }
                     }
                 }
             }
         }
     }
 
-    private fun setUi(model: MyPageEditModel) = with(binding){
-        ivMypageEditProfile.load(model.selectUrl?: model.profileUrl)
-        if (tvMypageEditName.text.isNullOrBlank()) tvMypageEditName.setText(model.name?: return@with)
+    private fun setUi(model: MyPageEditModel) = with(binding) {
+        ivMypageEditProfile.load(model.selectUrl ?: model.profileUrl)
+        if (tvMypageEditName.text.isNullOrBlank()) tvMypageEditName.setText(
+            model.name ?: return@with
+        )
     }
 
     private fun initView() {
@@ -125,7 +133,6 @@ class MyPageEditDetailActivity : AppCompatActivity() {
                 )
             }
         }
-
     }
 
     private fun openGallery(galleryResultLauncher: ActivityResultLauncher<Intent>) {

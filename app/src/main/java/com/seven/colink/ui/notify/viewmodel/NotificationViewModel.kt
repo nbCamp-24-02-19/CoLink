@@ -9,7 +9,7 @@ import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.NotificationStoreRepository
 import com.seven.colink.domain.repository.ResourceRepository
 import com.seven.colink.ui.notify.NotifyItem
-import com.seven.colink.ui.notify.viewmodel.NotificationViewModel.FilterType.*
+import com.seven.colink.ui.notify.viewmodel.FilterType.*
 import com.seven.colink.util.convert.convertTime
 import com.seven.colink.util.status.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,11 +26,8 @@ class NotificationViewModel @Inject constructor(
     private val _notifyList = MutableStateFlow<UiState<List<NotifyItem>>>(UiState.Loading)
     val notifyList = _notifyList.asStateFlow()
 
-    private val _observingList = MutableStateFlow<List<NotifyItem>>(emptyList())
-    val observingList = _observingList.asStateFlow()
-
-    private var _currentFilter = ALL
-    private val currentFilter get() = _currentFilter
+    private var _currentFilter = MutableStateFlow(ALL)
+    val currentFilter = _currentFilter.asStateFlow()
 
     init {
         setNotify()
@@ -45,7 +42,7 @@ class NotificationViewModel @Inject constructor(
                     ).map {
                         it.convert()
                     }.let {
-                        UiState.Success(listOf(NotifyItem.Filter) + it)
+                        UiState.Success(it)
                     }
                 } catch (e: Exception) {
                     UiState.Error(e)
@@ -53,18 +50,8 @@ class NotificationViewModel @Inject constructor(
         }
     }
 
-    fun setList(){
-        val list = notifyList.value
-        list as UiState.Success
-        _observingList.value = when (currentFilter) {
-            ALL -> list.data
-            CHAT -> list.data.filterIsInstance<NotifyItem.ChatItem>()
-            RECRUIT -> list.data.filterIsInstance<NotifyItem.DefaultItem>()
-        }
-    }
     fun filterNotifications(filterType: FilterType) {
-        _currentFilter = filterType
-        setList()
+        _currentFilter.value = filterType
     }
     private fun NotificationEntity.convert() =
         when(type) {
@@ -128,7 +115,8 @@ class NotificationViewModel @Inject constructor(
         else -> null
     }
 
-    enum class FilterType {
-        ALL, CHAT, RECRUIT
-    }
+}
+
+enum class FilterType {
+    ALL, CHAT, RECRUIT
 }

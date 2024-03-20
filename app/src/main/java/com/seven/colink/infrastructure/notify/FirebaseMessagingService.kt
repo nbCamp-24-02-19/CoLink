@@ -3,6 +3,7 @@ package com.seven.colink.infrastructure.notify
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
@@ -17,9 +18,13 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.seven.colink.R
 import com.seven.colink.domain.model.NotifyType
+import com.seven.colink.ui.chat.ChatRoomActivity
+import com.seven.colink.ui.group.GroupActivity
 import com.seven.colink.ui.main.MainActivity
+import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.util.convert.convertTime
 import com.seven.colink.util.loadImageBitmap
+import com.seven.colink.util.status.GroupType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -42,52 +47,65 @@ class FirebaseMessagingService : FirebaseMessagingService() {
         else if (remoteMessage.data.isNotEmpty()) {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                remoteMessage.data["type"]?.let { type ->
-                    remoteMessage.data["title"]?.let { title ->
-                        remoteMessage.data["message"]?.let { message ->
-                            when (NotifyType.fromTitle(type)) {
-                                NotifyType.CHAT -> {
-                                    remoteMessage.data["name"]?.let { name ->
-                                        remoteMessage.data["img"]?.let { img ->
-                                            remoteMessage.data["registeredDate"]?.let { registeredDate ->
-                                                sendNotification(
-                                                    title = title,
-                                                    name = name,
-                                                    message = message,
-                                                    img = img,
-                                                    type = type,
-                                                    registeredDate = registeredDate
-                                                )
+                remoteMessage.data["key"]?.let { key ->
+                    remoteMessage.data["type"]?.let { type ->
+                        remoteMessage.data["title"]?.let { title ->
+                            remoteMessage.data["message"]?.let { message ->
+                                remoteMessage.data["groupType"]?.let { groupType ->
+                                    when (NotifyType.fromTitle(type)) {
+                                        NotifyType.CHAT -> {
+                                            remoteMessage.data["name"]?.let { name ->
+                                                remoteMessage.data["img"]?.let { img ->
+                                                    remoteMessage.data["registeredDate"]?.let { registeredDate ->
+                                                        sendNotification(
+                                                            key = key,
+                                                            title = title,
+                                                            name = name,
+                                                            message = message,
+                                                            img = img,
+                                                            type = type,
+                                                            registeredDate = registeredDate
+                                                        )
+                                                    }
+                                                }
                                             }
                                         }
+
+                                        NotifyType.INVITE ->
+                                            sendNotification(
+                                                key = key,
+                                                title = title,
+                                                type = type,
+                                                message = message,
+                                                groupType = GroupType.from(groupType.toInt()),
+                                            )
+
+                                        NotifyType.APPLY ->
+                                            sendNotification(
+                                                key = key,
+                                                title = title,
+                                                type = type,
+                                                message = message,
+                                                groupType = GroupType.from(groupType.toInt()),
+                                            )
+
+                                        NotifyType.JOIN ->
+                                            sendNotification(
+                                                key = key,
+                                                title = title,
+                                                type = type,
+                                                message = message,
+                                                groupType = GroupType.from(groupType.toInt()),
+                                            )
+
+                                        else -> {
+                                            sendNotification(
+                                                remoteMessage.notification?.title,
+                                                remoteMessage.notification?.body ?: return
+                                            )
+                                        }
                                     }
-                                }
 
-                                NotifyType.INVITE ->
-                                    sendNotification(
-                                        title = title,
-                                        type = type,
-                                        message = message,
-                                    )
-
-                                NotifyType.APPLY ->
-                                    sendNotification(
-                                        title = title,
-                                        type = type,
-                                        message = message,
-                                    )
-
-                                NotifyType.JOIN ->
-                                    sendNotification(
-                                        title = title,
-                                        type = type,
-                                        message = message,
-                                    )
-                                else -> {
-                                    sendNotification(
-                                        remoteMessage.notification?.title,
-                                        remoteMessage.notification?.body?: return
-                                    )
                                 }
                             }
                         }
@@ -104,6 +122,7 @@ class FirebaseMessagingService : FirebaseMessagingService() {
 
     @RequiresApi(Build.VERSION_CODES.P)
     private fun sendNotification(
+        key: String,
         title: String,
         name: String,
         message: String,
@@ -111,12 +130,10 @@ class FirebaseMessagingService : FirebaseMessagingService() {
         type: String,
         registeredDate: String
     ) {
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = ChatRoomActivity.newIntent(this, key, title)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        val pendingIntent = PendingIntent.getActivity(
-            this, 0, intent,
-            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
-        )
+        val pendingIntent = pendingIntent(intent)
+
         val user: Person = Person.Builder()
             .setName(name)
             .setIcon(IconCompat.createWithResource(this, R.drawable.ic_colink_chat))
@@ -128,7 +145,7 @@ class FirebaseMessagingService : FirebaseMessagingService() {
             user
         )
 
-        val channelId = "channel_$type"
+        val channelId = "channel_$type$key"
 
         val messageStyle = NotificationCompat.MessagingStyle(user)
             .addMessage(notifyMessage)
@@ -174,7 +191,6 @@ class FirebaseMessagingService : FirebaseMessagingService() {
                         .setCustomContentView(notificationLayout)
                         .setCustomBigContentView(notificationLayoutExpanded)
 
-
                 val channel = NotificationChannel(
                     channelId,
                     "알림 메세지",
@@ -182,60 +198,61 @@ class FirebaseMessagingService : FirebaseMessagingService() {
                 )
                 notificationManager.createNotificationChannel(channel)
 
-                notificationManager.notify(0, notificationBuilder.build()) // 알림 생성
+                notificationManager.notify(key.hashCode(), notificationBuilder.build()) // 알림 생성
             }
         }
     }
 
     private fun sendNotification(
+        key: String,
         title: String,
         type: String,
         message: String,
+        groupType: GroupType,
     ) {
-        val intent = Intent(this, MainActivity::class.java)
+        val intent =
+            when (NotifyType.fromTitle(type)) {
+                NotifyType.APPLY -> GroupActivity.newIntent(this, groupType, key = key)
+                else -> PostActivity.newIntent(this, groupType, key = key)
+            }
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        val pendingIntent = PendingIntent.getActivity(
-            this, 0, intent,
-            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
-        )
+        val pendingIntent = pendingIntent(intent)
+
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        val icon = when(NotifyType.fromTitle(type)) {
+        val icon = when (NotifyType.fromTitle(type)) {
             NotifyType.INVITE -> R.drawable.ic_invite
             NotifyType.JOIN -> R.drawable.ic_join
             NotifyType.APPLY -> R.drawable.ic_apply_request
             else -> return
         }
+        val channelId = "channel_$type$key"
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val notificationBuilder = NotificationCompat.Builder(this, type)
+        val notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setContentTitle(title)
             .setContentText(message)
             .setSmallIcon(icon)
-            .setAutoCancel(true)
             .setSound(defaultSoundUri)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)
 
-        val channelId = "channel_$type"
 
         val channel = NotificationChannel(
-            channelId,
-            "Channel human readable title",
+            "channel_$type$key",
+            "알림 메세지",
             NotificationManager.IMPORTANCE_DEFAULT
         )
 
         notificationManager.createNotificationChannel(channel)
 
-        notificationManager.notify(0, notificationBuilder.build())
+        notificationManager.notify(key.hashCode(), notificationBuilder.build())
     }
 
     private fun sendNotification(title: String?, body: String) {
         val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP) // 액티비티 중복 생성 방지
-        val pendingIntent = PendingIntent.getActivity(
-            this, 0, intent,
-            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
-        ) // 일회성
+        val pendingIntent = pendingIntent(intent)
 
         val channelId = "channel" // 채널 아이디
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION) // 소리
@@ -258,6 +275,11 @@ class FirebaseMessagingService : FirebaseMessagingService() {
 
         notificationManager.notify(0, notificationBuilder.build()) // 알림 생성
     }
+
+    private fun pendingIntent(intent: Intent) =
+        PendingIntent.getActivity(
+            this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
 }
 
 /*
