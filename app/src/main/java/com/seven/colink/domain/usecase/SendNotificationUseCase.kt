@@ -1,6 +1,5 @@
 package com.seven.colink.domain.usecase
 
-import android.content.Context
 import com.seven.colink.R
 import com.seven.colink.domain.entity.ChatRoomEntity
 import com.seven.colink.domain.entity.MessageEntity
