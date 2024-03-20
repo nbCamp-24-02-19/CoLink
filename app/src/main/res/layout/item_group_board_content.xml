@@ -34,6 +34,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/iv_group_image" />
 
+    <ImageView
+        android:id="@+id/iv_calendar"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_calendar_today_24"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tv_group_type"
+        app:layout_constraintBottom_toBottomOf="@id/tv_group_type"
+        app:tint="@color/calender_fab" />
+
     <TextView
         android:id="@+id/tv_teamName"
         android:layout_width="match_parent"
@@ -87,7 +98,7 @@
         app:layout_constraintTop_toBottomOf="@id/recycler_view_tags" />
 
     <TextView
-        android:id="@+id/tv_description"
+        android:id="@+id/et_description"
         style="@style/PostEditTextStyle"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"

@@ -41,7 +41,7 @@ class ChatTabFragment : Fragment() {
     private val adapter by lazy {
         ChatListAdapter(
             onClick = {
-                startActivity(ChatRoomActivity.newIntent(requireContext(), it.key, it.title))
+                startActivity(ChatRoomActivity.newIntent(requireContext(), it.key))
             }
         )
     }

@@ -25,6 +25,8 @@ import com.seven.colink.ui.sign.signup.valid.SignUpErrorMessage
 import com.seven.colink.ui.sign.signup.viewmodel.SignUpViewModel
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
+import com.seven.colink.util.snackbar.setSnackBar
+import com.seven.colink.util.status.SnackType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -42,7 +44,7 @@ class SignUpActivity : AppCompatActivity() {
         ) = Intent(
             context, SignUpActivity()::class.java
         ).apply {
-            putExtra(EXTRA_ENTRY_TYPE, entryType.ordinal)
+            putExtra(EXTRA_ENTRY_TYPE, entryType)
         }
     }
 
@@ -144,9 +146,11 @@ class SignUpActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.registrationResult.collect{
                 this@SignUpActivity.hideProgressOverlay()
-                Toast.makeText(this@SignUpActivity, it, Toast.LENGTH_SHORT).show()
                 if (it == "등록 성공") {
+                    binding.root.setSnackBar(SnackType.Success, it)
                     finish()
+                } else {
+                    binding.root.setSnackBar(SnackType.Error, it)
                 }
             }
         }

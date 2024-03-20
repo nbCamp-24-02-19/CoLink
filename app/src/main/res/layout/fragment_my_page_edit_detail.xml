@@ -39,7 +39,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView5">
 
         <ImageView
-            android:id="@+id/iv_mypage_edit_profil"
+            android:id="@+id/iv_mypage_edit_profile"
             android:layout_width="148dp"
             android:layout_height="148dp"
             android:src="@drawable/ic_profile"
@@ -52,8 +52,8 @@
             android:layout_width="33dp"
             android:layout_height="33dp"
             android:src="@drawable/ic_camera"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_mypage_edit_profil"
-            app:layout_constraintEnd_toEndOf="@+id/iv_mypage_edit_profil" />
+            app:layout_constraintBottom_toBottomOf="@+id/iv_mypage_edit_profile"
+            app:layout_constraintEnd_toEndOf="@+id/iv_mypage_edit_profile" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -67,7 +67,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iv_mypage_edit_profil" />
+            app:layout_constraintTop_toBottomOf="@+id/iv_mypage_edit_profile" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

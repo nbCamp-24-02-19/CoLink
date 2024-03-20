@@ -12,6 +12,7 @@
         android:layout_marginVertical="24dp"
         android:background="@drawable/bg_stepper_circle"
         android:backgroundTint="@android:color/transparent"
+        android:scaleType="centerCrop"
         android:clipToOutline="true"
         android:src="@drawable/dummy"
         app:layout_constraintTop_toTopOf="parent"

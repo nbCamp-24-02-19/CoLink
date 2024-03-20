@@ -27,6 +27,7 @@ import com.seven.colink.util.setLevelIcon
 
 class RecommendAdapter(
     private val inviteGroup: (String) -> Unit,
+    private val editGroup: (String) -> Unit,
     private val onChat: (String) -> Unit,
     private val onNext: () -> Unit,
     private val onDetail: (String) -> Unit,
@@ -73,7 +74,8 @@ class RecommendAdapter(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
-                )
+                ),
+                editGroup
             )
 
             RecommendViewType.CARD -> CardViewHolder(
@@ -111,11 +113,15 @@ class RecommendAdapter(
         }
 
     class TitleViewHolder(
-        private val binding: ItemRecommendTitleBinding
+        private val binding: ItemRecommendTitleBinding,
+        private val editGroup: (String) -> Unit
     ) : RecommendViewHolder(binding.root) {
         override fun onBind(item: RecommendType) = with(binding) {
             item as RecommendType.Title
             tvRecommendTitleName.text = item.name.setFontType(root.context.getString(R.string.recommend_user_recommend_one), itemView.interBold())
+            tvRecommendEditGroup.setOnClickListener {
+                editGroup(item.key)
+            }
         }
     }
 

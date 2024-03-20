@@ -17,10 +17,12 @@ fun View.setSnackBar(
     state: SnackType,
     message: String,
     duration: Int = Snackbar.LENGTH_SHORT,
-) {
+): Snackbar {
     val snackBar = Snackbar.make(this,"",duration)
     val layout = snackBar.view as Snackbar.SnackbarLayout
     val view = LayoutInflater.from(context).inflate(R.layout.util_custom_snackbar, null)
+
+    layout.setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent))
 
     val img = view.findViewById<ImageView>(R.id.iv_snack_state)
     val text = view.findViewById<TextView>(R.id.tv_snack_message)
@@ -32,37 +34,36 @@ fun View.setSnackBar(
     }
     text.text = message
 
-    layout.setPadding(0,0,0,0)
     layout.addView(view)
 
-
-    snackBar.show()
+    return snackBar
 }
+
+
 
 fun View.setSnackBar(
     image: Any?,
     message: String,
-    @ColorRes backgroundColor: Int = R.color.white,
-    @ColorRes fontColor: Int = R.color.black,
+    @ColorRes backgroundColor: Int = R.color.black,
+    @ColorRes fontColor: Int = R.color.white,
     duration: Int = Snackbar.LENGTH_SHORT,
-) {
+): Snackbar {
     val snackBar = Snackbar.make(this,"",duration)
     val layout = snackBar.view as Snackbar.SnackbarLayout
     val view = LayoutInflater.from(context).inflate(R.layout.util_custom_snackbar, null)
 
+    layout.setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent))
     val img = view.findViewById<ImageView>(R.id.iv_snack_state)
     val text = view.findViewById<TextView>(R.id.tv_snack_message)
 
-    view.findViewById<LinearLayout>(R.id.ll_snack_bg).apply {
+    view.findViewById<LinearLayoutCompat>(R.id.ll_snack_bar).apply {
         background.setTint(ContextCompat.getColor(context, backgroundColor))
     }
     img.load(image)
     text.text = message
     text.setTextColor(ContextCompat.getColor(context, fontColor))
 
-    layout.setPadding(0,0,0,0)
     layout.addView(view)
 
-
-    snackBar.show()
+    return snackBar
 }
