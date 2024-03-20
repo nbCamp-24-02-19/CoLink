@@ -1,6 +1,7 @@
 package com.seven.colink.ui.post.content.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,7 +9,9 @@ import androidx.lifecycle.viewModelScope
 import com.seven.colink.R
 import com.seven.colink.domain.entity.ApplicationInfo
 import com.seven.colink.domain.entity.CommentEntity
+import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.entity.RecruitInfo
+import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.CommentRepository
 import com.seven.colink.domain.repository.PostRepository
@@ -56,6 +59,30 @@ class PostContentViewModel @Inject constructor(
 
     private val _userComment = MutableLiveData<CommentEntity>()
     val userComments: LiveData<CommentEntity> = _userComment
+
+    private val _checkLogin = MutableLiveData<Boolean>(false)
+    val checkLogin: LiveData<Boolean> get() = _checkLogin
+
+    private val _isLike = MutableLiveData<Boolean>()
+    val isLike: LiveData<Boolean> get() = _isLike
+
+    private var _currentUser:UserEntity? = null
+    private val currentUser get() = _currentUser
+
+    private val _likeList = MutableLiveData<List<String>?>()
+    val likeList: LiveData<List<String>?> get() = _likeList
+
+    init {
+        viewModelScope.launch {
+            _currentUser = authRepository.getCurrentUser().message.let {
+                userRepository.getUserDetails(it)
+            }.getOrNull()
+
+//            _likeList.value = authRepository.getCurrentUser().message.let {
+//                userRepository.getUserDetails(it)
+//            }.getOrNull()?.likeList
+        }
+    }
 
     suspend fun setEntity(key: String) {
         entity = getPostUseCase(key) ?: return
@@ -262,7 +289,8 @@ class PostContentViewModel @Inject constructor(
         description = description,
         tags = tags,
         registeredDate = registeredDate,
-        views = views
+        views = views,
+        like = like
     )
 
     fun createDialog(recruitItem: PostContentItem.RecruitItem) {
@@ -275,4 +303,53 @@ class PostContentViewModel @Inject constructor(
             recruitItem = recruitItem
         )
     }
+
+    fun checkLogin(){
+        viewModelScope.launch {
+            val currentUser = authRepository.getCurrentUser()
+            _checkLogin.value = currentUser == DataResultStatus.SUCCESS
+        }
+    }
+
+    fun discernLike(key: String) : Boolean? {
+        viewModelScope.launch {
+            Log.d("Post", "@@@ LikeList = ${currentUser?.likeList}")
+
+            if (currentUser?.likeList?.contains(key) == false){
+                _currentUser = currentUser!!.copy(likeList = currentUser!!.likeList?.plus(listOf(key)))
+                _isLike.value = true
+                Log.d("Post","!!! likeList containsNot key")
+                Log.d("Post","likeList = ${currentUser?.likeList}")
+            } else {
+                _currentUser = currentUser!!.copy(likeList = currentUser!!.likeList?.minus(listOf(key).toSet()))
+                _isLike.value = false
+                Log.d("Post","### likeList contains key")
+                Log.d("Post","likeList = ${currentUser?.likeList}")
+            }
+            Log.d("Post","_isLike.value = ${_isLike.value}")
+        }
+        Log.d("Post","isLike.value = ${isLike.value}")
+        return _isLike.value
+    }
+
+//    fun discernLike(key: String) {
+//        viewModelScope.launch {
+//            Log.d("Post", "@@@ LikeList = ${likeList.value}")
+//
+//            val currentList = likeList.value ?: emptyList()
+//
+//            if (!currentList.contains(key)){
+//                _likeList.value = currentList.plus(key)
+//                _isLike.value = true
+//                Log.d("Post","!!! likeList containsNot key")
+//                Log.d("Post","likeList = ${likeList}")
+//            } else {
+//                _likeList.value = currentList.minus(key)
+//                _isLike.value = false
+//                Log.d("Post","### likeList contains key")
+//                Log.d("Post","likeList = ${likeList}")
+//            }
+//        }
+//    }
+
 }
