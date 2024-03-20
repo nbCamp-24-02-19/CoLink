@@ -2,17 +2,24 @@ package com.seven.colink.ui.post.content
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import android.widget.PopupMenu
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentPostContentBinding
+import com.seven.colink.databinding.ItemPostCommentBinding
+import com.seven.colink.domain.entity.CommentEntity
+import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.ui.group.board.list.ApplyRequestFragment
 import com.seven.colink.ui.post.content.adapter.PostContentListAdapter
+import com.seven.colink.ui.post.content.model.CommentButtonUiState
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.content.model.DialogUiState
 import com.seven.colink.ui.post.content.model.PostContentItem
@@ -35,6 +42,8 @@ class PostContentFragment : Fragment() {
     private var _binding: FragmentPostContentBinding? = null
     private val binding: FragmentPostContentBinding get() = _binding!!
 
+    private lateinit var commentBinding: ItemPostCommentBinding
+
     private val viewModel: PostContentViewModel by viewModels()
     private val sharedViewModel: PostSharedViewModel by activityViewModels()
 
@@ -49,6 +58,39 @@ class PostContentFragment : Fragment() {
                                 item.userInfo.uid ?: return@PostContentListAdapter
                             )
                         )
+                    }
+
+                    is PostContentItem.Item -> {
+                        Log.d("Post", "isLike Clicked")
+                        if (viewModel.checkLogin.value == true) {
+                            Log.d("Post", "State = Login")
+                            // 좋아요 버튼 클릭 이벤트
+                            // if문 안에 viewModel.discernLike(key)로 isLike 구분 하도록 바꾸기
+                            // ((contains(key) = true) == (isLike = true))
+                            if (item.key?.let { viewModel.discernLike(it) } == false){
+                                item.isLike = false
+                                item.like = item.like?.minus(1)
+                                Log.d("Post", "Like True to False = ${item.isLike}")
+                                Log.d("Post", "Like Count = ${item.like}")
+                            } else {
+                                item.isLike = true
+                                item.like = item.like?.plus(1)
+                                Log.d("Post", "Like False to True = ${item.isLike}")
+                                Log.d("Post", "Like Count = ${item.like}")
+                            }
+                        } else {
+                            Log.d("Post", "State = Logout")
+                            requireContext().setDialog(
+                                title = "로그인 필요",
+                                message = "서비스를 이용하기 위해서는 로그인이 필요합니다. \n로그인 페이지로 이동하시겠습니까?",
+                                confirmAction = {
+                                    val intent = Intent(requireContext(), SignInActivity::class.java)
+                                    startActivity(intent)
+                                    it.dismiss()
+                                },
+                                cancelAction = { it.dismiss() }
+                            ).show()
+                        }
                     }
 
                     else -> Unit
@@ -88,8 +130,18 @@ class PostContentFragment : Fragment() {
             onClickCommentButton = {
                 viewModel.registerComment(it)
             },
-            onClickCommentDeleteButton = {
-                viewModel.deleteComment(it)
+            onClickCommentDeleteButton = {item, buttonUiState->
+//                when(commentButtonUistate){
+//                    CommentButtonUiState.Manager -> viewModel.deleteComment(item)
+//                    CommentButtonUiState.User -> commentBinding.tvPostCommentDelete.visibility = View.GONE
+//                    CommentButtonUiState.Unknown -> commentBinding.tvPostCommentDelete.visibility = View.GONE
+//                }
+
+                when(buttonUiState) {
+                    ContentButtonUiState.Manager -> viewModel.deleteComment(item)
+                    ContentButtonUiState.User -> commentBinding.tvPostCommentDelete.visibility = View.GONE
+                    ContentButtonUiState.Unknown -> commentBinding.tvPostCommentDelete.visibility = View.GONE
+                }
             }
         )
     }
@@ -98,6 +150,7 @@ class PostContentFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        commentBinding = ItemPostCommentBinding.inflate(layoutInflater)
         _binding = FragmentPostContentBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -131,6 +184,7 @@ class PostContentFragment : Fragment() {
     private fun initViewModel() = with(viewModel) {
         uiState.observe(viewLifecycleOwner) { items ->
             postContentListAdapter.submitList(items)
+            checkLogin()
         }
 
         updateButtonUiState.observe(viewLifecycleOwner) {
@@ -159,6 +213,12 @@ class PostContentFragment : Fragment() {
 
             requireContext().showToast(getString(messageResId))
         }
+
+//        updateCommentButtonUiState.observe(viewLifecycleOwner){
+//            commentBinding.tvPostCommentDelete.visibility =
+//                if(it == CommentButtonUiState.Manager) View.VISIBLE else View.GONE
+//        }
+
     }
 
     private fun initSharedViewModel() = with(sharedViewModel) {

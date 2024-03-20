@@ -2,22 +2,36 @@ package com.seven.colink.ui.userdetail.adapter
 
 import android.graphics.Color
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.seven.colink.R
 import com.seven.colink.databinding.MypageRecyclerviewItemPostBinding
+import com.seven.colink.ui.mypage.MyPostItem
 import com.seven.colink.ui.userdetail.UserPostItem
 
-class UserDetailPostAdapter (var mItems: List<UserPostItem>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class UserDetailPostAdapter (
+    var mItems: List<UserPostItem>
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
     companion object{
         private const val VIEW_TYPE_PROJECT = 1
         private const val VIEW_TYPE_STUDY = 2
     }
+
+    interface PostClick{
+        fun onClick(view: View, position: Int, item: UserPostItem.UserDetailPostItem)
+    }
+
+    interface StudyClick{
+        fun onClick(view: View, position: Int, item: UserPostItem.UserDetailStudyItem)
+    }
+
+    var studyClick: StudyClick? = null
+
+    var postClick: PostClick? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-//        val binding = MypageRecyclerviewItemPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-//        return postViewHolder(binding)
         val inflater = LayoutInflater.from(parent.context)
         return when(viewType){
             VIEW_TYPE_PROJECT -> {
@@ -45,6 +59,9 @@ class UserDetailPostAdapter (var mItems: List<UserPostItem>) : RecyclerView.Adap
                 }
                 holder.projectname.text = item.userprojectName
                 holder.projecttime.text = item.userprojectTime
+                holder.itemView.setOnClickListener {
+                    postClick?.onClick(it, position, item)
+                }
             }
             is UserPostItem.UserDetailStudyItem ->{
                 (holder as StudyViewHolder).holderStudying.text = item.userstudying
@@ -56,6 +73,9 @@ class UserDetailPostAdapter (var mItems: List<UserPostItem>) : RecyclerView.Adap
                 }
                 holder.studyname.text = item.userstudyName
                 holder.studytime.text = item.userstudyTime
+                holder.itemView.setOnClickListener {
+                    studyClick?.onClick(it, position, item)
+                }
             }
         }
     }
@@ -66,7 +86,8 @@ class UserDetailPostAdapter (var mItems: List<UserPostItem>) : RecyclerView.Adap
     }
 
     override fun getItemCount(): Int {
-        return mItems.size
+        val limit = 5
+        return Math.min(mItems.size, limit)
     }
 
     override fun getItemViewType(position: Int): Int {

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <ImageView
+        android:id="@+id/notification_thumbnail"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/dummy" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/notification_chat_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            style="@style/BoldTextStyle"
+            android:maxLines="1"
+            android:text="메이플 스토리"
+            android:textColor="@color/black"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/notification_chat_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/BoldTextStyle"
+            android:maxLines="1"
+            android:text="빅치즈"
+            android:textColor="@color/black"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/notification_chat_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="감사합니다 ㅎㅎ"
+            android:textColor="@color/typo_color"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/notification_chat_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:text="오전 4:20"
+        android:textColor="@color/typo_color"
+        android:textSize="10sp" />
+</LinearLayout>

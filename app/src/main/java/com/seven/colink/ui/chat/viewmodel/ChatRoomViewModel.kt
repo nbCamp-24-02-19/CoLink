@@ -1,5 +1,6 @@
 package com.seven.colink.ui.chat.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,7 +8,9 @@ import com.seven.colink.domain.entity.ChatRoomEntity
 import com.seven.colink.domain.entity.MessageEntity
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.ChatRepository
+import com.seven.colink.domain.repository.ImageRepository
 import com.seven.colink.domain.repository.UserRepository
+import com.seven.colink.domain.usecase.SendNotificationUseCase
 import com.seven.colink.ui.chat.ChatRoomActivity.Companion.CHAT_ID
 import com.seven.colink.ui.chat.model.ChatRoomItem
 import com.seven.colink.util.convert.convertTime
@@ -17,8 +20,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.internal.wait
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,6 +31,8 @@ class ChatRoomViewModel @Inject constructor(
     private val chatRepository: ChatRepository,
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
+    private val sendNotificationUseCase: SendNotificationUseCase,
+    private val imageRepository: ImageRepository,
     private val handle: SavedStateHandle,
 ) : ViewModel() {
     private val _messageList = MutableStateFlow<UiState<List<ChatRoomItem>?>>(UiState.Loading)
@@ -36,7 +43,11 @@ class ChatRoomViewModel @Inject constructor(
     private val _chatRoom = MutableStateFlow(ChatRoomEntity())
     val chatRoom: StateFlow<ChatRoomEntity> = _chatRoom
 
-    private lateinit var uid: String
+    private val _selectedImage = MutableStateFlow<Uri>(Uri.EMPTY)
+    val selectedImage = _selectedImage.asStateFlow()
+
+    private var _uid: String? = null
+    private val uid get() = _uid!!
 
     init {
         viewModelScope.launch {
@@ -44,7 +55,7 @@ class ChatRoomViewModel @Inject constructor(
             val uidDeferred = async { authRepository.getCurrentUser().message }
 
             _chatRoom.value = chatRoomDeferred.await()
-            uid = uidDeferred.await()
+            _uid = uidDeferred.await()
 
             setMessages(chatRoom.value)
         }
@@ -82,14 +93,20 @@ class ChatRoomViewModel @Inject constructor(
 
     fun sendMessage(text: String) {
         viewModelScope.launch {
-            chatRepository.sendMessage(
-                MessageEntity(
-                    chatRoomId = chatRoom.value.key,
-                    text = text,
-                    authId = uid,
-                    viewUsers = listOf(uid)
-                )
-            )
+            val imageUrl = selectedImage.value.let {
+                imageRepository.uploadChatImage(it).getOrNull()?.toString()
+            }
+
+            MessageEntity(
+                chatRoomId = chatRoom.value.key,
+                text = text.ifEmpty { "사진" },
+                img = imageUrl,
+                authId = uid,
+                viewUsers = listOf(uid)
+            ).let {
+            chatRepository.sendMessage(it)
+                sendNotificationUseCase(it, chatRoom.value)
+            }
         }
     }
 
@@ -100,6 +117,7 @@ class ChatRoomViewModel @Inject constructor(
     private fun MessageEntity.convertMyMessage(users: Int) = ChatRoomItem.MyMessage(
         key = key,
         text = text.toString(),
+        img = img,
         time = registerDate.convertTime(),
         viewCount = (users - viewUsers.size)
     )
@@ -110,9 +128,18 @@ class ChatRoomViewModel @Inject constructor(
                 key = key,
                 text = text.toString(),
                 time = registerDate.convertTime(),
+                img = img,
                 viewCount = (users - viewUsers.size),
                 profileUrl = it.getOrNull()?.photoUrl,
                 name = it.getOrNull()?.name.toString(),
             )
         }
+
+    fun selectImg(uri: Uri?) {
+        _selectedImage.value = uri?: Uri.EMPTY
+    }
+
+    fun emptyImg() {
+        _selectedImage.value = Uri.EMPTY
+    }
 }

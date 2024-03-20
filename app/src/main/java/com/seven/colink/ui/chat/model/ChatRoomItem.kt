@@ -3,7 +3,8 @@ package com.seven.colink.ui.chat.model
 sealed interface ChatRoomItem {
     data class MyMessage (
         val key: String,
-        val text: String,
+        val text: String? = null,
+        val img: String? = null,
         val time: String,
         val viewCount: Int,
     ): ChatRoomItem
@@ -12,7 +13,8 @@ sealed interface ChatRoomItem {
         val key: String,
         val name: String,
         val profileUrl: String?,
-        val text: String,
+        val text: String? = null,
+        val img: String? = null,
         val time: String,
         val viewCount: Int,
     ): ChatRoomItem

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/notification_thumbnail"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/dummy"
+        android:scaleType="centerCrop"
+        android:background="@drawable/bg_background_circle"
+        android:clipToOutline="true"/>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_marginStart="8dp">
+
+        <TextView
+            android:id="@+id/notification_chat_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="메이플 스토리"
+            android:textSize="12sp"
+            android:textColor="@color/black"
+            style="@style/BoldTextStyle"
+            android:ellipsize="end"
+            android:maxLines="1"/>
+
+        <TextView
+            android:id="@+id/notification_chat_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="빅치즈"
+            android:textSize="12sp"
+            android:textColor="@color/black"
+            style="@style/BoldTextStyle"
+            android:maxLines="1"/>
+
+        <TextView
+            android:id="@+id/notification_chat_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="감사합니다 ㅎㅎ"
+            android:textSize="12sp"
+            android:textColor="@color/typo_color"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/notification_chat_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="오전 4:20"
+        android:textSize="10sp"
+        android:textColor="@color/typo_color"
+        android:maxLines="1"/>
+</LinearLayout>

@@ -1,16 +1,11 @@
 package com.seven.colink.ui.showmore.adapter
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import com.seven.colink.R
 import com.seven.colink.databinding.ItemSearchPostBinding
-import com.seven.colink.databinding.MypageRecyclerviewItemPostBinding
-import com.seven.colink.ui.mypage.MyPostItem
-import com.seven.colink.ui.mypage.adapter.MyPagePostAdapter
 import com.seven.colink.ui.showmore.ShowMoreItem
 
 class MyPageShowMoreAdapter(var mItem: List<ShowMoreItem>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -56,22 +51,6 @@ class MyPageShowMoreAdapter(var mItem: List<ShowMoreItem>) : RecyclerView.Adapte
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when(val item = mItem[position]){
             is ShowMoreItem.ShowMoreProjectItem ->{
-//                (holder as ProjectViewHolder).holderProjecting.text = item.showmoreprojecting
-//                //여기서 if문으로 컬러 바꾸기
-//                if (holder.holderProjecting.text == "참여중"){
-////                    holder.holderProjecting.setBackgroundColor(Color.parseColor("#2DB7FF"))
-//                    holder.holderProjecting.setBackgroundResource(R.drawable.bg_mypage_ing_blue)
-//                } else if(holder.holderProjecting.text == "중도하차"){
-//                    holder.holderProjecting.setBackgroundResource(R.drawable.bg_mypage_ing_gray)
-//                } else if(holder.holderProjecting.text =="완료"){
-//                    holder.holderProjecting.setBackgroundResource(R.drawable.bg_mypage_ing_purple)
-//                    holder.holderProjecting.setTextColor(Color.WHITE)
-//                }
-//                holder.projectname.text = item.showmoreprojectName
-//                holder.projecttime.text = item.showmoreprojectTime
-//                holder.itemView.setOnClickListener {
-//                    postClick?.onClick(it, position, item)
-//                }
                 (holder as ProjectViewHolder).projecttitle.text = item.showmoreprojectTitle
                 holder.projectname.text = item.showmoreprojectName
                 holder.projectdescription.text = item.showmoreprojectDescription
@@ -83,18 +62,6 @@ class MyPageShowMoreAdapter(var mItem: List<ShowMoreItem>) : RecyclerView.Adapte
                 }
             }
             is ShowMoreItem.ShowMoreStudyItem ->{
-//                (holder as StudyViewHolder).holderStudying.text = item.showmorestudying
-//                if (holder.holderStudying.text == "참여중"){
-//                    holder.holderStudying.setBackgroundResource(R.drawable.bg_mypage_ing_blue)
-//                } else if(holder.holderStudying.text == "완료"){
-//                    holder.holderStudying.setBackgroundResource(R.drawable.bg_mypage_ing_purple)
-//                    holder.holderStudying.setTextColor(Color.WHITE)
-//                }
-//                holder.studyname.text = item.showmorestudyName
-//                holder.studytime.text = item.showmorestudyTime
-//                holder.itemView.setOnClickListener {
-//                    studyClick?.onClick(it, position, item)
-//                }
                 (holder as StudyViewHolder).studytitle.text = item.showmorestudytitle
                 holder.studyname.text = item.showmorestudyName
                 holder.studydescription.text = item.showmorestudyDescription
@@ -116,9 +83,6 @@ class MyPageShowMoreAdapter(var mItem: List<ShowMoreItem>) : RecyclerView.Adapte
     }
 
     inner class ProjectViewHolder(val binding: ItemSearchPostBinding) : RecyclerView.ViewHolder(binding.root){
-        //        val holderProjecting = binding.tvMypagePostItemIngText
-//        val projectname = binding.tvMypagePostItemProjectName
-//        val projecttime = binding.tvMypagePostItemTime
         val projecttitle = binding.tvSearchItemTitle
         val projectdescription = binding.tvSearchItemDescription
         val projectname = binding.tvSearchItemPoster
@@ -128,9 +92,6 @@ class MyPageShowMoreAdapter(var mItem: List<ShowMoreItem>) : RecyclerView.Adapte
     }
 
     inner class StudyViewHolder(val binding: ItemSearchPostBinding): RecyclerView.ViewHolder(binding.root){
-        //        val holderStudying = binding.tvMypagePostItemIngText
-//        val studyname = binding.tvMypagePostItemProjectName
-//        val studytime = binding.tvMypagePostItemTime
         val studytitle = binding.tvSearchItemTitle
         val studydescription = binding.tvSearchItemDescription
         val studyname = binding.tvSearchItemPoster
