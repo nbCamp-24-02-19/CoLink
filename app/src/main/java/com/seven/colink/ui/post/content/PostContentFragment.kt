@@ -2,10 +2,12 @@ package com.seven.colink.ui.post.content
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -51,6 +53,39 @@ class PostContentFragment : Fragment() {
                         )
                     }
 
+                    is PostContentItem.Item -> {
+                        Log.d("Post", "isLike Clicked")
+                        if (viewModel.checkLogin.value == true) {
+                            Log.d("Post", "State = Login")
+                            // 좋아요 버튼 클릭 이벤트
+                            // if문 안에 viewModel.discernLike(key)로 isLike 구분 하도록 바꾸기
+                            // ((contains(key) = true) == (isLike = true))
+                            if (item.key?.let { viewModel.discernLike(it) } == false){
+                                item.isLike = false
+                                item.like = item.like?.minus(1)
+                                Log.d("Post", "Like True to False = ${item.isLike}")
+                                Log.d("Post", "Like Count = ${item.like}")
+                            } else {
+                                item.isLike = true
+                                item.like = item.like?.plus(1)
+                                Log.d("Post", "Like False to True = ${item.isLike}")
+                                Log.d("Post", "Like Count = ${item.like}")
+                            }
+                        } else {
+                            Log.d("Post", "State = Logout")
+                            requireContext().setDialog(
+                                title = "로그인 필요",
+                                message = "서비스를 이용하기 위해서는 로그인이 필요합니다. \n로그인 페이지로 이동하시겠습니까?",
+                                confirmAction = {
+                                    val intent = Intent(requireContext(), SignInActivity::class.java)
+                                    startActivity(intent)
+                                    it.dismiss()
+                                },
+                                cancelAction = { it.dismiss() }
+                            ).show()
+                        }
+                    }
+
                     else -> Unit
                 }
             },
@@ -61,7 +96,12 @@ class PostContentFragment : Fragment() {
                             ContentButtonUiState.User -> viewModel.createDialog(item)
                             ContentButtonUiState.Unknown -> {
                                 // TODO 로그인 화면으로 이동한다는 메세지 노출
-                                startActivity(Intent(requireContext(), SignInActivity::class.java))
+                                startActivity(
+                                    Intent(
+                                        requireContext(),
+                                        SignInActivity::class.java
+                                    )
+                                )
                             }
 
                             else -> Unit
@@ -131,6 +171,7 @@ class PostContentFragment : Fragment() {
     private fun initViewModel() = with(viewModel) {
         uiState.observe(viewLifecycleOwner) { items ->
             postContentListAdapter.submitList(items)
+            checkLogin()
         }
 
         updateButtonUiState.observe(viewLifecycleOwner) {

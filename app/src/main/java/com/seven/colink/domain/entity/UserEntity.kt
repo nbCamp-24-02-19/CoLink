@@ -27,5 +27,6 @@ data class UserEntity(
     val creativity: Float? = null,
     val evaluatedNumber: Int = 0,
     val participantsChatRoomIds: List<String>? = emptyList(),
-    @get:Exclude @set:Exclude var chatRoomKeyList: List<String>? = null
+    @get:Exclude @set:Exclude var chatRoomKeyList: List<String>? = null,
+    val likeList: List<String>? = emptyList()
 )
