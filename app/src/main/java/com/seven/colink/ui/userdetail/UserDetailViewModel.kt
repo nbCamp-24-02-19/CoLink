@@ -13,10 +13,8 @@ import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.domain.usecase.GetChatRoomUseCase
 import com.seven.colink.domain.usecase.SendNotificationInviteUseCase
-import com.seven.colink.ui.mypage.MyPagePostModel
 import com.seven.colink.ui.userdetail.UserDetailActivity.Companion.EXTRA_USER_KEY
 import com.seven.colink.util.convert.convertToDaysAgo
-import com.seven.colink.util.status.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -31,7 +29,7 @@ class UserDetailViewModel @Inject constructor(
     private val getChatRoomUseCase: GetChatRoomUseCase,
     private val sendNotificationInviteUseCase: SendNotificationInviteUseCase,
     handle: SavedStateHandle,
-): ViewModel() {
+) : ViewModel() {
 
     private val _userDetails = MutableLiveData<UserDetailModel>()
     private val _userDetailPosts = MutableLiveData<List<UserDetailPostModel>>()
@@ -45,16 +43,17 @@ class UserDetailViewModel @Inject constructor(
 
     private val _chatRoom = MutableSharedFlow<ChatRoomEntity>()
     val chatRoom = _chatRoom.asSharedFlow()
+
     init {
-        _userId = handle.get<String>(EXTRA_USER_KEY)?: ""
+        _userId = handle.get<String>(EXTRA_USER_KEY) ?: ""
         loadUserDetails()
         loadUserPost()
     }
 
-    private fun loadUserDetails(){
+    private fun loadUserDetails() {
         viewModelScope.launch {
             val result = userRepository.getUserDetails(userId)
-            result.onSuccess { user->
+            result.onSuccess { user ->
                 _userDetails.postValue(user?.convertUserEntity())
             }
         }
@@ -70,7 +69,7 @@ class UserDetailViewModel @Inject constructor(
     }
 
     fun registerChatRoom() {
-        viewModelScope.launch{
+        viewModelScope.launch {
             _chatRoom.emit(getChatRoomUseCase(userId))
         }
     }
@@ -101,8 +100,8 @@ class UserDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _currentUsersPostList.emit(
                 postRepository.getPostByAuthId(
-                authRepository.getCurrentUser().message
-            ).getOrNull()?: emptyList()
+                    authRepository.getCurrentUser().message
+                ).getOrNull() ?: emptyList()
             )
         }
     }
