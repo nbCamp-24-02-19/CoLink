@@ -41,6 +41,10 @@ class UserDetailShowmoreViewModel @Inject constructor(
         }
     }
 
+    suspend fun getPost(key: String): PostEntity? {
+        return postRepository.getPost(key).getOrNull()
+    }
+
     private suspend fun PostEntity.convertPostEntity() = UserDetailShowmoreModel(
         key = key,
         title = title,

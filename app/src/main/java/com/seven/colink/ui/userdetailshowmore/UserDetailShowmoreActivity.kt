@@ -4,13 +4,17 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.seven.colink.databinding.ActivityUserDetailShowmoreBinding
+import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.ui.userdetailshowmore.adapter.UserDetailShowmoreAdapter
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class UserDetailShowmoreActivity : AppCompatActivity() {
@@ -73,6 +77,52 @@ class UserDetailShowmoreActivity : AppCompatActivity() {
                     )
                 }
             }?.let { it1 -> adapter.changeDataset(it1) }
+        }
+
+        adapter.projectClick = object : UserDetailShowmoreAdapter.ProjectClick{
+            override fun onClick(
+                view: View,
+                position: Int,
+                item: UserDetailShowmoreItem.ShowMoreProjectItem
+            ) {
+                lifecycleScope.launch {
+                    var key = item.projectKey
+                    val post = key.let {
+                        viewModel.getPost(it)
+                    }
+                    if (post != null){
+                        startActivity(
+                            PostActivity.newIntent(
+                                context = this@UserDetailShowmoreActivity,
+                                key = key
+                            )
+                        )
+                    }
+                }
+            }
+        }
+
+        adapter.studyClick = object : UserDetailShowmoreAdapter.StudyClick{
+            override fun onClick(
+                view: View,
+                position: Int,
+                item: UserDetailShowmoreItem.ShowMoreStudyItem
+            ) {
+                lifecycleScope.launch {
+                    var key = item.studyKey
+                    val post = key.let {
+                        viewModel.getPost(it)
+                    }
+                    if (post != null){
+                        startActivity(
+                            PostActivity.newIntent(
+                                context = this@UserDetailShowmoreActivity,
+                                key = key
+                            )
+                        )
+                    }
+                }
+            }
         }
 
 
