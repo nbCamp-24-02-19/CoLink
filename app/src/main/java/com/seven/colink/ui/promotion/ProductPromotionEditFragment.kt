@@ -132,12 +132,20 @@ class ProductPromotionEditFragment : Fragment() {
         binding.tvPromotionEditComplete.setOnClickListener {
             editAdapter.editTextViewAllFocusOut()
             saveDataToViewModel()
+
+            val frag = ProductPromotionFragment()
+            val bundle = Bundle()
+            bundle.putString(Constants.EXTRA_ENTITY_KEY,editViewModel.entity.key)
+            frag.arguments = bundle
+
+            val fragmentManager = requireActivity().supportFragmentManager
+            val trans = fragmentManager.beginTransaction()
+            trans.replace(R.id.frame_product_promotion,frag)
+            trans.commit()
         }
     }
 
     private fun saveDataToViewModel(){
-
-
         coroutineScope.launch {
             val tempData = editAdapter.getTempData()
 
