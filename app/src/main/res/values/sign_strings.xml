@@ -12,9 +12,12 @@
     <string name="sign_up_id">아이디</string>
     <string name="sign_up_input_name">이름을\n입력해주세요</string>
     <string name="sign_up_name">이름</string>
+    <string name="sign_up_valid_name">이름은 1글자 이상 16자 이하여야 합니다</string>
     <string name="sign_up_input_email">이메일을\n입력해주세요</string>
     <string name="sign_up_email">이메일</string>
+    <string name="sign_up_valid_email">이메일 형식에 맞춰 작성해 주세요</string>
     <string name="sign_up_input_password">비밀번호를\n입력해주세요</string>
+    <string name="sign_up_valid_password">비밀번호는 6자 이상이어야 합니다.</string>
     <string name="sign_up_password">비밀번호</string>
     <string name="sign_up_password_check">비밀번호 확인</string>
     <string name="sign_up_next">다음</string>

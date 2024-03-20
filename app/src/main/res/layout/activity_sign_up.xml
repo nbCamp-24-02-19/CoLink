@@ -37,6 +37,16 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/tv_sign_up_valid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_up_valid_name"
+            android:textSize="14sp"
+            android:textColor="@color/typo_color"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_sign_up_title"/>
+
+        <TextView
             android:id="@+id/tv_sign_up_subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -84,7 +94,6 @@
                 app:boxStrokeColor="@color/black"
                 android:layout_width="0dp"
                 android:paddingStart="-8dp"
-                app:counterEnabled="true"
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
 
