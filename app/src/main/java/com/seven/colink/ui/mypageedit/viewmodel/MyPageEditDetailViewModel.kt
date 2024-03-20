@@ -32,11 +32,7 @@ class MyPageEditDetailViewModel @Inject constructor(
     private val _uploadState = MutableSharedFlow<SnackType>()
     val uploadState = _uploadState.asSharedFlow()
 
-    init {
-        loadUserDetails()
-    }
-
-    private fun loadUserDetails() {
+    fun loadUserDetails() {
         viewModelScope.launch {
             _userDetail.value = Loading // 로딩 상태 설정
             try {

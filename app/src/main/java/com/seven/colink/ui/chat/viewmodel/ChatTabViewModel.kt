@@ -54,7 +54,7 @@ class ChatTabViewModel @Inject constructor(
                             chatRepository.getChatRoom(it)?.convert(result.message, chatType.value)
                         }
                     } ?: return@launch
-                    _chatList.value = UiState.Success(list.awaitAll().filterNotNull())
+                    _chatList.value = UiState.Success(list.awaitAll().filterNotNull().sortedByDescending { it.recentTime })
                 }
             } catch (e: Exception) {
                 _chatList.value = UiState.Error(e)
