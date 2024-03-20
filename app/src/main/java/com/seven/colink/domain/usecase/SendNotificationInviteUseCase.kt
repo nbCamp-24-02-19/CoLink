@@ -1,9 +1,6 @@
 package com.seven.colink.domain.usecase
 
-import android.content.Context
 import com.seven.colink.R
-import com.seven.colink.domain.entity.ChatRoomEntity
-import com.seven.colink.domain.entity.MessageEntity
 import com.seven.colink.domain.entity.NotificationEntity
 import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.model.NotifyType
@@ -28,9 +25,10 @@ class SendNotificationInviteUseCase @Inject constructor(
                     key = data.key,
                     toUserToken = user.token,
                     toUserId = user.uid,
-                    message = resourceRepository.getString(R.string.group_invitation_message, data.title!!),
-                    title = resourceRepository.getString(R.string.group_invitation_title),
                     type = NotifyType.INVITE,
+                    title = resourceRepository.getString(R.string.group_invitation_title),
+                    message = resourceRepository.getString(R.string.group_invitation_message, data.title!!),
+                    groupType = data.groupType,
                 ).let { notificationEntity ->
                     notifyRepository.sendNotification(
                         notificationEntity
