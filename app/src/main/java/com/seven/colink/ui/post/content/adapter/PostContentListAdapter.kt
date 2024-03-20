@@ -1,11 +1,13 @@
 package com.seven.colink.ui.post.content.adapter
 
 import android.text.InputType
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -22,11 +24,15 @@ import com.seven.colink.databinding.ItemPostRecruitBinding
 import com.seven.colink.databinding.ItemPostSelectionTypeBinding
 import com.seven.colink.databinding.ItemPostSubTitleBinding
 import com.seven.colink.databinding.ItemUnknownBinding
+import com.seven.colink.domain.entity.CommentEntity
+import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.ui.group.board.board.GroupContentViewType
+import com.seven.colink.ui.post.content.model.CommentButtonUiState
 import com.seven.colink.ui.post.register.post.adapter.TagListAdapter
 import com.seven.colink.ui.post.register.post.model.TagListItem
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.content.model.PostContentItem
+import com.seven.colink.ui.post.content.viewmodel.PostContentViewModel
 import com.seven.colink.util.setLevelIcon
 import com.seven.colink.util.status.ApplicationStatus
 import com.seven.colink.util.status.GroupType
@@ -37,7 +43,7 @@ class PostContentListAdapter(
     private val onClickButton: (PostContentItem, ContentButtonUiState) -> Unit,
     private val onClickView: (View) -> Unit,
     private val onClickCommentButton: (String) -> Unit,
-    private val onClickCommentDeleteButton: (String) -> Unit,
+    private val onClickCommentDeleteButton: (String, ContentButtonUiState) -> Unit,
     ) : ListAdapter<PostContentItem, PostContentListAdapter.PostViewHolder>(
     object : DiffUtil.ItemCallback<PostContentItem>() {
 
@@ -103,7 +109,8 @@ class PostContentListAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder =
         when (PostContentViewTypeItem.from(viewType)) {
             PostContentViewTypeItem.ITEM -> PostItemViewHolder(
-                ItemPostContentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ItemPostContentBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                onClickItem
             )
 
             PostContentViewTypeItem.RECRUIT -> PostRecruitItemViewHolder(
@@ -200,6 +207,8 @@ class PostContentListAdapter(
     ) : PostViewHolder(binding.root) {
         override fun onBind(item: PostContentItem) {
             if (item is PostContentItem.MemberItem) {
+                binding.ivUser.load(item.userInfo.photoUrl)
+                binding.ivUser.clipToOutline = true
                 binding.tvUserName.text = item.userInfo.name
                 binding.tvUserGrade.text = item.userInfo.grade.toString()
                 item.userInfo.level?.let { binding.ivLevelDiaIcon.setLevelIcon(it) }
@@ -243,7 +252,8 @@ class PostContentListAdapter(
     }
 
     class PostItemViewHolder(
-        private val binding: ItemPostContentBinding
+        private val binding: ItemPostContentBinding,
+        private val onClickItem: (PostContentItem) -> Unit,
     ) : PostViewHolder(binding.root) {
         private val tagAdapter = TagListAdapter(onClickItem = { _ -> })
 
@@ -255,6 +265,14 @@ class PostContentListAdapter(
             val context = binding.root.context
             if (item is PostContentItem.Item) {
                 with(binding) {
+                    ivLike.setOnClickListener{
+                        onClickItem(item)
+                        if (!item.isLike) {
+                            ivLike.setImageResource(R.drawable.ic_heart)
+                        } else {
+                            ivLike.setImageResource(R.drawable.ic_heart_clicked)
+                        }
+                    }
                     tvTitle.text = item.title
                     tvRegisterDatetime.text = item.registeredDate
                     tvHits.text = item.views.toString()
@@ -365,7 +383,7 @@ class PostContentListAdapter(
 
     class PostCommentViewHolder(
         private val binding: ItemPostCommentBinding,
-        private val onClickCommentDeleteButton: (String) -> Unit
+        private val onClickCommentDeleteButton: (String, ContentButtonUiState) -> Unit
     ) : PostViewHolder(binding.root) {
         override fun onBind(item: PostContentItem) {
             if (item is PostContentItem.CommentItem){
@@ -374,8 +392,9 @@ class PostContentListAdapter(
                 binding.tvPostCommentTime.text = item.registeredDate
                 binding.ivPostCommentProfile.load(item.profile)
                 binding.ivPostCommentProfile.clipToOutline = true
+                binding.tvPostCommentDelete.visibility = if (item.buttonUiState == ContentButtonUiState.Manager) View.VISIBLE else View.GONE
                 binding.tvPostCommentDelete.setOnClickListener {
-                    onClickCommentDeleteButton(item.key)
+                    onClickCommentDeleteButton(item.key, item.buttonUiState)
                 }
             }
         }

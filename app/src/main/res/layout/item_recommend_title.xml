@@ -13,13 +13,20 @@
         android:layout_marginTop="?attr/actionBarSize"
         android:textSize="28sp"
         android:textColor="@color/black"
-        android:fontFamily="@font/inter_bold"/>
+        style="@style/BoldTextStyle"/>
+    <TextView
+        android:id="@+id/tv_recommend_edit_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/recommend_edit_group"
+        android:textColor="@color/main_color"
+        style="@style/BoldTextStyle"/>
 
     <TextView
         android:id="@+id/tv_recommend_title_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="32dp"
+        android:layout_marginVertical="24dp"
         android:text="@string/recommend_user_recommend_one"
         android:textColor="@color/black"
         android:fontFamily="@font/inter_medium"/>

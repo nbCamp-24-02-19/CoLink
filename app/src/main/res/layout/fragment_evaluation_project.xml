@@ -89,9 +89,9 @@
                 android:isIndicator="false"
                 android:numStars="5"
                 android:progressTint="@color/star_color"
-                android:rating="3"
+                android:rating="2.5"
                 android:secondaryProgressTint="@android:color/transparent"
-                android:stepSize="1" />
+                android:stepSize="0.5" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -133,9 +133,9 @@
                 android:layout_marginTop="12dp"
                 android:numStars="5"
                 android:progressTint="@color/star_color"
-                android:rating="3"
+                android:rating="2.5"
                 android:secondaryProgressTint="@android:color/transparent"
-                android:stepSize="1" />
+                android:stepSize="0.5" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -177,9 +177,9 @@
                 android:layout_marginTop="12dp"
                 android:numStars="5"
                 android:progressTint="@color/star_color"
-                android:rating="3"
+                android:rating="2.5"
                 android:secondaryProgressTint="@android:color/transparent"
-                android:stepSize="1" />
+                android:stepSize="0.5" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -221,9 +221,9 @@
                 android:layout_marginTop="12dp"
                 android:numStars="5"
                 android:progressTint="@color/star_color"
-                android:rating="3"
+                android:rating="2.5"
                 android:secondaryProgressTint="@android:color/transparent"
-                android:stepSize="1" />
+                android:stepSize="0.5" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -265,9 +265,9 @@
                 android:layout_marginTop="12dp"
                 android:numStars="5"
                 android:progressTint="@color/star_color"
-                android:rating="3"
+                android:rating="2.5"
                 android:secondaryProgressTint="@android:color/transparent"
-                android:stepSize="1" />
+                android:stepSize="0.5" />
 
             <LinearLayout
                 android:layout_width="match_parent"

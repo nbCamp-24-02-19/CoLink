@@ -8,6 +8,7 @@ import com.seven.colink.ui.chat.type.ChatTabType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -52,6 +53,7 @@ class GetChatRoomUseCase @Inject constructor(
                     )
                 }
             }
+            this.cancel()
         }
         val chatRoom = chatRepository.getChatRoom(newChat.key)
         return if (chatRoom == null) {
@@ -92,6 +94,7 @@ class GetChatRoomUseCase @Inject constructor(
                 }
             }
             chatRepository.createChatRoom(newChat)
+            this.cancel()
         }
         return chatRepository.getChatRoom(newChat.key) ?: newChat
     }
