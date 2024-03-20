@@ -1,18 +1,24 @@
 package com.seven.colink.ui.chat
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import com.seven.colink.databinding.ActivityChatRoomBinding
 import com.seven.colink.ui.chat.adapter.ChatRoomAdapter
 import com.seven.colink.ui.chat.viewmodel.ChatRoomViewModel
+import com.seven.colink.util.openGallery
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.status.UiState
@@ -29,7 +35,7 @@ class ChatRoomActivity : AppCompatActivity() {
         fun newIntent(
             context: Context,
             roomId: String,
-            title: String,
+            title: String? = null,
             ) = Intent(context, ChatRoomActivity()::class.java).apply {
             putExtra(CHAT_ID, roomId)
             putExtra(CHAT_TITLE, title)
@@ -45,6 +51,16 @@ class ChatRoomActivity : AppCompatActivity() {
     private val binding by lazy {
         ActivityChatRoomBinding.inflate(layoutInflater)
     }
+
+    private val galleryResultLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                viewModel.selectImg(result.data?.data?: return@registerForActivityResult)
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -55,21 +71,42 @@ class ChatRoomActivity : AppCompatActivity() {
 
     private fun initViewModel() = with(viewModel){
         lifecycleScope.launch {
-            chatRoom.collect{
-                observeMessage(it)
-                binding.tvChatRoomTitle.text = intent.getStringExtra(CHAT_TITLE)
+            chatRoom.collect{ chatRoomEntity ->
+                observeMessage(chatRoomEntity)
+                binding.tvChatRoomTitle.text = intent.getStringExtra(CHAT_TITLE) ?: chatRoomEntity.title
             }
         }
 
         lifecycleScope.launch {
             messageList.collect{ state ->
                 when(state) {
-                    is UiState.Loading -> showProgressOverlay()
+                    is UiState.Loading -> {
+                        showProgressOverlay()
+                    }
                     is UiState.Success -> {
                         adapter.submitList(state.data)
                         hideProgressOverlay()
+                        binding.rcChatRoom.scrollToPosition(adapter.itemCount - 1)
                     }
                     is UiState.Error -> Toast.makeText(this@ChatRoomActivity, "${state.throwable}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            selectedImage.collect { uri ->
+                with(binding) {
+                    if (uri != Uri.EMPTY) {
+                        llPreview.isVisible = true
+                        ivPreviewImg.load(uri)
+                        btChatroomSend.isEnabled = true
+                        etChatroomMessage.text?.clear()
+                        etChatroomMessage.isEnabled = false
+                    } else {
+                        llPreview.isVisible = false
+                        btChatroomSend.isEnabled = false
+                        etChatroomMessage.isEnabled = true
+                    }
                 }
             }
         }
@@ -88,8 +125,18 @@ class ChatRoomActivity : AppCompatActivity() {
             finish()
         }
         btChatroomSend.setOnClickListener {
-            viewModel.sendMessage(etChatroomMessage.text.toString())
+            viewModel.sendMessage(text = etChatroomMessage.text.toString())
             etChatroomMessage.text?.clear()
+            binding.llPreview.isVisible = false
+            viewModel.emptyImg()
+        }
+
+        btChatroomPlus.setOnClickListener {
+            openGallery(galleryResultLauncher)
+        }
+
+        ivPreviewClose.setOnClickListener {
+            viewModel.emptyImg()
         }
     }
 

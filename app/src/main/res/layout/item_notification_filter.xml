@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginVertical="12dp"
+    android:orientation="horizontal">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cv_notify_all"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:cardCornerRadius="24dp"
+        app:strokeColor="@color/main_color"
+        app:strokeWidth="1dp"
+        android:backgroundTint="@color/white">
+
+        <TextView
+            android:id="@+id/tv_notify_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="전체"
+            android:textSize="14sp"
+            android:paddingVertical="8dp"
+            android:paddingHorizontal="16dp"
+            android:textColor="@color/main_color"
+            style="@style/BoldTextStyle"/>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cv_notify_chat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:cardCornerRadius="24dp"
+        app:strokeColor="@color/enable_stroke"
+        app:strokeWidth="1dp"
+        android:backgroundTint="@color/white">
+
+        <TextView
+            android:id="@+id/tv_notify_chat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="채팅"
+            android:textSize="14sp"
+            android:paddingVertical="8dp"
+            android:paddingHorizontal="16dp"
+            android:textColor="@color/typo_color"
+            style="@style/BoldTextStyle"/>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cv_notify_recruit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:cardCornerRadius="24dp"
+        app:strokeColor="@color/enable_stroke"
+        app:strokeWidth="1dp"
+        android:backgroundTint="@color/white">
+
+        <TextView
+            android:id="@+id/tv_notify_recruit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="모집"
+            android:textSize="14sp"
+            android:paddingVertical="8dp"
+            android:paddingHorizontal="16dp"
+            android:textColor="@color/typo_color"
+            style="@style/BoldTextStyle"/>
+    </com.google.android.material.card.MaterialCardView>
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+    <TextView
+        android:id="@+id/tv_notify_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:text="전체 삭제"/>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

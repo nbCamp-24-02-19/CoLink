@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.messaging.FirebaseMessaging
 import com.seven.colink.data.firebase.type.DataBaseType
 import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.domain.repository.UserRepository
@@ -15,7 +16,8 @@ import kotlin.coroutines.suspendCoroutine
 
 class UserRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val firebaseMessaging: FirebaseMessaging,
 ) : UserRepository {
     override suspend fun registerUser(user: UserEntity) = suspendCoroutine { continuation ->
         firebaseAuth.currentUser?.uid?.let {
@@ -84,5 +86,21 @@ class UserRepositoryImpl @Inject constructor(
             }
     }.onFailure {
         return@onFailure
+    }
+
+    override suspend fun registerToken() = suspendCoroutine { continuation ->
+        firebaseMessaging.token.addOnSuccessListener { token ->
+            firebaseAuth.currentUser?.uid?.let {
+                firestore.collection(DataBaseType.USER.title).document(it).update("token",token)
+                    .addOnSuccessListener {
+                        continuation.resume(DataResultStatus.SUCCESS)
+                    }
+                    .addOnFailureListener { e ->
+                        continuation.resume(DataResultStatus.FAIL.apply {
+                            this.message = e.message ?: "Unknown Error"
+                        })
+                    }
+            }
+        }
     }
 }

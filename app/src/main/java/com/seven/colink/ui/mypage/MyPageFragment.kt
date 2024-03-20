@@ -27,6 +27,7 @@ import com.seven.colink.ui.mypage.adapter.MyPageSkilAdapter
 import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.ui.showmore.MyPageShowMoreActivity
 import com.seven.colink.ui.sign.signin.SignInActivity
+import com.seven.colink.util.convert.convertError
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
@@ -44,10 +45,6 @@ class MyPageFragment : Fragment() {
     private lateinit var _binding: MypageEditDialogBinding
     private lateinit var skiladapter: MyPageSkilAdapter
     private lateinit var postadapter: MyPagePostAdapter
-
-
-    var imageUri: Uri? = null
-
 
     companion object {
         fun newInstance() = MyPageFragment()
@@ -128,7 +125,7 @@ class MyPageFragment : Fragment() {
                 lifecycleScope.launch {
                     var key = item.studyKey
                     Log.d("postClick", "key = ${key}")
-                    val post = key?.let { viewModel.getPost(it) }
+                    val post = key.let { viewModel.getPost(it) }
                     Log.d("postClick", "post = ${post}")
                     if (post != null) {
                         startActivity(
@@ -168,7 +165,8 @@ class MyPageFragment : Fragment() {
 
                 is UiState.Error -> {
                     hideProgressOverlay()
-                    Toast.makeText(requireContext(), "${userDetails.throwable}", Toast.LENGTH_SHORT)
+                    if (userDetails.throwable.message == "No user") startActivity(Intent(requireContext(),SignInActivity::class.java))
+                    Toast.makeText(requireContext(), "${userDetails.throwable.message}", Toast.LENGTH_SHORT)
                         .show()
                 }
             }
@@ -350,5 +348,9 @@ class MyPageFragment : Fragment() {
             startActivity(Intent(requireContext(), SignInActivity::class.java))
             logout()
         }
+    }
+
+    fun onEditProfile() {
+
     }
 }
