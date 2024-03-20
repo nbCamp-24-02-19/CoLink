@@ -15,7 +15,7 @@ import com.seven.colink.databinding.UtilRecommendDialogBinding
 import com.seven.colink.ui.chat.ChatRoomActivity
 import com.seven.colink.ui.group.GroupActivity
 import com.seven.colink.ui.post.register.recommend.adapter.RecommendAdapter
-import com.seven.colink.ui.post.register.recommend.viewmodel.RecommendViewModel
+import com.seven.colink.ui.post.register.setgroup.viewmodel.SetGroupViewModel
 import com.seven.colink.ui.post.register.setgroup.SetGroupFragment
 import com.seven.colink.ui.post.register.viewmodel.PostSharedViewModel
 import com.seven.colink.ui.userdetail.UserDetailActivity
@@ -35,7 +35,7 @@ class RecommendFragment : Fragment() {
     private val binding by lazy {
         UtilRecommendDialogBinding.inflate(layoutInflater)
     }
-    private val viewModel: RecommendViewModel by viewModels()
+    private val viewModel: SetGroupViewModel by viewModels()
     private val sharedViewModel: PostSharedViewModel by activityViewModels()
     private val adapter by lazy {
         RecommendAdapter(
@@ -55,7 +55,10 @@ class RecommendFragment : Fragment() {
                 viewModel.setChatRoom(it)
             },
             onNext = {
-                requireActivity().finish()
+                parentFragmentManager.beginTransaction().apply {
+                    replace(R.id.fg_activity_post, SetGroupFragment())
+                    commit()
+                }
             },
             onDetail = {
                 startActivity(UserDetailActivity.newIntent(requireActivity(), it))
