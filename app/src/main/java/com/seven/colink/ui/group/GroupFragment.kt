@@ -51,17 +51,15 @@ class GroupFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentGroupBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-        return root
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         initView()
-        setObserve()
         initViewModel()
+        setObserve()
 
     }
 
@@ -79,8 +77,7 @@ class GroupFragment : Fragment() {
     }
 
     private fun setObserve() {
-
-        groupViewModel.joinList.observe(viewLifecycleOwner) {
+        groupViewModel.joinList.observe(viewLifecycleOwner){
             groupViewModel.itemUpdate()
         }
 
@@ -91,7 +88,6 @@ class GroupFragment : Fragment() {
         groupViewModel.groupData.observe(viewLifecycleOwner) {
             groupAdapter.submitList(it)
         }
-
     }
 
     private fun handleItemClick(item: GroupData) {

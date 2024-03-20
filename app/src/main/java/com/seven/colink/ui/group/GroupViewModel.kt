@@ -38,12 +38,8 @@ class GroupViewModel @Inject constructor(
     private val _wantList = MutableLiveData<List<GroupData.GroupWant>?>()
     val wantList: LiveData<List<GroupData.GroupWant>?> get() = _wantList
 
-    private val _checkLogin = MutableLiveData<Boolean>(false)
+    private val _checkLogin = MutableLiveData(false)
     val checkLogin: LiveData<Boolean> get() = _checkLogin
-
-    init {
-
-    }
 
     fun itemUpdate() {
         viewModelScope.launch {
@@ -53,12 +49,15 @@ class GroupViewModel @Inject constructor(
             if (checkLogin.value == true) {
                 if (joinList.value.isNullOrEmpty()) {
                     items.add(getEmptyJoinList())
+                    Log.d("GroupTest", "### getEmptyJoinList1")
                 } else {
                     joinList.value?.map { items.add(it) }
+                    Log.d("GroupTest", "### getEmptyJoinList2")
                 }
             }
             else {
                 items.add(getEmptyJoinList())
+                Log.d("GroupTest", "### getEmptyJoinList3")
             }
             items.add(getAdd())
             if (wantList.value.isNullOrEmpty()) {

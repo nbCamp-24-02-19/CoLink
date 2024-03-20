@@ -19,7 +19,9 @@ sealed interface PostContentItem {
         val description: String?,
         val tags: List<String>?,
         val registeredDate: String?,
-        val views: Int?
+        val views: Int?,
+        var like: Int?,
+        var isLike: Boolean = false
     ) : PostContentItem
 
     data class RecruitItem(
@@ -60,7 +62,9 @@ sealed interface PostContentItem {
         val name: String,
         val profile: String,
         val description: String?,
-        val registeredDate: String?
+        val registeredDate: String?,
+        val authId: String?,
+        val buttonUiState: ContentButtonUiState,
     ) : PostContentItem
 
     data object CommentSendItem: PostContentItem

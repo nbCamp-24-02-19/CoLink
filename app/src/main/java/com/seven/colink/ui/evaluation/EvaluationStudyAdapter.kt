@@ -14,29 +14,9 @@ class EvaluationStudyAdapter(
     }
 
     override fun createFragment(position: Int): Fragment {
-        Log.d("Evaluation", "EvalAdapter <createFragment_Study>")
-        return when (position) {
-            0 -> {
-                EvaluationStudyFragment.newInstanceStudy(
-                    mItems.filterIsInstance<EvaluationData.EvalStudy>()
-                )
-            }
-            1 -> {
-                EvaluationStudyFragment.newInstanceStudy(
-                    mItems.filterIsInstance<EvaluationData.EvalStudy>()
-                )
-            }
-            2 -> {
-                EvaluationStudyFragment.newInstanceStudy(
-                    mItems.filterIsInstance<EvaluationData.EvalStudy>()
-                )
-            }
-            3 -> {
-                EvaluationStudyFragment.newInstanceStudy(
-                    mItems.filterIsInstance<EvaluationData.EvalStudy>()
-                )
-            }
-            else -> throw IllegalArgumentException("Invalid type of data at position $position")
+        return if (position in mItems.indices) {
+            EvaluationStudyFragment.newInstanceStudy(position)
         }
+        else throw IllegalArgumentException("Invalid type of data at position $position")
     }
 }

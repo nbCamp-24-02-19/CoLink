@@ -8,12 +8,12 @@
 
 
     <TextView
-        android:id="@+id/tv_mypage_post_item_ing_text"
+        android:id="@+id/tv_mypage_recruit_state"
         android:layout_width="64dp"
         android:layout_height="24dp"
         android:background="@drawable/bg_mypage_ing_blue"
         android:gravity="center"
-        android:text="참여중"
+        android:text="모집중"
         android:textColor="@color/forth_color"
         android:textSize="12sp"
         android:textStyle="bold"
@@ -22,22 +22,23 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tv_mypage_post_item_project_name"
+        android:id="@+id/tv_mypage_like_project_name"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="9dp"
         android:text=" ㅁㅁ 프로젝트"
         android:textColor="@color/black"
         android:textSize="12sp"
         android:textStyle="bold"
         android:maxLines="1"
         android:ellipsize="end"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_mypage_post_item_ing_text"
-        app:layout_constraintStart_toEndOf="@+id/tv_mypage_post_item_ing_text"
-        app:layout_constraintTop_toTopOf="@+id/tv_mypage_post_item_ing_text" />
+        app:layout_constraintBottom_toBottomOf="@+id/tv_mypage_recruit_state"
+        app:layout_constraintEnd_toStartOf="@+id/tv_mypage_like_item_time"
+        app:layout_constraintStart_toEndOf="@+id/tv_mypage_recruit_state"
+        app:layout_constraintTop_toTopOf="@+id/tv_mypage_recruit_state" />
 
     <TextView
-        android:id="@+id/tv_mypage_post_item_time"
+        android:id="@+id/tv_mypage_like_item_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="14dp"
@@ -45,21 +46,8 @@
         android:textColor="@color/black"
         android:textSize="12sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_mypage_post_item_project_name"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_mypage_like_project_name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_mypage_post_item_project_name" />
-
-
-
-<!--    <androidx.recyclerview.widget.RecyclerView-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="0dp"-->
-<!--        android:layout_marginTop="23dp"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/mypage_re_item_text"-->
-<!--        tools:listitem="@layout/mypage_recyclerview_post_item"-->
-<!--        tools:itemCount="4"/>-->
-
+        app:layout_constraintTop_toTopOf="@+id/tv_mypage_like_project_name" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
