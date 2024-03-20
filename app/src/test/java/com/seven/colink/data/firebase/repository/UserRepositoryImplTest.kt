@@ -6,6 +6,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.FirebaseMessaging
 import com.seven.colink.domain.entity.UserEntity
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.*
@@ -23,10 +24,11 @@ class UserRepositoryImplTest {
     private val firebaseAuth: FirebaseAuth = mock(FirebaseAuth::class.java)
     private val firebaseFirestore: FirebaseFirestore = mock(FirebaseFirestore::class.java)
     private val documentSnapshot: DocumentSnapshot = mock(DocumentSnapshot::class.java)
+    private val firebaseMessaging: FirebaseMessaging = mock(FirebaseMessaging::class.java)
 
     @BeforeEach
     fun setUp() {
-        userRepository = UserRepositoryImpl(firebaseAuth, firebaseFirestore)
+        userRepository = UserRepositoryImpl(firebaseAuth, firebaseFirestore, firebaseMessaging)
     }
 
     @Test
@@ -35,8 +37,6 @@ class UserRepositoryImplTest {
         val user = UserEntity(
             uid = "user123",
             email = "zxcasd@wdsad.com",
-            password = "tlarbtkd",
-            id = "ID123",
             name = "John Doe",
             photoUrl = "https://example.com/photo.jpg",
             phoneNumber = "123-456-7890",
@@ -73,8 +73,6 @@ class UserRepositoryImplTest {
         `when`(documentSnapshot.toObject(UserEntity::class.java)).thenReturn(UserEntity(
             uid = "user123",
             email = "zxcasd@wdsad.com",
-            password = "tlarbtkd",
-            id = "ID123",
             name = "John Doe",
             photoUrl = "https://example.com/photo.jpg",
             phoneNumber = "123-456-7890",
