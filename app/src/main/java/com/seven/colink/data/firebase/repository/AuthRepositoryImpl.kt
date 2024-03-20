@@ -17,7 +17,7 @@ class AuthRepositoryImpl @Inject constructor(
             firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        continuation.resume(DataResultStatus.SUCCESS)
+                        continuation.resume(DataResultStatus.SUCCESS.apply { message = firebaseAuth.currentUser!!.uid })
                     }
                 }
                 .addOnFailureListener { e ->
@@ -37,7 +37,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun signIn(email: String, password: String) = suspendCoroutine { continuation ->
         firebaseAuth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener {
-                continuation.resume(DataResultStatus.SUCCESS)
+                continuation.resume(DataResultStatus.SUCCESS.apply { message = firebaseAuth.currentUser!!.uid })
             }
             .addOnFailureListener { e ->
                 if (e is FirebaseAuthException) {

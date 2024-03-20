@@ -9,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.seven.colink.R
 import com.seven.colink.domain.entity.ApplicationInfo
 import com.seven.colink.domain.entity.CommentEntity
-import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.entity.RecruitInfo
 import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.domain.repository.AuthRepository
@@ -18,10 +17,8 @@ import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.domain.usecase.GetPostUseCase
 import com.seven.colink.domain.usecase.RegisterApplicationInfoUseCase
-import com.seven.colink.domain.usecase.SendNotificationJoinUseCase
+import com.seven.colink.domain.usecase.SendNotificationApplyUseCase
 import com.seven.colink.ui.group.board.board.GroupContentViewType
-import com.seven.colink.ui.post.content.model.Comment
-import com.seven.colink.ui.post.content.model.CommentButtonUiState
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.content.model.DialogUiState
 import com.seven.colink.ui.post.content.model.PostContentItem
@@ -44,7 +41,7 @@ class PostContentViewModel @Inject constructor(
     private val getPostUseCase: GetPostUseCase,
     private val registerApplicationInfoUseCase: RegisterApplicationInfoUseCase,
     private val commentRepository: CommentRepository,
-    private val sendNotificationJoinUseCase: SendNotificationJoinUseCase,
+    private val sendNotificationApplyUseCase: SendNotificationApplyUseCase,
 ) : ViewModel() {
     private lateinit var entity: Post
 //    private lateinit var comment: Comment
@@ -235,7 +232,7 @@ class PostContentViewModel @Inject constructor(
             applicationStatus = ApplicationStatus.PENDING,
         )
         updateRecruitList(recruitItem, newApplicationInfo)
-        sendNotificationJoinUseCase(entity,getCurrentUser()?: return)
+        sendNotificationApplyUseCase(entity,getCurrentUser()?: return)
     }
 
     // 지원한 회원 데이터 추가

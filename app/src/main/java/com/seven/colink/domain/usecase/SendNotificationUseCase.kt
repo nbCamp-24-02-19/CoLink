@@ -32,17 +32,17 @@ class SendNotificationUseCase @Inject constructor(
                                 key = chatRoom.key,
                                 toUserToken = userEntity?.token,
                                 toUserId = userEntity?.uid,
-                                message = data.text?: "사진",
-                                name = currentUser?.name,
+                                type = NotifyType.CHAT,
                                 title = if (chatRoom.title.isNullOrEmpty()
                                         .not()
                                 ) chatRoom.title else currentUser?.name,
-                                type = NotifyType.CHAT,
+                                name = currentUser?.name,
+                                message = data.text?: "사진",
                                 thumbnail = if (chatRoom.thumbnail.isNullOrEmpty().not())
                                     chatRoom.thumbnail
                                 else {
                                     currentUser?.photoUrl
-                                }
+                                },
                             ).let { notificationEntity ->
                                 notifyRepository.sendNotification(
                                     notificationEntity
@@ -66,7 +66,8 @@ class SendNotificationUseCase @Inject constructor(
                     toUserId = auth?.uid,
                     message = resourceRepository.getString(R.string.group_join_message, data.title!!),
                     title = resourceRepository.getString(R.string.notify_join_group),
-                    type = NotifyType.APPLY
+                    type = NotifyType.JOIN,
+                    groupType = data.groupType,
                 ).let { notificationEntity ->
                     notifyRepository.sendNotification(
                         notificationEntity

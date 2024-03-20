@@ -69,6 +69,7 @@ class MainActivity : AppCompatActivity() {
     private fun onMyProfileEdit() = with(binding){
         navController.addOnDestinationChangedListener { _, destination, _ ->
             btnMypageEdit.isVisible = destination.id == R.id.navigation_my_page
+            btnNotify.isVisible = destination.id != R.id.navigation_dashboard
         }
 
         btnMypageEdit.setOnClickListener {
