@@ -18,48 +18,51 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <View
-        android:id="@+id/line_schedule"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginVertical="12dp"
-        android:background="@color/border_line"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_schedule" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_date"
+        android:id="@+id/layout_datetime_picker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/line_schedule">
+        app:layout_constraintTop_toBottomOf="@id/et_schedule">
 
-        <TextView
-            android:id="@+id/tv_start_date"
-            android:layout_width="0dp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_datetime"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="24dp"
-            android:paddingVertical="12dp"
-            android:text="2024.03.14(목)\n오후 11:00"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toStartOf="@id/tv_end_date"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/tv_end_date"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="24dp"
-            android:paddingVertical="12dp"
-            android:text="2024.03.15(금)\n오후 11:00"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="@id/tv_start_date"
+            android:background="@drawable/bg_date"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/tv_start_date"
-            app:layout_constraintTop_toTopOf="@id/tv_start_date" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tv_start_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="5dp"
+                android:paddingHorizontal="24dp"
+                android:paddingVertical="12dp"
+                android:text="2024.03.14(목)\n오후 11:00"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toStartOf="@id/tv_end_date"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_end_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="24dp"
+                android:paddingVertical="12dp"
+                android:text="2024.03.15(금)\n오후 11:00"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@id/tv_start_date"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tv_start_date"
+                app:layout_constraintTop_toTopOf="@id/tv_start_date" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <DatePicker
             android:id="@+id/start_date_picker"
@@ -70,7 +73,7 @@
             android:visibility="gone"
             app:layout_constraintEnd_toStartOf="@id/start_time_picker"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_start_date" />
+            app:layout_constraintTop_toBottomOf="@id/layout_datetime" />
 
         <TimePicker
             android:id="@+id/start_time_picker"
@@ -92,7 +95,7 @@
             android:visibility="gone"
             app:layout_constraintEnd_toStartOf="@id/end_time_picker"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_start_date" />
+            app:layout_constraintTop_toBottomOf="@id/layout_datetime" />
 
         <TimePicker
             android:id="@+id/end_time_picker"
@@ -115,7 +118,7 @@
         android:layout_marginVertical="24dp"
         android:src="@drawable/ic_document"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_date" />
+        app:layout_constraintTop_toBottomOf="@id/layout_datetime_picker" />
 
     <EditText
         android:id="@+id/et_description"
@@ -161,8 +164,8 @@
         android:id="@+id/rc_noti"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_marginTop="12dp"
+        android:orientation="horizontal"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="@id/tv_noti"
         app:layout_constraintStart_toStartOf="@id/tv_noti"
@@ -184,8 +187,8 @@
         android:layout_height="18dp"
         android:layout_marginStart="24dp"
         android:visibility="gone"
-        app:layout_constraintEnd_toStartOf="@id/tv_color_palette"
         app:layout_constraintBottom_toBottomOf="@id/iv_color_palette"
+        app:layout_constraintEnd_toStartOf="@id/tv_color_palette"
         app:layout_constraintStart_toEndOf="@id/iv_color_palette"
         app:layout_constraintTop_toTopOf="@id/iv_color_palette" />
 
