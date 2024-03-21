@@ -23,15 +23,11 @@ import com.seven.colink.databinding.ItemPostRecruitBinding
 import com.seven.colink.databinding.ItemPostSelectionTypeBinding
 import com.seven.colink.databinding.ItemPostSubTitleBinding
 import com.seven.colink.databinding.ItemUnknownBinding
-import com.seven.colink.domain.entity.CommentEntity
-import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.ui.group.board.board.GroupContentViewType
-import com.seven.colink.ui.post.content.model.CommentButtonUiState
 import com.seven.colink.ui.post.register.post.adapter.TagListAdapter
 import com.seven.colink.ui.post.register.post.model.TagListItem
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.content.model.PostContentItem
-import com.seven.colink.ui.post.content.viewmodel.PostContentViewModel
 import com.seven.colink.util.setLevelIcon
 import com.seven.colink.util.status.ApplicationStatus
 import com.seven.colink.util.status.GroupType
@@ -42,7 +38,7 @@ class PostContentListAdapter(
     private val onClickButton: (PostContentItem, ContentButtonUiState) -> Unit,
     private val onClickView: (View) -> Unit,
     private val onClickCommentButton: (String) -> Unit,
-    private val onClickCommentDeleteButton: (String, ContentButtonUiState) -> Unit,
+    private val onClickCommentDeleteButton: (String) -> Unit,
     ) : ListAdapter<PostContentItem, PostContentListAdapter.PostViewHolder>(
     object : DiffUtil.ItemCallback<PostContentItem>() {
 
@@ -372,7 +368,7 @@ class PostContentListAdapter(
 
     class PostCommentViewHolder(
         private val binding: ItemPostCommentBinding,
-        private val onClickCommentDeleteButton: (String, ContentButtonUiState) -> Unit
+        private val onClickCommentDeleteButton: (String) -> Unit
     ) : PostViewHolder(binding.root) {
         override fun onBind(item: PostContentItem) {
             if (item is PostContentItem.CommentItem){
@@ -381,9 +377,9 @@ class PostContentListAdapter(
                 binding.tvPostCommentTime.text = item.registeredDate
                 binding.ivPostCommentProfile.load(item.profile)
                 binding.ivPostCommentProfile.clipToOutline = true
-                binding.tvPostCommentDelete.visibility = if (item.buttonUiState == ContentButtonUiState.Manager) View.VISIBLE else View.GONE
+                binding.tvPostCommentDelete.isVisible = item.buttonUiState
                 binding.tvPostCommentDelete.setOnClickListener {
-                    onClickCommentDeleteButton(item.key, item.buttonUiState)
+                    onClickCommentDeleteButton(item.key)
                 }
             }
         }

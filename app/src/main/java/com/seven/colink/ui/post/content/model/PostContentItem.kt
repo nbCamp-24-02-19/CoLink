@@ -62,7 +62,7 @@ sealed interface PostContentItem {
         val description: String?,
         val registeredDate: String?,
         val authId: String?,
-        val buttonUiState: ContentButtonUiState,
+        val buttonUiState: Boolean,
     ) : PostContentItem
 
     data object CommentSendItem: PostContentItem

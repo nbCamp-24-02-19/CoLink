@@ -2,22 +2,24 @@ package com.seven.colink.ui.post.content
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.ContextMenu
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentPostContentBinding
 import com.seven.colink.databinding.ItemPostCommentBinding
-import com.seven.colink.domain.entity.CommentEntity
-import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.ui.group.board.list.ApplyRequestFragment
 import com.seven.colink.ui.post.content.adapter.PostContentListAdapter
-import com.seven.colink.ui.post.content.model.CommentButtonUiState
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.content.model.DialogUiState
 import com.seven.colink.ui.post.content.model.PostContentItem
@@ -95,18 +97,50 @@ class PostContentFragment : Fragment() {
             onClickCommentButton = {
                 viewModel.registerComment(it)
             },
-            onClickCommentDeleteButton = {item, buttonUiState->
-//                when(commentButtonUistate){
-//                    CommentButtonUiState.Manager -> viewModel.deleteComment(item)
-//                    CommentButtonUiState.User -> commentBinding.tvPostCommentDelete.visibility = View.GONE
-//                    CommentButtonUiState.Unknown -> commentBinding.tvPostCommentDelete.visibility = View.GONE
+            onClickCommentDeleteButton = {item->
+                //얘만 쓰면 일단 팝업이 뜬다...
+                showPopup(commentBinding.tvPostCommentDelete)
+
+                commentBinding.tvPostCommentDelete.setOnClickListener {
+                    showPopup(commentBinding.tvPostCommentDelete)
+                    var popupMenu = PopupMenu(context, it)
+                    popupMenu.menuInflater.inflate(R.menu.option,popupMenu.menu)
+                    popupMenu.show()
+                    popupMenu.setOnMenuItemClickListener {
+                        when(it.itemId){
+                            R.id.delete_option -> {
+                                viewModel.deleteComment(item)
+                                return@setOnMenuItemClickListener true
+                            }
+                            R.id.edit_option ->{
+                                Toast.makeText(context,"ㅎㅎ,,아직",Toast.LENGTH_SHORT).show()
+                                return@setOnMenuItemClickListener true
+                            }
+                            else -> {
+                                return@setOnMenuItemClickListener false
+                            }
+                        }
+                    }
+                }
+
+
+//                commentBinding.tvPostCommentDelete.setOnClickListener {
+//                    val popupMenu = PopupMenu(context, commentBinding.tvPostCommentDelete)
+//                    popupMenu.menuInflater.inflate(R.menu.option, popupMenu.menu)
+//                    popupMenu.setOnMenuItemClickListener {
+//                        when(it.itemId){
+//                            R.id.delete_option -> {
+//                                viewModel.deleteComment(item)
+//                            }
+//                            R.id.edit_option -> {
+//                                Toast.makeText(context, "ㅎㅎ...", Toast.LENGTH_SHORT).show()
+//                            }
+//                        }
+//                        true
+//                    }
+//                    popupMenu.show()
 //                }
 
-                when(buttonUiState) {
-                    ContentButtonUiState.Manager -> viewModel.deleteComment(item)
-                    ContentButtonUiState.User -> commentBinding.tvPostCommentDelete.visibility = View.GONE
-                    ContentButtonUiState.Unknown -> commentBinding.tvPostCommentDelete.visibility = View.GONE
-                }
             }
         )
     }
@@ -178,10 +212,6 @@ class PostContentFragment : Fragment() {
             requireContext().showToast(getString(messageResId))
         }
 
-//        updateCommentButtonUiState.observe(viewLifecycleOwner){
-//            commentBinding.tvPostCommentDelete.visibility =
-//                if(it == CommentButtonUiState.Manager) View.VISIBLE else View.GONE
-//        }
 
     }
 
@@ -219,6 +249,12 @@ class PostContentFragment : Fragment() {
                 cancelAction = { it.dismiss() }
             ).show()
         }
+    }
+
+    private fun showPopup(v:View) {
+        val popup = PopupMenu(context, v)
+        popup.menuInflater.inflate(R.menu.option, popup.menu)
+        popup.show()
     }
 
 }
