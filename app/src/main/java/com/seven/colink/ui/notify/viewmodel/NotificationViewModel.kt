@@ -70,7 +70,8 @@ class NotificationViewModel @Inject constructor(
                 registeredDate = registeredDate.convertTime(),
                 icon = getIconResByType(type),
                 title = getTitleResByType(type),
-                iconBackground = getIconBackgroundByType(type)
+                iconBackground = getIconBackgroundByType(type),
+                type = type,
             )
         }
 
