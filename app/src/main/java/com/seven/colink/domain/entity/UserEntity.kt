@@ -28,5 +28,6 @@ data class UserEntity(
     val evaluatedNumber: Int = 0,
     val participantsChatRoomIds: List<String>? = emptyList(),
     val token: String? = null,
-    @get:Exclude @set:Exclude var chatRoomKeyList: List<String>? = null
+    @get:Exclude @set:Exclude var chatRoomKeyList: List<String>? = null,
+    val likeList: List<String>? = emptyList()
 )

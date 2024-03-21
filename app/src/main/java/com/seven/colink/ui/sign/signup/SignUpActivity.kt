@@ -17,8 +17,6 @@ import com.seven.colink.R
 import com.seven.colink.databinding.ActivitySignUpBinding
 import com.seven.colink.ui.sign.signup.adater.SignUpProfileAdapter
 import com.seven.colink.ui.sign.signup.adater.SkillAdapter
-import com.seven.colink.ui.sign.signup.model.SignUpProfileItem
-import com.seven.colink.ui.sign.signup.model.SignUpUserModel
 import com.seven.colink.ui.sign.signup.type.SignUpEntryType
 import com.seven.colink.ui.sign.signup.type.SignUpUIState
 import com.seven.colink.ui.sign.signup.valid.SignUpErrorMessage
@@ -28,6 +26,7 @@ import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.snackbar.setSnackBar
 import com.seven.colink.util.status.SnackType
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -76,10 +75,24 @@ class SignUpActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        initView()
         initViewModel()
     }
     private fun initViewModel() = with(viewModel) {
+        lifecycleScope.launch {
+            combine(userModel, uiStatus){ userModel, uiStatus ->
+                Pair(userModel, uiStatus)
+            }.collect { (userModel, uiStatus) ->
+                with(binding) {
+                    if (uiStatus == SignUpUIState.NAME) etSignUpEdit1.setText(userModel.name)
+                    else etSignUpEdit1.setText(userModel.password)
+                    val parts = userModel.email?.split("@")
+                    etSignUpEmailId.setText(parts?.get(0) ?: "")
+                    etSignUpEmailService.setText(parts?.get(1) ?: "")
+                    etSignUpPasswordCheck.setText(userModel.password)
+                }
+            }
+        }
+
         lifecycleScope.launch {
             entryType.collect {
                 when (it) {
@@ -91,8 +104,10 @@ class SignUpActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-            uiStatus.collect { uiStatus ->
-                setUi(uiStatus)
+            combine(uiStatus, entryType){ uiStatus, entryType ->
+                Pair(uiStatus, entryType)
+            }.collect { (uiStatus, entryType) ->
+                setUi(uiStatus, entryType)
                 this@SignUpActivity.hideProgressOverlay()
             }
         }
@@ -167,26 +182,17 @@ class SignUpActivity : AppCompatActivity() {
             }
         }
     }
-
-    private fun initView() {
-        setBack()
-    }
-
-    private fun setBack() {
-        binding.ivSignUpBack.setOnClickListener {
-            finish()
-        }
-    }
-
     private fun setUi(
         state: SignUpUIState,
+        entryType: SignUpEntryType,
     ) = with(binding) {
         configureVisibility(state)
-        setButton(state)
+        setButton(state, entryType)
         setTextChangeListener(state)
 
         tvSignUpTitle.setText(state.title)
         tvSignUpSubtitle.setText(state.subTitle)
+        tvSignUpValid.setText(state.valid)
         tvSignUpSubtitle.setTextColor(this@SignUpActivity.getColor(R.color.black))
         tilSignUpEdit1.boxStrokeColor = ContextCompat.getColor(this@SignUpActivity, R.color.black)
     }
@@ -214,7 +220,7 @@ class SignUpActivity : AppCompatActivity() {
         layoutManager = LinearLayoutManager(context)
         adapter = this@SignUpActivity.adapter
     }
-    private fun setButton(state: SignUpUIState) = with(binding){
+    private fun setButton(state: SignUpUIState, entryType: SignUpEntryType) = with(binding){
         btSignUpBtn.setOnClickListener {
             this@SignUpActivity.showProgressOverlay()
             it.isEnabled = false
@@ -224,10 +230,21 @@ class SignUpActivity : AppCompatActivity() {
                 else -> viewModel.checkValid(state, etSignUpEdit1.text.toString())
             }
         }
+
+        ivSignUpBack.setOnClickListener {
+            if (entryType != SignUpEntryType.CREATE) finish()
+            else {
+                when (state) {
+                    SignUpUIState.NAME -> finish()
+                    else -> viewModel.backState(state)
+                }
+            }
+        }
     }
     private fun setTextChangeListener(state: SignUpUIState) = with(binding){
         etSignUpEdit1.addTextChangedListener {
-            btSignUpBtn.isEnabled = (it?.length ?: 0) >= 6
+            if (state == SignUpUIState.NAME) btSignUpBtn.isEnabled = (it?.length ?: 0) >= 1
+            else btSignUpBtn.isEnabled = (it?.length ?: 0) >= 6
             tvSignUpTitle.setText(state.title)
             tvSignUpSubtitle.setText(state.subTitle)
             tvSignUpSubtitle.setTextColor(this@SignUpActivity.getColor(R.color.black))

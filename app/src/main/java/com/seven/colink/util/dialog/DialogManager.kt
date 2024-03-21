@@ -73,14 +73,14 @@ private fun setupDialog(
     val end = message.lastIndexOf('\'')
 
     //''안에 텍스트는 bold처리
-    if (start != -1 && end != -1 && start < end) {
+/*    if (start != -1 && end != -1 && start < end) {
         spannableString.setSpan(
             StyleSpan(Typeface.BOLD),
             start,
             end + 1,
             SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
         )
-    }
+    }*/
     spannableMessage.append(spannableString)
 
     tvDiaMessage.text = spannableMessage

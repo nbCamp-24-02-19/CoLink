@@ -1,6 +1,7 @@
 package com.seven.colink.ui.post.content.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,7 +16,7 @@ import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.domain.usecase.GetPostUseCase
 import com.seven.colink.domain.usecase.RegisterApplicationInfoUseCase
-import com.seven.colink.domain.usecase.SendNotificationJoinUseCase
+import com.seven.colink.domain.usecase.SendNotificationApplyUseCase
 import com.seven.colink.ui.group.board.board.GroupContentViewType
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.content.model.DialogUiState
@@ -40,7 +41,7 @@ class PostContentViewModel @Inject constructor(
     private val getPostUseCase: GetPostUseCase,
     private val registerApplicationInfoUseCase: RegisterApplicationInfoUseCase,
     private val commentRepository: CommentRepository,
-    private val sendNotificationJoinUseCase: SendNotificationJoinUseCase,
+    private val sendNotificationApplyUseCase: SendNotificationApplyUseCase,
 ) : ViewModel() {
     private lateinit var entity: Post
     private val _uiState = MutableLiveData<List<PostContentItem>>()
@@ -60,6 +61,30 @@ class PostContentViewModel @Inject constructor(
     private val _userComment = MutableLiveData<CommentEntity>()
     val userComments: LiveData<CommentEntity> = _userComment
 
+
+    private val _checkLogin = MutableLiveData<Boolean>(false)
+    val checkLogin: LiveData<Boolean> get() = _checkLogin
+
+    private val _isLike = MutableLiveData<Boolean>()
+    val isLike: LiveData<Boolean> get() = _isLike
+
+    private var _currentUser:UserEntity? = null
+    private val currentUser get() = _currentUser
+
+    private val _likeList = MutableLiveData<List<String>?>()
+    val likeList: LiveData<List<String>?> get() = _likeList
+
+    init {
+        viewModelScope.launch {
+            _currentUser = authRepository.getCurrentUser().message.let {
+                userRepository.getUserDetails(it)
+            }.getOrNull()
+
+//            _likeList.value = authRepository.getCurrentUser().message.let {
+//                userRepository.getUserDetails(it)
+//            }.getOrNull()?.likeList
+        }
+    }
 
     suspend fun setEntity(key: String) {
         entity = getPostUseCase(key) ?: return
@@ -197,7 +222,7 @@ class PostContentViewModel @Inject constructor(
             applicationStatus = ApplicationStatus.PENDING,
         )
         updateRecruitList(recruitItem, newApplicationInfo)
-        sendNotificationJoinUseCase(entity,getCurrentUser()?: return)
+        sendNotificationApplyUseCase(entity,getCurrentUser()?: return)
     }
 
     // 지원한 회원 데이터 추가
@@ -270,7 +295,8 @@ class PostContentViewModel @Inject constructor(
         description = description,
         tags = tags,
         registeredDate = registeredDate,
-        views = views
+        views = views,
+        like = like
     )
 
     fun createDialog(recruitItem: PostContentItem.RecruitItem) {
@@ -283,4 +309,53 @@ class PostContentViewModel @Inject constructor(
             recruitItem = recruitItem
         )
     }
+
+    fun checkLogin(){
+        viewModelScope.launch {
+            val currentUser = authRepository.getCurrentUser()
+            _checkLogin.value = currentUser == DataResultStatus.SUCCESS
+        }
+    }
+
+    fun discernLike(key: String) : Boolean? {
+        viewModelScope.launch {
+            Log.d("Post", "@@@ LikeList = ${currentUser?.likeList}")
+
+            if (currentUser?.likeList?.contains(key) == false){
+                _currentUser = currentUser!!.copy(likeList = currentUser!!.likeList?.plus(listOf(key)))
+                _isLike.value = true
+                Log.d("Post","!!! likeList containsNot key")
+                Log.d("Post","likeList = ${currentUser?.likeList}")
+            } else {
+                _currentUser = currentUser!!.copy(likeList = currentUser!!.likeList?.minus(listOf(key).toSet()))
+                _isLike.value = false
+                Log.d("Post","### likeList contains key")
+                Log.d("Post","likeList = ${currentUser?.likeList}")
+            }
+            Log.d("Post","_isLike.value = ${_isLike.value}")
+        }
+        Log.d("Post","isLike.value = ${isLike.value}")
+        return _isLike.value
+    }
+
+//    fun discernLike(key: String) {
+//        viewModelScope.launch {
+//            Log.d("Post", "@@@ LikeList = ${likeList.value}")
+//
+//            val currentList = likeList.value ?: emptyList()
+//
+//            if (!currentList.contains(key)){
+//                _likeList.value = currentList.plus(key)
+//                _isLike.value = true
+//                Log.d("Post","!!! likeList containsNot key")
+//                Log.d("Post","likeList = ${likeList}")
+//            } else {
+//                _likeList.value = currentList.minus(key)
+//                _isLike.value = false
+//                Log.d("Post","### likeList contains key")
+//                Log.d("Post","likeList = ${likeList}")
+//            }
+//        }
+//    }
+
 }
