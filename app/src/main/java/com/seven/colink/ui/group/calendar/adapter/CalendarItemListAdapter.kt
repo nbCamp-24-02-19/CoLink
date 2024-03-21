@@ -10,8 +10,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.seven.colink.R
 import com.seven.colink.databinding.ItemListCalendarItemBinding
 import com.seven.colink.ui.group.calendar.model.ScheduleModel
+import java.time.LocalDate
 
-class ScheduleItemListAdapter :
+class ScheduleItemListAdapter(
+    private val tempMonth: Int,
+    private val date: LocalDate
+) :
     ListAdapter<ScheduleModel, ScheduleItemListAdapter.ScheduleViewHolder>(
         object : DiffUtil.ItemCallback<ScheduleModel>() {
             override fun areItemsTheSame(oldItem: ScheduleModel, newItem: ScheduleModel): Boolean {
@@ -56,6 +60,11 @@ class ScheduleItemListAdapter :
                 )
             }
             binding.tvScheduleItem.background = backgroundDrawable
+            if (tempMonth != date.monthValue) {
+                binding.tvScheduleItem.alpha = 0.4f
+            } else {
+                binding.tvScheduleItem.alpha = 1.0f
+            }
         }
     }
 }

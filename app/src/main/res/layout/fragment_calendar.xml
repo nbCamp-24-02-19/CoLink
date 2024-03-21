@@ -35,11 +35,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
+                android:nestedScrollingEnabled="true"
                 android:orientation="vertical"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
         </androidx.core.widget.NestedScrollView>
-
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fb_register_schedule"
