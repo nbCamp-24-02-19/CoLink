@@ -94,7 +94,8 @@ class ChatRoomViewModel @Inject constructor(
     fun sendMessage(text: String) {
         viewModelScope.launch {
             val imageUrl = selectedImage.value.let {
-                imageRepository.uploadChatImage(it).getOrNull()?.toString()
+                if (it != Uri.EMPTY) imageRepository.uploadChatImage(it).getOrNull()?.toString()
+                else null
             }
 
             MessageEntity(
