@@ -13,6 +13,7 @@
         android:id="@+id/item_day_text"
         android:layout_width="24dp"
         android:layout_height="24dp"
+        android:layout_gravity="center_horizontal"
         android:background="@drawable/bg_background_circle"
         android:fontFamily="@font/roboto_regular"
         android:gravity="center"

@@ -11,9 +11,10 @@
         android:id="@+id/iv_user"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:src="@drawable/ic_user_24dp"
+        android:background="@drawable/bg_background_circle"
         android:scaleType="centerCrop"
-        android:background="@drawable/bg_profile_circle"
+        android:src="@drawable/ic_user_24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

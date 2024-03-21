@@ -16,7 +16,9 @@ import java.util.Date
 
 class MonthListAdapter(
     private val onDayItemClick: (date: LocalDate) -> Unit,
-    private val uiState: List<ScheduleModel>
+    private val uiState: List<ScheduleModel>,
+    private val onMonthChange: (Boolean) -> Unit
+
 ) : ListAdapter<Int, MonthListAdapter.MonthViewHolder>(
     object : DiffUtil.ItemCallback<Int>() {
         override fun areItemsTheSame(oldItem: Int, newItem: Int): Boolean =
@@ -27,7 +29,7 @@ class MonthListAdapter(
     }
 ) {
     val center = Int.MAX_VALUE / 2
-    private val calendar = Calendar.getInstance()
+    private var dayListAdapter: DayListAdapter? = null
 
     abstract class MonthViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         abstract fun bind(month: Int, position: Int)
@@ -41,8 +43,11 @@ class MonthListAdapter(
             parent,
             false
         )
-        return MonthView(binding,
-            onDayItemClick)
+        return MonthView(
+            binding,
+            onDayItemClick,
+            onMonthChange
+        )
     }
 
     override fun onBindViewHolder(holder: MonthViewHolder, position: Int) {
@@ -52,12 +57,16 @@ class MonthListAdapter(
 
     inner class MonthView(
         private val binding: ItemListMonthBinding,
-        private val onDayItemClick: (date: LocalDate) -> Unit
+        private val onDayItemClick: (date: LocalDate) -> Unit,
+        private val onMonthChange: (Boolean) -> Unit
     ) : MonthViewHolder(binding.root) {
+        private var dayListManager: GridLayoutManager? = null
+        private val calendar = Calendar.getInstance()
+
         override fun bind(month: Int, position: Int) {
             calendar.time = Date()
             calendar.set(Calendar.DAY_OF_MONTH, 1)
-            calendar.add(Calendar.MONTH, position - center)
+            calendar.add(Calendar.MONTH, month)
             binding.itemMonthText.text =
                 "${calendar.get(Calendar.YEAR)}년 ${calendar.get(Calendar.MONTH) + 1}월"
             val tempMonth = calendar.get(Calendar.MONTH) + 1
@@ -74,11 +83,13 @@ class MonthListAdapter(
                 }
                 calendar.add(Calendar.WEEK_OF_MONTH, 1)
             }
-            val dayListManager = GridLayoutManager(binding.root.context, 7)
-            val dayListAdapter =
-                DayListAdapter(tempMonth, dayList, uiState, onItemClick = { _, date ->
-                    onDayItemClick(date)
-                })
+
+            dayListManager = GridLayoutManager(binding.root.context, 7)
+            dayListAdapter = DayListAdapter(tempMonth, dayList, uiState, onItemClick = { _, date ->
+                onDayItemClick(date)
+            }, onMonthChange = { isPreviousMonth ->
+                onMonthChange(isPreviousMonth)
+            })
 
             binding.itemMonthDayList.apply {
                 layoutManager = dayListManager
