@@ -41,28 +41,28 @@
         app:layout_constraintStart_toEndOf="@+id/tv_post_comment_name"
         app:layout_constraintTop_toTopOf="@+id/tv_post_comment_name" />
 
-    <TextView
-        android:id="@+id/tv_post_comment_delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
-        android:text="삭제"
-        android:textColor="@color/chat_notice"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_post_comment_time"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_post_comment_time" />
-
 <!--    <TextView-->
 <!--        android:id="@+id/tv_post_comment_delete"-->
 <!--        android:layout_width="wrap_content"-->
 <!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="160dp"-->
-<!--        android:text="..."-->
-<!--        android:textColor="@color/bottom_enable_color"-->
-<!--        android:textSize="20sp"-->
-<!--        app:layout_constraintStart_toEndOf="@+id/tv_post_comment_time"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
+<!--        android:layout_marginEnd="24dp"-->
+<!--        android:text="삭제"-->
+<!--        android:textColor="@color/chat_notice"-->
+<!--        android:textSize="12sp"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/tv_post_comment_time"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/tv_post_comment_time" />-->
+
+    <TextView
+        android:id="@+id/tv_post_comment_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="..."
+        android:textColor="@color/bottom_enable_color"
+        android:textSize="20sp"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_post_comment"
