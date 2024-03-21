@@ -7,19 +7,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import android.widget.PopupMenu
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentPostContentBinding
 import com.seven.colink.databinding.ItemPostCommentBinding
-import com.seven.colink.domain.entity.CommentEntity
-import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.ui.group.board.list.ApplyRequestFragment
 import com.seven.colink.ui.post.content.adapter.PostContentListAdapter
-import com.seven.colink.ui.post.content.model.CommentButtonUiState
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.content.model.DialogUiState
 import com.seven.colink.ui.post.content.model.PostContentItem
@@ -55,7 +50,7 @@ class PostContentFragment : Fragment() {
                         startActivity(
                             UserDetailActivity.newIntent(
                                 requireActivity(),
-                                item.userInfo.uid ?: return@PostContentListAdapter
+                                item.userInfo?.uid ?: return@PostContentListAdapter
                             )
                         )
                     }
