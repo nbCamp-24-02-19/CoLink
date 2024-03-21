@@ -58,6 +58,10 @@ class ChatTabFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initView()
+    }
+
+    override fun onStart() {
+        super.onStart()
         initViewModel()
     }
 

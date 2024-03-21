@@ -1,6 +1,8 @@
 package com.seven.colink.ui.group.board.board.adapter
 
 import android.text.InputType
+import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +28,8 @@ import com.seven.colink.ui.group.board.board.GroupContentViewType
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.register.post.adapter.TagListAdapter
 import com.seven.colink.ui.post.register.post.model.TagListItem
+import com.seven.colink.ui.promotion.ProductPromotionActivity
+import com.seven.colink.util.Constants
 import com.seven.colink.util.convert.convertCalculateDays
 import com.seven.colink.util.setLevelIcon
 import com.seven.colink.util.status.ApplicationStatus
