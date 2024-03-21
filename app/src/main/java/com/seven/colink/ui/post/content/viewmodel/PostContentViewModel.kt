@@ -255,7 +255,7 @@ class PostContentViewModel @Inject constructor(
             applicationStatus = ApplicationStatus.PENDING,
         )
         updateRecruitList(recruitItem, newApplicationInfo)
-        sendNotificationApplyUseCase(entity,getCurrentUser()?: return)
+        sendNotificationApplyUseCase(entity)
     }
 
     // 지원한 회원 데이터 추가
