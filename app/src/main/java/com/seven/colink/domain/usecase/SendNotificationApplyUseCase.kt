@@ -20,10 +20,10 @@ class SendNotificationApplyUseCase @Inject constructor(
     private val resourceRepository: ResourceRepository,
     private val notificationStoreRepository: NotificationStoreRepository,
 ) {
-    suspend operator fun invoke(data: Post, uid: String) = withContext(Dispatchers.IO) {
+    suspend operator fun invoke(data: Post) = withContext(Dispatchers.IO) {
         userRepository.getUserDetails(authRepository.getCurrentUser().message).getOrNull()
             .let { currentUser ->
-                userRepository.getUserDetails(uid).getOrNull().let { auth ->
+                userRepository.getUserDetails(data.authId!!).getOrNull().let { auth ->
                     NotificationEntity(
                         key = data.key,
                         toUserToken = auth?.token,
