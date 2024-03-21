@@ -265,6 +265,7 @@ class PostContentListAdapter(
             val context = binding.root.context
             if (item is PostContentItem.Item) {
                 with(binding) {
+                    ivLike.setImageResource(if (!item.isLike) R.drawable.ic_heart else R.drawable.ic_heart_clicked)
                     ivLike.setOnClickListener{
                         onClickItem(item)
                         if (!item.isLike) {

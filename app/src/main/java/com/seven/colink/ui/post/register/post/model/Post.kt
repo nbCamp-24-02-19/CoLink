@@ -23,6 +23,7 @@ data class Post (
     val editDate: String? = null,
     val views: Int? = 0,
     val like: Int? = 0,
+    val isLike: Boolean = false,
     val startDate: String? = "",
     val endDate: String? = "",
     val memberIds: List<String> = emptyList(),
