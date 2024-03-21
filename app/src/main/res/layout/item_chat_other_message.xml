@@ -86,11 +86,11 @@
             android:id="@+id/iv_chat_message_img"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
             android:maxWidth="300dp"
-            android:paddingVertical="8dp"
-            android:paddingHorizontal="12dp"
             android:background="@drawable/chat_bubble_other"
-            android:backgroundTint="@color/user_color"
+            android:clipToOutline="true"
             android:src="@drawable/dummy"
             android:visibility="gone"/>
     </FrameLayout>
