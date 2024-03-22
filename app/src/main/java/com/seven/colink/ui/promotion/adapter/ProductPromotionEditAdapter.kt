@@ -1,11 +1,14 @@
 package com.seven.colink.ui.promotion.adapter
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.IBinder
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.result.ActivityResultLauncher
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
@@ -21,7 +24,7 @@ import com.seven.colink.ui.promotion.model.ProductPromotionItems
 import com.seven.colink.util.openGallery
 import com.seven.colink.util.setLevelIcon
 
-class ProductPromotionEditAdapter (private val recyclerView: RecyclerView, private val dItem : MutableList<ProductPromotionItems>) : RecyclerView.Adapter<RecyclerView.ViewHolder> () {
+class ProductPromotionEditAdapter (private val mContext: Context,private val recyclerView: RecyclerView, private val dItem : MutableList<ProductPromotionItems>) : RecyclerView.Adapter<RecyclerView.ViewHolder> () {
     interface ItemClick {
         fun onClick(view: View, pos : Int)
     }
@@ -65,7 +68,7 @@ class ProductPromotionEditAdapter (private val recyclerView: RecyclerView, priva
         notifyDataSetChanged()
     }
 
-    fun imgClickListener(listener:(ViewHolder) -> Unit) {
+    private fun imgClickListener(listener:(ViewHolder) -> Unit) {
         this.OnClickImgListener = listener
     }
 
@@ -74,6 +77,11 @@ class ProductPromotionEditAdapter (private val recyclerView: RecyclerView, priva
         recyclerView.post {
             notifyItemChanged(position)
         }
+    }
+
+    private fun hideKeyboard(view: View) {
+        val imm: InputMethodManager = mContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken,0)
     }
 
     fun initResult(galleryResultLauncher1: ActivityResultLauncher<Intent>,
@@ -130,12 +138,14 @@ class ProductPromotionEditAdapter (private val recyclerView: RecyclerView, priva
             editTitle.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) {
                     saveData(adapterPosition)
+                    hideKeyboard(editTitle)
                 }
             }
 
             editDes.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) {
                     saveData(adapterPosition)
+                    hideKeyboard(editDes)
                 }
             }
             editTitle.setText(tempEntity.title)
@@ -210,18 +220,21 @@ class ProductPromotionEditAdapter (private val recyclerView: RecyclerView, priva
             etWebLink.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) {
                     saveData(adapterPosition)
+                    hideKeyboard(etWebLink)
                 }
             }
 
             etPlayStore.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) {
                     saveData(adapterPosition)
+                    hideKeyboard(etPlayStore)
                 }
             }
 
             etAppStore.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) {
                     saveData(adapterPosition)
+                    hideKeyboard(etAppStore)
                 }
             }
             etPlayStore.setText(tempEntity.aos)
@@ -239,7 +252,6 @@ class ProductPromotionEditAdapter (private val recyclerView: RecyclerView, priva
             if (adapterPosition != RecyclerView.NO_POSITION) {
                 if (item.webLink?.isNotEmpty() == true) {
                     etWebLink.setText(item.webLink)
-                    Log.d("item","#eee item = ${item.webLink}")
                 }else {
                     etWebLink.setText(tempEntity.web)
                 }

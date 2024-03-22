@@ -1,6 +1,7 @@
 package com.seven.colink.ui.promotion.ui
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -41,6 +42,7 @@ class ProductPromotionEditFragment : Fragment() {
     private lateinit var editAdapter : ProductPromotionEditAdapter
     private lateinit var getResultMainImg : ActivityResultLauncher<Intent>
     private lateinit var getResultDesImg : ActivityResultLauncher<Intent>
+    private lateinit var mContext: Context
     private val editViewModel : ProductPromotionEditViewModel by viewModels()
     private val sharedViewModel : ProductPromotionSharedViewModel by activityViewModels()
     private var key : String? = null
@@ -56,6 +58,11 @@ class ProductPromotionEditFragment : Fragment() {
         ProductPromotionItems.ProjectMemberHeader(""),
         ProductPromotionItems.ProjectMember(null)
     )
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mContext = context
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,7 +100,7 @@ class ProductPromotionEditFragment : Fragment() {
             ProductPromotionItems.ProjectMemberHeader(""),
             ProductPromotionItems.ProjectMember(null)
         ))
-        editAdapter = ProductPromotionEditAdapter(binding.rvPromotionEdit,viewList)
+        editAdapter = ProductPromotionEditAdapter(mContext,binding.rvPromotionEdit,viewList)
         binding.rvPromotionEdit.adapter = editAdapter
         binding.rvPromotionEdit.layoutManager = LinearLayoutManager(requireContext())
         setButton()
