@@ -34,9 +34,6 @@ class HomeChildViewModel @Inject constructor(
 
             kotlin.runCatching {
                 repository.forEach {
-//                    var bottomRecentItem = BottomItems(it.groupType,it.title,it.description
-//                        ,it.tags,it.imageUrl,it.key,it.status,it.status)
-//                    getBottomItemList.add(bottomRecentItem)
                     while (true) {
                         if (getBottomItemList.size < num) {
                             var bottomRecentItem = BottomItems(it.groupType,it.title,it.description
