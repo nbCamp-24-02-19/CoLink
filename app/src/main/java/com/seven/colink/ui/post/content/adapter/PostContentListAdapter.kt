@@ -1,10 +1,12 @@
 package com.seven.colink.ui.post.content.adapter
 
+import android.content.Context
 import android.text.InputType
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -40,6 +42,7 @@ class PostContentListAdapter(
     private val onClickView: (View) -> Unit,
     private val onClickCommentButton: (String) -> Unit,
     private val onClickCommentDeleteButton: (String) -> Unit,
+    private val onClickCommentEditButton: (String) -> Unit,
     ) : ListAdapter<PostContentItem, PostContentListAdapter.PostViewHolder>(
     object : DiffUtil.ItemCallback<PostContentItem>() {
 
@@ -171,7 +174,8 @@ class PostContentListAdapter(
                     parent,
                     false
                 ),
-                onClickCommentDeleteButton
+                onClickCommentDeleteButton,
+                onClickCommentEditButton
             )
 
             PostContentViewTypeItem.COMMENTSEND -> PostCommentSendViewHolder(
@@ -379,9 +383,11 @@ class PostContentListAdapter(
 
     class PostCommentViewHolder(
         private val binding: ItemPostCommentBinding,
-        private val onClickCommentDeleteButton: (String) -> Unit
+        private val onClickCommentDeleteButton: (String) -> Unit,
+        private val onClickCommentEditButton: (String) -> Unit,
     ) : PostViewHolder(binding.root) {
         override fun onBind(item: PostContentItem) {
+            val context = binding.root.context
             if (item is PostContentItem.CommentItem){
                 binding.tvPostCommentName.text = item.name
                 binding.tvPostComment.text = item.description
@@ -390,8 +396,34 @@ class PostContentListAdapter(
                 binding.ivPostCommentProfile.clipToOutline = true
                 binding.tvPostCommentDelete.isVisible = item.buttonUiState
                 binding.tvPostCommentDelete.setOnClickListener {
-                    onClickCommentDeleteButton(item.key)
+                    var popupMenu = PopupMenu(context, it)
+                    popupMenu.menuInflater.inflate(R.menu.option, popupMenu.menu)
+                    popupMenu.setOnMenuItemClickListener {
+                        when(it.itemId){
+                            R.id.delete_option -> {
+                                onClickCommentDeleteButton(item.key)
+                                return@setOnMenuItemClickListener true
+                            }
+                            R.id.edit_option -> {
+                                binding.etPostComment.visibility = View.VISIBLE
+                                binding.btnPostCommentEdit.visibility = View.VISIBLE
+                                binding.tvPostComment.visibility = View.GONE
+                                binding.btnPostCommentEdit.setOnClickListener {
+                                    onClickCommentEditButton(binding.etPostComment.text.toString())
+                                    binding.tvPostComment.visibility = View.VISIBLE
+                                    binding.etPostComment.visibility = View.GONE
+                                    binding.btnPostCommentEdit.visibility = View.GONE
+                                }
+                                return@setOnMenuItemClickListener true
+                            }
+                            else ->{
+                                return@setOnMenuItemClickListener  false
+                            }
+                        }
+                    }
+                    popupMenu.show()
                 }
+
             }
         }
     }
