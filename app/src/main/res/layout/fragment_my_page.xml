@@ -284,7 +284,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="16dp"
-                    android:text="등록글"
+                    android:text="즐겨찾기 목록"
                     android:textColor="@color/main_color"
                     android:textSize="14sp"
                     android:textStyle="bold"

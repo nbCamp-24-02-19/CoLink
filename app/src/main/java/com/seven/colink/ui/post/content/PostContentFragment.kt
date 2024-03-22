@@ -212,7 +212,6 @@ class PostContentFragment : Fragment() {
                 if (it != null) {
                     viewModel.setEntity(it)
                     viewModel.initViewStateByEntity()
-//                    viewModel.checkLike()
                 }
             }
         }
