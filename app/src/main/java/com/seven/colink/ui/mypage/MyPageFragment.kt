@@ -166,8 +166,7 @@ class MyPageFragment : Fragment() {
                 is UiState.Error -> {
                     hideProgressOverlay()
                     if (userDetails.throwable.message == "No user") startActivity(Intent(requireContext(),SignInActivity::class.java))
-                    Toast.makeText(requireContext(), "${userDetails.throwable.message}", Toast.LENGTH_SHORT)
-                        .show()
+                    Log.i("MyPage", "${userDetails.throwable}")
                 }
             }
         }
