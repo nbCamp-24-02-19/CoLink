@@ -14,6 +14,7 @@ import com.seven.colink.R
 import com.seven.colink.databinding.ItemNotificationChatBinding
 import com.seven.colink.databinding.ItemNotificationDefaultBinding
 import com.seven.colink.databinding.ItemNotificationFilterBinding
+import com.seven.colink.domain.model.NotifyType.*
 import com.seven.colink.ui.notify.NotifyItem
 import com.seven.colink.ui.notify.NotifyItem.ChatItem
 import com.seven.colink.ui.notify.NotifyItem.DefaultItem
@@ -27,6 +28,8 @@ import com.seven.colink.ui.notify.viewmodel.*
 
 class NotificationAdapter (
     private val onChat: (String) -> Unit,
+    private val onPost: (String) -> Unit,
+    private val onGroup: (String) -> Unit,
     private val selectedFilter: (FilterType) -> Unit,
     private val deleteAll: () -> Unit
 ): ListAdapter<NotifyItem, ViewHolder>(
@@ -67,7 +70,9 @@ class NotificationAdapter (
         }
         DEFAULT -> {
             DefaultNotifyViewHolder(
-                ItemNotificationDefaultBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ItemNotificationDefaultBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                onPost,
+                onGroup,
             )
         }
     }
@@ -121,7 +126,9 @@ class NotificationAdapter (
     }
 
     class DefaultNotifyViewHolder(
-        private val binding: ItemNotificationDefaultBinding
+        private val binding: ItemNotificationDefaultBinding,
+        private val onPost: (String) -> Unit,
+        private val onGroup: (String) -> Unit,
     ) :
         ViewHolder(binding.root) {
         override fun onBind(item: NotifyItem) = with(binding) {
@@ -131,6 +138,12 @@ class NotificationAdapter (
             tvNotifyTitle.text = item.title
             tvNotifyBody.text = item.body
             tvNotifyRegisteredDate.text = item.registeredDate
+
+            when (item.type) {
+                APPLY, JOIN -> onGroup(item.key!!)
+                INVITE -> onPost(item.key!!)
+                else -> Unit
+            }
         }
     }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

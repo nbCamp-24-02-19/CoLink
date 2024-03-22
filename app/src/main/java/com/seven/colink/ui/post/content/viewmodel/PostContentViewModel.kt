@@ -13,6 +13,7 @@ import com.seven.colink.domain.entity.RecruitInfo
 import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.CommentRepository
+import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.domain.usecase.GetPostUseCase
@@ -43,6 +44,7 @@ class PostContentViewModel @Inject constructor(
     private val registerApplicationInfoUseCase: RegisterApplicationInfoUseCase,
     private val commentRepository: CommentRepository,
     private val sendNotificationApplyUseCase: SendNotificationApplyUseCase,
+    private val groupRepository: GroupRepository
 ) : ViewModel() {
     private lateinit var entity: Post
     private val _uiState = MutableLiveData<List<PostContentItem>>()
@@ -174,18 +176,16 @@ class PostContentViewModel @Inject constructor(
                 } else {
                     items.addAll(recruitItems)
                 }
-
                 items.add(
                     PostContentItem.TitleItem(
                         if (currentEntity.groupType == GroupType.PROJECT) R.string.project_member_info else R.string.study_member_info,
                         GroupContentViewType.UNKNOWN
                     )
                 )
-                items.add(PostContentItem.SubTitleItem(R.string.project_team_member))
-                items.addAll(createMember(currentEntity))
-
+                createMember(currentEntity)?.let { memberItems ->
+                    items.addAll(memberItems)
+                }
                 items.add(PostContentItem.CommentTitle(R.string.comment))
-
                 getComment()?.forEach {
                     userRepository.getUserDetails(it.authId).getOrNull().let {user ->
                         items.add(
@@ -204,7 +204,6 @@ class PostContentViewModel @Inject constructor(
                 items.add(
                     PostContentItem.CommentSendItem
                 )
-
                 _uiState.value = items
             }
         }
@@ -218,13 +217,37 @@ class PostContentViewModel @Inject constructor(
             )
         } ?: emptyList()
 
-    private suspend fun createMember(uiState: Post): List<PostContentItem.MemberItem> {
-        return uiState.memberIds.mapNotNull { memberId ->
-            val userEntity = userRepository.getUserDetails(memberId).getOrNull()
-            userEntity?.let { user ->
-                PostContentItem.MemberItem(key = uiState.key, userInfo = user)
+    private suspend fun createMember(uiState: Post): List<PostContentItem> {
+        val group = groupRepository.getGroupDetail(uiState.key).getOrNull()
+        val memberItems = mutableListOf<PostContentItem>()
+        var leaderTitleAdded = false
+        val memberIdsSet = group?.memberIds?.toSet()
+
+        if (memberIdsSet != null) {
+            for (memberId in memberIdsSet) {
+                val userEntity = userRepository.getUserDetails(memberId).getOrNull()
+
+                if (userEntity != null) {
+                    val isLeader = uiState.authId == memberId
+
+                    if (isLeader && !leaderTitleAdded) {
+                        memberItems.add(PostContentItem.SubTitleItem(R.string.project_team_leader))
+                    } else if (!isLeader && !leaderTitleAdded) {
+                        memberItems.add(PostContentItem.SubTitleItem(R.string.project_team_member))
+                        leaderTitleAdded = true
+                    }
+
+                    memberItems.add(
+                        PostContentItem.MemberItem(
+                            key = uiState.key,
+                            userInfo = userEntity
+                        )
+                    )
+                }
             }
         }
+
+        return memberItems
     }
 
     private suspend fun getCurrentUser(): String? {
@@ -240,7 +263,7 @@ class PostContentViewModel @Inject constructor(
             applicationStatus = ApplicationStatus.PENDING,
         )
         updateRecruitList(recruitItem, newApplicationInfo)
-        sendNotificationApplyUseCase(entity,getCurrentUser()?: return)
+        sendNotificationApplyUseCase(entity)
     }
 
     // 지원한 회원 데이터 추가
