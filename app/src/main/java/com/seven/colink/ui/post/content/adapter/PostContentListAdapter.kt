@@ -5,6 +5,7 @@ import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -403,6 +404,7 @@ class PostContentListAdapter(
                                 return@setOnMenuItemClickListener true
                             }
                             R.id.edit_option -> {
+                                binding.etPostComment.text.clear()
                                 binding.etPostComment.visibility = View.VISIBLE
                                 binding.btnPostCommentEdit.visibility = View.VISIBLE
                                 binding.tvPostComment.visibility = View.GONE
@@ -411,6 +413,8 @@ class PostContentListAdapter(
                                     binding.tvPostComment.visibility = View.VISIBLE
                                     binding.etPostComment.visibility = View.GONE
                                     binding.btnPostCommentEdit.visibility = View.GONE
+                                    val imm:InputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                    imm.hideSoftInputFromWindow(binding.etPostComment.windowToken, 0)
                                 }
                                 return@setOnMenuItemClickListener true
                             }
