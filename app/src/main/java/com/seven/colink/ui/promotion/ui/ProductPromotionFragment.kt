@@ -51,7 +51,6 @@ class ProductPromotionFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             key = it.getString(Constants.EXTRA_ENTITY_KEY)
-            Log.d("FragView","#aaa arguments key = $key")
         }
     }
 
@@ -71,7 +70,6 @@ class ProductPromotionFragment : Fragment() {
 
     private fun initView() {
         key?.let { promotionViewModel.initProduct(it) }
-        Log.d("FragView","#aaa key = $key")
         viewAdapter = ProductPromotionViewAdapter(mContext)
         binding.rvPromotion.adapter = viewAdapter
         binding.rvPromotion.layoutManager = LinearLayoutManager(requireContext())
@@ -80,19 +78,8 @@ class ProductPromotionFragment : Fragment() {
     private fun setObserve() {
         promotionViewModel.product.observe(viewLifecycleOwner) {
             viewList = promotionViewModel.getViewList()
-            Log.d("FragView","#aaa observe = $viewList")
             viewAdapter.submitList(viewList)
             viewAdapter.notifyDataSetChanged()
-//            promotionViewModel.getViewList().let { items ->
-//                viewList = mutableListOf()
-//                viewList.clear()
-//                viewList.addAll(items)
-//                viewAdapter = ProductPromotionViewAdapter(mContext)
-//                binding.rvPromotion.adapter = viewAdapter
-//                binding.rvPromotion.layoutManager = LinearLayoutManager(requireContext())
-//                viewAdapter.submitList(items)
-//                viewAdapter.notifyDataSetChanged()
-//            }
         }
 
         promotionViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->

@@ -23,13 +23,13 @@ import javax.inject.Inject
 class ProductPromotionViewViewModel @Inject constructor(
     private val productRepository : ProductRepository,
     private val userRepository: UserRepository,
-    private val context: Application
+    private val context: Application,
+
 ) : ViewModel() {
 
     private val _product = MutableLiveData<ProductEntity?>()
     val product: LiveData<ProductEntity?> get() = _product
     private val _isLoading = MutableLiveData<Boolean>()
-//    private val _setLeader = MutableLiveData<ProductPromotionItems.ProjectLeaderItem>()
     private val _setLeader = MutableLiveData<Result<UserEntity?>?>()
     private val _setMember = MutableLiveData<MutableList<ProductPromotionItems.ProjectMember>>()
     private val _setView = MutableLiveData<MutableList<ProductPromotionItems>>()
@@ -44,21 +44,17 @@ class ProductPromotionViewViewModel @Inject constructor(
         _isLoading.value = true
         Handler(Looper.getMainLooper()).postDelayed( {getData(key)} , 2000)
         _isLoading.value = false
-//        getData(key)
     }
 
     private fun getData(key: String) {
 
         entity = ProductEntity()
-        val authEntity = UserEntity()
         var memberList = mutableListOf<ProductPromotionItems.ProjectMember>()
 
         viewModelScope.launch {
             memberList.clear()
             val repository = productRepository.getProductDetail(key)
             val getEntity = repository.getOrNull()
-            Log.d("ViewModelView","#aaa getEntity = $getEntity")
-//            entity = getEntity
             entity = getEntity?.memberIds?.let { mem ->
                 entity?.copy(
                     key = key,
@@ -75,19 +71,13 @@ class ProductPromotionViewViewModel @Inject constructor(
                     iosUrl = getEntity.iosUrl
                     )
             }
-            Log.d("ViewModelView","#aaa entity = $entity")
 
-//            val getLeaderDetail = getEntity?.authId?.let { getMemberDetail(it) }
             val getLeaderDetail = getEntity?.authId?.let { userRepository.getUserDetails(it) }
-            val setLeaderItem = ProductPromotionItems.ProjectLeaderItem(getLeaderDetail)
-            Log.d("ViewModelView","#aaa getLeader = $getLeaderDetail")
-            Log.d("ViewModelView","#aaa setLeader = $setLeaderItem")
 
             val memberIds = getEntity?.memberIds
             if (memberIds != null) {
                 var memberDetailList = mutableListOf<ProductPromotionItems.ProjectMember>()
                 memberIds.forEach { id ->
-//                    val detail = getMemberDetail(id)
                     val detail = userRepository.getUserDetails(id)
                     val userNt = detail.getOrNull()
                     val user = userEntity.copy(
@@ -102,10 +92,7 @@ class ProductPromotionViewViewModel @Inject constructor(
                         chatRoomKeyList = userNt?.chatRoomKeyList
                     )
                     this@ProductPromotionViewViewModel.userEntity = user
-                    Log.d("ViewModelView","#aaa userEntity = $userEntity")
-                    Log.d("ViewModelView","#aaa user = $user")
                     memberDetailList.add(ProductPromotionItems.ProjectMember(user))
-                    Log.d("ViewModelView","#aaa memberDetailList = $memberDetailList")
                 }
                 memberList = memberDetailList
             }
@@ -133,13 +120,15 @@ class ProductPromotionViewViewModel @Inject constructor(
                 ProductPromotionItems.ProjectLeaderHeader(getString(R.string.product_leader)),
                 ProductPromotionItems.ProjectLeaderItem(_setLeader.value),
                 ProductPromotionItems.ProjectMemberHeader(getString(R.string.product_member)),
-//                ProductPromotionItems.ProjectMember(userEntity)
             )
         )
         _setMember.value?.forEach { member ->
             viewList.add(member)
         }
-        Log.d("ViewModelView","#aaa list = $viewList")
         return viewList
+    }
+
+    fun getLogInUser() {
+
     }
 }
