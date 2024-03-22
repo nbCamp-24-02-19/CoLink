@@ -10,6 +10,7 @@ import com.seven.colink.R
 import com.seven.colink.domain.entity.ApplicationInfo
 import com.seven.colink.domain.entity.CommentEntity
 import com.seven.colink.domain.entity.RecruitInfo
+import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.CommentRepository
 import com.seven.colink.domain.repository.PostRepository
@@ -68,7 +69,7 @@ class PostContentViewModel @Inject constructor(
     private val _isLike = MutableLiveData<Boolean>()
     val isLike: LiveData<Boolean> get() = _isLike
 
-    private var _currentUser:UserEntity? = null
+    private var _currentUser: UserEntity? = null
     private val currentUser get() = _currentUser
 
     private val _likeList = MutableLiveData<List<String>?>()
@@ -120,6 +121,23 @@ class PostContentViewModel @Inject constructor(
         }
         setPostContentItems(entity.recruit)
     }
+//수정을 하려면 일단 그 댓글의 키값을 가져와서 그 키값이랑 맞는 댓글의 description을 수정해야 하는것이지?????????????????????
+    //근데???????????밑에 이 친구는 그냥 댓글 추가 하는 거잖아???????????????ㅎ..ㅋ.ㅎ..ㅎ.ㅎ..ㅎ.
+//    fun editComment(text: String) {
+//        viewModelScope.launch {
+//            commentRepository.registerComment(
+//                getCurrentUser()?.let {
+//                    CommentEntity(
+////                        key = ,
+//                        authId = it,
+//                        postId = entity.key,
+//                        description = text
+//                    )
+//                }?: return@launch
+//            )
+//        }
+//        setPostContentItems(entity.recruit)
+//    }
 
     fun deleteComment(key: String){
         viewModelScope.launch {
