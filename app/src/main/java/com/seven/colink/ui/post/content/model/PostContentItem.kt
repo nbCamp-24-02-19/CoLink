@@ -3,10 +3,8 @@ package com.seven.colink.ui.post.content.model
 import com.seven.colink.domain.entity.RecruitInfo
 import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.ui.group.board.board.GroupContentViewType
-import com.seven.colink.util.convert.convertLocalDateTime
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
-import java.time.LocalDateTime
 
 sealed interface PostContentItem {
     data class Item(
@@ -32,7 +30,7 @@ sealed interface PostContentItem {
 
     data class MemberItem(
         val key: String?,
-        val userInfo: UserEntity
+        val userInfo: UserEntity?
     ) : PostContentItem
 
     data class TitleItem(

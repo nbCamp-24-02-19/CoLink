@@ -1,6 +1,7 @@
 package com.seven.colink.ui.notify
 
 import android.graphics.drawable.Drawable
+import com.seven.colink.domain.model.NotifyType
 import com.seven.colink.ui.notify.viewmodel.FilterType
 
 sealed interface NotifyItem {
@@ -18,6 +19,7 @@ sealed interface NotifyItem {
 
     data class DefaultItem(
         val key: String?,
+        val type: NotifyType?,
         val icon: Drawable?,
         val iconBackground: Int?,
         val title: String?,

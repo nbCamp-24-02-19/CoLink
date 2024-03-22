@@ -1,4 +1,4 @@
-package com.seven.colink.ui.promotion
+package com.seven.colink.ui.promotion.model
 
 import com.seven.colink.domain.entity.UserEntity
 

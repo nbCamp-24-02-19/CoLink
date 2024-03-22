@@ -2,14 +2,12 @@ package com.seven.colink.ui.post.content.adapter
 
 import android.content.Context
 import android.text.InputType
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -57,7 +55,7 @@ class PostContentListAdapter(
                 }
 
                 oldItem is PostContentItem.MemberItem && newItem is PostContentItem.MemberItem -> {
-                    oldItem.userInfo.uid == newItem.userInfo.uid
+                    oldItem.userInfo?.uid == newItem.userInfo?.uid
                 }
 
                 oldItem is PostContentItem.AdditionalInfo && newItem is PostContentItem.AdditionalInfo -> {
@@ -207,13 +205,13 @@ class PostContentListAdapter(
     ) : PostViewHolder(binding.root) {
         override fun onBind(item: PostContentItem) {
             if (item is PostContentItem.MemberItem) {
-                binding.ivUser.load(item.userInfo.photoUrl)
+                binding.ivUser.load(item.userInfo?.photoUrl)
                 binding.ivUser.clipToOutline = true
-                binding.tvUserName.text = item.userInfo.name
-                binding.tvUserGrade.text = item.userInfo.grade.toString()
-                item.userInfo.level?.let { binding.ivLevelDiaIcon.setLevelIcon(it) }
-                binding.tvLevelDiaIcon.text = item.userInfo.level.toString()
-                binding.tvUserIntroduction.text = item.userInfo.info
+                binding.tvUserName.text = item.userInfo?.name
+                binding.tvUserGrade.text = item.userInfo?.grade.toString()
+                item.userInfo?.level?.let { binding.ivLevelDiaIcon.setLevelIcon(it) }
+                binding.tvLevelDiaIcon.text = item.userInfo?.level.toString()
+                binding.tvUserIntroduction.text = item.userInfo?.info
 
                 binding.root.setOnClickListener {
                     onClickItem(item)

@@ -11,8 +11,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import android.widget.PopupMenu
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -56,7 +54,7 @@ class PostContentFragment : Fragment() {
                         startActivity(
                             UserDetailActivity.newIntent(
                                 requireActivity(),
-                                item.userInfo.uid ?: return@PostContentListAdapter
+                                item.userInfo?.uid ?: return@PostContentListAdapter
                             )
                         )
                     }

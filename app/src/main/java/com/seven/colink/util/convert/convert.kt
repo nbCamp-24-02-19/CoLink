@@ -6,7 +6,6 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -60,13 +59,13 @@ fun getDateByState(scheduleDateType: ScheduleDateType): String {
 
     val adjustedTime = when (scheduleDateType) {
         ScheduleDateType.CURRENT -> now.plusHours(1)
-        ScheduleDateType.NEXT_DAY -> now.plusHours(2)
+        ScheduleDateType.AFTER_TWO_HOUR -> now.plusHours(2)
     }
 
     return formatDate(adjustedTime)
 }
 
 fun formatDate(date: LocalDateTime): String {
-    val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")
+    val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:00")
     return date.format(formatter)
 }
