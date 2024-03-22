@@ -33,6 +33,11 @@ class SignInActivity : AppCompatActivity() {
         initViewModel()
     }
 
+    override fun onStart() {
+        viewModel.signInCheck()
+        super.onStart()
+    }
+
     private fun initViewModel() = with(viewModel) {
         lifecycleScope.launch {
             entryType.collect {

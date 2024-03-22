@@ -16,12 +16,14 @@ class NotifyRepositoryImpl @Inject constructor(
     private fun NotificationEntity.convert() = NotificationDTO(
         to = toUserToken,
         data = NotificationDTO.NotificationData(
+            key = key,
             title = title,
             type = type?.title,
             name = name,
             message = message,
             registeredDate = registeredDate,
             img = thumbnail,
+            groupType = groupType?.ordinal.toString()
         )
     )
 }

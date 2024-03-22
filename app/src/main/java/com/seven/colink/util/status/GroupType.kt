@@ -5,7 +5,7 @@ enum class GroupType {
     ;
 
     companion object {
-        fun from(ordinal: Int): GroupType = GroupType.values().find {
+        fun from(ordinal: Int?): GroupType = entries.find {
             it.ordinal == ordinal
         } ?: UNKNOWN
     }

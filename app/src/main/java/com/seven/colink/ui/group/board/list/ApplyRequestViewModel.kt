@@ -23,7 +23,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ApplyRequestViewModel @Inject constructor(
-    val groupRepository: GroupRepository,
+    private val groupRepository: GroupRepository,
     val postRepository: PostRepository,
     val userRepository: UserRepository,
     val postUseCase: GetPostUseCase,
@@ -56,7 +56,6 @@ class ApplyRequestViewModel @Inject constructor(
             val matchingApplicationInfos = recruitInfo.applicationInfos?.filter {
                 it.recruitId == recruitInfo.key && it.applicationStatus == ApplicationStatus.PENDING
             } ?: emptyList()
-
             if (matchingApplicationInfos.isNotEmpty()) {
                 dataList.add(GroupBoardItem.SubTitleItem(title = type))
                 matchingApplicationInfos.forEach { applicationInfo ->
@@ -88,7 +87,10 @@ class ApplyRequestViewModel @Inject constructor(
         updateApplicationStatus(applicationInfo, ApplicationStatus.REJECTED)
     }
 
-    private fun updateApplicationStatus(applicationInfo: ApplicationInfo?, newStatus: ApplicationStatus) {
+    private fun updateApplicationStatus(
+        applicationInfo: ApplicationInfo?,
+        newStatus: ApplicationStatus
+    ) {
         applicationInfo?.let {
             viewModelScope.launch {
 
@@ -103,23 +105,35 @@ class ApplyRequestViewModel @Inject constructor(
                 )
 
                 if (updateResult == DataResultStatus.SUCCESS) {
-                    val updatedUiState = uiState.value?.map { item ->
+                    val updatedUiState = uiState.value?.mapNotNull { item ->
                         when (item) {
                             is GroupBoardItem.MemberApplicationInfoItem -> {
                                 if (item.applicationInfo == applicationInfo) {
-                                    item.copy(applicationInfo = applicationInfo.copy(applicationStatus = newStatus))
+                                    val updatedApplicationInfo = applicationInfo.copy(
+                                        applicationStatus = newStatus
+                                    )
+                                    if (updatedApplicationInfo.applicationStatus == ApplicationStatus.PENDING) {
+                                        item.copy(applicationInfo = updatedApplicationInfo)
+                                    } else {
+                                        null
+                                    }
                                 } else {
                                     item
                                 }
                             }
                             else -> item
                         }
+                    }?.toMutableList() ?: mutableListOf()
+
+                    if (updatedUiState.none { it is GroupBoardItem.MemberApplicationInfoItem && it.applicationInfo?.applicationStatus == ApplicationStatus.PENDING }) {
+                        updatedUiState.add(GroupBoardItem.MessageItem(message = "지원 목록이 없습니다."))
                     }
 
                     _uiState.postValue(updatedUiState)
 
                     if (newStatus == ApplicationStatus.APPROVE) {
-                        _entity = entity.copy(memberIds = entity.memberIds + listOf(applicationInfo.userId.orEmpty()))
+                        _entity =
+                            entity.copy(memberIds = entity.memberIds + listOf(applicationInfo.userId.orEmpty()))
                         groupRepository.updateGroupMemberIds(entity.key, entity)
                     }
                 }
