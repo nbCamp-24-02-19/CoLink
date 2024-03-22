@@ -41,17 +41,6 @@
         app:layout_constraintStart_toEndOf="@+id/tv_post_comment_name"
         app:layout_constraintTop_toTopOf="@+id/tv_post_comment_name" />
 
-<!--    <TextView-->
-<!--        android:id="@+id/tv_post_comment_delete"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginEnd="24dp"-->
-<!--        android:text="삭제"-->
-<!--        android:textColor="@color/chat_notice"-->
-<!--        android:textSize="12sp"-->
-<!--        app:layout_constraintBottom_toBottomOf="@+id/tv_post_comment_time"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="@+id/tv_post_comment_time" />-->
 
     <TextView
         android:id="@+id/tv_post_comment_delete"
@@ -88,6 +77,8 @@
         android:textSize="14sp"
         android:background="@drawable/userdetail_shape"
         android:backgroundTint="@color/border_line"
+        android:imeOptions="actionDone"
+        android:inputType="text"
         android:maxLines="1"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
