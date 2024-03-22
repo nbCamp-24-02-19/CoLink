@@ -41,28 +41,17 @@
         app:layout_constraintStart_toEndOf="@+id/tv_post_comment_name"
         app:layout_constraintTop_toTopOf="@+id/tv_post_comment_name" />
 
+
     <TextView
         android:id="@+id/tv_post_comment_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="..."
+        android:textColor="@color/bottom_enable_color"
+        android:textSize="20sp"
         android:layout_marginEnd="24dp"
-        android:text="삭제"
-        android:textColor="@color/chat_notice"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_post_comment_time"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_post_comment_time" />
-
-<!--    <TextView-->
-<!--        android:id="@+id/tv_post_comment_delete"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="160dp"-->
-<!--        android:text="..."-->
-<!--        android:textColor="@color/bottom_enable_color"-->
-<!--        android:textSize="20sp"-->
-<!--        app:layout_constraintStart_toEndOf="@+id/tv_post_comment_time"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_post_comment"
@@ -76,5 +65,38 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/iv_post_comment_profile"
         app:layout_constraintTop_toBottomOf="@+id/tv_post_comment_name" />
+
+    <EditText
+        android:id="@+id/et_post_comment"
+        android:layout_width="271dp"
+        android:layout_height="50dp"
+        android:padding="5dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="35dp"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        android:background="@drawable/userdetail_shape"
+        android:backgroundTint="@color/border_line"
+        android:imeOptions="actionDone"
+        android:inputType="text"
+        android:maxLines="1"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/iv_post_comment_profile"
+        app:layout_constraintTop_toBottomOf="@+id/tv_post_comment_name" />
+
+    <Button
+        android:id="@+id/btn_post_comment_edit"
+        android:layout_width="50dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:text="수정"
+        android:textColor="@color/white"
+        android:background="@drawable/mypage_re_shape"
+        android:backgroundTint="@color/main_color"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@+id/et_post_comment"
+        app:layout_constraintTop_toBottomOf="@+id/tv_post_comment_delete" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

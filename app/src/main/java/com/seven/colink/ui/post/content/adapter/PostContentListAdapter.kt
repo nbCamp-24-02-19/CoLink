@@ -1,9 +1,12 @@
 package com.seven.colink.ui.post.content.adapter
 
+import android.content.Context
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
@@ -37,7 +40,8 @@ class PostContentListAdapter(
     private val onClickButton: (PostContentItem, ContentButtonUiState) -> Unit,
     private val onClickView: (View) -> Unit,
     private val onClickCommentButton: (String) -> Unit,
-    private val onClickCommentDeleteButton: (String, ContentButtonUiState) -> Unit,
+    private val onClickCommentDeleteButton: (String) -> Unit,
+    private val onClickCommentEditButton: (String, String) -> Unit,
     ) : ListAdapter<PostContentItem, PostContentListAdapter.PostViewHolder>(
     object : DiffUtil.ItemCallback<PostContentItem>() {
 
@@ -169,7 +173,8 @@ class PostContentListAdapter(
                     parent,
                     false
                 ),
-                onClickCommentDeleteButton
+                onClickCommentDeleteButton,
+                onClickCommentEditButton
             )
 
             PostContentViewTypeItem.COMMENTSEND -> PostCommentSendViewHolder(
@@ -377,19 +382,50 @@ class PostContentListAdapter(
 
     class PostCommentViewHolder(
         private val binding: ItemPostCommentBinding,
-        private val onClickCommentDeleteButton: (String, ContentButtonUiState) -> Unit
+        private val onClickCommentDeleteButton: (String) -> Unit,
+        private val onClickCommentEditButton: (String, String) -> Unit,
     ) : PostViewHolder(binding.root) {
         override fun onBind(item: PostContentItem) {
+            val context = binding.root.context
             if (item is PostContentItem.CommentItem){
                 binding.tvPostCommentName.text = item.name
                 binding.tvPostComment.text = item.description
                 binding.tvPostCommentTime.text = item.registeredDate
                 binding.ivPostCommentProfile.load(item.profile)
                 binding.ivPostCommentProfile.clipToOutline = true
-                binding.tvPostCommentDelete.visibility = if (item.buttonUiState == ContentButtonUiState.Manager) View.VISIBLE else View.GONE
+                binding.tvPostCommentDelete.isVisible = item.buttonUiState
                 binding.tvPostCommentDelete.setOnClickListener {
-                    onClickCommentDeleteButton(item.key, item.buttonUiState)
+                    var popupMenu = PopupMenu(context, it)
+                    popupMenu.menuInflater.inflate(R.menu.option, popupMenu.menu)
+                    popupMenu.setOnMenuItemClickListener {
+                        when(it.itemId){
+                            R.id.delete_option -> {
+                                onClickCommentDeleteButton(item.key)
+                                return@setOnMenuItemClickListener true
+                            }
+                            R.id.edit_option -> {
+                                binding.etPostComment.text.clear()
+                                binding.etPostComment.visibility = View.VISIBLE
+                                binding.btnPostCommentEdit.visibility = View.VISIBLE
+                                binding.tvPostComment.visibility = View.GONE
+                                binding.btnPostCommentEdit.setOnClickListener {
+                                    onClickCommentEditButton(item.key, binding.etPostComment.text.toString())
+                                    binding.tvPostComment.visibility = View.VISIBLE
+                                    binding.etPostComment.visibility = View.GONE
+                                    binding.btnPostCommentEdit.visibility = View.GONE
+                                    val imm:InputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                    imm.hideSoftInputFromWindow(binding.etPostComment.windowToken, 0)
+                                }
+                                return@setOnMenuItemClickListener true
+                            }
+                            else ->{
+                                return@setOnMenuItemClickListener  false
+                            }
+                        }
+                    }
+                    popupMenu.show()
                 }
+
             }
         }
     }
