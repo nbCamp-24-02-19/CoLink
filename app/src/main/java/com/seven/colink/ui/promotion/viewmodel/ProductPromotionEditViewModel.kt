@@ -29,7 +29,7 @@ class ProductPromotionEditViewModel @Inject constructor(
     private val groupRepository: GroupRepository,
     private val productRepository : ProductRepository,
     private val userRepository: UserRepository,
-    private val imageRepository: ImageRepository
+    private val imageRepository: ImageRepository,
 ) : ViewModel() {
     var entity = ProductEntity()
 
@@ -38,6 +38,8 @@ class ProductPromotionEditViewModel @Inject constructor(
     private val _setLeader = MutableLiveData<ProductPromotionItems.ProjectLeaderItem>()
     private val _setMember = MutableLiveData<MutableList<ProductPromotionItems.ProjectMember>>()
     private val _isLoading = MutableLiveData<Boolean>()
+    private val _key = MutableLiveData<String>()
+    val key : LiveData<String> get() = _key
     val result : LiveData<DataResultStatus> get() = _result
     val product : LiveData<ProductEntity> get() = _product
     val setLeader : LiveData<ProductPromotionItems.ProjectLeaderItem> get() = _setLeader
@@ -92,8 +94,6 @@ class ProductPromotionEditViewModel @Inject constructor(
 
             val getLeaderDetail = ids.getOrNull()?.authId?.let { authId -> userRepository.getUserDetails(authId) }
             val setLeaderItem = ProductPromotionItems.ProjectLeaderItem(getLeaderDetail)
-            Log.d("viewmodel","#bbb 리더 제대로 뜨는거야? = $getLeaderDetail")
-            Log.d("viewmodel","#bbb 리더 uid? = ${ids.getOrNull()?.authId}")
 
             entity = ProductEntity(authId = ids.getOrNull()?.authId)
 
@@ -134,7 +134,6 @@ class ProductPromotionEditViewModel @Inject constructor(
                 }
             _setMember.value = memberList
             _setLeader.value = setLeaderItem
-            Log.d("viewmodel","#bbb data entity = $entity")
             }
         }
 
@@ -148,35 +147,18 @@ class ProductPromotionEditViewModel @Inject constructor(
             aosUrl = nt.aosUrl,
             iosUrl = nt.iosUrl
         )
-        Log.d("Edit","#ccc viewModel save entity = $entity")
     }
 
     suspend fun uploadImage(uri: Uri): String =
         imageRepository.uploadImage(uri).getOrThrow().toString()
 
-    fun changeType(temp: TempProductEntity, nt:ProductEntity){
-        viewModelScope.launch {
-            entity = entity.copy(
-                title = nt.title,
-                imageUrl = temp.selectMainImgUri?.let { uploadImage(it) } ?: "",
-                description = nt.description,
-                desImg = temp.selectMiddleImgUri?.let { uploadImage(it) } ?: "",
-                referenceUrl = nt.referenceUrl,
-                aosUrl = nt.aosUrl,
-                iosUrl = nt.iosUrl
-            )
-        }
-    }
-
     fun registerProduct()  {
         _product.value = entity
-
         saveProduct(entity)
-        Log.d("ViewModel","#bbb save entity = $entity")
         viewModelScope.launch {
             _result.value = productRepository.registerProduct(entity)
-            Log.d("ViewModel","#bbb firebase entity = $entity")
         }
+        _key.value = entity.key
     }
 
     private fun saveProduct(nt : ProductEntity) {
