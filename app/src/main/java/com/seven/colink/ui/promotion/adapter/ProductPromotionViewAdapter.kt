@@ -131,7 +131,6 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
         if (item is ProductPromotionItems.Img) {
             holder as FirstViewHolder
             holder.img.load(item.img)
-            Log.d("AdapterView","#aaa img = ${item.img}")
         }
 
         if (item is ProductPromotionItems.Title) {
@@ -146,9 +145,6 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
                 date.text = item.date
                 viewDes.text = item.des
                 viewTitle.text = item.title
-                Log.d("AdapterView","#aaa date = ${item.date}")
-                Log.d("AdapterView","#aaa des = ${item.des}")
-                Log.d("AdapterView","#aaa title = ${item.title}")
             }
         }
 
@@ -159,7 +155,6 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
             }else {
                 holder.lay.visibility = View.VISIBLE
                 holder.img.load(item.img)
-                Log.d("AdapterView","#aaa middleImg = ${item.img}")
             }
         }
 
@@ -169,7 +164,6 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
                 viewLink.visibility = View.VISIBLE
                 editLayLink.visibility = View.GONE
                 viewWebLink.text = item.webLink
-                Log.d("AdapterView","#aaa web = ${item.webLink}")
                 viewWebLink.setOnClickListener {
                     val url = item.webLink
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
@@ -221,7 +215,6 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
                 img.load(items?.getOrNull()?.photoUrl)
                 name.text = items?.getOrNull()?.name
                 intro.text = items?.getOrNull()?.info
-                Log.d("AdapterView","#aaa name = ${items?.getOrNull()?.name}")
                 grade.text = items?.getOrNull()?.grade.toString()
                 level.text = items?.getOrNull()?.level.toString()
                 items?.getOrNull()?.level.let { color ->
@@ -247,7 +240,6 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
                 items?.let { member ->
                     img.load(member.photoUrl)
                     name.text = member.name
-                    Log.d("AdapterView","#aaa memberName = ${member.name}")
                     intro.text = member.info
                     grade.text = member.grade.toString()
                     level.text = member.level.toString()
