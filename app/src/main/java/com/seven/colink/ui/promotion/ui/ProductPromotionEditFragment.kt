@@ -11,7 +11,9 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentProductPromotionEditBinding
@@ -19,6 +21,7 @@ import com.seven.colink.domain.entity.ProductEntity
 import com.seven.colink.ui.promotion.adapter.ProductPromotionEditAdapter
 import com.seven.colink.ui.promotion.model.ProductPromotionItems
 import com.seven.colink.ui.promotion.viewmodel.ProductPromotionEditViewModel
+import com.seven.colink.ui.promotion.viewmodel.ProductPromotionSharedViewModel
 import com.seven.colink.util.Constants
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
@@ -26,6 +29,7 @@ import com.seven.colink.util.status.DataResultStatus
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -38,6 +42,7 @@ class ProductPromotionEditFragment : Fragment() {
     private lateinit var getResultMainImg : ActivityResultLauncher<Intent>
     private lateinit var getResultDesImg : ActivityResultLauncher<Intent>
     private val editViewModel : ProductPromotionEditViewModel by viewModels()
+    private val sharedViewModel : ProductPromotionSharedViewModel by activityViewModels()
     private var key : String? = null
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
     private var viewList = mutableListOf(
@@ -51,7 +56,6 @@ class ProductPromotionEditFragment : Fragment() {
         ProductPromotionItems.ProjectMemberHeader(""),
         ProductPromotionItems.ProjectMember(null)
     )
-    private var loading = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -131,10 +135,6 @@ class ProductPromotionEditFragment : Fragment() {
         editViewModel.result.observe(viewLifecycleOwner) { result ->
             if (result == DataResultStatus.SUCCESS) {
                 val frag = ProductPromotionFragment()
-                val bundle = Bundle()
-                bundle.putString(Constants.EXTRA_ENTITY_KEY,editViewModel.entity.key)
-                frag.arguments = bundle
-
                 val fragmentManager = requireActivity().supportFragmentManager
                 val trans = fragmentManager.beginTransaction()
                 trans.replace(R.id.frame_product_promotion,frag)
@@ -182,6 +182,11 @@ class ProductPromotionEditFragment : Fragment() {
                 aosUrl = tempData.aos,
                 iosUrl = tempData.ios
             )
+
+            editViewModel.key.observe(viewLifecycleOwner) { k ->
+                sharedViewModel.setKey(k)
+            }
+
             with(editViewModel) {
                 saveEntity(entity)
                 registerProduct()

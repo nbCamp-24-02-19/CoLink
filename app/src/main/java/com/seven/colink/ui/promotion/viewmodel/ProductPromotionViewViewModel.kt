@@ -1,9 +1,6 @@
 package com.seven.colink.ui.promotion.viewmodel
 
 import android.app.Application
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,7 +12,8 @@ import com.seven.colink.domain.repository.ProductRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.ui.promotion.model.ProductPromotionItems
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,7 +22,6 @@ class ProductPromotionViewViewModel @Inject constructor(
     private val productRepository : ProductRepository,
     private val userRepository: UserRepository,
     private val context: Application,
-
 ) : ViewModel() {
 
     private val _product = MutableLiveData<ProductEntity?>()
@@ -39,9 +36,13 @@ class ProductPromotionViewViewModel @Inject constructor(
     val isLoading: LiveData<Boolean> get() = _isLoading
     private var entity : ProductEntity? = null
     private var userEntity = UserEntity()
+    private val _key = MutableLiveData<String?>()
+    val key : LiveData<String?> get() =_key
 
-    fun initProduct(key: String) {
-        Handler(Looper.getMainLooper()).postDelayed( {getData(key)} , 2000)
+
+    fun initProduct(keyValue: String) {
+//        Handler(Looper.getMainLooper()).postDelayed( {getData(key)} , 2000)
+        getData(keyValue)
     }
 
     private fun getData(key: String) {
