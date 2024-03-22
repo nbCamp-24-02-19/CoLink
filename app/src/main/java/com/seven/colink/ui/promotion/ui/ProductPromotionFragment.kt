@@ -66,6 +66,7 @@ class ProductPromotionFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initView()
         setObserve()
+        clickBackButton()
     }
 
     private fun initView() {
@@ -73,6 +74,12 @@ class ProductPromotionFragment : Fragment() {
         viewAdapter = ProductPromotionViewAdapter(mContext)
         binding.rvPromotion.adapter = viewAdapter
         binding.rvPromotion.layoutManager = LinearLayoutManager(requireContext())
+    }
+
+    private fun clickBackButton() {
+        binding.ivPromotionFinish.setOnClickListener {
+            activity?.finish()
+        }
     }
 
     private fun setObserve() {

@@ -72,7 +72,7 @@
         android:fontFamily="@font/inter_bold"
         android:textColor="@color/black"
         android:textStyle="bold"
-        android:text="@string/product_edit_link_header"/>
+        android:text="@string/product_edit_store_link_header"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/lay_product_edit_link"

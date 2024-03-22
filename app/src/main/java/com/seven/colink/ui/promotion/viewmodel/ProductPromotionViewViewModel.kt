@@ -41,13 +41,11 @@ class ProductPromotionViewViewModel @Inject constructor(
     private var userEntity = UserEntity()
 
     fun initProduct(key: String) {
-        _isLoading.value = true
         Handler(Looper.getMainLooper()).postDelayed( {getData(key)} , 2000)
-        _isLoading.value = false
     }
 
     private fun getData(key: String) {
-
+        _isLoading.value = true
         entity = ProductEntity()
         var memberList = mutableListOf<ProductPromotionItems.ProjectMember>()
 
@@ -99,7 +97,7 @@ class ProductPromotionViewViewModel @Inject constructor(
             _setLeader.value = getLeaderDetail
             _setMember.value = memberList
             _product.value = entity
-
+            _isLoading.value = false
         }
     }
 
