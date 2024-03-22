@@ -46,12 +46,12 @@ class ChatTabViewModel @Inject constructor(
         viewModelScope.launch {
             _chatList.value = UiState.Loading
             try {
-                val result = authRepository.getCurrentUser()
-                if (result == DataResultStatus.SUCCESS) {
-                    val list = userRepository.getUserDetails(result.message)
+                val current = authRepository.getCurrentUser()
+                if (current == DataResultStatus.SUCCESS) {
+                    val list = userRepository.getUserDetails(current.message)
                         .getOrNull()?.participantsChatRoomIds?.map {
                         async {
-                            chatRepository.getChatRoom(it)?.convert(result.message, chatType.value)
+                            chatRepository.getChatRoom(it)?.convert(current.message, chatType.value)
                         }
                     } ?: return@launch
                     _chatList.value = UiState.Success(list.awaitAll().filterNotNull().sortedByDescending { it.recentTime })
@@ -73,13 +73,17 @@ class ChatTabViewModel @Inject constructor(
                 chatRepository.getChatRoomMessage(key)
             }
         val message = messageDeferred.await()
+        if (type == ChatTabType.GENERAL && (message.isNullOrEmpty())) {
+            return@withContext null
+        }
+
         ChatListItem(
             key = key,
             title = title.toString(),
-            message = message?.lastOrNull()?.text?: return@withContext null,
+            message = if (type != ChatTabType.GENERAL) message?.lastOrNull()?.text.orEmpty() else message?.last()?.text?: "" ,
             thumbnail = thumbnail,
-            recentTime = message.last().registerDate.convertTime(),
-            unreadCount = message.count { entity -> entity.viewUsers.none { it == uid } }
+            recentTime = message?.lastOrNull()?.registerDate?.convertTime()?: registerDate.convertTime(),
+            unreadCount = message?.count { entity -> entity.viewUsers.none { it == uid } }
         )
     }
 

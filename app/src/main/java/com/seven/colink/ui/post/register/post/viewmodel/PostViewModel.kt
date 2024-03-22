@@ -12,8 +12,10 @@ import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.domain.repository.ImageRepository
 import com.seven.colink.domain.repository.UserRepository
+import com.seven.colink.domain.usecase.GetChatRoomUseCase
 import com.seven.colink.domain.usecase.GetPostUseCase
 import com.seven.colink.domain.usecase.RegisterPostUseCase
+import com.seven.colink.ui.chat.type.ChatTabType
 import com.seven.colink.ui.post.register.post.model.PostErrorMessage
 import com.seven.colink.ui.post.register.post.model.PostErrorUiState
 import com.seven.colink.ui.post.register.post.model.Post
@@ -39,6 +41,7 @@ class PostViewModel @Inject constructor(
     private val getPostUseCase: GetPostUseCase,
     private val registerPostUseCase: RegisterPostUseCase,
     private val userRepository: UserRepository,
+    private val getChatRoomUseCase: GetChatRoomUseCase,
 ) : ViewModel() {
 
     private lateinit var entryType: PostEntryType
@@ -209,7 +212,6 @@ class PostViewModel @Inject constructor(
     }
 
 
-
     fun addRecruitInfo(entity: RecruitInfo) {
         updateUiState(uiState.value.map { uiStateValue ->
             when (uiStateValue) {
@@ -256,6 +258,17 @@ class PostViewModel @Inject constructor(
                     registerPostUseCase(entity)
                     groupRepository.registerGroup(entity.convertGroupEntity())
                     onSuccess(context.getString(R.string.post_register_success))
+                    getChatRoomUseCase(
+                        key = entity.key,
+                        uids = entity.memberIds,
+                        title = entity.title!!,
+                        type = when (entity.groupType) {
+                            GroupType.PROJECT -> ChatTabType.PROJECT
+                            GroupType.STUDY -> ChatTabType.STUDY
+                            else -> return@launch
+                        },
+                        thumbnail = entity.imageUrl
+                    )
                     _complete.emit(entity.key)
                 } catch (groupException: Exception) {
                     onError(groupException)

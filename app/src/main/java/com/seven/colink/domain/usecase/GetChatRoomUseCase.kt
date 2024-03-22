@@ -32,7 +32,9 @@ class GetChatRoomUseCase @Inject constructor(
             val myDeferred = async { userRepository.getUserDetails(currentUid) }
 
             userDeferred.await().onSuccess {
-                if (it != null && it.participantsChatRoomIds?.contains(newChat.key)?.not() != false) {
+                if (it != null && it.participantsChatRoomIds?.contains(newChat.key)
+                        ?.not() != false
+                ) {
                     userRepository.registerUser(
                         it.copy(
                             participantsChatRoomIds = it.participantsChatRoomIds?.plus(
@@ -43,7 +45,9 @@ class GetChatRoomUseCase @Inject constructor(
                 }
             }
             myDeferred.await().onSuccess {
-                if (it != null && it.participantsChatRoomIds?.contains(newChat.key)?.not() != false) {
+                if (it != null && it.participantsChatRoomIds?.contains(newChat.key)
+                        ?.not() != false
+                ) {
                     userRepository.registerUser(
                         it.copy(
                             participantsChatRoomIds = it.participantsChatRoomIds?.plus(
@@ -97,5 +101,25 @@ class GetChatRoomUseCase @Inject constructor(
             this.cancel()
         }
         return chatRepository.getChatRoom(newChat.key) ?: newChat
+    }
+
+    suspend operator fun invoke(
+        postId: String,
+        uid: String,
+    ) {
+        chatRepository.createChatRoom(
+            chatRepository.getChatRoom("CR_$postId")?.let {
+                it.copy(
+                    participantsUid = it.participantsUid.plus(mapOf(uid to true))
+                )
+            } ?: return
+        )
+        userRepository.registerUser(
+            userRepository.getUserDetails(uid).getOrNull()?.let {
+                it.copy(
+                    chatRoomKeyList = it.chatRoomKeyList?.plus("CR_$postId")
+                )
+            } ?: return
+        )
     }
 }
