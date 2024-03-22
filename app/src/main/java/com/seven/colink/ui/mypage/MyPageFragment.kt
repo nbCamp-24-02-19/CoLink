@@ -12,6 +12,8 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -67,6 +69,8 @@ class MyPageFragment : Fragment() {
         PostRecyclerView()
         setLogout()
         postShowMore()
+
+
 
         //스킬 추가
         skiladapter.plusClick = object : MyPageSkilAdapter.PlusClick {
@@ -202,6 +206,10 @@ class MyPageFragment : Fragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadUserPost()
+    }
 
     private fun updateUI(user: MyPageUserModel) {
         // Update your views with user information

@@ -66,12 +66,17 @@ class MyPageViewModel @Inject constructor(
         }
     }
 
-    private fun loadUserPost() {
+    fun loadUserPost() {
         viewModelScope.launch {
             val result = postRepository.getPostByAuthId(authRepository.getCurrentUser().message)
             result.onSuccess { post ->
+                post.forEach {
+                    Log.d("loadUserPost", "${it.title}")
+                }
+
                 _userPosts.postValue(post.sortedByDescending { it.registeredDate }
                     .map { it.convertPostEntity() })
+
             }
         }
     }
