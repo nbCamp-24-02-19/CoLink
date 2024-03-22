@@ -18,7 +18,8 @@ class DayListAdapter(
     private val tempMonth: Int,
     private val dayList: MutableList<LocalDate>,
     private val uiState: List<ScheduleModel>,
-    private val onItemClick: (position: Int, date: LocalDate) -> Unit
+    private val onItemClick: (position: Int, date: LocalDate) -> Unit,
+    private val onMonthChange: (isPreviousMonth: Boolean) -> Unit
 ) :
     ListAdapter<LocalDate, DayListAdapter.DayView>(
         object : DiffUtil.ItemCallback<LocalDate>() {
@@ -31,6 +32,8 @@ class DayListAdapter(
     ) {
 
     private var selectedPosition = RecyclerView.NO_POSITION
+    private var selectedDate: LocalDate? = null
+    private var isFirstTimeShowing = true
 
     abstract class DayViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         abstract fun bind(date: LocalDate, position: Int, isSelected: Boolean)
@@ -42,32 +45,43 @@ class DayListAdapter(
             parent,
             false
         )
-        return DayView(binding, tempMonth, onItemClick)
+        return DayView(binding, tempMonth, onItemClick, onMonthChange)
     }
 
     override fun onBindViewHolder(holder: DayView, position: Int) {
         val date = dayList[position]
         holder.bind(date, position, position == selectedPosition)
-    }
+        val currentMonth = LocalDate.now().monthValue
+        val isFirstDayOfMonth = date.dayOfMonth == 1 && tempMonth == date.monthValue
+        val isCurrentMonth = tempMonth == currentMonth
 
+        if (isFirstDayOfMonth && !isCurrentMonth && isFirstTimeShowing) {
+            holder.itemView.post {
+                holder.itemView.performClick()
+            }
+            isFirstTimeShowing = false
+        }
+
+    }
     inner class DayView(
         val binding: ItemListDayBinding,
         private val tempMonth: Int,
-        private val onItemClick: (position: Int, date: LocalDate) -> Unit
+        private val onItemClick: (position: Int, date: LocalDate) -> Unit,
+        private val onMonthChange: (isPreviousMonth: Boolean) -> Unit
     ) : DayViewHolder(binding.root) {
         private val context = binding.root.context
         private val scheduleRecyclerView: RecyclerView = binding.rcScheduleItem
-        private val scheduleItemListAdapter = ScheduleItemListAdapter()
 
         init {
             scheduleRecyclerView.layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            scheduleRecyclerView.adapter = scheduleItemListAdapter
         }
 
         override fun bind(date: LocalDate, position: Int, isSelected: Boolean) {
-            val context = binding.root.context
+            val scheduleItemListAdapter = ScheduleItemListAdapter(tempMonth, date)
+            scheduleRecyclerView.adapter = scheduleItemListAdapter
 
+            val context = binding.root.context
             val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")
             val matchingSchedules = uiState.filter { schedule ->
                 val scheduleStartDate = LocalDate.parse(schedule.startDate, formatter)
@@ -108,10 +122,29 @@ class DayListAdapter(
             }
 
             binding.root.setOnClickListener {
-                onItemClick(adapterPosition, date)
+                val isPreviousMonth = date.monthValue < tempMonth
+                val isNextMonth = date.monthValue > tempMonth
+                if (isPreviousMonth) {
+                    onMonthChange(true)
+                } else if (isNextMonth) {
+                    onMonthChange(false)
+                } else {
+                    onItemClick(adapterPosition, date)
+                }
+                selectedDate = date
                 notifyItemChanged(selectedPosition)
                 selectedPosition = adapterPosition
                 notifyItemChanged(selectedPosition)
+            }
+
+            val currentMonth = LocalDate.now().monthValue
+            val isFirstDayOfMonth = date.dayOfMonth == 1 && tempMonth == date.monthValue
+            val isCurrentMonth = tempMonth == currentMonth
+            if (position == 0 && isFirstDayOfMonth && !isCurrentMonth && isFirstTimeShowing) {
+                itemView.post {
+                    itemView.performClick()
+                }
+                isFirstTimeShowing = false
             }
         }
 
@@ -125,4 +158,5 @@ class DayListAdapter(
     override fun getItemCount(): Int {
         return dayList.size
     }
+
 }

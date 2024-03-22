@@ -421,5 +421,4 @@ class PostViewModel @Inject constructor(
             }
         })
     }
-
 }

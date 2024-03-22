@@ -3,9 +3,7 @@ package com.seven.colink.ui.notify.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Filterable
 import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -16,6 +14,7 @@ import com.seven.colink.R
 import com.seven.colink.databinding.ItemNotificationChatBinding
 import com.seven.colink.databinding.ItemNotificationDefaultBinding
 import com.seven.colink.databinding.ItemNotificationFilterBinding
+import com.seven.colink.domain.model.NotifyType.*
 import com.seven.colink.ui.notify.NotifyItem
 import com.seven.colink.ui.notify.NotifyItem.ChatItem
 import com.seven.colink.ui.notify.NotifyItem.DefaultItem
@@ -25,10 +24,12 @@ import com.seven.colink.ui.notify.type.NotifyType
 import com.seven.colink.ui.notify.type.NotifyType.CHAT
 import com.seven.colink.ui.notify.type.NotifyType.DEFAULT
 import com.seven.colink.ui.notify.type.NotifyType.FILTER
-import com.seven.colink.ui.notify.viewmodel.NotificationViewModel.*
+import com.seven.colink.ui.notify.viewmodel.*
 
 class NotificationAdapter (
     private val onChat: (String) -> Unit,
+    private val onPost: (String) -> Unit,
+    private val onGroup: (String) -> Unit,
     private val selectedFilter: (FilterType) -> Unit,
     private val deleteAll: () -> Unit
 ): ListAdapter<NotifyItem, ViewHolder>(
@@ -42,7 +43,7 @@ class NotificationAdapter (
         override fun areContentsTheSame(oldItem: NotifyItem, newItem: NotifyItem) =
             oldItem == newItem
     }
-), Filterable {
+) {
     abstract class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
         abstract fun onBind(item: NotifyItem)
     }
@@ -69,7 +70,9 @@ class NotificationAdapter (
         }
         DEFAULT -> {
             DefaultNotifyViewHolder(
-                ItemNotificationDefaultBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ItemNotificationDefaultBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                onPost,
+                onGroup,
             )
         }
     }
@@ -80,10 +83,16 @@ class NotificationAdapter (
         private val deleteAll: () -> Unit,
     ): ViewHolder(binding.root) {
         override fun onBind(item: NotifyItem) = with(binding) {
-            cvNotifyAll.setOnClickListener { selectedFilter(FilterType.ALL) }
-            cvNotifyChat.setOnClickListener { selectedFilter(FilterType.CHAT) }
-            cvNotifyRecruit.setOnClickListener { selectedFilter(FilterType.RECRUIT) }
+            item as Filter
+            cvNotifyAll.setup(FilterType.ALL, tvNotifyAll, item.state)
+            cvNotifyChat.setup(FilterType.CHAT, tvNotifyChat, item.state)
+            cvNotifyRecruit.setup(FilterType.RECRUIT, tvNotifyRecruit, item.state)
             tvNotifyDelete.setOnClickListener { deleteAll }
+        }
+
+        private fun MaterialCardView.setup(filterType: FilterType, text: TextView, state: FilterType) {
+            selected(text, isSelected = state == filterType)
+            setOnClickListener { selectedFilter(filterType) }
         }
 
         private fun MaterialCardView.selected(text: TextView, isSelected: Boolean) {
@@ -117,7 +126,9 @@ class NotificationAdapter (
     }
 
     class DefaultNotifyViewHolder(
-        private val binding: ItemNotificationDefaultBinding
+        private val binding: ItemNotificationDefaultBinding,
+        private val onPost: (String) -> Unit,
+        private val onGroup: (String) -> Unit,
     ) :
         ViewHolder(binding.root) {
         override fun onBind(item: NotifyItem) = with(binding) {
@@ -127,13 +138,15 @@ class NotificationAdapter (
             tvNotifyTitle.text = item.title
             tvNotifyBody.text = item.body
             tvNotifyRegisteredDate.text = item.registeredDate
+
+            when (item.type) {
+                APPLY, JOIN -> onGroup(item.key!!)
+                INVITE -> onPost(item.key!!)
+                else -> Unit
+            }
         }
     }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.onBind(getItem(position))
-    }
-
-    override fun getFilter(): android.widget.Filter {
-        TODO("Not yet implemented")
     }
 }

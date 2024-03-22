@@ -23,6 +23,9 @@ class SignInViewModel @Inject constructor(
     private val _result = MutableSharedFlow<DataResultStatus>()
     val result = _result.asSharedFlow()
     init {
+
+    }
+    fun signInCheck() {
         viewModelScope.launch {
             _entryType.value = authRepository.getCurrentUser() == DataResultStatus.SUCCESS
         }

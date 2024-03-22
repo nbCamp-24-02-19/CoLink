@@ -1,13 +1,11 @@
 package com.seven.colink.ui.post.content.adapter
 
 import android.text.InputType
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -24,15 +22,11 @@ import com.seven.colink.databinding.ItemPostRecruitBinding
 import com.seven.colink.databinding.ItemPostSelectionTypeBinding
 import com.seven.colink.databinding.ItemPostSubTitleBinding
 import com.seven.colink.databinding.ItemUnknownBinding
-import com.seven.colink.domain.entity.CommentEntity
-import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.ui.group.board.board.GroupContentViewType
-import com.seven.colink.ui.post.content.model.CommentButtonUiState
 import com.seven.colink.ui.post.register.post.adapter.TagListAdapter
 import com.seven.colink.ui.post.register.post.model.TagListItem
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.content.model.PostContentItem
-import com.seven.colink.ui.post.content.viewmodel.PostContentViewModel
 import com.seven.colink.util.setLevelIcon
 import com.seven.colink.util.status.ApplicationStatus
 import com.seven.colink.util.status.GroupType
@@ -58,7 +52,7 @@ class PostContentListAdapter(
                 }
 
                 oldItem is PostContentItem.MemberItem && newItem is PostContentItem.MemberItem -> {
-                    oldItem.userInfo.uid == newItem.userInfo.uid
+                    oldItem.userInfo?.uid == newItem.userInfo?.uid
                 }
 
                 oldItem is PostContentItem.AdditionalInfo && newItem is PostContentItem.AdditionalInfo -> {
@@ -207,13 +201,13 @@ class PostContentListAdapter(
     ) : PostViewHolder(binding.root) {
         override fun onBind(item: PostContentItem) {
             if (item is PostContentItem.MemberItem) {
-                binding.ivUser.load(item.userInfo.photoUrl)
+                binding.ivUser.load(item.userInfo?.photoUrl)
                 binding.ivUser.clipToOutline = true
-                binding.tvUserName.text = item.userInfo.name
-                binding.tvUserGrade.text = item.userInfo.grade.toString()
-                item.userInfo.level?.let { binding.ivLevelDiaIcon.setLevelIcon(it) }
-                binding.tvLevelDiaIcon.text = item.userInfo.level.toString()
-                binding.tvUserIntroduction.text = item.userInfo.info
+                binding.tvUserName.text = item.userInfo?.name
+                binding.tvUserGrade.text = item.userInfo?.grade.toString()
+                item.userInfo?.level?.let { binding.ivLevelDiaIcon.setLevelIcon(it) }
+                binding.tvLevelDiaIcon.text = item.userInfo?.level.toString()
+                binding.tvUserIntroduction.text = item.userInfo?.info
 
                 binding.root.setOnClickListener {
                     onClickItem(item)

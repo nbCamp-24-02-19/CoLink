@@ -104,8 +104,10 @@ class SignUpActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-            uiStatus.collect { uiStatus ->
-                setUi(uiStatus)
+            combine(uiStatus, entryType){ uiStatus, entryType ->
+                Pair(uiStatus, entryType)
+            }.collect { (uiStatus, entryType) ->
+                setUi(uiStatus, entryType)
                 this@SignUpActivity.hideProgressOverlay()
             }
         }
@@ -182,9 +184,10 @@ class SignUpActivity : AppCompatActivity() {
     }
     private fun setUi(
         state: SignUpUIState,
+        entryType: SignUpEntryType,
     ) = with(binding) {
         configureVisibility(state)
-        setButton(state)
+        setButton(state, entryType)
         setTextChangeListener(state)
 
         tvSignUpTitle.setText(state.title)
@@ -217,7 +220,7 @@ class SignUpActivity : AppCompatActivity() {
         layoutManager = LinearLayoutManager(context)
         adapter = this@SignUpActivity.adapter
     }
-    private fun setButton(state: SignUpUIState) = with(binding){
+    private fun setButton(state: SignUpUIState, entryType: SignUpEntryType) = with(binding){
         btSignUpBtn.setOnClickListener {
             this@SignUpActivity.showProgressOverlay()
             it.isEnabled = false
@@ -229,9 +232,12 @@ class SignUpActivity : AppCompatActivity() {
         }
 
         ivSignUpBack.setOnClickListener {
-            when(state) {
-                SignUpUIState.NAME -> finish()
-                else -> viewModel.backState(state)
+            if (entryType != SignUpEntryType.CREATE) finish()
+            else {
+                when (state) {
+                    SignUpUIState.NAME -> finish()
+                    else -> viewModel.backState(state)
+                }
             }
         }
     }
