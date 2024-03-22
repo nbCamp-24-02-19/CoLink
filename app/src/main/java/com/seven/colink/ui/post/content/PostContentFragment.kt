@@ -217,10 +217,14 @@ class PostContentFragment : Fragment() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        viewModel.updateUserInfo()
+    }
+
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
-        viewModel.updateUserInfo()
     }
 
     private fun showDialog(state: DialogUiState?) {

@@ -26,8 +26,11 @@ class MyPageViewModel @Inject constructor(
 
     private val _userDetails = MutableLiveData<UiState<MyPageUserModel>>()
     private val _userPosts = MutableLiveData<List<MyPagePostModel>>()
+    private val _likePost = MutableLiveData<List<MyPageLikeModel>?>()
     val userDetails: LiveData<UiState<MyPageUserModel>> = _userDetails
     val userPost: LiveData<List<MyPagePostModel>> = _userPosts
+    val likePost : LiveData<List<MyPageLikeModel>?> = _likePost
+
 
     init {
         loadUserDetails()
@@ -72,6 +75,20 @@ class MyPageViewModel @Inject constructor(
             result.onSuccess { post ->
                 _userPosts.postValue(post.sortedByDescending { it.registeredDate }
                     .map { it.convertPostEntity() })
+            }
+        }
+    }
+
+    fun loadLikePost(){
+        viewModelScope.launch {
+            val currentUser = authRepository.getCurrentUser()
+            val userDetails = userRepository.getUserDetails(currentUser.message)
+            val likeList = userDetails.getOrNull()?.likeList
+            val getLikeList = likeList?.map {
+                getPost(it)!!.convertMyLikeEntity()
+            }?.sortedByDescending { it.time }
+            _likePost.value = getLikeList?.map {
+                it.copy(time= it.time?.convertToDaysAgo())
             }
         }
     }
@@ -122,6 +139,13 @@ class MyPageViewModel @Inject constructor(
         ing = status,
         grouptype = groupType,
         time = registeredDate?.convertToDaysAgo()
+    )
+
+    private fun PostEntity.convertMyLikeEntity() = MyPageLikeModel(
+        key = key,
+        title = title,
+        status = status,
+        time = registeredDate
     )
 
 
