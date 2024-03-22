@@ -7,17 +7,21 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentProductPromotionBinding
 import com.seven.colink.ui.promotion.adapter.ProductPromotionViewAdapter
 import com.seven.colink.ui.promotion.model.ProductPromotionItems
+import com.seven.colink.ui.promotion.viewmodel.ProductPromotionSharedViewModel
 import com.seven.colink.ui.promotion.viewmodel.ProductPromotionViewViewModel
 import com.seven.colink.util.Constants
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ProductPromotionFragment : Fragment() {
@@ -27,6 +31,7 @@ class ProductPromotionFragment : Fragment() {
     private lateinit var mContext: Context
     private lateinit var viewAdapter : ProductPromotionViewAdapter
     private val promotionViewModel : ProductPromotionViewViewModel by viewModels()
+    private val sharedViewModel : ProductPromotionSharedViewModel by activityViewModels()
     private var key : String? = null
 //    private lateinit var viewList : MutableList<ProductPromotionItems>
     private var viewList = mutableListOf(
@@ -83,6 +88,15 @@ class ProductPromotionFragment : Fragment() {
     }
 
     private fun setObserve() {
+        lifecycleScope.launch {
+            sharedViewModel.key.collect { k ->
+                if (k != null) {
+                    sharedViewModel.setKey(k)
+                    promotionViewModel.initProduct(k)
+                }
+            }
+        }
+
         promotionViewModel.product.observe(viewLifecycleOwner) {
             viewList = promotionViewModel.getViewList()
             viewAdapter.submitList(viewList)
