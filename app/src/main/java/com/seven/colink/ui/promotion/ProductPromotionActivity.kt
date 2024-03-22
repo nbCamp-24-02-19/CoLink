@@ -5,6 +5,8 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.seven.colink.R
 import com.seven.colink.databinding.ActivityProductPromotionBinding
+import com.seven.colink.ui.promotion.ui.ProductPromotionEditFragment
+import com.seven.colink.ui.promotion.ui.ProductPromotionFragment
 import com.seven.colink.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
 

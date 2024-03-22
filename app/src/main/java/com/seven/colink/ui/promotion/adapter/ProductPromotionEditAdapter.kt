@@ -1,6 +1,5 @@
 package com.seven.colink.ui.promotion.adapter
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
@@ -8,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.load
@@ -19,7 +17,7 @@ import com.seven.colink.databinding.ItemProductMemberHeaderBinding
 import com.seven.colink.databinding.ItemProductProjectHeaderBinding
 import com.seven.colink.databinding.ItemProductTitleBinding
 import com.seven.colink.domain.entity.TempProductEntity
-import com.seven.colink.ui.promotion.ProductPromotionItems
+import com.seven.colink.ui.promotion.model.ProductPromotionItems
 import com.seven.colink.util.openGallery
 import com.seven.colink.util.setLevelIcon
 
@@ -92,36 +90,11 @@ class ProductPromotionEditAdapter (private val recyclerView: RecyclerView, priva
         }
     }
 
-    fun initResultMain(galleryResultLauncher: ActivityResultLauncher<Intent>){
-        imgClickListener { viewHolder ->
-            Log.d("gallery","#qqq 메인 이미지 클릭 되었니?")
-            when(viewHolder) {
-                is ForthViewHolder -> {
-                    Log.d("gallery","#qqq 메인 마지막까지 왔니??")
-                    openGallery(galleryResultLauncher)
-                }
-            }
-        }
-    }
-
-    fun initResultDes(galleryResultLauncher: ActivityResultLauncher<Intent>){
-        imgClickListener { viewHolder ->
-            Log.d("gallery","#qqq 설명 이미지 클릭 되었니?")
-            when(viewHolder) {
-                is ThirdViewHolder -> {
-                    Log.d("gallery","#qqq 설명 마지막까지 왔니??")
-                    openGallery(galleryResultLauncher)
-                }
-            }
-        }
-    }
-
     inner class TopMainImgViewHolder(binding: ItemProductImgBinding) : ViewHolder(binding.root) {
         private val mainImg = binding.ivProductPromotion
 
         init {
             mainImg.setOnClickListener {
-                Log.d("gallery","#qqq 이동을 위한 클릭")
                 OnClickImgListener?.invoke(this)
             }
         }
@@ -149,12 +122,7 @@ class ProductPromotionEditAdapter (private val recyclerView: RecyclerView, priva
             if (tempEntity.title != title || tempEntity.des != des) {
                 tempEntity.title = title
                 tempEntity.des = des
-                Log.d("temp","#eee title = $title")
-                Log.d("temp","#eee des = $des")
-                Log.d("temp","#eee tempTitle = ${tempEntity.title}")
-                Log.d("temp","#eee tempDes = ${tempEntity.des}")
                 updateTempData(position,tempEntity)
-                Log.d("temp","#eee temp = ${tempEntity}")
             }
         }
 
@@ -184,7 +152,6 @@ class ProductPromotionEditAdapter (private val recyclerView: RecyclerView, priva
             if (adapterPosition != RecyclerView.NO_POSITION) {
                 if (item.title?.isNotEmpty() == true) {
                     editTitle.setText(item.title)
-                    Log.d("item","#eee item = ${item.title}")
                 }else {
                     editTitle.setText(tempEntity.title)
                 }
@@ -204,7 +171,6 @@ class ProductPromotionEditAdapter (private val recyclerView: RecyclerView, priva
 
         init {
             img.setOnClickListener {
-                Log.d("gallery","#qqq 이동을 위한 클릭")
                 OnClickImgListener?.invoke(this)
             }
         }
@@ -236,14 +202,7 @@ class ProductPromotionEditAdapter (private val recyclerView: RecyclerView, priva
                 tempEntity.web = web
                 tempEntity.aos = aos
                 tempEntity.ios = ios
-                Log.d("temp","#eee web = $web")
-                Log.d("temp","#eee aos = $aos")
-                Log.d("temp","#eee ios = $ios")
-                Log.d("temp","#eee tempWeb = ${tempEntity.web}")
-                Log.d("temp","#eee tempAos = ${tempEntity.aos}")
-                Log.d("temp","#eee tempIos = ${tempEntity.ios}")
                 updateTempData(position,tempEntity)
-                Log.d("temp","#eee temp = ${tempEntity}")
             }
         }
 
@@ -329,11 +288,9 @@ class ProductPromotionEditAdapter (private val recyclerView: RecyclerView, priva
 
             img.load(items?.getOrNull()?.photoUrl)
             name.text = items?.getOrNull()?.name
-            Log.d("Adapter", "#aaa grade = ${items?.getOrNull()?.name}")
             intro.text = items?.getOrNull()?.info
             grade.text = items?.getOrNull()?.grade.toString()
             level.text = items?.getOrNull()?.level.toString()
-            Log.d("Adapter", "#aaa level = ${items?.getOrNull()?.level}")
             items?.getOrNull()?.level.let { color ->
                 if (color != null) {
                     levelColor.setLevelIcon(color)

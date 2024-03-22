@@ -1,10 +1,12 @@
 package com.seven.colink.ui.promotion.adapter
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -15,10 +17,11 @@ import com.seven.colink.databinding.ItemProductLinkBinding
 import com.seven.colink.databinding.ItemProductMemberHeaderBinding
 import com.seven.colink.databinding.ItemProductProjectHeaderBinding
 import com.seven.colink.databinding.ItemProductTitleBinding
-import com.seven.colink.ui.promotion.ProductPromotionItems
+import com.seven.colink.ui.promotion.model.ProductPromotionItems
 import com.seven.colink.util.setLevelIcon
+import okhttp3.internal.notify
 
-class ProductPromotionViewAdapter : ListAdapter<ProductPromotionItems, RecyclerView.ViewHolder>(
+class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<ProductPromotionItems, RecyclerView.ViewHolder>(
     ProductPromotionDiffUtil
 ) {
     object ProductPromotionDiffUtil : DiffUtil.ItemCallback<ProductPromotionItems>() {
@@ -27,7 +30,7 @@ class ProductPromotionViewAdapter : ListAdapter<ProductPromotionItems, RecyclerV
         ): Boolean {
             return when {
                 oldItem is ProductPromotionItems.Img && newItem is ProductPromotionItems.Img -> {
-                    oldItem == newItem
+                    oldItem.img == newItem.img
                 }
 
                 oldItem is ProductPromotionItems.Title && newItem is ProductPromotionItems.Title -> {
@@ -35,7 +38,7 @@ class ProductPromotionViewAdapter : ListAdapter<ProductPromotionItems, RecyclerV
                 }
 
                 oldItem is ProductPromotionItems.ProjectLeaderItem && newItem is ProductPromotionItems.ProjectLeaderItem -> {
-                    oldItem.userInfo?.onSuccess { it?.uid } == newItem.userInfo?.onSuccess { it?.uid }
+                    oldItem.userInfo?.getOrNull()?.uid == newItem.userInfo?.getOrNull()?.uid
                 }
 
                 oldItem is ProductPromotionItems.MiddleImg && newItem is ProductPromotionItems.MiddleImg -> {
@@ -128,6 +131,7 @@ class ProductPromotionViewAdapter : ListAdapter<ProductPromotionItems, RecyclerV
         if (item is ProductPromotionItems.Img) {
             holder as FirstViewHolder
             holder.img.load(item.img)
+            Log.d("AdapterView","#aaa img = ${item.img}")
         }
 
         if (item is ProductPromotionItems.Title) {
@@ -135,35 +139,61 @@ class ProductPromotionViewAdapter : ListAdapter<ProductPromotionItems, RecyclerV
             with(holder) {
                 viewDes.visibility = View.VISIBLE
                 viewTitle.visibility = View.VISIBLE
+                date.visibility = View.VISIBLE
                 editDes.visibility = View.GONE
                 editTitle.visibility = View.GONE
 
                 date.text = item.date
                 viewDes.text = item.des
                 viewTitle.text = item.title
+                Log.d("AdapterView","#aaa date = ${item.date}")
+                Log.d("AdapterView","#aaa des = ${item.des}")
+                Log.d("AdapterView","#aaa title = ${item.title}")
             }
         }
 
         if (item is ProductPromotionItems.MiddleImg) {
             holder as ThirdViewHolder
-            holder.img.load(item.img)
+            if (item.img == null) {
+                holder.lay.visibility = View.GONE
+            }else {
+                holder.lay.visibility = View.VISIBLE
+                holder.img.load(item.img)
+                Log.d("AdapterView","#aaa middleImg = ${item.img}")
+            }
         }
 
         if (item is ProductPromotionItems.Link) {
             holder as ForthViewHolder
             with(holder) {
                 viewLink.visibility = View.VISIBLE
-
+                editLayLink.visibility = View.GONE
                 viewWebLink.text = item.webLink
+                Log.d("AdapterView","#aaa web = ${item.webLink}")
+                viewWebLink.setOnClickListener {
+                    val url = item.webLink
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    context.startActivity(intent)
+                }
 
                 if (item.aosLink?.isNotEmpty() == true) {
                     viewPlayStore.visibility = View.VISIBLE
+                    viewPlayStore.setOnClickListener {
+                        val url = item.aosLink
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://$url"))
+                        context.startActivity(intent)
+                    }
                 }else {
                     viewPlayStore.visibility = View.INVISIBLE
                 }
 
                 if (item.iosLink?.isNotEmpty() == true) {
                     viewAppStore.visibility = View.VISIBLE
+                    viewAppStore.setOnClickListener {
+                        val url = item.iosLink
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://$url"))
+                        context.startActivity(intent)
+                    }
                 }else {
                     viewAppStore.visibility = View.INVISIBLE
                 }
@@ -183,20 +213,22 @@ class ProductPromotionViewAdapter : ListAdapter<ProductPromotionItems, RecyclerV
 
         if (item is ProductPromotionItems.ProjectLeaderItem) {
             holder as SeventhViewHolder
+            holder.itemView.setOnClickListener {
+                itemClick?.onClick(it,position)
+            }
             val items = item.userInfo
             with(holder) {
-                img.load(items?.onSuccess { it?.photoUrl })
-                name.text = items?.onSuccess { it?.name }?.toString()
-                intro.text = items?.onSuccess { it?.info }?.toString()
-                grade.text = items?.onSuccess { it?.grade }?.toString()
-                level.text = items?.onSuccess { it?.level }?.toString()
-                items?.onSuccess { it?.level?.let { color -> levelColor.setLevelIcon(color) } }
-//                img.load(item.userInfo.photoUrl)
-//                name.text = item.userInfo.name
-//                intro.text = item.userInfo.info
-//                grade.text = item.userInfo.grade?.toString()
-//                level.text = item.userInfo.level?.toString()
-//                item.userInfo.level?.let { levelColor.setLevelIcon(it) }
+                img.load(items?.getOrNull()?.photoUrl)
+                name.text = items?.getOrNull()?.name
+                intro.text = items?.getOrNull()?.info
+                Log.d("AdapterView","#aaa name = ${items?.getOrNull()?.name}")
+                grade.text = items?.getOrNull()?.grade.toString()
+                level.text = items?.getOrNull()?.level.toString()
+                items?.getOrNull()?.level.let { color ->
+                    if (color != null) {
+                        levelColor.setLevelIcon(color)
+                    }
+                }
             }
         }
 
@@ -207,32 +239,24 @@ class ProductPromotionViewAdapter : ListAdapter<ProductPromotionItems, RecyclerV
 
         if (item is ProductPromotionItems.ProjectMember) {
             holder as NinethViewHolder
+            holder.itemView.setOnClickListener {
+                itemClick?.onClick(it,position)
+            }
             val items = item.userInfo
-//            with(holder) {
-//                items?.forEach { member ->
-//                    img.load(member?.onSuccess { it?.photoUrl })
-//                    name.text = member?.onSuccess { it?.name }.toString()
-//                    intro.text = member?.onSuccess { it?.info }.toString()
-//                    grade.text = member?.onSuccess { it?.grade }.toString()
-//                    level.text = member?.onSuccess { it?.level }.toString()
-//                    member?.onSuccess {
-//                        it?.level?.let { color ->
-//                            levelColor.setLevelIcon(color)
-//                        }
-//                    }
-//                }
-//            }
-
             with(holder) {
-//                item.userInfo?.forEach {
-//                    img.load(it?.photoUrl)
-//                    name.text = it?.name
-//                    intro.text = it?.info
-//                    grade.text = it?.grade?.toString()
-//                    level.text = it?.level?.toString()
-//                    it?.level?.let { color ->
-//                        levelColor.setLevelIcon(color) }
-//                }
+                items?.let { member ->
+                    img.load(member.photoUrl)
+                    name.text = member.name
+                    Log.d("AdapterView","#aaa memberName = ${member.name}")
+                    intro.text = member.info
+                    grade.text = member.grade.toString()
+                    level.text = member.level.toString()
+                    member.level.let { color ->
+                        if (color != null) {
+                            levelColor.setLevelIcon(color)
+                        }
+                    }
+                }
             }
         }
     }
@@ -268,6 +292,7 @@ class ProductPromotionViewAdapter : ListAdapter<ProductPromotionItems, RecyclerV
 
     inner class ThirdViewHolder(binding: ItemProductImgBinding) : RecyclerView.ViewHolder(binding.root) {
         val img = binding.ivProductPromotion
+        val lay = binding.layMiddle
     }
 
     inner class ForthViewHolder(binding : ItemProductLinkBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -275,6 +300,7 @@ class ProductPromotionViewAdapter : ListAdapter<ProductPromotionItems, RecyclerV
         val viewPlayStore = binding.ivPlaystore
         val viewAppStore = binding.ivAppstore
         val viewWebLink = binding.tvProductWebLink
+        val editLayLink = binding.layProductEditLink
         val etWebLink = binding.etProductWebLink
         val etPlayStore = binding.etProductPlaystoreLink
         val etAppStore = binding.etProductAppstoreLink
@@ -295,6 +321,7 @@ class ProductPromotionViewAdapter : ListAdapter<ProductPromotionItems, RecyclerV
         val grade = binding.tvUserGrade
         val levelColor = binding.ivLevelDiaIcon
         val level = binding.tvLevelDiaIcon
+        val lay = binding.layMember
     }
 
     inner class EighthViewHolder(binding : ItemProductMemberHeaderBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -308,5 +335,6 @@ class ProductPromotionViewAdapter : ListAdapter<ProductPromotionItems, RecyclerV
         val grade = binding.tvUserGrade
         val levelColor = binding.ivLevelDiaIcon
         val level = binding.tvLevelDiaIcon
+        val lay = binding.layMember
     }
 }
