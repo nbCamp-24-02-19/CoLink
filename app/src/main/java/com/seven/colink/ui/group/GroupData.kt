@@ -33,7 +33,7 @@ sealed interface GroupData {
         val groupType: GroupType?,
         val title: String?,
         val description: String?,
-        val kind: String?,
+        val tags: List<String>? = emptyList(),
         val img: String?
     ) : GroupData
 
