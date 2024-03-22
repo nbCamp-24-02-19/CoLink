@@ -2,11 +2,16 @@ package com.seven.colink.ui.post.content
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.ContextMenu
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -125,18 +130,11 @@ class PostContentFragment : Fragment() {
             onClickCommentButton = {
                 viewModel.registerComment(it)
             },
-            onClickCommentDeleteButton = {item, buttonUiState->
-//                when(commentButtonUistate){
-//                    CommentButtonUiState.Manager -> viewModel.deleteComment(item)
-//                    CommentButtonUiState.User -> commentBinding.tvPostCommentDelete.visibility = View.GONE
-//                    CommentButtonUiState.Unknown -> commentBinding.tvPostCommentDelete.visibility = View.GONE
-//                }
-
-                when(buttonUiState) {
-                    ContentButtonUiState.Manager -> viewModel.deleteComment(item)
-                    ContentButtonUiState.User -> commentBinding.tvPostCommentDelete.visibility = View.GONE
-                    ContentButtonUiState.Unknown -> commentBinding.tvPostCommentDelete.visibility = View.GONE
-                }
+            onClickCommentDeleteButton = {item->
+                viewModel.deleteComment(item)
+            },
+            onClickCommentEditButton = {key, comment ->
+                viewModel.editComment(key, comment)
             }
         )
     }
@@ -209,10 +207,6 @@ class PostContentFragment : Fragment() {
             requireContext().showToast(getString(messageResId))
         }
 
-//        updateCommentButtonUiState.observe(viewLifecycleOwner){
-//            commentBinding.tvPostCommentDelete.visibility =
-//                if(it == CommentButtonUiState.Manager) View.VISIBLE else View.GONE
-//        }
 
     }
 
@@ -251,5 +245,6 @@ class PostContentFragment : Fragment() {
             ).show()
         }
     }
+
 
 }
