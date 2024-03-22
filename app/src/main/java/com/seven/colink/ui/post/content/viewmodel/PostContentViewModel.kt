@@ -140,6 +140,17 @@ class PostContentViewModel @Inject constructor(
 //        }
 //        setPostContentItems(entity.recruit)
 //    }
+//해당 댓글의 키값 가져오기...registerComment는 댓글 작성하는 것,,getComment는 댓글 가져오는 것..
+    //근데 댓글...음?..음???? 그 가져온 댓글에서 description만 수정하기..ㅋ.ㅋ..가능?ㅎㅎ
+    //getComment는 suspend를 사용해야 사용 가능 그럼 이걸 사용하는 것이 아닌듯
+
+    fun editComment(key: String, comment: String){
+        viewModelScope.launch {
+            commentRepository.editComment(key, comment)
+        }
+        setPostContentItems(entity.recruit)
+    }
+
 
     fun deleteComment(key: String){
         viewModelScope.launch {

@@ -40,7 +40,7 @@ class PostContentListAdapter(
     private val onClickView: (View) -> Unit,
     private val onClickCommentButton: (String) -> Unit,
     private val onClickCommentDeleteButton: (String) -> Unit,
-    private val onClickCommentEditButton: (String) -> Unit,
+    private val onClickCommentEditButton: (String, String) -> Unit,
     ) : ListAdapter<PostContentItem, PostContentListAdapter.PostViewHolder>(
     object : DiffUtil.ItemCallback<PostContentItem>() {
 
@@ -382,7 +382,7 @@ class PostContentListAdapter(
     class PostCommentViewHolder(
         private val binding: ItemPostCommentBinding,
         private val onClickCommentDeleteButton: (String) -> Unit,
-        private val onClickCommentEditButton: (String) -> Unit,
+        private val onClickCommentEditButton: (String, String) -> Unit,
     ) : PostViewHolder(binding.root) {
         override fun onBind(item: PostContentItem) {
             val context = binding.root.context
@@ -407,7 +407,7 @@ class PostContentListAdapter(
                                 binding.btnPostCommentEdit.visibility = View.VISIBLE
                                 binding.tvPostComment.visibility = View.GONE
                                 binding.btnPostCommentEdit.setOnClickListener {
-                                    onClickCommentEditButton(binding.etPostComment.text.toString())
+                                    onClickCommentEditButton(item.key, binding.etPostComment.text.toString())
                                     binding.tvPostComment.visibility = View.VISIBLE
                                     binding.etPostComment.visibility = View.GONE
                                     binding.btnPostCommentEdit.visibility = View.GONE

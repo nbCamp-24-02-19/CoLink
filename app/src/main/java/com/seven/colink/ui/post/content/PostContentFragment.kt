@@ -11,6 +11,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -132,9 +133,8 @@ class PostContentFragment : Fragment() {
             onClickCommentDeleteButton = {item->
                 viewModel.deleteComment(item)
             },
-            onClickCommentEditButton = {
-                Toast.makeText(context, "곧 수정을 만들겠습니다..ㅠ", Toast.LENGTH_SHORT).show()
-//                viewModel.editComment(item)
+            onClickCommentEditButton = {key, comment ->
+                viewModel.editComment(key, comment)
             }
         )
     }
