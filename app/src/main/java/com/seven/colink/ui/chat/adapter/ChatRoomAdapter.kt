@@ -110,19 +110,7 @@ class ChatRoomAdapter(
 
             if (item.embed != null) {
                 clChatEmbed.isVisible = true
-                ivChatEmbed.load(item.embed.imageUrl) {
-                    listener(
-                        onStart = {
-                            ivChatEmbed.isVisible = false
-                        },
-                        onSuccess = { _,_ ->
-                            ivChatEmbed.isVisible = true
-                        },
-                        onError = { _, _ ->
-                            Log.d("CoilLoadError", "Failed to load image.")
-                        },
-                    )
-                }
+                ivChatEmbed.load(item.embed.imageUrl)
                 tvChatEmbedTitle.text = item.embed.title
                 tvChatEmbedDescription.text = item.embed.description
                 tvChatEmbedDomain.text = item.embed.host
