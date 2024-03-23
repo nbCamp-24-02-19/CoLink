@@ -1,10 +1,9 @@
-package com.seven.colink.ui.promotion
+package com.seven.colink.ui.promotion.ui
 
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,16 +11,25 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentProductPromotionEditBinding
 import com.seven.colink.domain.entity.ProductEntity
 import com.seven.colink.ui.promotion.adapter.ProductPromotionEditAdapter
+import com.seven.colink.ui.promotion.model.ProductPromotionItems
+import com.seven.colink.ui.promotion.viewmodel.ProductPromotionEditViewModel
+import com.seven.colink.ui.promotion.viewmodel.ProductPromotionSharedViewModel
 import com.seven.colink.util.Constants
+import com.seven.colink.util.progress.hideProgressOverlay
+import com.seven.colink.util.progress.showProgressOverlay
+import com.seven.colink.util.status.DataResultStatus
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -34,6 +42,7 @@ class ProductPromotionEditFragment : Fragment() {
     private lateinit var getResultMainImg : ActivityResultLauncher<Intent>
     private lateinit var getResultDesImg : ActivityResultLauncher<Intent>
     private val editViewModel : ProductPromotionEditViewModel by viewModels()
+    private val sharedViewModel : ProductPromotionSharedViewModel by activityViewModels()
     private var key : String? = null
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
     private var viewList = mutableListOf(
@@ -52,7 +61,6 @@ class ProductPromotionEditFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             key = it.getString(Constants.EXTRA_ENTITY_KEY)
-            Log.d("Edit","key = $key")
         }
     }
 
@@ -66,7 +74,6 @@ class ProductPromotionEditFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("Edit","Edit으로 뜨니?")
         initView()
         clickComplete()
         clickBackButton()
@@ -89,6 +96,7 @@ class ProductPromotionEditFragment : Fragment() {
         editAdapter = ProductPromotionEditAdapter(binding.rvPromotionEdit,viewList)
         binding.rvPromotionEdit.adapter = editAdapter
         binding.rvPromotionEdit.layoutManager = LinearLayoutManager(requireContext())
+        setButton()
         setObserve()
     }
 
@@ -123,25 +131,28 @@ class ProductPromotionEditFragment : Fragment() {
         editViewModel.setMember.observe(viewLifecycleOwner) { memberItem ->
             editAdapter.setMember(memberItem)
         }
+
+        editViewModel.result.observe(viewLifecycleOwner) { result ->
+            if (result == DataResultStatus.SUCCESS) {
+                val frag = ProductPromotionFragment()
+                val fragmentManager = requireActivity().supportFragmentManager
+                val trans = fragmentManager.beginTransaction()
+                trans.replace(R.id.frame_product_promotion,frag)
+                trans.commit()
+            }
+        }
+    }
+
+    private fun setButton() {
+        binding.tvPromotionEditComplete.visibility = View.VISIBLE
+        binding.tvPromotionEditComplete.setTextColor(ContextCompat.getColor(requireContext(),R.color.forth_color))
+        binding.tvPromotionEditComplete.text = getText(R.string.bt_complete)
     }
 
     private fun clickComplete(){
-        binding.tvPromotionEditComplete.visibility = View.VISIBLE
-        binding.tvPromotionEditComplete.setTextColor(ContextCompat.getColor(requireContext(),R.color.forth_color))
-        binding.tvPromotionEditComplete.text = "완료"
         binding.tvPromotionEditComplete.setOnClickListener {
             editAdapter.editTextViewAllFocusOut()
             saveDataToViewModel()
-
-            val frag = ProductPromotionFragment()
-            val bundle = Bundle()
-            bundle.putString(Constants.EXTRA_ENTITY_KEY,editViewModel.entity.key)
-            frag.arguments = bundle
-
-            val fragmentManager = requireActivity().supportFragmentManager
-            val trans = fragmentManager.beginTransaction()
-            trans.replace(R.id.frame_product_promotion,frag)
-            trans.commit()
         }
     }
 
@@ -171,6 +182,11 @@ class ProductPromotionEditFragment : Fragment() {
                 aosUrl = tempData.aos,
                 iosUrl = tempData.ios
             )
+
+            editViewModel.key.observe(viewLifecycleOwner) { k ->
+                sharedViewModel.setKey(k)
+            }
+
             with(editViewModel) {
                 saveEntity(entity)
                 registerProduct()

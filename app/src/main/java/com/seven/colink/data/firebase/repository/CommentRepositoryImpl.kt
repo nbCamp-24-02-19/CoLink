@@ -39,4 +39,15 @@ class CommentRepositoryImpl @Inject constructor(
                 continuation.resume(DataResultStatus.FAIL.message.apply { it.message })
             }
     }
+
+    override suspend fun editComment(key: String, comment: String) = suspendCoroutine {continuation ->
+        firestore.collection(DataBaseType.COMMENT.title).document(key).update("description",comment)
+            .addOnSuccessListener {
+                continuation.resume(DataResultStatus.SUCCESS)
+            }
+            .addOnFailureListener {
+                continuation.resume(DataResultStatus.FAIL.message.apply { it.message })
+            }
+
+    }
 }
