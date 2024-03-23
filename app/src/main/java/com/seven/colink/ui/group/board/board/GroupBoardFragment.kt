@@ -1,6 +1,7 @@
 package com.seven.colink.ui.group.board.board
 
 
+import com.seven.colink.ui.group.calendar.material.MaterialCalendarFragment
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -15,14 +16,15 @@ import com.seven.colink.R
 import com.seven.colink.databinding.FragmentGroupBoardBinding
 import com.seven.colink.ui.group.board.board.adapter.GroupBoardListAdapter
 import com.seven.colink.ui.group.board.list.ApplyRequestFragment
-import com.seven.colink.ui.group.calendar.CalendarFragment
 import com.seven.colink.ui.group.content.GroupContentFragment
 import com.seven.colink.ui.group.viewmodel.GroupSharedViewModel
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.ui.promotion.ProductPromotionActivity
 import com.seven.colink.util.Constants
+import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.status.PostEntryType
+import com.seven.colink.util.status.ProjectStatus
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -68,33 +70,59 @@ class GroupBoardFragment : Fragment() {
                         }
                     }
 
-                    R.id.bt_status -> {
-                        // TODO 홍보 하기 버튼
-                        when(item) {
-                            is GroupBoardItem.GroupItem -> {
-                                Log.d("Frag","#bbb key = ${item.key}")
-                                val intent = Intent(requireContext(), ProductPromotionActivity::class.java)
-                                intent.putExtra(Constants.EXTRA_ENTITY_KEY,item.key)
-                                startActivity(intent)
-                            }else -> Unit
-                        }
-
-                    }
-
-                    R.id.iv_calendar -> {
+                    R.id.iv_calendar, R.id.tv_calendar -> {
                         parentFragmentManager.beginTransaction().apply {
                             replace(
                                 R.id.fg_activity_group,
-                                CalendarFragment()
+                                MaterialCalendarFragment()
                             )
                             addToBackStack(null)
                             commit()
                         }
                     }
                 }
+            },
+            onChangeStatus = { item, status ->
+                when (status) {
+                    ProjectStatus.END -> {
+                        when (item) {
+                            is GroupBoardItem.GroupItem -> {
+                                Log.d("Frag", "#bbb key = ${item.key}")
+                                val intent =
+                                    Intent(requireContext(), ProductPromotionActivity::class.java)
+                                intent.putExtra(Constants.EXTRA_ENTITY_KEY, item.key)
+                                startActivity(intent)
+                            }
+
+                            else -> Unit
+                        }
+                    }
+
+                    else -> {
+                        Log.d("status", "$status")
+                        requireContext().setDialog(
+                            title = "프로젝트 상태 변경",
+                            message = "프로젝트 상태를 ${status.getStatusText()}로 변경하시겠습니까?",
+                            confirmAction = {
+                                viewModel.onChangedStatus(status)
+                                it.dismiss()
+                            },
+                            cancelAction = { it.dismiss() }
+                        ).show()
+
+                    }
+                }
             }
         )
     }
+
+    private fun ProjectStatus.getStatusText(): String =
+        when (this) {
+            ProjectStatus.RECRUIT -> "시작하기"
+            ProjectStatus.START -> "종료하기"
+            else -> ""
+        }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
