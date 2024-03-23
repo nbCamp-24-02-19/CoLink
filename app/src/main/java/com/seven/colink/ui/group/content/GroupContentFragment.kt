@@ -55,15 +55,11 @@ class GroupContentFragment : Fragment() {
                     else -> Unit
                 }
             },
-            onChangeStatus = {
-                viewModel.onChangedStatus(it)
-            },
             onChangedFocus = { position, title, description, item ->
                 when (item) {
                     is GroupContentItem.GroupContent, is GroupContentItem.GroupOptionItem -> {
                         viewModel.updateGroupItemText(position, title, description)
                     }
-                    else -> Unit
                 }
             }
         )

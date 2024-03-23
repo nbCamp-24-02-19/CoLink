@@ -91,8 +91,9 @@ class GroupRepositoryImpl @Inject constructor(
                 }
         }
 
-    override suspend fun updateGroupStatus(key: String, status: ProjectStatus): DataResultStatus {
-        val fieldMap = mapOf("status" to status)
+    override suspend fun updateGroupStatus(key: String, status: ProjectStatus, date: Map<String, String>): DataResultStatus {
+        val fieldMap = mutableMapOf<String, Any>("status" to status)
+        fieldMap.putAll(date)
         return updateFirestoreField(key, fieldMap)
     }
 
