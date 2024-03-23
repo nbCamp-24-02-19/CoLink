@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -137,11 +136,7 @@ class SignUpActivity : AppCompatActivity() {
                         }
 
                         SignUpErrorMessage.SPECIALTY, SignUpErrorMessage.SKILL, SignUpErrorMessage.LEVEL -> {
-                            Toast.makeText(
-                                this@SignUpActivity,
-                                "${it.message}",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            binding.root.setSnackBar(SnackType.Error, getString(it.message))
                         }
 
                         SignUpErrorMessage.DUMMY -> Unit
