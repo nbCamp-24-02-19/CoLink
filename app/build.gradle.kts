@@ -58,6 +58,7 @@ android {
 repositories {
     google()
     mavenCentral()
+
 }
 
 dependencies {
@@ -124,4 +125,7 @@ dependencies {
 
     // Indicator
     implementation("com.tbuonomo:dotsindicator:5.0")
+
+    //kakao
+    implementation("com.kakao.sdk:v2-user:2.10.0")
 }
