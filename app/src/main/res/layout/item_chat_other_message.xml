@@ -32,6 +32,7 @@
             android:layout_height="32dp"
             android:background="@drawable/bg_stepper_circle"
             android:clipToOutline="true"
+            android:scaleType="centerCrop"
             android:src="@drawable/dummy" />
 
     </com.google.android.material.card.MaterialCardView>
