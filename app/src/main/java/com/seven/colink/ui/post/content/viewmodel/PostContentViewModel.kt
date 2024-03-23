@@ -26,6 +26,7 @@ import com.seven.colink.ui.post.content.model.PostContentItem
 import com.seven.colink.ui.post.register.post.model.PostErrorMessage
 import com.seven.colink.ui.post.register.post.model.PostErrorUiState
 import com.seven.colink.ui.post.register.post.model.Post
+import com.seven.colink.util.convert.convertTime
 import com.seven.colink.util.status.ApplicationStatus
 import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.GroupType
@@ -46,7 +47,6 @@ class PostContentViewModel @Inject constructor(
     private val groupRepository: GroupRepository
 ) : ViewModel() {
     private lateinit var entity: Post
-//    private lateinit var comment: Comment
     private val _uiState = MutableLiveData<List<PostContentItem>>()
     val uiState: LiveData<List<PostContentItem>> get() = _uiState
 
@@ -64,8 +64,6 @@ class PostContentViewModel @Inject constructor(
     private val _userComment = MutableLiveData<CommentEntity>()
     val userComments: LiveData<CommentEntity> = _userComment
 
-//    private val _updateCommentButtonUiState = MutableLiveData<CommentButtonUiState>()
-//    val updateCommentButtonUiState: LiveData<CommentButtonUiState>  get() = _updateCommentButtonUiState
 
     private val _checkLogin = MutableLiveData<Boolean>(false)
     val checkLogin: LiveData<Boolean> get() = _checkLogin
@@ -73,7 +71,7 @@ class PostContentViewModel @Inject constructor(
     private val _isLike = MutableLiveData<Boolean>()
     val isLike: LiveData<Boolean> get() = _isLike
 
-    private var _currentUser:UserEntity? = null
+    private var _currentUser: UserEntity? = null
     private val currentUser get() = _currentUser
 
     private val _likeList = MutableLiveData<List<String>?>()
@@ -110,13 +108,6 @@ class PostContentViewModel @Inject constructor(
         }
     }
 
-//    private suspend fun setCommentButtonUiState(comment: Comment) {
-//        _updateCommentButtonUiState.value = when (getCurrentUser()) {
-//            comment.authId -> CommentButtonUiState.Manager
-//            null -> CommentButtonUiState.Unknown
-//            else -> CommentButtonUiState.User
-//        }
-//    }
 
     fun registerComment(text: String) {
         viewModelScope.launch {
@@ -132,6 +123,34 @@ class PostContentViewModel @Inject constructor(
         }
         setPostContentItems(entity.recruit)
     }
+//수정을 하려면 일단 그 댓글의 키값을 가져와서 그 키값이랑 맞는 댓글의 description을 수정해야 하는것이지?????????????????????
+    //근데???????????밑에 이 친구는 그냥 댓글 추가 하는 거잖아???????????????ㅎ..ㅋ.ㅎ..ㅎ.ㅎ..ㅎ.
+//    fun editComment(text: String) {
+//        viewModelScope.launch {
+//            commentRepository.registerComment(
+//                getCurrentUser()?.let {
+//                    CommentEntity(
+////                        key = ,
+//                        authId = it,
+//                        postId = entity.key,
+//                        description = text
+//                    )
+//                }?: return@launch
+//            )
+//        }
+//        setPostContentItems(entity.recruit)
+//    }
+//해당 댓글의 키값 가져오기...registerComment는 댓글 작성하는 것,,getComment는 댓글 가져오는 것..
+    //근데 댓글...음?..음???? 그 가져온 댓글에서 description만 수정하기..ㅋ.ㅋ..가능?ㅎㅎ
+    //getComment는 suspend를 사용해야 사용 가능 그럼 이걸 사용하는 것이 아닌듯
+
+    fun editComment(key: String, comment: String){
+        viewModelScope.launch {
+            commentRepository.editComment(key, comment)
+        }
+        setPostContentItems(entity.recruit)
+    }
+
 
     fun deleteComment(key: String){
         viewModelScope.launch {
@@ -142,7 +161,7 @@ class PostContentViewModel @Inject constructor(
     private suspend fun getComment() =
             commentRepository.getComment(
                 postId = entity.key
-            ).getOrNull()
+            ).getOrNull()?.sortedBy { it.registeredDate }
 
     private fun setPostContentItems(updatedRecruitList: List<RecruitInfo>?) =
         viewModelScope.launch {
@@ -186,9 +205,9 @@ class PostContentViewModel @Inject constructor(
                                 name = user?.name?:"",
                                 profile = user?.photoUrl?: "",
                                 description = it.description,
-                                registeredDate = it.registeredDate,
+                                registeredDate = it.registeredDate.convertTime(),
                                 authId = it.authId,
-                                buttonUiState = updateButtonUiState.value ?: ContentButtonUiState.User
+                                buttonUiState = it.authId == getCurrentUser()
                             )
                         )
                     }

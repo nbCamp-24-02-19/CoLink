@@ -1,4 +1,4 @@
-package com.seven.colink.ui.promotion
+package com.seven.colink.ui.promotion.viewmodel
 
 import android.app.Application
 import android.net.Uri
@@ -14,7 +14,9 @@ import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.domain.repository.ImageRepository
 import com.seven.colink.domain.repository.ProductRepository
 import com.seven.colink.domain.repository.UserRepository
+import com.seven.colink.ui.promotion.model.ProductPromotionItems
 import com.seven.colink.util.convert.convertLocalDateTime
+import com.seven.colink.util.status.DataResultStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -27,20 +29,22 @@ class ProductPromotionEditViewModel @Inject constructor(
     private val groupRepository: GroupRepository,
     private val productRepository : ProductRepository,
     private val userRepository: UserRepository,
-    private val imageRepository: ImageRepository
+    private val imageRepository: ImageRepository,
 ) : ViewModel() {
     var entity = ProductEntity()
 
+    private val _result = MutableLiveData<DataResultStatus>()
     private val _product = MutableLiveData<ProductEntity>()
-    private val _setMainImg = MutableLiveData<ProductPromotionItems.Img>()
-    private val _setMiddleImg = MutableLiveData<ProductPromotionItems.MiddleImg>()
     private val _setLeader = MutableLiveData<ProductPromotionItems.ProjectLeaderItem>()
     private val _setMember = MutableLiveData<MutableList<ProductPromotionItems.ProjectMember>>()
+    private val _isLoading = MutableLiveData<Boolean>()
+    private val _key = MutableLiveData<String>()
+    val key : LiveData<String> get() = _key
+    val result : LiveData<DataResultStatus> get() = _result
     val product : LiveData<ProductEntity> get() = _product
-    val setMainImg : LiveData<ProductPromotionItems.Img> get() = _setMainImg
-    val setMiddleImg : LiveData<ProductPromotionItems.MiddleImg> get() = _setMiddleImg
     val setLeader : LiveData<ProductPromotionItems.ProjectLeaderItem> get() = _setLeader
     val setMember : MutableLiveData<MutableList<ProductPromotionItems.ProjectMember>> get() = _setMember
+    val isLoading: LiveData<Boolean> get() = _isLoading
 
     fun init(key: String) {
         if (entity.title?.isEmpty() == true) {
@@ -51,22 +55,26 @@ class ProductPromotionEditViewModel @Inject constructor(
     }
 
     private fun initPostToProduct(key: String) {  //포스트에서 프로덕트로 만들때
-        entity = ProductEntity(
-            key = "PRD_" + UUID.randomUUID().toString(),
-            projectId = "",
-            authId = "",
-            memberIds = emptyList(),
-            title = "",
-            imageUrl = "",
-            description = "",
-            desImg = "",
-            tags = emptyList(),
-            registeredDate = LocalDateTime.now().convertLocalDateTime(),
-            referenceUrl = null,
-            aosUrl = null,
-            iosUrl = null
-        )
-        getMemberDetail(key)
+        viewModelScope.launch {
+            val ids = groupRepository.getGroupDetail(key)
+
+            entity = ProductEntity(
+                key = "PRD_" + UUID.randomUUID().toString(),
+                projectId = "",
+                authId = ids.getOrNull()?.authId ?: "",
+                memberIds = ids.getOrNull()?.memberIds ?: emptyList(),
+                title = "",
+                imageUrl = "",
+                description = "",
+                desImg = "",
+                tags = emptyList(),
+                registeredDate = LocalDateTime.now().convertLocalDateTime(),
+                referenceUrl = null,
+                aosUrl = null,
+                iosUrl = null
+            )
+            getMemberDetail(key)
+        }
     }
 
     private fun initProduct(key: String) {  //프로덕트를 편집할때
@@ -79,20 +87,15 @@ class ProductPromotionEditViewModel @Inject constructor(
     }
 
     fun getMemberDetail(key: String) {
-        val viewList = mutableListOf<ProductEntity>()
         var memberList = mutableListOf<ProductPromotionItems.ProjectMember>()
 
         viewModelScope.launch {
             val ids = groupRepository.getGroupDetail(key)
 
-            val viewItem = ids.getOrNull()?.memberIds?.let { member -> entity.copy(authId = ids.getOrNull()?.authId, memberIds = member) }
-            Log.d("Viewmodel","#aaa postUser Id = ${ids.getOrNull()?.authId}")
-            Log.d("Viewmodel","#aaa postMember Id = ${ids.getOrNull()?.memberIds}")
-            if (viewItem != null) {
-                viewList.add(viewItem)
-            }
             val getLeaderDetail = ids.getOrNull()?.authId?.let { authId -> userRepository.getUserDetails(authId) }
             val setLeaderItem = ProductPromotionItems.ProjectLeaderItem(getLeaderDetail)
+
+            entity = ProductEntity(authId = ids.getOrNull()?.authId)
 
             val memIds = ids.getOrNull()?.memberIds
             if (memIds != null) {
@@ -111,7 +114,6 @@ class ProductPromotionEditViewModel @Inject constructor(
                                 participantsChatRoomIds = userNt?.participantsChatRoomIds,
                                 chatRoomKeyList = userNt?.chatRoomKeyList
                             )
-                    entity = ProductEntity(authId = user.uid)
 
                     memberDetailList.add(ProductPromotionItems.ProjectMember(user))
                     val delAuth = ids.getOrNull()?.authId
@@ -127,10 +129,7 @@ class ProductPromotionEditViewModel @Inject constructor(
 
                 }
                     val setMemberItem = memberDetailList
-                    Log.d("Viewmodel","#aaa 디테일 = $memberDetailList")
-                    Log.d("Viewmodel","#aaa set 아이템 = $setMemberItem")
                     memberList.plus(setMemberItem)
-                    Log.d("Viewmodel","#aaa 멤버리스트 = $setMemberItem")
                 memberList = memberList.plus(setMemberItem).toMutableList()
                 }
             _setMember.value = memberList
@@ -148,35 +147,18 @@ class ProductPromotionEditViewModel @Inject constructor(
             aosUrl = nt.aosUrl,
             iosUrl = nt.iosUrl
         )
-        Log.d("Edit","#ccc viewModel save entity = $entity")
     }
 
     suspend fun uploadImage(uri: Uri): String =
         imageRepository.uploadImage(uri).getOrThrow().toString()
 
-    fun changeType(temp: TempProductEntity, nt:ProductEntity){
-        viewModelScope.launch {
-            entity = entity.copy(
-                title = nt.title,
-                imageUrl = temp.selectMainImgUri?.let { uploadImage(it) } ?: "",
-                description = nt.description,
-                desImg = temp.selectMiddleImgUri?.let { uploadImage(it) } ?: "",
-                referenceUrl = nt.referenceUrl,
-                aosUrl = nt.aosUrl,
-                iosUrl = nt.iosUrl
-            )
-        }
-    }
-
-    fun registerProduct() {
+    fun registerProduct()  {
         _product.value = entity
-
         saveProduct(entity)
-        Log.d("ViewModel","#bbb save entity = $entity")
         viewModelScope.launch {
-            productRepository.registerProduct(entity)
-            Log.d("ViewModel","#bbb firebase entity = $entity")
+            _result.value = productRepository.registerProduct(entity)
         }
+        _key.value = entity.key
     }
 
     private fun saveProduct(nt : ProductEntity) {
