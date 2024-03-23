@@ -124,4 +124,7 @@ dependencies {
 
     // Indicator
     implementation("com.tbuonomo:dotsindicator:5.0")
+
+    //Jsoup
+    implementation ("org.jsoup:jsoup:1.17.2")
 }

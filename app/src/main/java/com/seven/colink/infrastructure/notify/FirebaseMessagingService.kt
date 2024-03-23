@@ -35,29 +35,29 @@ import kotlinx.coroutines.withContext
 class FirebaseMessagingService : FirebaseMessagingService() {
 
     // 메세지가 수신되면 호출
-    override fun onMessageReceived(remoteMessage: RemoteMessage) {
+    override fun onMessageReceived(remoteMessage: RemoteMessage) = with(remoteMessage) {
         // 서버에서 직접 보낼때
-        if (remoteMessage.notification != null) {
+        if (notification != null) {
             sendNotification(
-                remoteMessage.notification?.title,
-                remoteMessage.notification?.body!!
+                notification?.title,
+                notification?.body!!
             )
         }
         //다른 기기에서 서버로 보낼때
-        else if (remoteMessage.data.isNotEmpty()) {
+        else if (data.isNotEmpty()) {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 CoroutineScope(SupervisorJob()).launch {
-                    remoteMessage.data["key"]?.let { key ->
-                        remoteMessage.data["type"]?.let { type ->
-                            remoteMessage.data["title"]?.let { title ->
-                                remoteMessage.data["message"]?.let { message ->
-                                    remoteMessage.data["groupType"]?.let { groupType ->
+                    data["key"]?.let { key ->
+                        data["type"]?.let { type ->
+                            data["title"]?.let { title ->
+                                data["message"]?.let { message ->
+                                    data["groupType"]?.let { groupType ->
                                         when (NotifyType.fromTitle(type)) {
                                             NotifyType.CHAT -> {
-                                                remoteMessage.data["name"]?.let { name ->
-                                                    remoteMessage.data["img"]?.let { img ->
-                                                        remoteMessage.data["registeredDate"]?.let { registeredDate ->
+                                                data["name"]?.let { name ->
+                                                    data["img"]?.let { img ->
+                                                        data["registeredDate"]?.let { registeredDate ->
                                                             sendNotification(
                                                                 key = key,
                                                                 title = title,
@@ -101,8 +101,8 @@ class FirebaseMessagingService : FirebaseMessagingService() {
 
                                             else -> {
                                                 sendNotification(
-                                                    remoteMessage.notification?.title,
-                                                    remoteMessage.notification?.body ?: return@launch
+                                                    notification?.title,
+                                                    notification?.body ?: return@launch
                                                 )
                                             }
                                         }
@@ -115,8 +115,8 @@ class FirebaseMessagingService : FirebaseMessagingService() {
                 }
             } else {
                 sendNotification(
-                    remoteMessage.notification?.title,
-                    remoteMessage.notification?.body!!
+                    notification?.title,
+                    notification?.body!!
                 )
             }
         }
@@ -218,24 +218,23 @@ class FirebaseMessagingService : FirebaseMessagingService() {
         type: String,
         message: String,
         groupType: GroupType,
-    ) = withContext(Dispatchers.Main){
+    ) = withContext(Dispatchers.Main) {
         val code = key.hashCode()
-        var intent = Intent()
-            intent =
-                when (NotifyType.fromTitle(type)) {
-                    NotifyType.APPLY -> GroupActivity.newIntent(
-                        this@FirebaseMessagingService,
-                        groupType,
-                        key = key
-                    )
+        val intent =
+            when (NotifyType.fromTitle(type)) {
+                NotifyType.APPLY -> GroupActivity.newIntent(
+                    this@FirebaseMessagingService,
+                    groupType,
+                    key = key
+                )
 
-                    else -> PostActivity.newIntent(
-                        this@FirebaseMessagingService,
-                        groupType,
-                        key = key
-                    )
-                }
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                else -> PostActivity.newIntent(
+                    this@FirebaseMessagingService,
+                    groupType,
+                    key = key
+                )
+            }
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         val pendingIntent = pendingIntent(code, intent)
 
         val notificationManager =
@@ -249,13 +248,14 @@ class FirebaseMessagingService : FirebaseMessagingService() {
         }
         val channelId = "channel_$type$key"
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val notificationBuilder = NotificationCompat.Builder(this@FirebaseMessagingService, channelId)
-            .setContentTitle(title)
-            .setContentText(message)
-            .setSmallIcon(icon)
-            .setSound(defaultSoundUri)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setContentIntent(pendingIntent)
+        val notificationBuilder =
+            NotificationCompat.Builder(this@FirebaseMessagingService, channelId)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setSmallIcon(icon)
+                .setSound(defaultSoundUri)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(pendingIntent)
 
 
         val channel = NotificationChannel(

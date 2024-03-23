@@ -1,6 +1,13 @@
 package com.seven.colink.util.convert
 
+import com.seven.colink.util.model.UrlMetaData
 import com.seven.colink.util.status.ScheduleDateType
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import org.jsoup.Jsoup
+import java.net.URL
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -8,6 +15,37 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Date
 import java.util.Locale
+
+fun String.containsUrl() = Regex("(http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|%[0-9a-fA-F][0-9a-fA-F])+)").containsMatchIn(this)
+
+fun String.extractUrl(): String {
+    val urlPattern = Regex("(http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)")
+    return urlPattern.findAll(this).map { it.value }.toList().first()
+}
+
+suspend fun fetchUrlMetaData(url: String)= withContext(Dispatchers.IO) {
+    try {
+        val client = OkHttpClient()
+        val request = Request.Builder().url(url).build()
+
+        client.newCall(request).execute().use { response ->
+            val htmlString = response.body?.string()
+
+            htmlString?.let {
+                val doc = Jsoup.parse(it)
+                val title = doc.select("meta[property=og:title]").attr("content")
+                val description = doc.select("meta[property=og:description]").attr("content")
+                var imageUrl = doc.select("meta[property=og:image]").attr("content")
+
+                if (imageUrl.containsUrl().not()) imageUrl = "https:$imageUrl"
+                return@withContext UrlMetaData(title, description, imageUrl, URL(url).host, url)
+            }
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+    return@withContext null
+}
 
 fun LocalDateTime.convertLocalDateTime(): String = run {
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")

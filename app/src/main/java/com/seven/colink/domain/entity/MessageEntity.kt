@@ -2,6 +2,7 @@ package com.seven.colink.domain.entity
 
 import com.seven.colink.ui.chat.type.ChatTabType
 import com.seven.colink.util.convert.convertLocalDateTime
+import com.seven.colink.util.model.UrlMetaData
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -19,6 +20,7 @@ data class MessageEntity (
     val text: String? = null,
     val authId: String? = "",
     val img: String? = null,
+    val embed: UrlMetaData? = null,
     val viewUsers: List<String> = emptyList(),
     val registerDate: String = LocalDateTime.now().convertLocalDateTime(),
 )

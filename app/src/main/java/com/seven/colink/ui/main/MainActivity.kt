@@ -45,6 +45,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         initView()
+        initViewModel()
     }
 
 
@@ -53,7 +54,16 @@ class MainActivity : AppCompatActivity() {
         initPermission()
         onMyProfileEdit()
         onNotify()
-        viewModel
+    }
+
+    private fun initViewModel() = with(viewModel) {
+        lifecycleScope.launch {
+            recruitApprove.collect {
+                it.forEach { data ->
+                    viewModel.getChatRoom(data)
+                }
+            }
+        }
     }
 
     private fun onNotify() = with(binding) {
