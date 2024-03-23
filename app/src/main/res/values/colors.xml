@@ -69,5 +69,6 @@
     <color name="enabled_color">#7B7C80</color>
     <color name="today_color">#C9EFE8</color>
 
+    <color name="link_color">#295DC6</color>
 
 </resources>
