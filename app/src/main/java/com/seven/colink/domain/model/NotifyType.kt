@@ -14,7 +14,10 @@ enum class NotifyType(
     ),
     JOIN(
         title = "join"
-    )
+    ),
+    RESERVATION(
+        title = "reservation"
+    ),
 
     ;
 
