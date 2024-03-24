@@ -31,11 +31,9 @@ class CalendarViewModel @Inject constructor(
         _uiState.value = scheduleList
         filterScheduleListByDate(LocalDate.now())
         filterDataByMonth(LocalDate.now())
-        Log.d("1234", "setEntity")
     }
 
     fun filterScheduleListByDate(date: LocalDate) = viewModelScope.launch {
-        Log.d("1234", "filterScheduleListByDate=$date")
         val allScheduleList = uiState.value
         val filteredScheduleList = mutableListOf<ScheduleModel?>()
         allScheduleList.forEach { schedule ->
@@ -85,8 +83,6 @@ class CalendarViewModel @Inject constructor(
     }
 
     fun filterDataByMonth(date: LocalDate) {
-        Log.d("1234", "filterDataByMonth=$date")
-
         val monthData = uiState.value.filter { schedule ->
             val startDate = schedule.startDate?.let {
                 LocalDate.parse(
