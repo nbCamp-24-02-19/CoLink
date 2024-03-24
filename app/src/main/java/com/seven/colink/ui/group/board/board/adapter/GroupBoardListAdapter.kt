@@ -27,7 +27,6 @@ import com.seven.colink.ui.group.board.board.GroupContentViewType
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.register.post.adapter.TagListAdapter
 import com.seven.colink.ui.post.register.post.model.TagListItem
-import com.seven.colink.util.convert.convertCalculateDays
 import com.seven.colink.util.setLevelIcon
 import com.seven.colink.util.status.ApplicationStatus
 import com.seven.colink.util.status.GroupType
@@ -344,9 +343,8 @@ class GroupBoardListAdapter(
         override fun onBind(item: GroupBoardItem) {
             if (item is GroupBoardItem.GroupOptionItem) {
                 binding.etPrecautions.setText(item.precautions)
-                binding.etRecruitInfo.setText(item.recruitInfo)
                 binding.etPrecautions.inputType = InputType.TYPE_NULL
-                binding.etRecruitInfo.inputType = InputType.TYPE_NULL
+                binding.layoutDate.visibility = View.GONE
             }
         }
     }

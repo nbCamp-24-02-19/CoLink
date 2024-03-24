@@ -1,5 +1,6 @@
 package com.seven.colink.util.convert
 
+import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.seven.colink.util.model.UrlMetaData
 import com.seven.colink.util.status.ScheduleDateType
 import kotlinx.coroutines.Dispatchers
@@ -9,6 +10,7 @@ import okhttp3.Request
 import org.jsoup.Jsoup
 import java.net.URL
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -113,4 +115,8 @@ fun getDateByState(scheduleDateType: ScheduleDateType): String {
 fun formatDate(date: LocalDateTime): String {
     val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:00")
     return date.format(formatter)
+}
+
+fun CalendarDay.convertCalendarDayToLocalDate(): LocalDate {
+    return LocalDate.of(this.year, this.month, this.day)
 }
