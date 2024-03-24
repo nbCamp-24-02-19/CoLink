@@ -62,8 +62,30 @@ class MaterialCalendarFragment : Fragment() {
 
     private fun initView() = with(binding) {
         recyclerViewSchedule.adapter = scheduleListAdapter
+        binding.ivCalendarFinish.setOnClickListener {
+            if (!parentFragmentManager.isStateSaved) {
+                parentFragmentManager.popBackStack()
+            }
+        }
+        binding.fbRegisterSchedule.setOnClickListener {
+            sharedViewModel.setScheduleKey(null)
+            sharedViewModel.setScheduleEntryType(CalendarEntryType.CREATE)
+            parentFragmentManager.beginTransaction().apply {
+                setCustomAnimations(
+                    R.anim.enter_animation,
+                    R.anim.exit_animation,
+                    R.anim.enter_animation,
+                    R.anim.exit_animation
+                )
+                replace(
+                    R.id.fg_activity_group,
+                    RegisterScheduleFragment()
+                )
+                addToBackStack(null)
+                commit()
+            }
+        }
         with(calendarView) {
-
             dayDecorator = CalendarDecorators.dayDecorator(requireContext())
             todayDecorator = CalendarDecorators.todayDecorator(requireContext())
             sundayDecorator = CalendarDecorators.sundayDecorator()
