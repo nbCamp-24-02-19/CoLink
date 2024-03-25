@@ -366,9 +366,7 @@ class PostContentListAdapter(
         override fun onBind(item: PostContentItem) {
             if (item is PostContentItem.AdditionalInfo) {
                 binding.etPrecautions.setText(item.precautions)
-                binding.etRecruitInfo.setText(item.recruitInfo)
                 binding.etPrecautions.inputType = InputType.TYPE_NULL
-                binding.etRecruitInfo.inputType = InputType.TYPE_NULL
                 val startDateText = item.startDate
                 val endDateText = item.endDate
                 if (!startDateText.isNullOrBlank() && !endDateText.isNullOrBlank()) {

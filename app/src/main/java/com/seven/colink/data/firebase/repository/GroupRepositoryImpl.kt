@@ -3,7 +3,6 @@ package com.seven.colink.data.firebase.repository
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.android.play.integrity.internal.w
 import com.seven.colink.data.firebase.type.DataBaseType
 import com.seven.colink.domain.entity.GroupEntity
 import com.seven.colink.domain.repository.GroupRepository
@@ -46,7 +45,9 @@ class GroupRepositoryImpl @Inject constructor(
                 updatedGroup.tags?.let { put("tags", it) }
                 updatedGroup.imageUrl?.let { put("imageUrl", it) }
                 updatedGroup.precautions?.let { put("precautions", it) }
-                updatedGroup.recruitInfo?.let { put("recruitInfo", it) }
+                updatedGroup.startDate?.let { put("startDate", it) }
+                updatedGroup.endDate?.let { put("endDate", it) }
+
             }
 
             firestore.collection(DataBaseType.GROUP.title).document(key)

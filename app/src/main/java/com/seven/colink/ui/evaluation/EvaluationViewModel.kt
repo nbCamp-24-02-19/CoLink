@@ -208,8 +208,8 @@ class EvaluationViewModel @Inject constructor(
     fun updatePage(position: Int) {
         _currentPage.value =
             when (position) {
-                0 -> if (currentGroup.value.memberIds.size - 1 > position) PageState.FIRST else PageState.LAST
-                currentGroup.value.memberIds.size - 1 -> PageState.LAST
+                0 -> if (currentGroup.value.memberIds.size > position) PageState.FIRST else PageState.LAST
+                currentGroup.value.memberIds.size -> PageState.LAST
                 else -> PageState.MIDDLE
             }.apply { num = position }
     }
