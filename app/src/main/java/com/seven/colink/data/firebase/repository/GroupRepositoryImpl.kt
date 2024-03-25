@@ -1,18 +1,25 @@
 package com.seven.colink.data.firebase.repository
 
+import android.util.Log
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.android.play.integrity.internal.w
 import com.seven.colink.data.firebase.type.DataBaseType
 import com.seven.colink.domain.entity.GroupEntity
 import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.ProjectStatus
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 class GroupRepositoryImpl @Inject constructor(
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val auth: FirebaseAuth
 ) : GroupRepository {
     override suspend fun registerGroup(group: GroupEntity) = suspendCoroutine { continuation ->
         firestore.collection(DataBaseType.GROUP.title).document(group.key).set(group)
@@ -102,4 +109,22 @@ class GroupRepositoryImpl @Inject constructor(
         return updateFirestoreField(key, fieldMap)
     }
 
+    override suspend fun observeGroupState() = callbackFlow {
+        val uid = auth.currentUser?.uid ?: close()
+        val listener = firestore.collection(DataBaseType.GROUP.title).whereArrayContains("memberIds", uid)
+        .addSnapshotListener { snapshot, e ->
+                    if(e != null) {
+                        Log.w("observeGroupState", "failed", e)
+                    } else if (snapshot != null) {
+                        trySend(
+                            snapshot.toObjects(GroupEntity::class.java)
+                        ).isSuccess
+                    }
+        }
+        awaitClose {
+            listener.remove()
+        }
+    }.mapNotNull { data ->
+        data.filter { it.status != ProjectStatus.RECRUIT}.takeIf { it.isNotEmpty() }
+    }
 }

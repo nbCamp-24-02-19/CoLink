@@ -1,29 +1,28 @@
 package com.seven.colink.ui.evaluation
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import coil.load
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentEvaluationProjectBinding
-import com.seven.colink.ui.home.HomeFragment
-import com.seven.colink.ui.search.SearchFragment
 import com.seven.colink.util.dialog.setDialog
+import com.seven.colink.util.status.PageState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class EvaluationProjectFragment : Fragment() {
     private var _binding: FragmentEvaluationProjectBinding? = null
     private val binding get() = _binding!!
-
-    private var projectUserList: Int = 0
 
     private val evaluationViewModel: EvaluationViewModel by activityViewModels()
 
@@ -48,10 +47,6 @@ class EvaluationProjectFragment : Fragment() {
     ): View {
         _binding = FragmentEvaluationProjectBinding.inflate(inflater, container, false)
 
-        arguments?.let {
-            projectUserList = it.getInt("projectUserList")
-        }
-
         return binding.root
     }
 
@@ -60,8 +55,6 @@ class EvaluationProjectFragment : Fragment() {
 
         initViewModel()
         initView()
-        firstPage()
-        lastPage()
     }
 
     private fun initView() {
@@ -70,14 +63,8 @@ class EvaluationProjectFragment : Fragment() {
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                evaluationViewModel.updateProjectMembers(
-                    projectUserList,
-                    binding.rbEvalQuestion1.rating,
-                    binding.rbEvalQuestion2.rating,
-                    binding.rbEvalQuestion3.rating,
-                    binding.rbEvalQuestion4.rating,
-                    binding.rbEvalQuestion5.rating
-                )
+
+                evaluationViewModel.updatePage(position)
             }
         })
 
@@ -99,16 +86,49 @@ class EvaluationProjectFragment : Fragment() {
     }
 
     private fun initViewModel() = with(evaluationViewModel) {
-        evalProjectMembersData.observe(viewLifecycleOwner) {
-            setView(it?.get(projectUserList))
-            firstPage()
-            lastPage()
+        lifecycleScope.launch {
+            combine(currentPage,evalProjectMembersData.asFlow()) { page, data ->
+                Pair(page,data)
+            }.collect { (page, data) ->
+                setView(data?.get(page.num))
+            }
+        }
+
+        lifecycleScope.launch {
+            currentPage.collect { state ->
+                when(state) {
+                    PageState.FIRST -> firstPage()
+                    PageState.MIDDLE -> Unit
+                    PageState.LAST -> lastPage(state.num)
+                }
+
+                updateMembers(state.num)
+            }
+        }
+
+        lifecycleScope.launch {
+            combine(currentGroup,currentUid,currentPage) { group, uid, page ->
+                Triple(group, uid, page)
+            }.filter {
+                it.third == PageState.LAST
+            }.collect { (group, uid,_) ->
+                updateProjectUserGrade(group, uid)
+                requireActivity().finish()
+            }
         }
     }
 
+    private fun updateMembers(position: Int) =
+        evaluationViewModel.updateProjectMembers(
+            position,
+            binding.rbEvalQuestion1.rating,
+            binding.rbEvalQuestion2.rating,
+            binding.rbEvalQuestion3.rating,
+            binding.rbEvalQuestion4.rating,
+            binding.rbEvalQuestion5.rating
+        )
+
     private fun firstPage() {
-        val firstPage = projectUserList == 0
-        if (firstPage) {
             binding.tvEvalPrev.visibility = View.INVISIBLE
             binding.tvEvalNext.visibility = View.VISIBLE
             binding.tvEvalNext.setOnClickListener {
@@ -117,20 +137,15 @@ class EvaluationProjectFragment : Fragment() {
                     viewPager.setCurrentItem(currentPage + 1, true)
                 }
             }
-        }
     }
 
-    private fun lastPage() {
-        val lastPage =
-            projectUserList + 1 == evaluationViewModel.evalProjectMembersData.value?.size
-        if (lastPage) {
+    private fun lastPage(page: Int) {
             binding.tvEvalNext.visibility = View.INVISIBLE
             binding.tvEvalPrev.setOnClickListener {
                 setViewPager()
                 if (currentPage > 0) {
                     viewPager.setCurrentItem(currentPage - 1, true)
                 }
-            }
 
             binding.btnEvalNext.text = getString(R.string.eval_project_done)
             binding.btnEvalNext.setOnClickListener {
@@ -138,19 +153,9 @@ class EvaluationProjectFragment : Fragment() {
                     title = getString(R.string.eval_dialog_title),
                     message = getString(R.string.eval_dialog_des),
                     confirmAction = {
-                        evaluationViewModel.updateProjectMembers(
-                            projectUserList,
-                            binding.rbEvalQuestion1.rating,
-                            binding.rbEvalQuestion2.rating,
-                            binding.rbEvalQuestion3.rating,
-                            binding.rbEvalQuestion4.rating,
-                            binding.rbEvalQuestion5.rating
-                        )
-                        for (i in 0..projectUserList){
-                            evaluationViewModel.updateProjectUserGrade(i)
-                        }
+                        updateMembers(page)
+
                         it.dismiss()
-                        activity?.finish()
                     },
                     cancelAction = { it.dismiss() }
                 ).show()
