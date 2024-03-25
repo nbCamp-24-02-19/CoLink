@@ -43,22 +43,20 @@ class ApplyRequestViewModel @Inject constructor(
 
     private suspend fun initViewState() {
         val postEntity = postUseCase(entity.postKey)
-
         val dataList = mutableListOf<GroupBoardItem>()
         dataList.add(
             GroupBoardItem.TitleSingleItem(
                 titleRes = R.string.apply_request_list,
             )
         )
-
         postEntity?.recruit?.forEach { recruitInfo ->
             val type = recruitInfo.type ?: ""
-            val matchingApplicationInfos = recruitInfo.applicationInfos?.filter {
+            val matchingApplicationInfo = recruitInfo.applicationInfos?.filter {
                 it.recruitId == recruitInfo.key && it.applicationStatus == ApplicationStatus.PENDING
             } ?: emptyList()
-            if (matchingApplicationInfos.isNotEmpty()) {
+            if (matchingApplicationInfo.isNotEmpty()) {
                 dataList.add(GroupBoardItem.SubTitleItem(title = type))
-                matchingApplicationInfos.forEach { applicationInfo ->
+                matchingApplicationInfo.forEach { applicationInfo ->
                     applicationInfo.userId?.let {
                         userRepository.getUserDetails(it).getOrNull()?.let { userEntity ->
                             dataList.add(
@@ -72,7 +70,7 @@ class ApplyRequestViewModel @Inject constructor(
                 }
             } else {
                 dataList.add(GroupBoardItem.SubTitleItem(title = type))
-                dataList.add(GroupBoardItem.MessageItem(message = "지원 목록이 없습니다."))
+                dataList.add(GroupBoardItem.MessageItem(message = R.string.no_list_supported))
             }
         }
 
@@ -121,12 +119,13 @@ class ApplyRequestViewModel @Inject constructor(
                                     item
                                 }
                             }
+
                             else -> item
                         }
                     }?.toMutableList() ?: mutableListOf()
 
                     if (updatedUiState.none { it is GroupBoardItem.MemberApplicationInfoItem && it.applicationInfo?.applicationStatus == ApplicationStatus.PENDING }) {
-                        updatedUiState.add(GroupBoardItem.MessageItem(message = "지원 목록이 없습니다."))
+                        updatedUiState.add(GroupBoardItem.MessageItem(message = R.string.no_list_supported))
                     }
 
                     _uiState.postValue(updatedUiState)

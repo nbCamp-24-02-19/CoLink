@@ -2,16 +2,11 @@ package com.seven.colink.ui.post.content
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.ContextMenu
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -41,12 +36,9 @@ import kotlinx.coroutines.launch
 class PostContentFragment : Fragment() {
     private var _binding: FragmentPostContentBinding? = null
     private val binding: FragmentPostContentBinding get() = _binding!!
-
     private lateinit var commentBinding: ItemPostCommentBinding
-
     private val viewModel: PostContentViewModel by viewModels()
     private val sharedViewModel: PostSharedViewModel by activityViewModels()
-
     private val postContentListAdapter by lazy {
         PostContentListAdapter(
             onClickItem = { item ->
@@ -102,7 +94,6 @@ class PostContentFragment : Fragment() {
                         when (buttonUiState) {
                             ContentButtonUiState.User -> viewModel.createDialog(item)
                             ContentButtonUiState.Unknown -> {
-                                // TODO 로그인 화면으로 이동한다는 메세지 노출
                                 startActivity(Intent(requireContext(), SignInActivity::class.java))
                             }
 
@@ -189,7 +180,6 @@ class PostContentFragment : Fragment() {
             if (state == null) {
                 return@observe
             }
-
             showDialog(state)
         }
 
@@ -245,6 +235,4 @@ class PostContentFragment : Fragment() {
             ).show()
         }
     }
-
-
 }

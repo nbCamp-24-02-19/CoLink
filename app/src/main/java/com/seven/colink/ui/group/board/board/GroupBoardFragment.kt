@@ -4,7 +4,6 @@ package com.seven.colink.ui.group.board.board
 import com.seven.colink.ui.group.calendar.material.MaterialCalendarFragment
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +20,7 @@ import com.seven.colink.ui.group.viewmodel.GroupSharedViewModel
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.ui.promotion.ProductPromotionActivity
+import com.seven.colink.ui.userdetail.UserDetailActivity
 import com.seven.colink.util.Constants
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.status.PostEntryType
@@ -51,13 +51,18 @@ class GroupBoardFragment : Fragment() {
                     }
 
                     is GroupBoardItem.MemberItem -> {
-                        // TODO 멤버 상세 화면 이동
+                        startActivity(
+                            UserDetailActivity.newIntent(
+                                requireActivity(),
+                                item.userInfo.uid ?: return@GroupBoardListAdapter
+                            )
+                        )
                     }
 
                     else -> Unit
                 }
             },
-            onClickView = { item, view ->
+            onClickView = { _, view ->
                 when (view.id) {
                     R.id.tv_apply_request -> {
                         parentFragmentManager.beginTransaction().apply {
@@ -87,7 +92,6 @@ class GroupBoardFragment : Fragment() {
                     ProjectStatus.END -> {
                         when (item) {
                             is GroupBoardItem.GroupItem -> {
-                                Log.d("Frag", "#bbb key = ${item.key}")
                                 val intent =
                                     Intent(requireContext(), ProductPromotionActivity::class.java)
                                 intent.putExtra(Constants.EXTRA_ENTITY_KEY, item.key)
@@ -100,8 +104,11 @@ class GroupBoardFragment : Fragment() {
 
                     else -> {
                         requireContext().setDialog(
-                            title = "프로젝트 상태 변경",
-                            message = "프로젝트 상태를 ${status.getStatusText()}로 변경하시겠습니까?",
+                            title = requireContext().getString(R.string.project_status_changed),
+                            message = requireContext().getString(
+                                R.string.project_status_changed_message,
+                                status.getStatusText()
+                            ),
                             confirmAction = {
                                 viewModel.onChangedStatus(status)
                                 it.dismiss()
@@ -117,8 +124,8 @@ class GroupBoardFragment : Fragment() {
 
     private fun ProjectStatus.getStatusText(): String =
         when (this) {
-            ProjectStatus.RECRUIT -> "시작하기"
-            ProjectStatus.START -> "종료하기"
+            ProjectStatus.RECRUIT -> requireContext().getString(R.string.status_text_start)
+            ProjectStatus.START -> requireContext().getString(R.string.status_text_end)
             else -> ""
         }
 

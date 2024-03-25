@@ -33,7 +33,9 @@ import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.time.temporal.ChronoUnit
+import kotlin.math.absoluteValue
 
 class GroupBoardListAdapter(
     private val onClickItem: (GroupBoardItem) -> Unit,
@@ -184,7 +186,7 @@ class GroupBoardListAdapter(
         private val onClickView: (GroupBoardItem, View) -> Unit,
         private val onChangeStatus: (GroupBoardItem, ProjectStatus) -> Unit
     ) : GroupViewHolder(binding.root) {
-
+        private val context = binding.root.context
         private val tagAdapter = TagListAdapter { _ -> }
 
         init {
@@ -193,8 +195,6 @@ class GroupBoardListAdapter(
 
         override fun onBind(item: GroupBoardItem) {
             if (item !is GroupBoardItem.GroupItem) return
-            val context = binding.root.context
-
             with(binding) {
                 ivGroupImage.load(item.imageUrl)
                 ivGroupImage.clipToOutline = true
@@ -222,7 +222,6 @@ class GroupBoardListAdapter(
                 ProjectStatus.END -> binding.progressBar.progress = 100
             }
         }
-
 
         private fun setStatusTextColors(context: Context, status: ProjectStatus) {
             with(binding) {
@@ -303,36 +302,48 @@ class GroupBoardListAdapter(
             status: ProjectStatus,
             startDate: String?
         ): String {
-            val daysSinceStart = startDate?.daysSinceTargetDate() ?: "0"
-            return when (status) {
-                ProjectStatus.RECRUIT -> context.getString(
-                    R.string.progress_status_recruit,
-                    daysSinceStart
-                )
+            val daysSinceStart = startDate?.daysSinceTargetDate()?.toInt() ?: 0
+            val message = when (status) {
+                ProjectStatus.RECRUIT ->
+                    if (daysSinceStart > 0) {
+                        context.getString(
+                            R.string.progress_status_recruit,
+                            daysSinceStart.toString()
+                        )
+                    } else {
+                        context.getString(
+                            R.string.progress_status_recruit_d_day,
+                            daysSinceStart.absoluteValue.toString()
+                        )
+                    }
 
-                ProjectStatus.START -> context.getString(
-                    R.string.progress_status_ongoing,
-                    daysSinceStart
-                )
+                ProjectStatus.START ->
+                    context.getString(R.string.progress_status_ongoing, daysSinceStart.toString())
 
-                ProjectStatus.END -> context.getString(R.string.progress_status_completion)
+                ProjectStatus.END ->
+                    context.getString(R.string.progress_status_completion)
             }
+            return message
         }
 
         private fun getStatusButtonText(status: ProjectStatus): String {
             return when (status) {
-                ProjectStatus.RECRUIT -> "프로젝트 시작하기"
-                ProjectStatus.START -> "프로젝트 종료하기"
-                ProjectStatus.END -> "프로젝트 홍보하기"
+                ProjectStatus.RECRUIT -> context.getString(R.string.project_start)
+                ProjectStatus.START -> context.getString(R.string.project_end)
+                ProjectStatus.END -> context.getString(R.string.promotion)
             }
         }
 
         private fun String?.daysSinceTargetDate(): Long {
             if (this.isNullOrBlank()) return 0
-            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-            val targetDate = LocalDate.parse(this, formatter)
-            val currentDate = LocalDate.now()
-            return ChronoUnit.DAYS.between(targetDate, currentDate)
+            return try {
+                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                val targetDate = LocalDate.parse(this, formatter)
+                val currentDate = LocalDate.now()
+                ChronoUnit.DAYS.between(targetDate, currentDate)
+            } catch (e: DateTimeParseException) {
+                0
+            }
         }
     }
 
@@ -344,6 +355,8 @@ class GroupBoardListAdapter(
             if (item is GroupBoardItem.GroupOptionItem) {
                 binding.etPrecautions.setText(item.precautions)
                 binding.etPrecautions.inputType = InputType.TYPE_NULL
+                binding.etRecruitInfo.setText(item.recruitInfo)
+                binding.etRecruitInfo.inputType = InputType.TYPE_NULL
                 binding.layoutDate.visibility = View.GONE
             }
         }
@@ -482,7 +495,8 @@ class GroupBoardListAdapter(
     ) : GroupViewHolder(binding.root) {
         override fun onBind(item: GroupBoardItem) {
             if (item is GroupBoardItem.MessageItem) {
-                binding.tvMessage.text = item.message
+                val context = binding.root.context
+                binding.tvMessage.text = item.message?.let { context.getString(it) }
             }
         }
     }

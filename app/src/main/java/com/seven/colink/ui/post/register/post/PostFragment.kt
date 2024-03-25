@@ -39,7 +39,7 @@ class PostFragment : Fragment() {
 
     private val postListAdapter: PostListAdapter by lazy {
         PostListAdapter(
-            onChangedFocus = { position, title, description, item ->
+            onTextChanged = { position, title, description, item ->
                 when (item) {
                     is PostListItem.PostItem -> {
                         viewModel.updatePostItemText(position, title, description)
@@ -48,7 +48,7 @@ class PostFragment : Fragment() {
                     else -> Unit
                 }
             },
-            onChangedSelectionFocus = { position, title, description, date, item ->
+            onOptionTextChanged = { position, title, description, date, item ->
                 when (item) {
                     is PostListItem.PostOptionItem -> {
                         viewModel.updatePostOptionItemText(position, title, description, date)
@@ -98,7 +98,7 @@ class PostFragment : Fragment() {
 
                 }
             },
-            onGroupImageClick = { tag ->
+            onClickGroupTag = { tag ->
                 viewModel.checkValidAddTag(tag)
             },
             tagAdapterOnClickItem = { _, item ->
