@@ -7,19 +7,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import android.widget.PopupMenu
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentPostContentBinding
 import com.seven.colink.databinding.ItemPostCommentBinding
-import com.seven.colink.domain.entity.CommentEntity
-import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.ui.group.board.list.ApplyRequestFragment
 import com.seven.colink.ui.post.content.adapter.PostContentListAdapter
-import com.seven.colink.ui.post.content.model.CommentButtonUiState
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.content.model.DialogUiState
 import com.seven.colink.ui.post.content.model.PostContentItem
@@ -41,12 +36,9 @@ import kotlinx.coroutines.launch
 class PostContentFragment : Fragment() {
     private var _binding: FragmentPostContentBinding? = null
     private val binding: FragmentPostContentBinding get() = _binding!!
-
     private lateinit var commentBinding: ItemPostCommentBinding
-
     private val viewModel: PostContentViewModel by viewModels()
     private val sharedViewModel: PostSharedViewModel by activityViewModels()
-
     private val postContentListAdapter by lazy {
         PostContentListAdapter(
             onClickItem = { item ->
@@ -55,7 +47,7 @@ class PostContentFragment : Fragment() {
                         startActivity(
                             UserDetailActivity.newIntent(
                                 requireActivity(),
-                                item.userInfo.uid ?: return@PostContentListAdapter
+                                item.userInfo?.uid ?: return@PostContentListAdapter
                             )
                         )
                     }
@@ -87,7 +79,6 @@ class PostContentFragment : Fragment() {
                         when (buttonUiState) {
                             ContentButtonUiState.User -> viewModel.createDialog(item)
                             ContentButtonUiState.Unknown -> {
-                                // TODO 로그인 화면으로 이동한다는 메세지 노출
                                 startActivity(Intent(requireContext(), SignInActivity::class.java))
                             }
 
@@ -115,18 +106,11 @@ class PostContentFragment : Fragment() {
             onClickCommentButton = {
                 viewModel.registerComment(it)
             },
-            onClickCommentDeleteButton = {item, buttonUiState->
-//                when(commentButtonUistate){
-//                    CommentButtonUiState.Manager -> viewModel.deleteComment(item)
-//                    CommentButtonUiState.User -> commentBinding.tvPostCommentDelete.visibility = View.GONE
-//                    CommentButtonUiState.Unknown -> commentBinding.tvPostCommentDelete.visibility = View.GONE
-//                }
-
-                when(buttonUiState) {
-                    ContentButtonUiState.Manager -> viewModel.deleteComment(item)
-                    ContentButtonUiState.User -> commentBinding.tvPostCommentDelete.visibility = View.GONE
-                    ContentButtonUiState.Unknown -> commentBinding.tvPostCommentDelete.visibility = View.GONE
-                }
+            onClickCommentDeleteButton = {item->
+                viewModel.deleteComment(item)
+            },
+            onClickCommentEditButton = {key, comment ->
+                viewModel.editComment(key, comment)
             }
         )
     }
@@ -181,7 +165,6 @@ class PostContentFragment : Fragment() {
             if (state == null) {
                 return@observe
             }
-
             showDialog(state)
         }
 
@@ -199,10 +182,6 @@ class PostContentFragment : Fragment() {
             requireContext().showToast(getString(messageResId))
         }
 
-//        updateCommentButtonUiState.observe(viewLifecycleOwner){
-//            commentBinding.tvPostCommentDelete.visibility =
-//                if(it == CommentButtonUiState.Manager) View.VISIBLE else View.GONE
-//        }
 
     }
 
@@ -246,5 +225,4 @@ class PostContentFragment : Fragment() {
             ).show()
         }
     }
-
 }

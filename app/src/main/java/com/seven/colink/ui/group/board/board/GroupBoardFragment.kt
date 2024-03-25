@@ -1,6 +1,8 @@
 package com.seven.colink.ui.group.board.board
 
 
+import com.seven.colink.ui.group.calendar.material.MaterialCalendarFragment
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -13,12 +15,16 @@ import com.seven.colink.R
 import com.seven.colink.databinding.FragmentGroupBoardBinding
 import com.seven.colink.ui.group.board.board.adapter.GroupBoardListAdapter
 import com.seven.colink.ui.group.board.list.ApplyRequestFragment
-import com.seven.colink.ui.group.calendar.CalendarFragment
 import com.seven.colink.ui.group.content.GroupContentFragment
 import com.seven.colink.ui.group.viewmodel.GroupSharedViewModel
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.register.PostActivity
+import com.seven.colink.ui.promotion.ProductPromotionActivity
+import com.seven.colink.ui.userdetail.UserDetailActivity
+import com.seven.colink.util.Constants
+import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.status.PostEntryType
+import com.seven.colink.util.status.ProjectStatus
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -45,7 +51,12 @@ class GroupBoardFragment : Fragment() {
                     }
 
                     is GroupBoardItem.MemberItem -> {
-                        // TODO 멤버 상세 화면 이동
+                        startActivity(
+                            UserDetailActivity.newIntent(
+                                requireActivity(),
+                                item.userInfo.uid ?: return@GroupBoardListAdapter
+                            )
+                        )
                     }
 
                     else -> Unit
@@ -64,24 +75,60 @@ class GroupBoardFragment : Fragment() {
                         }
                     }
 
-                    R.id.bt_status -> {
-                        // TODO 홍보 하기 버튼
-                    }
-
-                    R.id.iv_calendar -> {
+                    R.id.iv_calendar, R.id.tv_calendar -> {
                         parentFragmentManager.beginTransaction().apply {
                             replace(
                                 R.id.fg_activity_group,
-                                CalendarFragment()
+                                MaterialCalendarFragment()
                             )
                             addToBackStack(null)
                             commit()
                         }
                     }
                 }
+            },
+            onChangeStatus = { item, status ->
+                when (status) {
+                    ProjectStatus.END -> {
+                        when (item) {
+                            is GroupBoardItem.GroupItem -> {
+                                val intent =
+                                    Intent(requireContext(), ProductPromotionActivity::class.java)
+                                intent.putExtra(Constants.EXTRA_ENTITY_KEY, item.key)
+                                startActivity(intent)
+                            }
+
+                            else -> Unit
+                        }
+                    }
+
+                    else -> {
+                        requireContext().setDialog(
+                            title = requireContext().getString(R.string.project_status_changed),
+                            message = requireContext().getString(
+                                R.string.project_status_changed_message,
+                                status.getStatusText()
+                            ),
+                            confirmAction = {
+                                viewModel.onChangedStatus(status)
+                                it.dismiss()
+                            },
+                            cancelAction = { it.dismiss() }
+                        ).show()
+
+                    }
+                }
             }
         )
     }
+
+    private fun ProjectStatus.getStatusText(): String =
+        when (this) {
+            ProjectStatus.RECRUIT -> requireContext().getString(R.string.status_text_start)
+            ProjectStatus.START -> requireContext().getString(R.string.status_text_end)
+            else -> ""
+        }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

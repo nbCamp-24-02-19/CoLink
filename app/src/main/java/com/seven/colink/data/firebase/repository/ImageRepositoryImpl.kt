@@ -11,12 +11,12 @@ class ImageRepositoryImpl @Inject constructor(
     private val firebaseStorage: FirebaseStorage
 ): ImageRepository {
     override suspend fun uploadImage(imageUri: Uri) = runCatching {
-        firebaseStorage.reference.child("img/${UUID.randomUUID()}.jpg").putFile(imageUri)
+        firebaseStorage.reference.child("img/${imageUri}.jpg").putFile(imageUri)
             .await().storage.downloadUrl.await()
     }
 
     override suspend fun uploadChatImage(imageUri: Uri) = runCatching {
-        firebaseStorage.reference.child("chat_img/${UUID.randomUUID()}.jpg").putFile(imageUri)
+        firebaseStorage.reference.child("chat_img/${imageUri}.jpg").putFile(imageUri)
             .await().storage.downloadUrl.await()
     }
 }

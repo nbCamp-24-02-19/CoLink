@@ -14,6 +14,10 @@ import com.seven.colink.domain.usecase.SendNotificationUseCase
 import com.seven.colink.ui.chat.ChatRoomActivity.Companion.CHAT_ID
 import com.seven.colink.ui.chat.model.ChatRoomItem
 import com.seven.colink.util.convert.convertTime
+import com.seven.colink.util.convert.containsUrl
+import com.seven.colink.util.convert.extractUrl
+import com.seven.colink.util.convert.fetchUrlMetaData
+import com.seven.colink.util.model.UrlMetaData
 import com.seven.colink.util.status.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -23,7 +27,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.internal.wait
 import javax.inject.Inject
 
 @HiltViewModel
@@ -65,36 +68,38 @@ class ChatRoomViewModel @Inject constructor(
         _messageList.value =
             try {
                 UiState.Success(chatRoom.run {
-            chatRepository.getChatRoomMessage(room.key)?.map {
-                withContext(Dispatchers.IO) {
-                    async { it.convert(room.participantsUid.count()) }
-                }.await()
+                    chatRepository.getChatRoomMessage(room.key)?.map {
+                        withContext(Dispatchers.IO) {
+                            async { it.convert(room.participantsUid.count()) }
+                        }.await()
+                    }
+                })
+            } catch (e: Exception) {
+                UiState.Error(e)
             }
-        })} catch (e:Exception) {
-            UiState.Error(e)
-        }
     }
 
     suspend fun observeMessage(room: ChatRoomEntity) {
         chatRepository.observeNewMessage(room) { newMessage ->
             viewModelScope.launch(Dispatchers.IO) {
-               readMessage(newMessage)
+                readMessage(newMessage)
             }
         }
     }
 
     private suspend fun readMessage(message: MessageEntity) {
-            message.viewUsers.takeUnless { it.contains(uid) }?.also {
-                val updatedMessage = message.copy(viewUsers = it + uid)
-                chatRepository.updateMessage(updatedMessage)
-            }
+        message.viewUsers.takeUnless { it.contains(uid) }?.also {
+            val updatedMessage = message.copy(viewUsers = it + uid)
+            chatRepository.updateMessage(updatedMessage)
+        }
         setMessages(chatRoom.value)
     }
 
     fun sendMessage(text: String) {
         viewModelScope.launch {
             val imageUrl = selectedImage.value.let {
-                imageRepository.uploadChatImage(it).getOrNull()?.toString()
+                if (it != Uri.EMPTY) imageRepository.uploadChatImage(it).getOrNull()?.toString()
+                else null
             }
 
             MessageEntity(
@@ -104,9 +109,29 @@ class ChatRoomViewModel @Inject constructor(
                 authId = uid,
                 viewUsers = listOf(uid)
             ).let {
-            chatRepository.sendMessage(it)
+                chatRepository.sendMessage(it)
                 sendNotificationUseCase(it, chatRoom.value)
             }
+
+            if (text.containsUrl()) {
+                fetchUrlMetaData(text.extractUrl()).let { data ->
+                    if (data is UrlMetaData) {
+                        launch { sendEmbed(data) }
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun sendEmbed(data: UrlMetaData) {
+        MessageEntity(
+            chatRoomId = chatRoom.value.key,
+            text = "링크",
+            embed = data,
+            authId = uid,
+            viewUsers = listOf(uid)
+        ).let {
+            chatRepository.sendMessage(it)
         }
     }
 
@@ -119,7 +144,8 @@ class ChatRoomViewModel @Inject constructor(
         text = text.toString(),
         img = img,
         time = registerDate.convertTime(),
-        viewCount = (users - viewUsers.size)
+        viewCount = (users - viewUsers.size),
+        embed = embed
     )
 
     private suspend fun MessageEntity.convertOtherMessage(users: Int, authId: String) =
@@ -132,11 +158,12 @@ class ChatRoomViewModel @Inject constructor(
                 viewCount = (users - viewUsers.size),
                 profileUrl = it.getOrNull()?.photoUrl,
                 name = it.getOrNull()?.name.toString(),
+                embed = embed
             )
         }
 
     fun selectImg(uri: Uri?) {
-        _selectedImage.value = uri?: Uri.EMPTY
+        _selectedImage.value = uri ?: Uri.EMPTY
     }
 
     fun emptyImg() {

@@ -12,8 +12,10 @@ import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.domain.repository.ImageRepository
 import com.seven.colink.domain.repository.UserRepository
+import com.seven.colink.domain.usecase.GetChatRoomUseCase
 import com.seven.colink.domain.usecase.GetPostUseCase
 import com.seven.colink.domain.usecase.RegisterPostUseCase
+import com.seven.colink.ui.chat.type.ChatTabType
 import com.seven.colink.ui.post.register.post.model.PostErrorMessage
 import com.seven.colink.ui.post.register.post.model.PostErrorUiState
 import com.seven.colink.ui.post.register.post.model.Post
@@ -39,6 +41,7 @@ class PostViewModel @Inject constructor(
     private val getPostUseCase: GetPostUseCase,
     private val registerPostUseCase: RegisterPostUseCase,
     private val userRepository: UserRepository,
+    private val getChatRoomUseCase: GetChatRoomUseCase,
 ) : ViewModel() {
 
     private lateinit var entryType: PostEntryType
@@ -87,7 +90,9 @@ class PostViewModel @Inject constructor(
         PostListItem.PostOptionItem(
             key = key,
             precautions = precautions,
-            recruitInfo = recruitInfo
+            recruitInfo = recruitInfo,
+            startDate = startDate,
+            endDate = endDate
         ),
         PostListItem.TitleItem(
             R.string.people_recruited,
@@ -170,7 +175,9 @@ class PostViewModel @Inject constructor(
         precautions = precautions,
         recruitInfo = recruitInfo,
         memberIds = memberIds,
-        registeredDate = registeredDate
+        registeredDate = registeredDate,
+        startDate = startDate,
+        endDate = endDate
     )
 
     fun setImageResult(data: Intent?) {
@@ -207,7 +214,6 @@ class PostViewModel @Inject constructor(
 
         _errorUiState.value = updatedErrorUiState
     }
-
 
 
     fun addRecruitInfo(entity: RecruitInfo) {
@@ -256,6 +262,17 @@ class PostViewModel @Inject constructor(
                     registerPostUseCase(entity)
                     groupRepository.registerGroup(entity.convertGroupEntity())
                     onSuccess(context.getString(R.string.post_register_success))
+                    getChatRoomUseCase(
+                        key = entity.key,
+                        uids = entity.memberIds,
+                        title = entity.title!!,
+                        type = when (entity.groupType) {
+                            GroupType.PROJECT -> ChatTabType.PROJECT
+                            GroupType.STUDY -> ChatTabType.STUDY
+                            else -> return@launch
+                        },
+                        thumbnail = entity.imageUrl
+                    )
                     _complete.emit(entity.key)
                 } catch (groupException: Exception) {
                     onError(groupException)
@@ -280,7 +297,7 @@ class PostViewModel @Inject constructor(
         return Post(
             authId = getCurrentUser(),
             title = postItem?.title,
-            imageUrl = postItem?.selectedImageUrl?.let { uploadImage(it) },
+            imageUrl = postItem?.selectedImageUrl?.let { uploadImage(it) } ?: postItem?.imageUrl,
             groupType = postItem?.groupType,
             description = postItem?.description,
             tags = postItem?.tags,
@@ -290,7 +307,11 @@ class PostViewModel @Inject constructor(
                 .let { (it as? PostListItem.PostOptionItem)?.recruitInfo },
             recruit = (_uiState.value.find { it is PostListItem.RecruitItem }
                     as? PostListItem.RecruitItem)?.recruit,
-            memberIds = listOf(getCurrentUser())
+            memberIds = listOf(getCurrentUser()),
+            startDate = _uiState.value.find { it is PostListItem.PostOptionItem }
+                .let { (it as? PostListItem.PostOptionItem)?.startDate },
+            endDate = _uiState.value.find { it is PostListItem.PostOptionItem }
+                .let { (it as? PostListItem.PostOptionItem)?.endDate },
         )
     }
 
@@ -310,7 +331,11 @@ class PostViewModel @Inject constructor(
                 .let { (it as? PostListItem.PostOptionItem)?.recruitInfo },
             recruit = (_uiState.value.find { it is PostListItem.RecruitItem }
                     as? PostListItem.RecruitItem)?.recruit,
-            memberIds = entity.memberIds
+            memberIds = entity.memberIds,
+            startDate = _uiState.value.find { it is PostListItem.PostOptionItem }
+                .let { (it as? PostListItem.PostOptionItem)?.startDate },
+            endDate = _uiState.value.find { it is PostListItem.PostOptionItem }
+                .let { (it as? PostListItem.PostOptionItem)?.endDate },
         )
     }
 
@@ -390,9 +415,22 @@ class PostViewModel @Inject constructor(
                     postItemDataMap["description"] = description
                 }
 
+                else -> uiStateValue
+            }
+        }
+    }
+
+    fun updatePostOptionItemText(position: Int, title: String, description: String, date: String?) {
+        if (position >= 0 && position < _uiState.value.size) {
+            when (val uiStateValue = _uiState.value[position]) {
                 is PostListItem.PostOptionItem -> {
                     postItemDataMap["precautions"] = title
                     postItemDataMap["recruitInfo"] = description
+                    if (!date.isNullOrBlank()) {
+                        val (startDate, endDate) = date.split("~")
+                        postItemDataMap["startDate"] = startDate
+                        postItemDataMap["endDate"] = endDate
+                    }
                 }
 
                 else -> uiStateValue
@@ -414,12 +452,15 @@ class PostViewModel @Inject constructor(
                         postItemDataMap["precautions"] ?: uiStateValue.precautions
                     val recruitInfo =
                         postItemDataMap["recruitInfo"] ?: uiStateValue.recruitInfo
-                    uiStateValue.copy(precautions = precautions, recruitInfo = recruitInfo)
+                    val startDate =
+                        postItemDataMap["startDate"] ?: uiStateValue.startDate
+                    val endDate =
+                        postItemDataMap["endDate"] ?: uiStateValue.endDate
+                    uiStateValue.copy(precautions = precautions, recruitInfo = recruitInfo, startDate = startDate, endDate = endDate)
                 }
 
                 else -> uiStateValue
             }
         })
     }
-
 }

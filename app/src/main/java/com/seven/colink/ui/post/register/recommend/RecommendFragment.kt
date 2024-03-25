@@ -55,7 +55,10 @@ class RecommendFragment : Fragment() {
                 viewModel.setChatRoom(it)
             },
             onNext = {
-                requireActivity().finish()
+                parentFragmentManager.beginTransaction().apply {
+                    replace(R.id.fg_activity_post, SetGroupFragment())
+                    commit()
+                }
             },
             onDetail = {
                 startActivity(UserDetailActivity.newIntent(requireActivity(), it))

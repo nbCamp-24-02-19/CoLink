@@ -178,6 +178,7 @@
                 android:layout_marginTop="39dp"
                 android:layout_marginEnd="25dp"
                 android:text="9.0"
+                android:maxLength="3"
                 android:textColor="@color/black"
                 android:textSize="24sp"
                 android:textStyle="bold"
@@ -194,36 +195,39 @@
                 app:layout_constraintEnd_toStartOf="@+id/tv_userdetail_score"
                 app:layout_constraintTop_toTopOf="@+id/tv_userdetail_score" />
 
+
             <ImageView
                 android:id="@+id/iv_userdetail_blog"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:layout_marginTop="16dp"
                 android:layout_marginStart="25dp"
+                android:layout_marginTop="160dp"
                 android:src="@drawable/ic_blog"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btn_userdetail_group" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/iv_userdetail_git"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginStart="9dp"
+                android:layout_marginTop="160dp"
+                android:layout_marginStart="25dp"
                 android:src="@drawable/ic_git2"
+                android:visibility="gone"
                 app:layout_constraintStart_toEndOf="@+id/iv_userdetail_blog"
-                app:layout_constraintTop_toBottomOf="@+id/btn_userdetail_group" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/iv_userdetail_link"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginStart="9dp"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="160dp"
                 android:src="@drawable/ic_link"
                 android:visibility="gone"
                 app:layout_constraintStart_toEndOf="@+id/iv_userdetail_git"
-                app:layout_constraintTop_toBottomOf="@+id/btn_userdetail_group" />
+                app:layout_constraintTop_toTopOf="parent" />
 
 
             <LinearLayout
@@ -231,7 +235,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="18dp"
+                android:layout_marginTop="60dp"
                 android:layout_marginEnd="16dp"
                 android:padding="10dp"
                 android:background="@drawable/mypage_re_shape"
@@ -239,7 +243,7 @@
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/iv_userdetail_git">
+                app:layout_constraintTop_toBottomOf="@+id/btn_userdetail_group">
 
                 <TextView
                     android:id="@+id/tv_userdetail_text"

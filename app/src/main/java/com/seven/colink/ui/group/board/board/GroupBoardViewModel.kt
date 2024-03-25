@@ -11,8 +11,12 @@ import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.domain.usecase.GetPostUseCase
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
+import com.seven.colink.util.convert.convertLocalDateTime
+import com.seven.colink.util.status.DataResultStatus
+import com.seven.colink.util.status.ProjectStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -122,7 +126,51 @@ class GroupBoardViewModel @Inject constructor(
         return memberItems
     }
 
-    fun onClickStatusButton() = viewModelScope.launch {
-        // TODO 홍보 하기
+    fun onChangedStatus(status: ProjectStatus) = viewModelScope.launch {
+        val updatedList = uiStateList.value?.map { uiStateValue ->
+            when (uiStateValue) {
+                is GroupBoardItem.GroupItem -> {
+                    val (key, dateField) = when (status) {
+                        ProjectStatus.RECRUIT -> uiStateValue.key to "startDate"
+                        else -> uiStateValue.key to "endDate"
+                    }
+
+                    val result = groupRepository.updateGroupStatus(
+                        key ?: "",
+                        getNextStatus(status),
+                        mapOf(dateField to LocalDateTime.now().convertLocalDateTime())
+                    )
+
+                    if (result == DataResultStatus.SUCCESS) {
+                        uiStateValue.copy(
+                            status = getNextStatus(status),
+                            startDate = if (status == ProjectStatus.RECRUIT) LocalDateTime.now().convertLocalDateTime() else uiStateValue.startDate,
+                            endDate = if (status != ProjectStatus.RECRUIT) LocalDateTime.now().convertLocalDateTime() else uiStateValue.endDate
+                        )
+                    } else {
+                        uiStateValue
+                    }
+                }
+                else -> uiStateValue
+            }
+        }
+
+        _uiStateList.value = updatedList
     }
+
+
+    private fun getNextStatus(currentStatus: ProjectStatus): ProjectStatus {
+        return when (currentStatus) {
+            ProjectStatus.RECRUIT -> {
+                ProjectStatus.START
+            }
+
+            ProjectStatus.START -> {
+                ProjectStatus.END
+            }
+
+            else -> currentStatus
+        }
+    }
+
 }

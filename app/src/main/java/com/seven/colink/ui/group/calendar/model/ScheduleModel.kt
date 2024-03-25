@@ -1,7 +1,10 @@
 package com.seven.colink.ui.group.calendar.model
 
 import com.seven.colink.ui.group.calendar.status.CalendarButtonUiState
+import com.seven.colink.util.convert.getDateByState
 import com.seven.colink.util.dialog.enum.ColorEnum
+import com.seven.colink.util.status.ScheduleDateType
+import java.time.LocalDate
 
 data class ScheduleModel(
     val key: String?,
@@ -19,11 +22,23 @@ data class ScheduleModel(
             key = null,
             authId = null,
             groupId = null,
-            startDate = null,
-            endDate = null,
+            startDate = getDateByState(ScheduleDateType.CURRENT),
+            endDate = getDateByState(ScheduleDateType.AFTER_TWO_HOUR),
             calendarColor = ColorEnum.UNKNOWN,
             title = null,
             description = null,
+        )
+    }
+}
+
+data class ScheduleItem(
+    val list: List<ScheduleModel?>,
+    val date: LocalDate?
+) {
+    companion object {
+        fun init() = ScheduleItem(
+            list = emptyList(),
+            date = LocalDate.now()
         )
     }
 }

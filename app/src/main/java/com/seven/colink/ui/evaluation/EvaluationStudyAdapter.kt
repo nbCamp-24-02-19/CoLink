@@ -7,7 +7,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 
 class EvaluationStudyAdapter(
     frag: FragmentActivity,
-    val mItems: MutableList<EvaluationData.EvalStudy>
+    val mItems: List<EvaluationData.EvalStudy>
 ) : FragmentStateAdapter(frag) {
     override fun getItemCount(): Int {
         return mItems.size

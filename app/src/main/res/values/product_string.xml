@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="product_link">Google Play</string>
+    <string name="product_header">프로젝트 멤버</string>
+
+    <string name="product_edit_links">링크를 입력하세요.</string>
+    <string name="product_leader">리더</string>
+    <string name="product_member">멤버</string>
+
+    <string name="product_edit_date">홍보글을 올린 시간이 표시됩니다.</string>
+    <string name="product_edit_title">홍보글에 올릴 제목을 입력해주세요.</string>
+    <string name="product_edit_des">홍보글에 올릴 내용을 입력해주세요.</string>
+    <string name="product_edit_link_header">프로젝트 링크</string>
+    <string name="product_edit_store_link_header">스토어 링크</string>
+    <string name="product_edit_store_link">https://</string>
+    <string name="product_necessary_img">이미지를 등록 해 주세요</string>
+    <string name="product_necessary_title_des">제목과 설명은 필수 등록 사항입니다.</string>
+
+</resources>
