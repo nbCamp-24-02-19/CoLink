@@ -103,12 +103,10 @@ fun String.convertCalculateDays(): String {
 
 fun getDateByState(scheduleDateType: ScheduleDateType): String {
     val now = LocalDateTime.now()
-
     val adjustedTime = when (scheduleDateType) {
-        ScheduleDateType.CURRENT -> now.plusHours(1)
-        ScheduleDateType.AFTER_TWO_HOUR -> now.plusHours(2)
+        ScheduleDateType.CURRENT -> now.plusHours(1).withMinute(0).withSecond(0)
+        ScheduleDateType.AFTER_TWO_HOUR -> now.plusHours(2).withMinute(0).withSecond(0)
     }
-
     return formatDate(adjustedTime)
 }
 

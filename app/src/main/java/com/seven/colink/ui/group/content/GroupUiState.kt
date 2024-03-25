@@ -29,7 +29,8 @@ sealed interface GroupContentItem {
     data class GroupOptionItem(
         val key: String?,
         val precautions: String?,
-        val recruitInfo: String?,
+        val startDate: String?,
+        val endDate: String?
     ) : GroupContentItem
 
 }

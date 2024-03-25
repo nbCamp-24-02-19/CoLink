@@ -21,12 +21,15 @@ sealed interface GroupBoardItem {
         val startDate: String?,
         val endDate: String?,
         val isOwner: Boolean?,
+        val projectStartDate: String?,
+        val projectEndDate: String?
     ) : GroupBoardItem
 
     data class GroupOptionItem(
         val key: String?,
         val precautions: String?,
-        val recruitInfo: String?,
+        val startDate: String?,
+        val endDate: String?
     ) : GroupBoardItem
 
     data class PostItem(
