@@ -85,7 +85,7 @@ class RecruitRepositoryImpl @Inject constructor(
     }
 
     override suspend fun observeRecruitPending() = callbackFlow {
-        val uid = firebaseAuth.currentUser?.uid ?: return@callbackFlow
+        val uid = firebaseAuth.currentUser?.uid ?: close()
         val listenerRegistration = firestore.collection(DataBaseType.APPINFO.title).whereEqualTo("userId", uid)
             .addSnapshotListener { snapshot, e ->
                 if (e != null) {

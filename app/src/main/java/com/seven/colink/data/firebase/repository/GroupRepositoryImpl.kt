@@ -109,7 +109,7 @@ class GroupRepositoryImpl @Inject constructor(
     }
 
     override suspend fun observeGroupState() = callbackFlow {
-        val uid = auth.currentUser?.uid ?: return@callbackFlow
+        val uid = auth.currentUser?.uid ?: close()
         val listener = firestore.collection(DataBaseType.GROUP.title).whereArrayContains("memberIds", uid)
         .addSnapshotListener { snapshot, e ->
                     if(e != null) {
@@ -124,6 +124,6 @@ class GroupRepositoryImpl @Inject constructor(
             listener.remove()
         }
     }.mapNotNull { data ->
-        data.filter { it.status != ProjectStatus.RECRUIT}
+        data.filter { it.status != ProjectStatus.RECRUIT}.takeIf { it.isNotEmpty() }
     }
 }

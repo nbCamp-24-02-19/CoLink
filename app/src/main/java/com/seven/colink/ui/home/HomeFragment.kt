@@ -21,6 +21,8 @@ import com.seven.colink.ui.home.child.HomeProjectFragment
 import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
+import com.seven.colink.util.snackbar.setSnackBar
+import com.seven.colink.util.status.SnackType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import kotlin.math.abs
