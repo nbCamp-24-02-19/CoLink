@@ -209,6 +209,7 @@ class GroupContentListAdapter(
                 currentItem = item
                 binding.etPrecautions.setText(item.precautions)
                 binding.etRecruitInfo.setText(item.recruitInfo)
+                binding.layoutDate.visibility = View.GONE
             }
         }
 

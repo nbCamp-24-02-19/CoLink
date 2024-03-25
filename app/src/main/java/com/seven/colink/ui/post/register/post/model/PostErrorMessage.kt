@@ -19,6 +19,7 @@ enum class PostErrorMessage(
     ALREADY_SUPPORT(R.string.already_supported),
     SUCCESS_SUPPORT(R.string.successful_support),
 
+
     EMPTY(R.string.sign_up_pass),
     PASS(R.string.sign_up_pass)
     ;

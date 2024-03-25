@@ -99,7 +99,6 @@ class GroupBoardFragment : Fragment() {
                     }
 
                     else -> {
-                        Log.d("status", "$status")
                         requireContext().setDialog(
                             title = "프로젝트 상태 변경",
                             message = "프로젝트 상태를 ${status.getStatusText()}로 변경하시겠습니까?",

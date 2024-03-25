@@ -365,6 +365,11 @@ class PostContentListAdapter(
                 binding.etRecruitInfo.setText(item.recruitInfo)
                 binding.etPrecautions.inputType = InputType.TYPE_NULL
                 binding.etRecruitInfo.inputType = InputType.TYPE_NULL
+                val startDateText = item.startDate
+                val endDateText = item.endDate
+                if (!startDateText.isNullOrBlank() && !endDateText.isNullOrBlank()) {
+                    binding.etEstimatedSchedule.setText("$startDateText~$endDateText")
+                }
             }
         }
     }
@@ -395,7 +400,7 @@ class PostContentListAdapter(
                 binding.ivPostCommentProfile.clipToOutline = true
                 binding.tvPostCommentDelete.isVisible = item.buttonUiState
                 binding.tvPostCommentDelete.setOnClickListener {
-                    var popupMenu = PopupMenu(context, it)
+                    val popupMenu = PopupMenu(context, it)
                     popupMenu.menuInflater.inflate(R.menu.option, popupMenu.menu)
                     popupMenu.setOnMenuItemClickListener {
                         when(it.itemId){
