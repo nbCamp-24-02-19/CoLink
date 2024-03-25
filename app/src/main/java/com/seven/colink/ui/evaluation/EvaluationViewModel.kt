@@ -106,9 +106,8 @@ class EvaluationViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 evalProjectMembersData.value?.map { data ->
-                    launch {
+                    async {
                         userRepository.getUserDetails(data?.uid!!).getOrNull().let { member ->
-                            _result.emit(
                                 userRepository.updateUserInfo(
                                 member!!.copy(
                                     grade = (member.grade!! * member.evaluatedNumber + data.grade!! * 2) / ++data.evalCount,
@@ -120,16 +119,13 @@ class EvaluationViewModel @Inject constructor(
                                     evaluatedNumber = ++data.evalCount,
                                 )
                             )
-                            )
                         }
                     }
-                }
-                launch {
-                    groupRepository.registerGroup(
+                }?.awaitAll()
+                    _result.emit(groupRepository.registerGroup(
                         groupEntity.let {
                             it.copy(evaluateMember = it.evaluateMember?.plus(currentUid))
-                        })
-                }
+                        }))
             } catch (e: Exception){
                 _result.emit(DataResultStatus.FAIL.apply { message = e.message?: "알수 없는 에러" })
             }
@@ -224,11 +220,11 @@ class EvaluationViewModel @Inject constructor(
         )
 
     fun updatePage(position: Int) {
-        _currentPage.value =
-            when (position) {
-                0 -> if (currentGroup.value.memberIds.size - 1 != position) PageState.FIRST else PageState.LAST
-                currentGroup.value.memberIds.size - 1 -> PageState.LAST
-                else -> PageState.MIDDLE
-            }.apply { num = position }
-    }
+            _currentPage.value =
+                when (position) {
+                    0 -> if (currentGroup.value.memberIds.size - 2 != position) PageState.FIRST else PageState.LAST
+                    currentGroup.value.memberIds.size - 2 -> PageState.LAST
+                    else -> PageState.MIDDLE
+                }.apply { num = position }
+        }
 }

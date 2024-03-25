@@ -31,6 +31,7 @@ class EvaluationProjectFragment : Fragment() {
     private lateinit var viewPager: ViewPager2
     private var currentPage: Int = 0
 
+    private var projectUserListPosition: Int = 0
     companion object {
         fun newInstanceProject(position: Int)
                 : EvaluationProjectFragment {
@@ -48,15 +49,22 @@ class EvaluationProjectFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentEvaluationProjectBinding.inflate(inflater, container, false)
-
+        arguments?.let {
+            projectUserListPosition = it.getInt("projectUserList", 0)
+        }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initViewModel()
         initView()
+    }
+
+    override fun onResume() {
+        initViewModel()
+        currentPage = projectUserListPosition
+        super.onResume()
     }
 
     private fun initView() {
@@ -66,8 +74,7 @@ class EvaluationProjectFragment : Fragment() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
 
-                currentPage = position
-                evaluationViewModel.updatePage(position)
+                if (projectUserListPosition == position) evaluationViewModel.updatePage(position)
             }
         })
 
@@ -99,13 +106,15 @@ class EvaluationProjectFragment : Fragment() {
 
         lifecycleScope.launch {
             currentPage.collect { state ->
-                when (state) {
-                    PageState.FIRST -> firstPage()
-                    PageState.MIDDLE -> Unit
-                    PageState.LAST -> lastPage()
-                }
+                if (projectUserListPosition == state.num) {
+                    when (state) {
+                        PageState.FIRST -> firstPage()
+                        PageState.MIDDLE -> Unit
+                        PageState.LAST -> lastPage()
+                    }
 
-                updateMembers(state.num - 1 )
+                    updateMembers(state.num)
+                }
             }
         }
     }
@@ -123,14 +132,18 @@ class EvaluationProjectFragment : Fragment() {
     }
 
     private fun updateMembers(position: Int) =
-        evaluationViewModel.updateProjectMembers(
-            position,
-            binding.rbEvalQuestion1.rating,
-            binding.rbEvalQuestion2.rating,
-            binding.rbEvalQuestion3.rating,
-            binding.rbEvalQuestion4.rating,
-            binding.rbEvalQuestion5.rating
-        )
+        if (currentPage == position) {
+            evaluationViewModel.updateProjectMembers(
+                position,
+                binding.rbEvalQuestion1.rating,
+                binding.rbEvalQuestion2.rating,
+                binding.rbEvalQuestion3.rating,
+                binding.rbEvalQuestion4.rating,
+                binding.rbEvalQuestion5.rating
+            )
+        } else {
+
+        }
 
     private fun firstPage() {
         binding.tvEvalPrev.visibility = View.INVISIBLE
