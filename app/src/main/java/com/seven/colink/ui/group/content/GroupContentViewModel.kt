@@ -10,7 +10,6 @@ import com.seven.colink.domain.repository.ImageRepository
 import com.seven.colink.util.Constants
 import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.PostEntryType
-import com.seven.colink.util.status.ProjectStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -65,7 +64,6 @@ class GroupContentViewModel @Inject constructor(
                     )
                 )
 
-                items.add(GroupContentItem.GroupProjectStatus(key = it.key, status = it.status))
                 items
             } ?: emptyList()
         }
@@ -73,8 +71,6 @@ class GroupContentViewModel @Inject constructor(
 
     fun onClickUpdate() = viewModelScope.launch {
         updateGroupContentItem()
-        val projectStatus =
-            uiState.value.find { it is GroupContentItem.GroupProjectStatus } as? GroupContentItem.GroupProjectStatus
         val groupContent =
             uiState.value.find { it is GroupContentItem.GroupContent } as? GroupContentItem.GroupContent
 
@@ -83,12 +79,6 @@ class GroupContentViewModel @Inject constructor(
 
         if (key != null) {
             resultPerformance(groupRepository.updateGroupSection(key, updatedGroupEntity))
-            resultPerformance(
-                groupRepository.updateGroupStatus(
-                    key,
-                    projectStatus?.status ?: ProjectStatus.RECRUIT
-                )
-            )
         }
     }
 
@@ -113,15 +103,6 @@ class GroupContentViewModel @Inject constructor(
             precautions = textItem?.precautions,
             recruitInfo = textItem?.recruitInfo
         )
-    }
-
-    fun onChangedStatus(status: ProjectStatus) {
-        _uiState.value = uiState.value.map { uiStateValue ->
-            when (uiStateValue) {
-                is GroupContentItem.GroupProjectStatus -> uiStateValue.copy(status = status)
-                else -> uiStateValue
-            }
-        }
     }
 
     fun checkValidAddTag(tag: String) {
@@ -181,7 +162,7 @@ class GroupContentViewModel @Inject constructor(
 
     fun updateGroupItemText(position: Int, title: String, description: String) {
         if (position >= 0 && position < _uiState.value.size) {
-            when (val uiStateValue = _uiState.value[position]) {
+            when (_uiState.value[position]) {
                 is GroupContentItem.GroupContent -> {
                     postItemDataMap["title"] = title
                     postItemDataMap["description"] = description
@@ -192,7 +173,6 @@ class GroupContentViewModel @Inject constructor(
                     postItemDataMap["recruitInfo"] = description
                 }
 
-                else -> uiStateValue
             }
         }
     }
@@ -214,7 +194,6 @@ class GroupContentViewModel @Inject constructor(
                     uiStateValue.copy(precautions = precautions, recruitInfo = recruitInfo)
                 }
 
-                else -> uiStateValue
             }
         }
     }

@@ -31,20 +31,14 @@ data class ScheduleModel(
     }
 }
 
-sealed interface ScheduleItem {
-    data class DateTitle(
-        val date: LocalDate
-    ) : ScheduleItem
-
-    data class ScheduleModel(
-        val key: String?,
-        val authId: String?,
-        val groupId: String?,
-        val startDate: String? = getDateByState(ScheduleDateType.CURRENT),
-        val endDate: String? = getDateByState(ScheduleDateType.AFTER_TWO_HOUR),
-        val calendarColor: ColorEnum?,
-        val title: String?,
-        val description: String?,
-        val buttonUiState: CalendarButtonUiState? = CalendarButtonUiState.Detail
-    ) : ScheduleItem
+data class ScheduleItem(
+    val list: List<ScheduleModel?>,
+    val date: LocalDate?
+) {
+    companion object {
+        fun init() = ScheduleItem(
+            list = emptyList(),
+            date = LocalDate.now()
+        )
+    }
 }

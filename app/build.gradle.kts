@@ -30,7 +30,7 @@ android {
         buildConfigField("String", "FCM_KEY", properties.getProperty("FCM_KEY"))
     }
     packagingOptions {
-        exclude ("META-INF/DEPENDENCIES")
+        exclude("META-INF/DEPENDENCIES")
     }
 
     buildTypes {
@@ -107,24 +107,27 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
     implementation("com.google.firebase:firebase-analytics")
     //FCM 라이브러리
-    implementation ("com.google.firebase:firebase-messaging:23.4.1")
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("com.google.firebase:firebase-messaging:23.4.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     //mock
     testImplementation("org.mockito:mockito-core:5.3.0")
 
     //material library
-    implementation ("com.google.android.material:material:1.11.0")
+    implementation("com.google.android.material:material:1.11.0")
 
     //algolia
-    implementation ("com.algolia:algoliasearch-android:3.+")
-    implementation ("com.algolia:algoliasearch-client-kotlin:2.1.9")
+    implementation("com.algolia:algoliasearch-android:3.+")
+    implementation("com.algolia:algoliasearch-client-kotlin:2.1.9")
 
     // Indicator
     implementation("com.tbuonomo:dotsindicator:5.0")
 
     //Jsoup
-    implementation ("org.jsoup:jsoup:1.17.2")
+    implementation("org.jsoup:jsoup:1.17.2")
+
+    // Calendar
+    implementation("com.github.prolificinteractive:material-calendarview:2.0.1")
 }

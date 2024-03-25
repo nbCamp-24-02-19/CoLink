@@ -48,7 +48,8 @@ class RegisterScheduleViewModel @Inject constructor(
 
     fun setEntity(key: String) {
         viewModelScope.launch {
-            val schedule = scheduleRepository.getScheduleDetail(key).getOrNull()?.setUi() ?: ScheduleModel.init()
+            val schedule = scheduleRepository.getScheduleDetail(key).getOrNull()?.setUi()
+                ?: ScheduleModel.init()
             _uiState.value = schedule
         }
     }
@@ -68,6 +69,7 @@ class RegisterScheduleViewModel @Inject constructor(
                 if (currentUser == authId) CalendarButtonUiState.Update
                 else CalendarButtonUiState.Detail
             }
+
             CalendarEntryType.UPDATE -> CalendarButtonUiState.Editing
         }
     }
@@ -88,7 +90,6 @@ class RegisterScheduleViewModel @Inject constructor(
     fun onChangedEditTexts(schedule: String, description: String) {
         textItemDataMap["schedule"] = schedule
         textItemDataMap["description"] = description
-        updateTexts()
     }
 
     private fun updateTexts() {
@@ -101,7 +102,9 @@ class RegisterScheduleViewModel @Inject constructor(
     fun onClickCompleteButton() {
         when (uiState.value.buttonUiState) {
             CalendarButtonUiState.Create -> onClickCreate()
-            CalendarButtonUiState.Update -> _uiState.value = uiState.value.copy(buttonUiState = CalendarButtonUiState.Editing)
+            CalendarButtonUiState.Update -> _uiState.value =
+                uiState.value.copy(buttonUiState = CalendarButtonUiState.Editing)
+
             CalendarButtonUiState.Editing -> onClickUpdate()
             else -> Unit
         }

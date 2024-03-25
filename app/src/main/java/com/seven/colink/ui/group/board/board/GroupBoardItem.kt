@@ -58,7 +58,7 @@ sealed interface GroupBoardItem {
     ) : GroupBoardItem
 
     data class MessageItem(
-        val message: String?
+        val message: Int?
     ) : GroupBoardItem
 
 }

@@ -1,5 +1,6 @@
 package com.seven.colink.util.convert
 
+import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.seven.colink.util.model.UrlMetaData
 import com.seven.colink.util.status.ScheduleDateType
 import kotlinx.coroutines.Dispatchers
@@ -9,6 +10,7 @@ import okhttp3.Request
 import org.jsoup.Jsoup
 import java.net.URL
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -16,14 +18,18 @@ import java.time.temporal.ChronoUnit
 import java.util.Date
 import java.util.Locale
 
-fun String.containsUrl() = Regex("(http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|%[0-9a-fA-F][0-9a-fA-F])+)").containsMatchIn(this)
+fun String.containsUrl() =
+    Regex("(http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|%[0-9a-fA-F][0-9a-fA-F])+)").containsMatchIn(
+        this
+    )
 
 fun String.extractUrl(): String {
-    val urlPattern = Regex("(http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)")
+    val urlPattern =
+        Regex("(http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)")
     return urlPattern.findAll(this).map { it.value }.toList().first()
 }
 
-suspend fun fetchUrlMetaData(url: String)= withContext(Dispatchers.IO) {
+suspend fun fetchUrlMetaData(url: String) = withContext(Dispatchers.IO) {
     try {
         val client = OkHttpClient()
         val request = Request.Builder().url(url).build()
@@ -53,19 +59,22 @@ fun LocalDateTime.convertLocalDateTime(): String = run {
 }
 
 fun String.convertTime(): String {
-    val localDateTime = LocalDateTime.parse(this, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+    val localDateTime =
+        LocalDateTime.parse(this, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
     val now = LocalDateTime.now(ZoneId.of("Asia/Seoul"))
     val minutes = ChronoUnit.MINUTES.between(localDateTime, now)
 
     return when {
         minutes < 1 -> "방금전"
         minutes < 60 * 24 -> localDateTime.format(DateTimeFormatter.ofPattern("a hh:mm"))
-        minutes < 60 * 24 * 60-> localDateTime.format(DateTimeFormatter.ofPattern("M월 d일"))
+        minutes < 60 * 24 * 60 -> localDateTime.format(DateTimeFormatter.ofPattern("M월 d일"))
         else -> localDateTime.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
     }
 }
+
 fun String.convertToDaysAgo(): String {
-    val localDateTime = LocalDateTime.parse(this, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+    val localDateTime =
+        LocalDateTime.parse(this, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
     val now = LocalDateTime.now(ZoneId.of("Asia/Seoul"))
     val minutes = ChronoUnit.MINUTES.between(localDateTime, now)
     val hours = ChronoUnit.HOURS.between(localDateTime, now)
@@ -106,4 +115,8 @@ fun getDateByState(scheduleDateType: ScheduleDateType): String {
 fun formatDate(date: LocalDateTime): String {
     val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:00")
     return date.format(formatter)
+}
+
+fun CalendarDay.convertCalendarDayToLocalDate(): LocalDate {
+    return LocalDate.of(this.year, this.month, this.day)
 }
