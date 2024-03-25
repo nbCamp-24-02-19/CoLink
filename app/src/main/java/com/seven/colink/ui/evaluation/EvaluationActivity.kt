@@ -15,6 +15,7 @@ import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.SnackType
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
@@ -40,6 +41,8 @@ class EvaluationActivity : AppCompatActivity() {
     private lateinit var evalProjectAdapter: EvaluationProjectAdapter
     private lateinit var evalStudyAdapter: EvaluationStudyAdapter
     private lateinit var evalViewModel: EvaluationViewModel
+    private var projectDid : Boolean = false
+    private var studyDid : Boolean = false
 
     private val binding by lazy {
         ActivityEvaluationBinding.inflate(layoutInflater)
@@ -76,33 +79,28 @@ class EvaluationActivity : AppCompatActivity() {
             }
 
             GroupType.STUDY -> {
-                evalViewModel.getStudyMembers(groupEntity)
-                evalStudyAdapter = EvaluationStudyAdapter(this, studyUserList)
-                binding.vpEvalViewpager.adapter = evalStudyAdapter
-                binding.vpEvalViewpager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
-                binding.dotsindicator.attachTo(binding.vpEvalViewpager)
                 setStudyObserve()
             }
 
             else -> throw IllegalArgumentException("Unknown GroupTypeEntity!")
         }
-
         Log.d("Evaluation", "evaluationValue = ${groupTypeEntity}, $groupEntity")
     }
 
-    private var did = true
     private fun setProjectObserve() = with(evalViewModel) {
-        evalViewModel.evalProjectMembersData.observe(this@EvaluationActivity) {
-            it?.let { list ->
-                if (did) {
-                    evalProjectAdapter = EvaluationProjectAdapter(
-                        this@EvaluationActivity,
-                        list.filterNotNull()
-                    )
-                    binding.vpEvalViewpager.adapter = evalProjectAdapter
-                    binding.vpEvalViewpager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
-                    binding.dotsindicator.attachTo(binding.vpEvalViewpager)
-                    did = false
+        lifecycleScope.launch {
+            evalViewModel.evalProjectMembersData.observe(this@EvaluationActivity) {
+                it?.let { list ->
+                    if (!projectDid) {
+                        evalProjectAdapter = EvaluationProjectAdapter(
+                            this@EvaluationActivity,
+                            list.filterNotNull()
+                        )
+                        binding.vpEvalViewpager.adapter = evalProjectAdapter
+                        binding.vpEvalViewpager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+                        binding.dotsindicator.attachTo(binding.vpEvalViewpager)
+                    }
+                    projectDid = true
                 }
             }
         }
@@ -118,12 +116,29 @@ class EvaluationActivity : AppCompatActivity() {
     }
 
     private fun setStudyObserve() = with(evalViewModel) {
-        evalViewModel.evalStudyMembersData.observe(this@EvaluationActivity) { it ->
-            it?.let { list ->
-                val nonNullList = list.filterNotNull()
-                evalStudyAdapter.mItems.clear()
-                evalStudyAdapter.mItems.addAll(nonNullList)
-                evalStudyAdapter.notifyDataSetChanged()
+        lifecycleScope.launch {
+            evalViewModel.evalStudyMembersData.observe(this@EvaluationActivity) {
+                it?.let { list ->
+                    if (!studyDid) {
+                        evalStudyAdapter = EvaluationStudyAdapter(
+                            this@EvaluationActivity,
+                            list.filterNotNull()
+                        )
+                        binding.vpEvalViewpager.adapter = evalStudyAdapter
+                        binding.vpEvalViewpager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+                        binding.dotsindicator.attachTo(binding.vpEvalViewpager)
+                    }
+                    studyDid = true
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            combine(currentGroup, currentUid) {group, uid ->
+                Pair(group, uid)
+            }.collect{ (group, uid) ->
+                if (group.postKey != "" && uid != "") getStudyMembers(group, uid)
+                else Unit
             }
         }
     }

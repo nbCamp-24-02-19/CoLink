@@ -121,7 +121,7 @@ class GroupViewModel @Inject constructor(
             groupType = groupType,
             title = title,
             description = description,
-            kind = authId,
+            tags = tags,
             img = imageUrl
         )
 
@@ -133,15 +133,6 @@ class GroupViewModel @Inject constructor(
         addGroupImage = R.drawable.ic_add,
         addGroupText = "모집 글 작성하기",
         appliedGroup = "지원한 그룹"
-    )
-
-    private fun getWant() = GroupData.GroupWant(
-        key = "",
-        groupType = GroupType.PROJECT,
-        title = "영화 커뮤니티 서비스 프로젝트 모집합니다",
-        description = "영화 커뮤니티 서비스 프로젝트를 함께하실 안드로이드 개발자를 모십니다.",
-        kind = "나는뉴비",
-        img = "https://firebasestorage.googleapis.com/v0/b/colink-a7c3a.appspot.com/o/img%2F2ad7abe5-7945-47ba-b5ca-611278836783.jpg?alt=media&token=a1445ac5-b90f-4af3-b2de-9e07052bb497"
     )
 
     private fun getEmptyJoinList() = GroupData.GroupEmpty(

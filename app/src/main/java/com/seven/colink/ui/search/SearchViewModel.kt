@@ -38,10 +38,6 @@ class SearchViewModel @Inject constructor(
     private val _checkLogin = MutableLiveData<Boolean>(false)
     val checkLogin: LiveData<Boolean> get() = _checkLogin
 
-    init {
-        doSearch("")
-    }
-
     fun doSearch(query: String) {
         val groupType: GroupType? = when (searchGroupState.value) {
             "ALL" -> null

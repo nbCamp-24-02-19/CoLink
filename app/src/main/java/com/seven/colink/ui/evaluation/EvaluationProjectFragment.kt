@@ -77,22 +77,6 @@ class EvaluationProjectFragment : Fragment() {
                 if (projectUserListPosition == position) evaluationViewModel.updatePage(position)
             }
         })
-
-        with(binding) {
-            tvEvalPrev.visibility = View.VISIBLE
-            tvEvalPrev.setOnClickListener {
-                viewPager.setCurrentItem(currentPage - 1, true)
-            }
-
-            tvEvalNext.visibility = View.VISIBLE
-            tvEvalNext.setOnClickListener {
-                viewPager.setCurrentItem(currentPage + 1, true)
-            }
-
-            btnEvalNext.setOnClickListener {
-                viewPager.setCurrentItem(currentPage + 1, true)
-            }
-        }
     }
 
     private fun initViewModel() = with(evaluationViewModel) {
@@ -145,28 +129,42 @@ class EvaluationProjectFragment : Fragment() {
 
         }
 
-    private fun firstPage() {
-        binding.tvEvalPrev.visibility = View.INVISIBLE
-        binding.tvEvalNext.visibility = View.VISIBLE
-        binding.tvEvalNext.setOnClickListener {
-            setViewPager()
-            if (currentPage == 0) {
-                viewPager.setCurrentItem(currentPage + 1, true)
-            }
+    private fun firstPage() = with(binding) {
+        tvEvalPrev.visibility = View.INVISIBLE
+        tvEvalNext.visibility = View.VISIBLE
+        tvEvalNext.setOnClickListener {
+            nextPage(viewPager)
+        }
+        btnEvalNext.text = getString(R.string.eval_project_next)
+        btnEvalNext.setOnClickListener {
+            nextPage(viewPager)
+        }
+
+    }
+
+    private fun middlePage() = with(binding) {
+        tvEvalPrev.visibility = View.VISIBLE
+        tvEvalPrev.setOnClickListener {
+            prevPage(viewPager)
+        }
+        tvEvalNext.visibility = View.VISIBLE
+        tvEvalNext.setOnClickListener {
+            nextPage(viewPager)
+        }
+        btnEvalNext.text = getString(R.string.eval_project_next)
+        btnEvalNext.setOnClickListener {
+            nextPage(viewPager)
         }
     }
 
-    private fun lastPage() {
-        binding.tvEvalNext.visibility = View.INVISIBLE
-        binding.tvEvalPrev.setOnClickListener {
-            setViewPager()
-            if (currentPage > 0) {
-                viewPager.setCurrentItem(currentPage - 1, true)
-            }
+    private fun lastPage() = with(binding) {
+        tvEvalNext.visibility = View.INVISIBLE
+        tvEvalPrev.setOnClickListener {
+            prevPage(viewPager)
         }
 
-        binding.btnEvalNext.text = getString(R.string.eval_project_done)
-        binding.btnEvalNext.setOnClickListener {
+        btnEvalNext.text = getString(R.string.eval_project_done)
+        btnEvalNext.setOnClickListener {
             requireContext().setDialog(
                 title = getString(R.string.eval_dialog_title),
                 message = getString(R.string.eval_dialog_des),
@@ -174,11 +172,13 @@ class EvaluationProjectFragment : Fragment() {
                     updateMembers(currentPage)
                     updateGrade()
                     it.dismiss()
+                    activity?.finish()
                 },
                 cancelAction = { it.dismiss() }
             ).show()
         }
     }
+
 
     private fun setViewPager() {
         viewPager = requireActivity().findViewById(R.id.vp_eval_viewpager)
@@ -194,6 +194,14 @@ class EvaluationProjectFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun prevPage(viewPager: ViewPager2) {
+        viewPager.setCurrentItem(currentPage - 1, true)
+    }
+
+    private fun nextPage(viewPager: ViewPager2) {
+        viewPager.setCurrentItem(currentPage + 1, true)
     }
 
 }
