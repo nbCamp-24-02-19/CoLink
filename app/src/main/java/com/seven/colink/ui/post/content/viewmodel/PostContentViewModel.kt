@@ -64,7 +64,6 @@ class PostContentViewModel @Inject constructor(
     private val _userComment = MutableLiveData<CommentEntity>()
     val userComments: LiveData<CommentEntity> = _userComment
 
-
     private val _checkLogin = MutableLiveData<Boolean>(false)
     val checkLogin: LiveData<Boolean> get() = _checkLogin
 
@@ -108,7 +107,6 @@ class PostContentViewModel @Inject constructor(
         }
     }
 
-
     fun registerComment(text: String) {
         viewModelScope.launch {
             commentRepository.registerComment(
@@ -150,7 +148,6 @@ class PostContentViewModel @Inject constructor(
         }
         setPostContentItems(entity.recruit)
     }
-
 
     fun deleteComment(key: String){
         viewModelScope.launch {
@@ -269,7 +266,6 @@ class PostContentViewModel @Inject constructor(
         }
     }
 
-    // 모집 분야 지원 했을 때
     suspend fun applyForProject(recruitItem: PostContentItem.RecruitItem) {
         val newApplicationInfo = ApplicationInfo(
             userId = getCurrentUser(),
@@ -279,7 +275,6 @@ class PostContentViewModel @Inject constructor(
         sendNotificationApplyUseCase(entity)
     }
 
-    // 지원한 회원 데이터 추가
     private suspend fun updateRecruitList(
         recruitItem: PostContentItem.RecruitItem,
         newApplicationInfo: ApplicationInfo
@@ -320,8 +315,6 @@ class PostContentViewModel @Inject constructor(
         }
     }
 
-
-    // 이미 지원 한 회원일 때
     private suspend fun isAlreadySupported(recruitItem: PostContentItem.RecruitItem): PostErrorMessage {
         val isAlreadySupported = entity.recruit?.any { recruitInfo ->
             recruitInfo.type == recruitItem.recruit.type &&
@@ -335,7 +328,6 @@ class PostContentViewModel @Inject constructor(
         }
     }
 
-    // 조회수
     private suspend fun incrementPostViews(): DataResultStatus =
         postRepository.incrementPostViews(entity.key)
 

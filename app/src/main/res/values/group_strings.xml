@@ -24,6 +24,14 @@
     <string name="participating_group_empty">참여중인 그룹이 없습니다</string>
     <string name="apply_group_empty">지원한 그룹이 없습니다</string>
     <string name="progress_status_recruit">프로젝트 예상 시작일로부터 %1$s일을 경과했습니다.\n프로젝트를 시작해주세요!</string>
+    <string name="progress_status_recruit_d_day">프로젝트 예상 시작일 %1$s일 전입니다.\n프로젝트를 시작해주세요!</string>
     <string name="progress_status_ongoing">프로젝트 시작일로부터 %1$s일이 경과했습니다. 이번 기간 동안의 성과를 돌아보고, 개선할 점은 없는지 함께 논의해요."</string>
     <string name="progress_status_completion">드디어 프로젝트가 끝났습니다!\n홍보를 통해 더 많은 사람들에게 우리의 성과를 보여줄 준비를 해볼까요?</string>
+    <string name="project_status_changed">프로젝트 상태 변경</string>
+    <string name="project_status_changed_message">프로젝트 상태를 %1$s로 변경하시겠습니까?</string>
+    <string name="status_text_start">시작하기</string>
+    <string name="status_text_end">종료하록</string>
+    <string name="no_list_supported">지원한 목록이 없습니다.</string>
+    <string name="no_schedule">일정이 없습니다. </string>
+
 </resources>

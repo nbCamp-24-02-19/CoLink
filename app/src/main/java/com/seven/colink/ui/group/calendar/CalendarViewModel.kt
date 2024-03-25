@@ -1,12 +1,12 @@
 package com.seven.colink.ui.group.calendar
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seven.colink.domain.entity.ScheduleEntity
 import com.seven.colink.domain.repository.ScheduleRepository
 import com.seven.colink.ui.group.calendar.model.ScheduleItem
 import com.seven.colink.ui.group.calendar.model.ScheduleModel
+import com.seven.colink.util.Constants.Companion.CALENDAR_TIME_FORMAT
 import com.seven.colink.util.dialog.enum.ColorEnum
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,13 +40,13 @@ class CalendarViewModel @Inject constructor(
             val startDate = schedule.startDate?.let {
                 LocalDate.parse(
                     it,
-                    DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")
+                    DateTimeFormatter.ofPattern(CALENDAR_TIME_FORMAT)
                 )
             }
             val endDate = schedule.endDate?.let {
                 LocalDate.parse(
                     it,
-                    DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")
+                    DateTimeFormatter.ofPattern(CALENDAR_TIME_FORMAT)
                 )
             }
 
@@ -59,7 +59,7 @@ class CalendarViewModel @Inject constructor(
         val sortedList = filteredScheduleList.sortedBy {
             LocalDate.parse(
                 it?.startDate,
-                DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")
+                DateTimeFormatter.ofPattern(CALENDAR_TIME_FORMAT)
             )
         }
 
@@ -87,13 +87,13 @@ class CalendarViewModel @Inject constructor(
             val startDate = schedule.startDate?.let {
                 LocalDate.parse(
                     it,
-                    DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")
+                    DateTimeFormatter.ofPattern(CALENDAR_TIME_FORMAT)
                 )
             }
             val endDate = schedule.endDate?.let {
                 LocalDate.parse(
                     it,
-                    DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")
+                    DateTimeFormatter.ofPattern(CALENDAR_TIME_FORMAT)
                 )
             }
             val isSameMonth = { dateToCheck: LocalDate? ->
@@ -131,7 +131,6 @@ class CalendarViewModel @Inject constructor(
         }
         return datesInRange
     }
-
 
     private fun ScheduleEntity.convert() =
         ScheduleModel(

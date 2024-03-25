@@ -162,7 +162,7 @@ class GroupContentViewModel @Inject constructor(
 
     fun updateGroupItemText(position: Int, title: String, description: String) {
         if (position >= 0 && position < _uiState.value.size) {
-            when (val uiStateValue = _uiState.value[position]) {
+            when (_uiState.value[position]) {
                 is GroupContentItem.GroupContent -> {
                     postItemDataMap["title"] = title
                     postItemDataMap["description"] = description
