@@ -132,7 +132,6 @@ class EvaluationViewModel @Inject constructor(
         }
     }
 
-
     private fun UserEntity.convertEvalProjectData() =
         EvaluationData.EvalProject(
             uid = uid,
@@ -147,16 +146,13 @@ class EvaluationViewModel @Inject constructor(
             evalCount = evaluatedNumber
         )
 
-    fun getStudyMembers(groupKey: String?) {
+    fun getStudyMembers(groupEntity: GroupEntity, uid: String) {
         viewModelScope.launch {
-            val currentUser = authRepository.getCurrentUser()
-            val getMembers = groupRepository.getGroupDetail(groupKey ?: "")
-                .getOrNull()?.memberIds?.filter {
-                    it != currentUser.message
-                }?.mapNotNull {
-                    userRepository.getUserDetails(it).getOrNull()?.convertEvalStudyData()
-                }
-            _evalStudyMembersData.value = getMembers
+            _evalStudyMembersData.value = groupEntity.memberIds.filter {
+                it != uid
+            }.mapNotNull {
+                userRepository.getUserDetails(it).getOrNull()?.convertEvalStudyData()
+            }
             Log.d("Evaluation", "evalStudyMembersData = ${_evalStudyMembersData.value}")
         }
     }
@@ -177,21 +173,26 @@ class EvaluationViewModel @Inject constructor(
         }
     }
 
-    fun updateStudyUserGrade(position: Int) {
+    fun updateStudyUserGrade(groupEntity: GroupEntity, currentUid: String) {
         viewModelScope.launch {
-            val studyMembers = _evalStudyMembersData.value?.toMutableList() ?: return@launch
-            val member = studyMembers[position]
-            val getUserEntity = userRepository.getUserDetails(member?.uid.toString())
-            if (getUserEntity.getOrNull()?.uid == member?.uid) {
-                if (member != null) {
-                    getUserEntity.map {
-                        member.evalCount++
-                        member.grade =
-                            (((getUserEntity.getOrNull()?.grade)!! * (getUserEntity.getOrNull()?.evaluatedNumber)!!) + ((member.grade)!!) * 2) / member.evalCount
-                        userRepository.updateUserInfo(member.convertStudyUserEntity())
-                    }
+            evalStudyMembersData.value?.map { data ->
+                userRepository.getUserDetails(data?.uid!!).getOrNull().let { member ->
+                    userRepository.updateUserInfo(
+                        member!!.copy(
+                            grade = (member.grade!! * member.evaluatedNumber + data.grade!! * 2) / ++data.evalCount,
+                            diligence = data.diligence,
+                            communication = data.communication,
+                            flexibility = data.flexibility,
+                            evaluatedNumber = ++data.evalCount
+                        )
+                    )
                 }
             }
+            groupRepository.registerGroup(
+                groupEntity.let {
+                    it.copy(evaluateMember = it.evaluateMember?.plus(currentUid))
+                }
+            )
         }
     }
 
@@ -226,5 +227,6 @@ class EvaluationViewModel @Inject constructor(
                     currentGroup.value.memberIds.size - 2 -> PageState.LAST
                     else -> PageState.MIDDLE
                 }.apply { num = position }
+        Log.d("Evaluation","currentPage = ${_currentPage.value}")
         }
 }

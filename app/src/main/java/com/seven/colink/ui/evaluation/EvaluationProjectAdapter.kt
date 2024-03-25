@@ -14,7 +14,6 @@ class EvaluationProjectAdapter(
     }
 
     override fun createFragment(position: Int): Fragment {
-        Log.d("createFragment", "$position")
         return if (position in mItems.indices){
             EvaluationProjectFragment.newInstanceProject(position)
         }

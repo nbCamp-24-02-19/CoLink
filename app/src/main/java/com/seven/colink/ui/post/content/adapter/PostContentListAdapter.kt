@@ -253,6 +253,7 @@ class PostContentListAdapter(
                         if (item.buttonUiState == ContentButtonUiState.Manager) View.GONE else View.VISIBLE
                     btRecruit.setOnClickListener { onClickButton(item, item.buttonUiState) }
                 }
+
             }
         }
     }

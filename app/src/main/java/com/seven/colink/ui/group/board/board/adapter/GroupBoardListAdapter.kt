@@ -27,6 +27,8 @@ import com.seven.colink.ui.group.board.board.GroupContentViewType
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.register.post.adapter.TagListAdapter
 import com.seven.colink.ui.post.register.post.model.TagListItem
+import com.seven.colink.util.convert.convertGradeFormat
+import com.seven.colink.util.convert.convertGradeStringFormat
 import com.seven.colink.util.setLevelIcon
 import com.seven.colink.util.status.ApplicationStatus
 import com.seven.colink.util.status.GroupType
@@ -372,7 +374,7 @@ class GroupBoardListAdapter(
                     ivUser.load(item.userInfo.photoUrl)
                     ivUser.clipToOutline = true
                     tvUserName.text = item.userInfo.name
-                    tvUserGrade.text = item.userInfo.grade.toString()
+                    tvUserGrade.text = item.userInfo.grade?.convertGradeStringFormat()
                     item.userInfo.level?.let { ivLevelDiaIcon.setLevelIcon(it) }
                     tvLevelDiaIcon.text = item.userInfo.level.toString()
                     tvUserIntroduction.text = item.userInfo.info

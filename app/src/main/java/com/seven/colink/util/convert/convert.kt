@@ -120,3 +120,11 @@ fun formatDate(date: LocalDateTime): String {
 fun CalendarDay.convertCalendarDayToLocalDate(): LocalDate {
     return LocalDate.of(this.year, this.month, this.day)
 }
+
+fun Double.convertGradeFormat(): Double {
+    return "%.2f".format(this).toDouble()
+}
+
+fun Double.convertGradeStringFormat(): String {
+    return String.format("%.2f", this)
+}
