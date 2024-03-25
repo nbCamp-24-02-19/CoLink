@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.seven.colink.R
 import com.seven.colink.databinding.ItemListCalendarScheduleBinding
 import com.seven.colink.ui.group.calendar.model.ScheduleModel
+import com.seven.colink.util.Constants
 import java.time.format.DateTimeFormatter
 
 class ScheduleListAdapter(
@@ -49,7 +50,7 @@ class ScheduleListAdapter(
         override fun bind(item: ScheduleModel) {
             val context = binding.root.context
             if (allFieldsNull(item)) {
-                binding.tvSchedule.text = "일정이 없습니다."
+                binding.tvSchedule.text = context.getString(R.string.no_schedule)
                 binding.tvSchedule.setTextColor(
                     ContextCompat.getColor(
                         context,
@@ -62,8 +63,8 @@ class ScheduleListAdapter(
             } else {
                 binding.tvSchedule.text = item.title
                 val startDate =
-                    item.startDate?.format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"))
-                val endDate = item.endDate?.format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"))
+                    item.startDate?.format(DateTimeFormatter.ofPattern(Constants.CALENDAR_TIME_FORMAT))
+                val endDate = item.endDate?.format(DateTimeFormatter.ofPattern(Constants.CALENDAR_TIME_FORMAT))
                 binding.tvDatetime.visibility = View.VISIBLE
                 binding.tvDatetime.text = "$startDate - $endDate"
 

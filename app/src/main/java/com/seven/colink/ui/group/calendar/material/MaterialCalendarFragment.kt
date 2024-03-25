@@ -21,7 +21,6 @@ import com.seven.colink.ui.group.calendar.status.CalendarEntryType
 import com.seven.colink.ui.group.viewmodel.GroupSharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import java.time.DayOfWeek
 import java.time.LocalDate
 
 @AndroidEntryPoint
@@ -123,38 +122,26 @@ class MaterialCalendarFragment : Fragment() {
             }
 
             setWeekDayFormatter(ArrayWeekDayFormatter(resources.getTextArray(R.array.custom_weekdays)))
-
             setHeaderTextAppearance(R.style.CalendarWidgetHeader)
-
-            setOnRangeSelectedListener { widget, dates -> }
-
-            setOnDateChangedListener { widget, date, selected ->
+            setOnDateChangedListener { _, date, _ ->
                 val localDate = date.toLocalDate()
                 viewModel.filterScheduleListByDate(localDate)
             }
-
-
         }
     }
 
     private fun initViewModel() {
         viewModel.apply {
             lifecycleScope.launch {
-                filteredByDate.collect {
-                    scheduleListAdapter.submitList(it.list)
+                filteredByDate.collect {item ->
+                    scheduleListAdapter.submitList(item.list)
 
-                    val dayOfWeekString = when (it.date?.dayOfWeek) {
-                        DayOfWeek.MONDAY -> "월"
-                        DayOfWeek.TUESDAY -> "화"
-                        DayOfWeek.WEDNESDAY -> "수"
-                        DayOfWeek.THURSDAY -> "목"
-                        DayOfWeek.FRIDAY -> "금"
-                        DayOfWeek.SATURDAY -> "토"
-                        DayOfWeek.SUNDAY -> "일"
-                        else -> ""
-                    }
+                    val dayOfWeekString = item.date?.dayOfWeek?.let {
+                        val weekdaysArray = requireContext().resources.getStringArray(R.array.custom_weekdays)
+                        weekdaysArray.getOrNull(it.ordinal) ?: ""
+                    } ?: ""
                     binding.tvDate.text =
-                        "${it.date?.monthValue}.${it.date?.dayOfMonth}. $dayOfWeekString"
+                        "${item.date?.monthValue}.${item.date?.dayOfMonth}. $dayOfWeekString"
                 }
             }
 

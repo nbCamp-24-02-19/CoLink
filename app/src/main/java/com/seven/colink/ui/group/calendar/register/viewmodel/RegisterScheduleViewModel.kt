@@ -90,7 +90,6 @@ class RegisterScheduleViewModel @Inject constructor(
     fun onChangedEditTexts(schedule: String, description: String) {
         textItemDataMap["schedule"] = schedule
         textItemDataMap["description"] = description
-        updateTexts()
     }
 
     private fun updateTexts() {
