@@ -31,6 +31,7 @@ import com.seven.colink.ui.userdetail.adapter.UserSkillAdapter
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.snackbar.setSnackBar
 import com.seven.colink.ui.userdetailshowmore.UserDetailShowmoreActivity
+import com.seven.colink.util.setLevelIcon
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
 import com.seven.colink.util.status.SnackType
@@ -184,22 +185,23 @@ class UserDetailActivity : AppCompatActivity() {
 
         binding.tvUserdetailScore.text = user.userscore.toString()
 
-        binding.ivUserdetailBlog.setOnClickListener {
-            if (user.userBlog != null){
+        //블로그
+        if(user.userBlog != null){
+            binding.ivUserdetailBlog.visibility = View.VISIBLE
+            binding.ivUserdetailBlog.setOnClickListener {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(user.userBlog))
                 startActivity(intent)
-            } else {
-                Toast.makeText(this, "블로그 주소가 없습니다.", Toast.LENGTH_SHORT).show()
             }
-        }
-        binding.ivUserdetailGit.setOnClickListener {
-            if (user.userGit != null){
+        } else binding.ivUserdetailBlog.visibility = View.GONE
+
+        //깃
+        if (user.userGit != null){
+            binding.ivUserdetailGit.visibility = View.VISIBLE
+            binding.ivUserdetailGit.setOnClickListener {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(user.userGit))
                 startActivity(intent)
-            } else {
-                Toast.makeText(this, "깃허브 주소가 없습니다.", Toast.LENGTH_SHORT).show()
             }
-        }
+        } else binding.ivUserdetailGit.visibility = View.GONE
 
         if (user.userProfile == null){
             binding.ivUserdetailProfile
@@ -207,52 +209,9 @@ class UserDetailActivity : AppCompatActivity() {
             binding.ivUserdetailProfile.load(user.userProfile)
             binding.ivUserdetailProfile.clipToOutline = true
         }
+        user.userLevel?.let { binding.ivUserdetailLevel.setLevelIcon(it) }
+        binding.tvUserdetailLevel.text = user.userLevel.toString()
 
-        val level = user.userLevel
-        val levelicon: Drawable = DrawableCompat.wrap(binding.ivUserdetailLevel.drawable)
-        if (level == 1){
-            binding.tvUserdetailLevel.text = "1"
-            DrawableCompat.setTint(
-                levelicon.mutate(),
-                ContextCompat.getColor(this,R.color.level1)
-            )
-        } else if(level == 2){
-            binding.tvUserdetailLevel.text ="2"
-            DrawableCompat.setTint(
-                levelicon.mutate(),
-                ContextCompat.getColor(this,R.color.level1)
-            )
-        } else if(level == 3){
-            binding.tvUserdetailLevel.text ="3"
-            DrawableCompat.setTint(
-                levelicon.mutate(),
-                ContextCompat.getColor(this,R.color.level3)
-            )
-        } else if(level == 4){
-            binding.tvUserdetailLevel.text ="4"
-            DrawableCompat.setTint(
-                levelicon.mutate(),
-                ContextCompat.getColor(this,R.color.level4)
-            )
-        } else if(level == 5){
-            binding.tvUserdetailLevel.text ="5"
-            DrawableCompat.setTint(
-                levelicon.mutate(),
-                ContextCompat.getColor(this,R.color.level5)
-            )
-        } else if(level == 6){
-            binding.tvUserdetailLevel.text ="6"
-            DrawableCompat.setTint(
-                levelicon.mutate(),
-                ContextCompat.getColor(this,R.color.level6)
-            )
-        } else {
-            binding.tvUserdetailLevel.text ="7"
-            DrawableCompat.setTint(
-                levelicon.mutate(),
-                ContextCompat.getColor(this,R.color.level7)
-            )
-        }
         Log.d("Tag","user = ${user}")
     }
 
