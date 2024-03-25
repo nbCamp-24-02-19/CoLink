@@ -12,6 +12,8 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -33,6 +35,7 @@ import com.seven.colink.util.convert.convertError
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
+import com.seven.colink.util.setLevelIcon
 import com.seven.colink.util.skillCategory
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
@@ -74,6 +77,8 @@ class MyPageFragment : Fragment() {
         setLogout()
         postShowMore()
         likeShowMore()
+
+
 
         //스킬 추가
         skiladapter.plusClick = object : MyPageSkilAdapter.PlusClick {
@@ -192,8 +197,7 @@ class MyPageFragment : Fragment() {
                 is UiState.Error -> {
                     hideProgressOverlay()
                     if (userDetails.throwable.message == "No user") startActivity(Intent(requireContext(),SignInActivity::class.java))
-                    Toast.makeText(requireContext(), "${userDetails.throwable.message}", Toast.LENGTH_SHORT)
-                        .show()
+                    Log.i("MyPage", "${userDetails.throwable}")
                 }
             }
         }
@@ -236,6 +240,12 @@ class MyPageFragment : Fragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadUserPost()
+        viewModel.loadUserDetails()
+        viewModel.loadLikePost()
+    }
 
     private fun updateUI(user: MyPageUserModel) {
         // Update your views with user information
@@ -264,24 +274,23 @@ class MyPageFragment : Fragment() {
         }
 
         //블로그 주소가 없으면
-        binding.ivMypageBlog.setOnClickListener {
-            if (user.blog != null) {
+        if(user.blog != null){
+            binding.ivMypageBlog.visibility = View.VISIBLE
+            binding.ivMypageBlog.setOnClickListener {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(user.blog))
                 startActivity(intent)
-            } else {
-                Toast.makeText(context, "블로그 주소가 없습니다.", Toast.LENGTH_SHORT).show()
             }
-        }
+        } else binding.ivMypageBlog.visibility = View.GONE
 
         //깃헙 주소가 없으면
-        binding.ivMypageGit.setOnClickListener {
-            if (user.git != null) {
+        if (user.git != null){
+            binding.ivMypageGit.visibility = View.VISIBLE
+            binding.ivMypageGit.setOnClickListener {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(user.git))
                 startActivity(intent)
-            } else {
-                Toast.makeText(context, "깃허브 주소가 없습니다.", Toast.LENGTH_SHORT).show()
             }
-        }
+        } else binding.ivMypageGit.visibility = View.GONE
+
 
 
         if (user.info != null) {
@@ -298,51 +307,9 @@ class MyPageFragment : Fragment() {
             binding.ivMypageProfile.clipToOutline = true
         }
 
-        val level = user.level
-        val levelicon: Drawable = DrawableCompat.wrap(binding.ivMypageLevel.drawable)
-        if (level == 1) {
-            binding.tvMypageLevel.text = "1"
-            DrawableCompat.setTint(
-                levelicon.mutate(),
-                ContextCompat.getColor(requireContext(), R.color.level1)
-            )
-        } else if (level == 2) {
-            binding.tvMypageLevel.text = "2"
-            DrawableCompat.setTint(
-                levelicon.mutate(),
-                ContextCompat.getColor(requireContext(), R.color.level2)
-            )
-        } else if (level == 3) {
-            binding.tvMypageLevel.text = "3"
-            DrawableCompat.setTint(
-                levelicon.mutate(),
-                ContextCompat.getColor(requireContext(), R.color.level3)
-            )
-        } else if (level == 4) {
-            binding.tvMypageLevel.text = "4"
-            DrawableCompat.setTint(
-                levelicon.mutate(),
-                ContextCompat.getColor(requireContext(), R.color.level4)
-            )
-        } else if (level == 5) {
-            binding.tvMypageLevel.text = "5"
-            DrawableCompat.setTint(
-                levelicon.mutate(),
-                ContextCompat.getColor(requireContext(), R.color.level5)
-            )
-        } else if (level == 6) {
-            binding.tvMypageLevel.text = "6"
-            DrawableCompat.setTint(
-                levelicon.mutate(),
-                ContextCompat.getColor(requireContext(), R.color.level6)
-            )
-        } else {
-            binding.tvMypageLevel.text = "7"
-            DrawableCompat.setTint(
-                levelicon.mutate(),
-                ContextCompat.getColor(requireContext(), R.color.level7)
-            )
-        }
+       user.level?.let { binding.ivMypageLevel.setLevelIcon(it) }
+        binding.tvMypageLevel.text = user.level.toString()
+
         binding.tvMypageScore.text = user.score.toString()
 
         Log.d("Tag", "user = ${user}")
@@ -396,11 +363,6 @@ class MyPageFragment : Fragment() {
             startActivity(Intent(requireContext(), SignInActivity::class.java))
             logout()
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.loadLikePost()
     }
 
     fun onEditProfile() {

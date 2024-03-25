@@ -1,6 +1,5 @@
 package com.seven.colink.ui.group.calendar.adapter
 
-import android.icu.util.Calendar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,13 +10,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.seven.colink.R
 import com.seven.colink.databinding.ItemListCalendarScheduleBinding
 import com.seven.colink.ui.group.calendar.model.ScheduleModel
-import java.text.SimpleDateFormat
-import java.util.Locale
-
+import com.seven.colink.util.Constants
+import java.time.format.DateTimeFormatter
 
 class ScheduleListAdapter(
     private val onClickItem: (ScheduleModel) -> Unit
-) : ListAdapter<ScheduleModel, ScheduleListAdapter.ScheduleViewHolder>(
+) : ListAdapter<ScheduleModel, ScheduleListAdapter.ViewHolder>(
     object : DiffUtil.ItemCallback<ScheduleModel>() {
         override fun areItemsTheSame(oldItem: ScheduleModel, newItem: ScheduleModel): Boolean =
             oldItem.key == newItem.key
@@ -25,71 +23,70 @@ class ScheduleListAdapter(
         override fun areContentsTheSame(oldItem: ScheduleModel, newItem: ScheduleModel): Boolean =
             oldItem == newItem
     }
-){
-    abstract class ScheduleViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+) {
+
+    abstract class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         abstract fun bind(item: ScheduleModel)
     }
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): ScheduleViewHolder {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemListCalendarScheduleBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
         )
-        return CalendarScheduleView(binding,
-            onClickItem)
+        return ScheduleViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: ScheduleViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
-        if (holder is CalendarScheduleView) {
-            holder.bind(item)
+        when (holder) {
+            is ScheduleViewHolder -> holder.bind(item)
         }
     }
 
-
-    inner class CalendarScheduleView(
-        val binding: ItemListCalendarScheduleBinding,
-        private val onClickItem: (ScheduleModel) -> Unit
-    ) : ScheduleViewHolder(binding.root) {
+    inner class ScheduleViewHolder(private val binding: ItemListCalendarScheduleBinding) :
+        ViewHolder(binding.root) {
         override fun bind(item: ScheduleModel) {
             val context = binding.root.context
-            binding.tvSchedule.text = item.title
-            binding.tVDatetime.text = "${item.startDate?.dateFormatter()} - ${item.endDate?.dateFormatter()}"
-            val color = ContextCompat.getColor(context, item.calendarColor?.color ?: R.color.main_color)
-            binding.viewColor.setBackgroundColor(color)
+            if (allFieldsNull(item)) {
+                binding.tvSchedule.text = context.getString(R.string.no_schedule)
+                binding.tvSchedule.setTextColor(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.enabled_color
+                    )
+                )
+                binding.tvDatetime.visibility = View.GONE
+                val color = ContextCompat.getColor(context, R.color.enabled_color)
+                binding.viewColor.setBackgroundColor(color)
+            } else {
+                binding.tvSchedule.text = item.title
+                val startDate =
+                    item.startDate?.format(DateTimeFormatter.ofPattern(Constants.CALENDAR_TIME_FORMAT))
+                val endDate = item.endDate?.format(DateTimeFormatter.ofPattern(Constants.CALENDAR_TIME_FORMAT))
+                binding.tvDatetime.visibility = View.VISIBLE
+                binding.tvDatetime.text = "$startDate - $endDate"
 
-            binding.root.setOnClickListener {
-                onClickItem(item)
+                val color =
+                    ContextCompat.getColor(context, item.calendarColor?.color ?: R.color.main_color)
+                binding.viewColor.setBackgroundColor(color)
+
+                binding.root.setOnClickListener {
+                    onClickItem(item)
+                }
             }
         }
 
-        private fun String.dateFormatter(): String {
-            val dateFormat = SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault())
-            val date = dateFormat.parse(this)
-            val calendar = Calendar.getInstance()
-            calendar.time = date
-
-            val month = calendar.get(java.util.Calendar.MONTH) + 1
-            val dayOfMonth = calendar.get(java.util.Calendar.DAY_OF_MONTH)
-            val dayOfWeek = when (calendar.get(java.util.Calendar.DAY_OF_WEEK)) {
-                Calendar.SUNDAY -> "일"
-                Calendar.MONDAY -> "월"
-                Calendar.TUESDAY -> "화"
-                Calendar.WEDNESDAY -> "수"
-                Calendar.THURSDAY -> "목"
-                Calendar.FRIDAY -> "금"
-                Calendar.SATURDAY -> "토"
-                else -> ""
-            }
-            val amPm = if (calendar.get(Calendar.HOUR_OF_DAY) < 12) "오전" else "오후"
-            var hour = calendar.get(Calendar.HOUR)
-            if (hour == 0) hour = 12
-            val minute = calendar.get(Calendar.MINUTE)
-            return "$month.$dayOfMonth.$dayOfWeek $amPm ${hour}시 ${minute}분"
+        private fun allFieldsNull(item: ScheduleModel): Boolean {
+            return listOf(
+                item.title,
+                item.startDate,
+                item.endDate,
+                item.calendarColor,
+                item.description,
+                item.buttonUiState
+            ).all { it == null }
         }
     }
-
 }

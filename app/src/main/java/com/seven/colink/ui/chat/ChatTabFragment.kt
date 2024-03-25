@@ -58,6 +58,10 @@ class ChatTabFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initView()
+    }
+
+    override fun onStart() {
+        super.onStart()
         initViewModel()
     }
 
@@ -73,8 +77,8 @@ class ChatTabFragment : Fragment() {
                 when (state) {
                     is UiState.Loading -> showProgressOverlay()
                     is UiState.Success -> {
-                        binding.clEmptyChat.isVisible = state.data.isNullOrEmpty()
-                        binding.rcChatList.isVisible = state.data.isNullOrEmpty().not()
+                        binding.clEmptyChat.isVisible = state.data.isEmpty()
+                        binding.rcChatList.isVisible = state.data.isEmpty().not()
                         adapter.submitList(state.data)
                         hideProgressOverlay()
                     }

@@ -1,10 +1,14 @@
 package com.seven.colink.ui.notify
 
 import android.graphics.drawable.Drawable
+import com.seven.colink.domain.model.NotifyType
+import com.seven.colink.ui.notify.viewmodel.FilterType
 
 sealed interface NotifyItem {
 
-    data object Filter: NotifyItem
+    data class Filter(
+        val state: FilterType
+    ): NotifyItem
     data class ChatItem(
         val key: String?,
         val name: String?,
@@ -15,6 +19,7 @@ sealed interface NotifyItem {
 
     data class DefaultItem(
         val key: String?,
+        val type: NotifyType?,
         val icon: Drawable?,
         val iconBackground: Int?,
         val title: String?,

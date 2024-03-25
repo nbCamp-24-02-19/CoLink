@@ -14,11 +14,13 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.seven.colink.R
 import com.seven.colink.databinding.ActivityMainBinding
+import com.seven.colink.ui.evaluation.EvaluationActivity
 import com.seven.colink.ui.main.viewmodel.MainViewModel
 import com.seven.colink.ui.mypageedit.MyPageEditDetailActivity
 import com.seven.colink.ui.notify.NotificationActivity
 import com.seven.colink.util.Constants
 import com.seven.colink.util.snackbar.setSnackBar
+import com.seven.colink.util.status.ProjectStatus
 import com.seven.colink.util.status.SnackType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -45,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         initView()
+        initViewModel()
     }
 
 
@@ -53,7 +56,30 @@ class MainActivity : AppCompatActivity() {
         initPermission()
         onMyProfileEdit()
         onNotify()
-        viewModel
+    }
+
+    private fun initViewModel() = with(viewModel) {
+        lifecycleScope.launch {
+            recruitApprove.collect {
+                it.forEach { data ->
+                    viewModel.getChatRoom(data)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            groupState.collect {
+                it.forEach { data ->
+                    if (data.state == ProjectStatus.END) {
+                        startActivity(EvaluationActivity.newIntentEval(
+                            context = this@MainActivity,
+                            groupType = data.type,
+                            entityKey = data.groupId
+                        ))
+                    }
+                }
+            }
+        }
     }
 
     private fun onNotify() = with(binding) {
@@ -69,6 +95,7 @@ class MainActivity : AppCompatActivity() {
     private fun onMyProfileEdit() = with(binding){
         navController.addOnDestinationChangedListener { _, destination, _ ->
             btnMypageEdit.isVisible = destination.id == R.id.navigation_my_page
+            btnNotify.isVisible = destination.id != R.id.navigation_dashboard
         }
 
         btnMypageEdit.setOnClickListener {

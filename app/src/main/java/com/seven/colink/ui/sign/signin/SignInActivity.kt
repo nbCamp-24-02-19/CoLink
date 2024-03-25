@@ -2,6 +2,7 @@ package com.seven.colink.ui.sign.signin
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -33,10 +34,16 @@ class SignInActivity : AppCompatActivity() {
         initViewModel()
     }
 
+    override fun onStart() {
+        viewModel.signInCheck()
+        super.onStart()
+    }
+
     private fun initViewModel() = with(viewModel) {
         lifecycleScope.launch {
             entryType.collect {
                 if (it) {
+                    Toast.makeText(this@SignInActivity, "로그인 성공", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this@SignInActivity, MainActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)

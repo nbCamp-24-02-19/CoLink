@@ -13,28 +13,29 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class SendNotificationJoinUseCase @Inject constructor(
+class SendNotificationApplyUseCase @Inject constructor(
     private val notifyRepository: NotifyRepository,
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
     private val resourceRepository: ResourceRepository,
     private val notificationStoreRepository: NotificationStoreRepository,
 ) {
-    suspend operator fun invoke(data: Post, uid: String) = withContext(Dispatchers.IO) {
+    suspend operator fun invoke(data: Post) = withContext(Dispatchers.IO) {
         userRepository.getUserDetails(authRepository.getCurrentUser().message).getOrNull()
             .let { currentUser ->
-                userRepository.getUserDetails(uid).getOrNull().let { auth ->
+                userRepository.getUserDetails(data.authId!!).getOrNull().let { auth ->
                     NotificationEntity(
                         key = data.key,
                         toUserToken = auth?.token,
                         toUserId = auth?.uid,
+                        type = NotifyType.APPLY,
+                        title = resourceRepository.getString(R.string.notify_new_apply),
                         message = resourceRepository.getString(
                             R.string.group_apply_message,
                             data.title!!,
                             currentUser!!.name!!
                         ),
-                        title = resourceRepository.getString(R.string.notify_new_apply),
-                        type = NotifyType.APPLY
+                        groupType = data.groupType
                     ).let { notificationEntity ->
                         notifyRepository.sendNotification(
                             notificationEntity

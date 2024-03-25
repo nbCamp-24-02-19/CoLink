@@ -90,6 +90,7 @@ class RegisterScheduleFragment : Fragment() {
                         }
                         binding.fbDeleteSchedule.visibility = View.GONE
                     }
+
                     CalendarButtonUiState.Editing -> {
                         binding.tvComplete.apply {
                             visibility = View.VISIBLE
@@ -97,10 +98,12 @@ class RegisterScheduleFragment : Fragment() {
                         }
                         binding.fbDeleteSchedule.visibility = View.VISIBLE
                     }
+
                     CalendarButtonUiState.Detail -> {
                         binding.tvComplete.visibility = View.GONE
                         binding.fbDeleteSchedule.visibility = View.GONE
                     }
+
                     CalendarButtonUiState.Update -> {
                         binding.tvComplete.apply {
                             visibility = View.VISIBLE
@@ -108,6 +111,7 @@ class RegisterScheduleFragment : Fragment() {
                         }
                         binding.fbDeleteSchedule.visibility = View.GONE
                     }
+
                     else -> Unit
                 }
 

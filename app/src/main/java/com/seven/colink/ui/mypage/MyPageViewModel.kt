@@ -10,6 +10,7 @@ import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.repository.UserRepository
+import com.seven.colink.util.convert.convertGradeFormat
 import com.seven.colink.util.convert.convertToDaysAgo
 import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.UiState
@@ -37,7 +38,7 @@ class MyPageViewModel @Inject constructor(
         loadUserPost()
     }
 
-    private fun loadUserDetails() {
+    fun loadUserDetails() {
         viewModelScope.launch {
 
             _userDetails.value = UiState.Loading
@@ -69,12 +70,17 @@ class MyPageViewModel @Inject constructor(
         }
     }
 
-    private fun loadUserPost() {
+    fun loadUserPost() {
         viewModelScope.launch {
             val result = postRepository.getPostByAuthId(authRepository.getCurrentUser().message)
             result.onSuccess { post ->
+                post.forEach {
+                    Log.d("loadUserPost", "${it.title}")
+                }
+
                 _userPosts.postValue(post.sortedByDescending { it.registeredDate }
                     .map { it.convertPostEntity() })
+
             }
         }
     }
@@ -153,7 +159,7 @@ class MyPageViewModel @Inject constructor(
         name = name,
         email = email,
         profile = photoUrl,
-        mainSpecialty = mainSpecialty,
+        mainSpecialty = specialty,
         specialty = specialty,
         skill = skill,
         level = level,
@@ -161,7 +167,7 @@ class MyPageViewModel @Inject constructor(
         git = git,
         blog = blog,
         link = link,
-        score = grade
+        score = grade?.convertGradeFormat()
     )
 
 }

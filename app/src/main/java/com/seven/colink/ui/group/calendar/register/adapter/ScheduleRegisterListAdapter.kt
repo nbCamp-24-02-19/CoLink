@@ -17,12 +17,10 @@ import com.seven.colink.ui.group.calendar.model.ScheduleModel
 import com.seven.colink.ui.group.calendar.status.CalendarButtonUiState
 import com.seven.colink.ui.post.register.post.adapter.TagListAdapter
 import com.seven.colink.ui.post.register.post.model.TagListItem
-import com.seven.colink.util.convert.getDateByState
 import com.seven.colink.util.dialog.enum.ColorEnum
 import com.seven.colink.util.dialog.setScheduleAlarm
 import com.seven.colink.util.dialog.setScheduleColor
 import com.seven.colink.util.showToast
-import com.seven.colink.util.status.ScheduleDateType
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -95,10 +93,12 @@ class ScheduleRegisterListAdapter(
         private fun toggleDateTimePicker(isStart: Boolean) {
             if (isStart) {
                 if (isStartDatePickerVisible) {
+                    binding.layoutDatetime.setBackgroundResource(R.drawable.bg_date)
                     isStartDatePickerVisible = false
                     binding.startDatePicker.visibility = View.GONE
                     binding.startTimePicker.visibility = View.GONE
                 } else {
+                    binding.layoutDatetime.setBackgroundResource(R.drawable.bg_start_datetime)
                     isEndDatePickerVisible = false
                     binding.endDatePicker.visibility = View.GONE
                     binding.endTimePicker.visibility = View.GONE
@@ -109,10 +109,12 @@ class ScheduleRegisterListAdapter(
                 }
             } else {
                 if (isEndDatePickerVisible) {
+                    binding.layoutDatetime.setBackgroundResource(R.drawable.bg_date)
                     isEndDatePickerVisible = false
                     binding.endDatePicker.visibility = View.GONE
                     binding.endTimePicker.visibility = View.GONE
                 } else {
+                    binding.layoutDatetime.setBackgroundResource(R.drawable.bg_end_datetime)
                     isStartDatePickerVisible = false
                     binding.startDatePicker.visibility = View.GONE
                     binding.startTimePicker.visibility = View.GONE
@@ -128,8 +130,8 @@ class ScheduleRegisterListAdapter(
             with(binding) {
                 etSchedule.setText(item.title)
                 etDescription.setText(item.description)
-                tvStartDate.text = item.startDate ?: getDateByState(ScheduleDateType.CURRENT)
-                tvEndDate.text = item.endDate ?: getDateByState(ScheduleDateType.NEXT_DAY)
+                tvStartDate.text = item.startDate
+                tvEndDate.text = item.endDate
                 tagAdapter.submitList(emptyList())
                 item.calendarColor?.let { updateColorPalette(it) }
 
@@ -156,10 +158,8 @@ class ScheduleRegisterListAdapter(
                 }
             }
 
-            val startDate = item.startDate?.parseDateTime() ?: Calendar.getInstance().time
-            val endDate = item.endDate?.parseDateTime() ?: Calendar.getInstance()
-                .apply { add(Calendar.DAY_OF_MONTH, 1) }.time
-
+            val startDate = item.startDate?.parseDateTime()!!
+            val endDate = item.endDate?.parseDateTime()!!
             setDateTimePicker(binding.startDatePicker, binding.startTimePicker, startDate, true)
             setDateTimePicker(binding.endDatePicker, binding.endTimePicker, endDate, false)
 
@@ -173,27 +173,6 @@ class ScheduleRegisterListAdapter(
                 context.setScheduleAlarm(savedColor.color!!) {
                     binding.tvColorPalette.text = it
                 }.show()
-            }
-        }
-
-        private fun updateDateTimeText(selectedDateTime: Calendar, isStartDate: Boolean) {
-            val formattedDateTime = selectedDateTime.formatDateTime()
-            with(binding) {
-                if (isStartDate) {
-                    val endDateDateTime = tvEndDate.text.toString().parseDateTime()
-                    if (selectedDateTime.time.after(endDateDateTime)) {
-                        context.showToast("시작 시간은 종료 시간 이전이어야 합니다.")
-                        return
-                    }
-                    dateChangeListener("startDate", formattedDateTime)
-                } else {
-                    val startDateTime = tvStartDate.text.toString().parseDateTime()
-                    if (selectedDateTime.time.before(startDateTime)) {
-                        context.showToast("종료 시간은 시작 시간 이후여야 합니다.")
-                        return
-                    }
-                    dateChangeListener("endDate", formattedDateTime)
-                }
             }
         }
 
@@ -223,9 +202,6 @@ class ScheduleRegisterListAdapter(
             SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault()).parse(this)
         }
 
-        private fun Calendar.formatDateTime(): String =
-            SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault()).format(time)
-
         private fun setDateTimePicker(
             datePicker: DatePicker,
             timePicker: TimePicker,
@@ -233,21 +209,52 @@ class ScheduleRegisterListAdapter(
             isStartDate: Boolean
         ) {
             val calendar = Calendar.getInstance().apply { time = dateTime }
+            val dateFormat = SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault())
+
+            fun updateDateText(selectedDateTime: Calendar, isStart: Boolean) {
+                val formattedDateTime = dateFormat.format(selectedDateTime.time)
+                if (isStart) {
+                    binding.tvStartDate.text = formattedDateTime
+                    if (isStartDate) {
+                        val endDateCalendar = Calendar.getInstance().apply {
+                            time = selectedDateTime.time
+                            add(Calendar.DAY_OF_MONTH, 2)
+                        }
+                        updateDateText(endDateCalendar, isStart = false)
+                        dateChangeListener("startDate", formattedDateTime)
+                    }
+                } else {
+                    binding.tvEndDate.text = formattedDateTime
+                    if (!isStartDate) {
+                        val startDateCalendar = binding.tvStartDate.text.toString().parseDateTime()
+                        if (selectedDateTime.time.before(startDateCalendar)) {
+                            context.showToast(context.getString(R.string.end_time_selection_error))
+                            return
+                        }
+                    }
+                    dateChangeListener("endDate", formattedDateTime)
+                }
+            }
+
             datePicker.init(
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH)
-            ) { _, year, month, dayOfMonth ->
-                calendar.set(year, month, dayOfMonth)
-                updateDateTimeText(calendar, isStartDate)
+            ) { _, year, monthOfYear, dayOfMonth ->
+                calendar.set(year, monthOfYear, dayOfMonth)
+                updateDateText(calendar, isStartDate)
             }
-            timePicker.hour = calendar.get(Calendar.HOUR_OF_DAY)
-            timePicker.minute = calendar.get(Calendar.MINUTE)
+
+            updateDateText(calendar, isStartDate)
+
             timePicker.setOnTimeChangedListener { _, hourOfDay, minute ->
                 calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
                 calendar.set(Calendar.MINUTE, minute)
-                updateDateTimeText(calendar, isStartDate)
+                updateDateText(calendar, isStartDate)
             }
+
+            timePicker.hour = calendar.get(Calendar.HOUR_OF_DAY)
+            timePicker.minute = calendar.get(Calendar.MINUTE)
         }
     }
 

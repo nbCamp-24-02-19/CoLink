@@ -43,7 +43,11 @@ class ChatRoomActivity : AppCompatActivity() {
     }
 
     private val adapter by lazy {
-        ChatRoomAdapter()
+        ChatRoomAdapter(
+            onClickLink = {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it)))
+            }
+        )
     }
 
     private val viewModel: ChatRoomViewModel by viewModels()

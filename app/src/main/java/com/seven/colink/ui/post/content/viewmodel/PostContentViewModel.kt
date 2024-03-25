@@ -14,11 +14,12 @@ import com.seven.colink.domain.entity.RecruitInfo
 import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.CommentRepository
+import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.domain.usecase.GetPostUseCase
 import com.seven.colink.domain.usecase.RegisterApplicationInfoUseCase
-import com.seven.colink.domain.usecase.SendNotificationJoinUseCase
+import com.seven.colink.domain.usecase.SendNotificationApplyUseCase
 import com.seven.colink.ui.group.board.board.GroupContentViewType
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.content.model.DialogUiState
@@ -26,6 +27,7 @@ import com.seven.colink.ui.post.content.model.PostContentItem
 import com.seven.colink.ui.post.register.post.model.PostErrorMessage
 import com.seven.colink.ui.post.register.post.model.PostErrorUiState
 import com.seven.colink.ui.post.register.post.model.Post
+import com.seven.colink.util.convert.convertTime
 import com.seven.colink.util.status.ApplicationStatus
 import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.GroupType
@@ -42,10 +44,10 @@ class PostContentViewModel @Inject constructor(
     private val getPostUseCase: GetPostUseCase,
     private val registerApplicationInfoUseCase: RegisterApplicationInfoUseCase,
     private val commentRepository: CommentRepository,
-    private val sendNotificationJoinUseCase: SendNotificationJoinUseCase,
+    private val sendNotificationApplyUseCase: SendNotificationApplyUseCase,
+    private val groupRepository: GroupRepository
 ) : ViewModel() {
     private lateinit var entity: Post
-//    private lateinit var comment: Comment
     private val _uiState = MutableLiveData<List<PostContentItem>?>()
     val uiState: LiveData<List<PostContentItem>?> get() = _uiState
 
@@ -63,23 +65,27 @@ class PostContentViewModel @Inject constructor(
     private val _userComment = MutableLiveData<CommentEntity>()
     val userComments: LiveData<CommentEntity> = _userComment
 
-//    private val _updateCommentButtonUiState = MutableLiveData<CommentButtonUiState>()
-//    val updateCommentButtonUiState: LiveData<CommentButtonUiState>  get() = _updateCommentButtonUiState
-
     private val _checkLogin = MutableLiveData<Boolean>(false)
     val checkLogin: LiveData<Boolean> get() = _checkLogin
 
     private val _isLike = MutableLiveData<Boolean>()
     val isLike: LiveData<Boolean> get() = _isLike
 
-    private var _currentUser:UserEntity? = null
+    private var _currentUser: UserEntity? = null
     private val currentUser get() = _currentUser
+
+    private val _likeList = MutableLiveData<List<String>?>()
+    val likeList: LiveData<List<String>?> get() = _likeList
 
     init {
         viewModelScope.launch {
             _currentUser = authRepository.getCurrentUser().message.let {
                 userRepository.getUserDetails(it)
             }.getOrNull()
+
+//            _likeList.value = authRepository.getCurrentUser().message.let {
+//                userRepository.getUserDetails(it)
+//            }.getOrNull()?.likeList
         }
     }
 
@@ -102,14 +108,6 @@ class PostContentViewModel @Inject constructor(
         }
     }
 
-//    private suspend fun setCommentButtonUiState(comment: Comment) {
-//        _updateCommentButtonUiState.value = when (getCurrentUser()) {
-//            comment.authId -> CommentButtonUiState.Manager
-//            null -> CommentButtonUiState.Unknown
-//            else -> CommentButtonUiState.User
-//        }
-//    }
-
     fun registerComment(text: String) {
         viewModelScope.launch {
             commentRepository.registerComment(
@@ -124,6 +122,33 @@ class PostContentViewModel @Inject constructor(
         }
         setPostContentItems(entity.recruit)
     }
+//수정을 하려면 일단 그 댓글의 키값을 가져와서 그 키값이랑 맞는 댓글의 description을 수정해야 하는것이지?????????????????????
+    //근데???????????밑에 이 친구는 그냥 댓글 추가 하는 거잖아???????????????ㅎ..ㅋ.ㅎ..ㅎ.ㅎ..ㅎ.
+//    fun editComment(text: String) {
+//        viewModelScope.launch {
+//            commentRepository.registerComment(
+//                getCurrentUser()?.let {
+//                    CommentEntity(
+////                        key = ,
+//                        authId = it,
+//                        postId = entity.key,
+//                        description = text
+//                    )
+//                }?: return@launch
+//            )
+//        }
+//        setPostContentItems(entity.recruit)
+//    }
+//해당 댓글의 키값 가져오기...registerComment는 댓글 작성하는 것,,getComment는 댓글 가져오는 것..
+    //근데 댓글...음?..음???? 그 가져온 댓글에서 description만 수정하기..ㅋ.ㅋ..가능?ㅎㅎ
+    //getComment는 suspend를 사용해야 사용 가능 그럼 이걸 사용하는 것이 아닌듯
+
+    fun editComment(key: String, comment: String){
+        viewModelScope.launch {
+            commentRepository.editComment(key, comment)
+        }
+        setPostContentItems(entity.recruit)
+    }
 
     fun deleteComment(key: String){
         viewModelScope.launch {
@@ -134,7 +159,7 @@ class PostContentViewModel @Inject constructor(
     private suspend fun getComment() =
             commentRepository.getComment(
                 postId = entity.key
-            ).getOrNull()
+            ).getOrNull()?.sortedBy { it.registeredDate }
 
     private fun setPostContentItems(updatedRecruitList: List<RecruitInfo>?) =
         viewModelScope.launch {
@@ -145,7 +170,9 @@ class PostContentViewModel @Inject constructor(
                     PostContentItem.AdditionalInfo(
                         key = entity.key,
                         precautions = entity.precautions,
-                        recruitInfo = entity.recruitInfo
+                        recruitInfo = entity.recruitInfo,
+                        startDate = entity.startDate,
+                        endDate = entity.endDate
                     )
                 )
                 items.add(
@@ -160,18 +187,16 @@ class PostContentViewModel @Inject constructor(
                 } else {
                     items.addAll(recruitItems)
                 }
-
                 items.add(
                     PostContentItem.TitleItem(
                         if (currentEntity.groupType == GroupType.PROJECT) R.string.project_member_info else R.string.study_member_info,
                         GroupContentViewType.UNKNOWN
                     )
                 )
-                items.add(PostContentItem.SubTitleItem(R.string.project_team_member))
-                items.addAll(createMember(currentEntity))
-
+                createMember(currentEntity).let { memberItems ->
+                    items.addAll(memberItems)
+                }
                 items.add(PostContentItem.CommentTitle(R.string.comment))
-
                 getComment()?.forEach {
                     userRepository.getUserDetails(it.authId).getOrNull().let {user ->
                         items.add(
@@ -180,9 +205,9 @@ class PostContentViewModel @Inject constructor(
                                 name = user?.name?:"",
                                 profile = user?.photoUrl?: "",
                                 description = it.description,
-                                registeredDate = it.registeredDate,
+                                registeredDate = it.registeredDate.convertTime(),
                                 authId = it.authId,
-                                buttonUiState = updateButtonUiState.value ?: ContentButtonUiState.User
+                                buttonUiState = it.authId == getCurrentUser()
                             )
                         )
                     }
@@ -190,7 +215,6 @@ class PostContentViewModel @Inject constructor(
                 items.add(
                     PostContentItem.CommentSendItem
                 )
-
                 _uiState.value = items
                 checkLike()
             }
@@ -205,13 +229,37 @@ class PostContentViewModel @Inject constructor(
             )
         } ?: emptyList()
 
-    private suspend fun createMember(uiState: Post): List<PostContentItem.MemberItem> {
-        return uiState.memberIds.mapNotNull { memberId ->
-            val userEntity = userRepository.getUserDetails(memberId).getOrNull()
-            userEntity?.let { user ->
-                PostContentItem.MemberItem(key = uiState.key, userInfo = user)
+    private suspend fun createMember(uiState: Post): List<PostContentItem> {
+        val group = groupRepository.getGroupDetail(uiState.key).getOrNull()
+        val memberItems = mutableListOf<PostContentItem>()
+        var leaderTitleAdded = false
+        val memberIdsSet = group?.memberIds?.toSet()
+
+        if (memberIdsSet != null) {
+            for (memberId in memberIdsSet) {
+                val userEntity = userRepository.getUserDetails(memberId).getOrNull()
+
+                if (userEntity != null) {
+                    val isLeader = uiState.authId == memberId
+
+                    if (isLeader && !leaderTitleAdded) {
+                        memberItems.add(PostContentItem.SubTitleItem(R.string.project_team_leader))
+                    } else if (!isLeader && !leaderTitleAdded) {
+                        memberItems.add(PostContentItem.SubTitleItem(R.string.project_team_member))
+                        leaderTitleAdded = true
+                    }
+
+                    memberItems.add(
+                        PostContentItem.MemberItem(
+                            key = uiState.key,
+                            userInfo = userEntity
+                        )
+                    )
+                }
             }
         }
+
+        return memberItems
     }
 
     private suspend fun getCurrentUser(): String? {
@@ -220,17 +268,15 @@ class PostContentViewModel @Inject constructor(
         }
     }
 
-    // 모집 분야 지원 했을 때
     suspend fun applyForProject(recruitItem: PostContentItem.RecruitItem) {
         val newApplicationInfo = ApplicationInfo(
             userId = getCurrentUser(),
             applicationStatus = ApplicationStatus.PENDING,
         )
         updateRecruitList(recruitItem, newApplicationInfo)
-        sendNotificationJoinUseCase(entity,getCurrentUser()?: return)
+        sendNotificationApplyUseCase(entity)
     }
 
-    // 지원한 회원 데이터 추가
     private suspend fun updateRecruitList(
         recruitItem: PostContentItem.RecruitItem,
         newApplicationInfo: ApplicationInfo
@@ -271,8 +317,6 @@ class PostContentViewModel @Inject constructor(
         }
     }
 
-
-    // 이미 지원 한 회원일 때
     private suspend fun isAlreadySupported(recruitItem: PostContentItem.RecruitItem): PostErrorMessage {
         val isAlreadySupported = entity.recruit?.any { recruitInfo ->
             recruitInfo.type == recruitItem.recruit.type &&
@@ -286,7 +330,6 @@ class PostContentViewModel @Inject constructor(
         }
     }
 
-    // 조회수
     private suspend fun incrementPostViews(): DataResultStatus =
         postRepository.incrementPostViews(entity.key)
 
@@ -335,6 +378,7 @@ class PostContentViewModel @Inject constructor(
                     }
                 }
                 _uiState.value = updateUiState
+                Log.d("Evaluation","updateUiState = $updateUiState")
             } else {
                 _currentUser = currentUser!!.copy(likeList = currentUser!!.likeList?.minus(listOf(key).toSet()))
                 val updateUiState = _uiState.value?.map { item ->
@@ -345,6 +389,7 @@ class PostContentViewModel @Inject constructor(
                     }
                 }
                 _uiState.value = updateUiState
+                Log.d("Evaluation","updateUiState = $updateUiState")
             }
 
         }
