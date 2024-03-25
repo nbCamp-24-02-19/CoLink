@@ -11,6 +11,7 @@ import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.ProjectStatus
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -115,7 +116,7 @@ class GroupRepositoryImpl @Inject constructor(
         .addSnapshotListener { snapshot, e ->
                     if(e != null) {
                         Log.w("observeGroupState", "failed", e)
-                    } else if (snapshot != null) {
+                    } else if (snapshot != null && !snapshot.isEmpty) {
                         trySend(
                             snapshot.toObjects(GroupEntity::class.java)
                         ).isSuccess
@@ -124,7 +125,11 @@ class GroupRepositoryImpl @Inject constructor(
         awaitClose {
             listener.remove()
         }
-    }.mapNotNull { data ->
-        data.filter { it.status != ProjectStatus.RECRUIT}.takeIf { it.isNotEmpty() }
+    }.map { data ->
+        data.filter {
+            it.status != ProjectStatus.RECRUIT && it.evaluateMember?.contains(auth.currentUser?.uid)?.not()?: true
+        }.takeIf {
+            it.isNotEmpty()
+        }
     }
 }

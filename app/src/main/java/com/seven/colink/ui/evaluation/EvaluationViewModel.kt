@@ -12,9 +12,14 @@ import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.ui.evaluation.EvaluationActivity.Companion.EXTRA_GROUP_ENTITY
+import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.PageState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -40,6 +45,9 @@ class EvaluationViewModel @Inject constructor(
 
     private val _currentUid = MutableStateFlow("")
     val currentUid = _currentUid.asStateFlow()
+
+    private val _result = MutableSharedFlow<DataResultStatus>()
+    val result = _result.asSharedFlow()
     private val groupKey get() = handle.get<String>(EXTRA_GROUP_ENTITY)
 
     init {
@@ -96,32 +104,33 @@ class EvaluationViewModel @Inject constructor(
     // 완료 버튼 클릭 시 user의 grade를 계산 후, 저장 시켜주기
     fun updateProjectUserGrade(groupEntity: GroupEntity, currentUid: String) {
         viewModelScope.launch {
-            evalProjectMembersData.value?.map { data ->
-                userRepository.getUserDetails(data?.uid!!).getOrNull().let { member ->
-                    userRepository.updateUserInfo(
-                        member!!.copy(
-                            grade = ((member.grade!! * member.evaluatedNumber + data.grade!! * 2) / ++data.evalCount),
-                            communication = data.communication,
-                            technicalSkill = data.technic,
-                            diligence = data.diligence,
-                            flexibility = data.flexibility,
-                            creativity = data.creativity,
-                            evaluatedNumber = ++data.evalCount,
-                        )
-                    )
-                }
+            try {
+                evalProjectMembersData.value?.map { data ->
+                    async {
+                        userRepository.getUserDetails(data?.uid!!).getOrNull().let { member ->
+                            userRepository.updateUserInfo(
+                                member!!.copy(
+                                    grade = (member.grade!! * member.evaluatedNumber + data.grade!! * 2) / ++data.evalCount,
+                                    communication = data.communication,
+                                    technicalSkill = data.technic,
+                                    diligence = data.diligence,
+                                    flexibility = data.flexibility,
+                                    creativity = data.creativity,
+                                    evaluatedNumber = ++data.evalCount,
+                                )
+                            )
+                        }
+                    }
+                }?.awaitAll()
+                _result.emit(groupRepository.registerGroup(
+                    groupEntity.let {
+                        it.copy(evaluateMember = it.evaluateMember?.plus(currentUid))
+                    }))
+            } catch (e: Exception){
+                _result.emit(DataResultStatus.FAIL.apply { message = e.message?: "알수 없는 에러" })
             }
-            Log.d("Evaluation", "@@@ evalProjectMembersData.value = ${evalProjectMembersData.value}")
-            groupRepository.registerGroup(
-                groupEntity.let {
-                    it.copy(evaluateMember = it.evaluateMember?.plus(currentUid))
-                }
-            )
-            Log.d("Evaluation", "@@@ currentUid = $currentUid")
-            Log.d("Evaluation", "@@@ groupEntity.evaluateMember = ${groupEntity.evaluateMember}")
         }
     }
-
 
     private fun UserEntity.convertEvalProjectData() =
         EvaluationData.EvalProject(
@@ -170,11 +179,11 @@ class EvaluationViewModel @Inject constructor(
                 userRepository.getUserDetails(data?.uid!!).getOrNull().let { member ->
                     userRepository.updateUserInfo(
                         member!!.copy(
-                            grade = (member.grade!! * member.evaluatedNumber + data.grade!! * 2) / data.evalCount++,
+                            grade = (member.grade!! * member.evaluatedNumber + data.grade!! * 2) / ++data.evalCount,
                             diligence = data.diligence,
                             communication = data.communication,
                             flexibility = data.flexibility,
-                            evaluatedNumber = data.evalCount
+                            evaluatedNumber = ++data.evalCount
                         )
                     )
                 }
@@ -214,14 +223,10 @@ class EvaluationViewModel @Inject constructor(
     fun updatePage(position: Int) {
         _currentPage.value =
             when (position) {
-                0 -> if (currentGroup.value.memberIds.size - 2 > position) PageState.FIRST else PageState.LAST
+                0 -> if (currentGroup.value.memberIds.size - 2 != position) PageState.FIRST else PageState.LAST
                 currentGroup.value.memberIds.size - 2 -> PageState.LAST
                 else -> PageState.MIDDLE
             }.apply { num = position }
-        Log.d("Evaluation", "_currentPage.value = ${_currentPage.value}")
-        Log.d(
-            "Evaluation",
-            "currentGroup.value.memberIds.size = ${currentGroup.value.memberIds.size}"
-        )
+        Log.d("Evaluation","currentPage = ${_currentPage.value}")
     }
 }
