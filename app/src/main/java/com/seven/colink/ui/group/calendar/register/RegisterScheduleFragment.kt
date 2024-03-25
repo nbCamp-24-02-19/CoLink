@@ -81,40 +81,41 @@ class RegisterScheduleFragment : Fragment() {
     private fun initViewModel() = with(viewModel) {
         lifecycleScope.launch {
             uiState.collect {
-                scheduleRegisterListAdapter.submitList(listOf(it))
-                when (it.buttonUiState) {
-                    CalendarButtonUiState.Create -> {
-                        binding.tvComplete.apply {
-                            visibility = View.VISIBLE
-                            text = "등록"
+                it.let {
+                    scheduleRegisterListAdapter.submitList(listOf(it))
+                    when (it.buttonUiState) {
+                        CalendarButtonUiState.Create -> {
+                            binding.tvComplete.apply {
+                                visibility = View.VISIBLE
+                                text = "등록"
+                            }
+                            binding.fbDeleteSchedule.visibility = View.GONE
                         }
-                        binding.fbDeleteSchedule.visibility = View.GONE
-                    }
 
-                    CalendarButtonUiState.Editing -> {
-                        binding.tvComplete.apply {
-                            visibility = View.VISIBLE
-                            text = "완료"
+                        CalendarButtonUiState.Editing -> {
+                            binding.tvComplete.apply {
+                                visibility = View.VISIBLE
+                                text = "완료"
+                            }
+                            binding.fbDeleteSchedule.visibility = View.VISIBLE
                         }
-                        binding.fbDeleteSchedule.visibility = View.VISIBLE
-                    }
 
-                    CalendarButtonUiState.Detail -> {
-                        binding.tvComplete.visibility = View.GONE
-                        binding.fbDeleteSchedule.visibility = View.GONE
-                    }
-
-                    CalendarButtonUiState.Update -> {
-                        binding.tvComplete.apply {
-                            visibility = View.VISIBLE
-                            text = "편집"
+                        CalendarButtonUiState.Detail -> {
+                            binding.tvComplete.visibility = View.GONE
+                            binding.fbDeleteSchedule.visibility = View.GONE
                         }
-                        binding.fbDeleteSchedule.visibility = View.GONE
-                    }
 
-                    else -> Unit
+                        CalendarButtonUiState.Update -> {
+                            binding.tvComplete.apply {
+                                visibility = View.VISIBLE
+                                text = "편집"
+                            }
+                            binding.fbDeleteSchedule.visibility = View.GONE
+                        }
+
+                        else -> Unit
+                    }
                 }
-
             }
         }
     }
