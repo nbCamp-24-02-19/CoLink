@@ -172,7 +172,9 @@ class PostContentViewModel @Inject constructor(
                     PostContentItem.AdditionalInfo(
                         key = entity.key,
                         precautions = entity.precautions,
-                        recruitInfo = entity.recruitInfo
+                        recruitInfo = entity.recruitInfo,
+                        startDate = entity.startDate,
+                        endDate = entity.endDate
                     )
                 )
                 items.add(
@@ -193,7 +195,7 @@ class PostContentViewModel @Inject constructor(
                         GroupContentViewType.UNKNOWN
                     )
                 )
-                createMember(currentEntity)?.let { memberItems ->
+                createMember(currentEntity).let { memberItems ->
                     items.addAll(memberItems)
                 }
                 items.add(PostContentItem.CommentTitle(R.string.comment))

@@ -41,8 +41,17 @@ class PostFragment : Fragment() {
         PostListAdapter(
             onChangedFocus = { position, title, description, item ->
                 when (item) {
-                    is PostListItem.PostItem, is PostListItem.PostOptionItem -> {
+                    is PostListItem.PostItem -> {
                         viewModel.updatePostItemText(position, title, description)
+                    }
+
+                    else -> Unit
+                }
+            },
+            onChangedSelectionFocus = { position, title, description, date, item ->
+                when (item) {
+                    is PostListItem.PostOptionItem -> {
+                        viewModel.updatePostOptionItemText(position, title, description, date)
                     }
 
                     else -> Unit
