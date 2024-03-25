@@ -14,5 +14,5 @@ interface GroupRepository {
     suspend fun updateGroupStatus(key: String, status: ProjectStatus, date: Map<String, String>): DataResultStatus
     suspend fun updateGroup(key: String, updatedGroup: GroupEntity): DataResultStatus
     suspend fun updateGroupMemberIds(key: String, updatedGroup: GroupEntity): DataResultStatus
-    suspend fun observeGroupState(): Flow<List<GroupEntity>>
+    suspend fun observeGroupState(): Flow<List<GroupEntity>?>
 }
