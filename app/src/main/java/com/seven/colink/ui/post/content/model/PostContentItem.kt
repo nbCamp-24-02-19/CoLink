@@ -49,7 +49,9 @@ sealed interface PostContentItem {
     data class AdditionalInfo(
         val key: String?,
         val precautions: String?,
-        val recruitInfo: String?
+        val recruitInfo: String?,
+        val startDate: String?,
+        val endDate: String?
     ) : PostContentItem
 
     data class CommentTitle(

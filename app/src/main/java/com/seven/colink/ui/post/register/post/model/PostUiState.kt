@@ -24,6 +24,8 @@ sealed interface PostListItem {
         val key: String?,
         val precautions: String?,
         val recruitInfo: String?,
+        val startDate: String?,
+        val endDate: String?
     ) : PostListItem
 
     data class RecruitItem(
@@ -41,4 +43,5 @@ sealed interface PostListItem {
     data class ButtonItem(
         val buttonText: Int?
     ) : PostListItem
+
 }

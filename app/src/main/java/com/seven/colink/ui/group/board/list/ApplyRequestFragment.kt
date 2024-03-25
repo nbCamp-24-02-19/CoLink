@@ -55,7 +55,8 @@ class ApplyRequestFragment : Fragment() {
                         }
                     }
                 }
-            }
+            },
+            onChangeStatus = { _, _ -> }
         )
     }
 
