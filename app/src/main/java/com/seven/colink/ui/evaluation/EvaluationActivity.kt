@@ -2,16 +2,18 @@ package com.seven.colink.ui.evaluation
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.seven.colink.databinding.ActivityEvaluationBinding
-import com.seven.colink.domain.entity.GroupEntity
 import com.seven.colink.util.Constants
+import com.seven.colink.util.snackbar.setSnackBar
+import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.GroupType
+import com.seven.colink.util.status.SnackType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
@@ -59,6 +61,12 @@ class EvaluationActivity : AppCompatActivity() {
     }
 
     private fun initViewModel() = with(evalViewModel) {
+        lifecycleScope.launch {
+            result.collect {
+                if (it == DataResultStatus.SUCCESS) finish()
+                else binding.root.setSnackBar(SnackType.Error, it.message)
+            }
+        }
     }
 
     private fun initView() {
@@ -66,6 +74,7 @@ class EvaluationActivity : AppCompatActivity() {
             GroupType.PROJECT -> {
                 setProjectObserve()
             }
+
             GroupType.STUDY -> {
                 evalViewModel.getStudyMembers(groupEntity)
                 evalStudyAdapter = EvaluationStudyAdapter(this, studyUserList)
@@ -74,16 +83,18 @@ class EvaluationActivity : AppCompatActivity() {
                 binding.dotsindicator.attachTo(binding.vpEvalViewpager)
                 setStudyObserve()
             }
+
             else -> throw IllegalArgumentException("Unknown GroupTypeEntity!")
         }
 
         Log.d("Evaluation", "evaluationValue = ${groupTypeEntity}, $groupEntity")
     }
 
+    private var did = true
     private fun setProjectObserve() = with(evalViewModel) {
-        lifecycleScope.launch {
-            evalViewModel.evalProjectMembersData.observe(this@EvaluationActivity) {
-                it?.let { list ->
+        evalViewModel.evalProjectMembersData.observe(this@EvaluationActivity) {
+            it?.let { list ->
+                if (did) {
                     evalProjectAdapter = EvaluationProjectAdapter(
                         this@EvaluationActivity,
                         list.filterNotNull()
@@ -91,15 +102,16 @@ class EvaluationActivity : AppCompatActivity() {
                     binding.vpEvalViewpager.adapter = evalProjectAdapter
                     binding.vpEvalViewpager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
                     binding.dotsindicator.attachTo(binding.vpEvalViewpager)
+                    did = false
                 }
             }
         }
 
         lifecycleScope.launch {
-            combine(currentGroup, currentUid){ group, uid ->
-                Pair(group,uid)
-            }.collect { (group,uid) ->
-                if(group.postKey != "" && uid != "") getProjectMembers(group, uid)
+            combine(currentGroup, currentUid) { group, uid ->
+                Pair(group, uid)
+            }.collect { (group, uid) ->
+                if (group.postKey != "" && uid != "") getProjectMembers(group, uid)
                 else Unit
             }
         }

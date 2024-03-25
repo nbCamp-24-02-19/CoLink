@@ -47,9 +47,9 @@ class MainViewModel @Inject constructor(
 
         viewModelScope.launch {
             groupRepository.observeGroupState().collect { data ->
-                _groupState.value = data.map {
+                _groupState.value = data?.map {
                     it.convert()
-                }
+                }?: return@collect
             }
         }
     }

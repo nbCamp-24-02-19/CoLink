@@ -13,8 +13,10 @@ import coil.load
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentEvaluationProjectBinding
 import com.seven.colink.util.dialog.setDialog
+import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.PageState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
@@ -64,6 +66,7 @@ class EvaluationProjectFragment : Fragment() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
 
+                currentPage = position
                 evaluationViewModel.updatePage(position)
             }
         })
@@ -87,8 +90,8 @@ class EvaluationProjectFragment : Fragment() {
 
     private fun initViewModel() = with(evaluationViewModel) {
         lifecycleScope.launch {
-            combine(currentPage,evalProjectMembersData.asFlow()) { page, data ->
-                Pair(page,data)
+            combine(currentPage, evalProjectMembersData.asFlow()) { page, data ->
+                Pair(page, data)
             }.collect { (page, data) ->
                 setView(data?.get(page.num))
             }
@@ -96,24 +99,25 @@ class EvaluationProjectFragment : Fragment() {
 
         lifecycleScope.launch {
             currentPage.collect { state ->
-                when(state) {
+                when (state) {
                     PageState.FIRST -> firstPage()
                     PageState.MIDDLE -> Unit
-                    PageState.LAST -> lastPage(state.num)
+                    PageState.LAST -> lastPage()
                 }
 
-                updateMembers(state.num)
+                updateMembers(state.num - 1 )
             }
         }
+    }
 
+    private fun updateGrade() = with(evaluationViewModel) {
         lifecycleScope.launch {
-            combine(currentGroup,currentUid,currentPage) { group, uid, page ->
+            combine(currentGroup, currentUid, currentPage) { group, uid, page ->
                 Triple(group, uid, page)
             }.filter {
                 it.third == PageState.LAST
-            }.collect { (group, uid,_) ->
+            }.collect { (group, uid, _) ->
                 updateProjectUserGrade(group, uid)
-                requireActivity().finish()
             }
         }
     }
@@ -129,37 +133,37 @@ class EvaluationProjectFragment : Fragment() {
         )
 
     private fun firstPage() {
-            binding.tvEvalPrev.visibility = View.INVISIBLE
-            binding.tvEvalNext.visibility = View.VISIBLE
-            binding.tvEvalNext.setOnClickListener {
-                setViewPager()
-                if (currentPage == 0) {
-                    viewPager.setCurrentItem(currentPage + 1, true)
-                }
+        binding.tvEvalPrev.visibility = View.INVISIBLE
+        binding.tvEvalNext.visibility = View.VISIBLE
+        binding.tvEvalNext.setOnClickListener {
+            setViewPager()
+            if (currentPage == 0) {
+                viewPager.setCurrentItem(currentPage + 1, true)
             }
+        }
     }
 
-    private fun lastPage(page: Int) {
-            binding.tvEvalNext.visibility = View.INVISIBLE
-            binding.tvEvalPrev.setOnClickListener {
-                setViewPager()
-                if (currentPage > 0) {
-                    viewPager.setCurrentItem(currentPage - 1, true)
-                }
-
-            binding.btnEvalNext.text = getString(R.string.eval_project_done)
-            binding.btnEvalNext.setOnClickListener {
-                requireContext().setDialog(
-                    title = getString(R.string.eval_dialog_title),
-                    message = getString(R.string.eval_dialog_des),
-                    confirmAction = {
-                        updateMembers(page)
-
-                        it.dismiss()
-                    },
-                    cancelAction = { it.dismiss() }
-                ).show()
+    private fun lastPage() {
+        binding.tvEvalNext.visibility = View.INVISIBLE
+        binding.tvEvalPrev.setOnClickListener {
+            setViewPager()
+            if (currentPage > 0) {
+                viewPager.setCurrentItem(currentPage - 1, true)
             }
+        }
+
+        binding.btnEvalNext.text = getString(R.string.eval_project_done)
+        binding.btnEvalNext.setOnClickListener {
+            requireContext().setDialog(
+                title = getString(R.string.eval_dialog_title),
+                message = getString(R.string.eval_dialog_des),
+                confirmAction = {
+                    updateMembers(currentPage)
+                    updateGrade()
+                    it.dismiss()
+                },
+                cancelAction = { it.dismiss() }
+            ).show()
         }
     }
 
