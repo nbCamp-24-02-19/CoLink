@@ -210,7 +210,10 @@ class GroupBoardListAdapter(
                 }
                 setProgress(item.status)
                 setStatusTextColors(context, item.status)
-                tvStatusMessage.text = getStatusMessage(context, item.status, item.startDate)
+
+                val startDate =
+                    if (item.status == ProjectStatus.RECRUIT) item.startDate else item.projectStartDate
+                tvStatusMessage.text = getStatusMessage(context, item.status, startDate)
                 btStatus.text = getStatusButtonText(item.status)
             }
         }
@@ -355,9 +358,11 @@ class GroupBoardListAdapter(
             if (item is GroupBoardItem.GroupOptionItem) {
                 binding.etPrecautions.setText(item.precautions)
                 binding.etPrecautions.inputType = InputType.TYPE_NULL
-                binding.etRecruitInfo.setText(item.recruitInfo)
-                binding.etRecruitInfo.inputType = InputType.TYPE_NULL
-                binding.layoutDate.visibility = View.GONE
+                val startDateText = item.startDate
+                val endDateText = item.endDate
+                if (!startDateText.isNullOrBlank() && !endDateText.isNullOrBlank()) {
+                    binding.etEstimatedSchedule.setText("$startDateText~$endDateText")
+                }
             }
         }
     }

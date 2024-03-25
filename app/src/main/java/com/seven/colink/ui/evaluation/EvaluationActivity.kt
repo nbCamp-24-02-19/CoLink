@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.seven.colink.databinding.ActivityEvaluationBinding
-import com.seven.colink.domain.entity.GroupEntity
 import com.seven.colink.util.Constants
 import com.seven.colink.util.status.GroupType
 import dagger.hilt.android.AndroidEntryPoint
@@ -79,18 +78,21 @@ class EvaluationActivity : AppCompatActivity() {
 
         Log.d("Evaluation", "evaluationValue = ${groupTypeEntity}, $groupEntity")
     }
-
+    private var a = false
     private fun setProjectObserve() = with(evalViewModel) {
         lifecycleScope.launch {
             evalViewModel.evalProjectMembersData.observe(this@EvaluationActivity) {
                 it?.let { list ->
-                    evalProjectAdapter = EvaluationProjectAdapter(
-                        this@EvaluationActivity,
-                        list.filterNotNull()
-                    )
-                    binding.vpEvalViewpager.adapter = evalProjectAdapter
-                    binding.vpEvalViewpager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
-                    binding.dotsindicator.attachTo(binding.vpEvalViewpager)
+                    if (a.not()) {
+                        evalProjectAdapter = EvaluationProjectAdapter(
+                            this@EvaluationActivity,
+                            list.filterNotNull()
+                        )
+                        binding.vpEvalViewpager.adapter = evalProjectAdapter
+                        binding.vpEvalViewpager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+                        binding.dotsindicator.attachTo(binding.vpEvalViewpager)
+                    }
+                    a = true
                 }
             }
         }

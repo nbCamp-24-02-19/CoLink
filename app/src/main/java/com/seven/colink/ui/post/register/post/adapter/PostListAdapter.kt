@@ -35,7 +35,6 @@ import com.seven.colink.util.status.PostContentViewType
 
 class PostListAdapter(
     private val onTextChanged: (Int, String, String, PostListItem) -> Unit,
-    private val onOptionTextChanged: (Int, String, String, String, PostListItem) -> Unit,
     private val onClickView: (View, PostListItem) -> Unit,
     private val onClickGroupTag: (String) -> Unit,
     private val tagAdapterOnClickItem: (Int, TagListItem) -> Unit,
@@ -103,7 +102,7 @@ class PostListAdapter(
                     parent,
                     false
                 ),
-                onOptionTextChanged
+                onTextChanged
             )
 
             PostContentViewType.GROUP_TYPE -> {
@@ -273,14 +272,13 @@ class PostListAdapter(
 
     class PostOptionItemViewHolder(
         private val binding: ItemPostSelectionTypeBinding,
-        private val onOptionTextChanged: (Int, String, String, String, PostListItem) -> Unit,
+        private val onTextChanged: (Int, String, String, PostListItem) -> Unit,
     ) : PostViewHolder(binding.root) {
         private var currentItem: PostListItem? = null
         private val editTexts
             get() = with(binding) {
                 listOf(
                     etPrecautions,
-                    etRecruitInfo,
                     etEstimatedSchedule
                 )
             }
@@ -294,7 +292,6 @@ class PostListAdapter(
                 editText.addTextChangedListener {
                     notifyTextChange(
                         binding.etPrecautions.text.toString(),
-                        binding.etRecruitInfo.text.toString(),
                         binding.etEstimatedSchedule.text.toString(),
                         currentItem
                     )
@@ -306,23 +303,19 @@ class PostListAdapter(
             if (item is PostListItem.PostOptionItem) {
                 val context = binding.root.context
                 currentItem = item
-
                 with(binding) {
                     val precautionsText = item.precautions ?: ""
-                    val recruitInfoText = item.recruitInfo ?: ""
                     val startDateText = item.startDate
                     val endDateText = item.endDate
-
                     if (!startDateText.isNullOrBlank() && !endDateText.isNullOrBlank()) {
                         etEstimatedSchedule.setText("$startDateText~$endDateText")
                     }
-
                     etPrecautions.setText(precautionsText)
-                    etRecruitInfo.setText(recruitInfoText)
                     tvTitleAsterisk.isVisible = true
-                    tvDescriptionAsterisk.isVisible = true
+                    tvCalendarAsterisk.isVisible = true
                     etEstimatedSchedule.setOnClickListener {
                         context.setUpCalendarDialog(
+                            etEstimatedSchedule.text.toString(),
                             confirmAction = { startDate, endDate ->
                                 etEstimatedSchedule.setText("$startDate~$endDate")
                             },
@@ -336,15 +329,13 @@ class PostListAdapter(
 
         private fun notifyTextChange(
             precautions: String,
-            description: String,
             estimatedSchedule: String,
             item: PostListItem?
         ) {
             item?.let {
-                onOptionTextChanged(
+                onTextChanged(
                     adapterPosition,
                     precautions,
-                    description,
                     estimatedSchedule,
                     it
                 )

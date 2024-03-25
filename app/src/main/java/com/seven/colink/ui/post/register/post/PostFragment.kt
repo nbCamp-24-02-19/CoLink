@@ -41,17 +41,8 @@ class PostFragment : Fragment() {
         PostListAdapter(
             onTextChanged = { position, title, description, item ->
                 when (item) {
-                    is PostListItem.PostItem -> {
+                    is PostListItem.PostItem, is PostListItem.PostOptionItem -> {
                         viewModel.updatePostItemText(position, title, description)
-                    }
-
-                    else -> Unit
-                }
-            },
-            onOptionTextChanged = { position, title, description, date, item ->
-                when (item) {
-                    is PostListItem.PostOptionItem -> {
-                        viewModel.updatePostOptionItemText(position, title, description, date)
                     }
 
                     else -> Unit

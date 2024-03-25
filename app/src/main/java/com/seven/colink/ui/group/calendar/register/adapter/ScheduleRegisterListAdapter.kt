@@ -32,7 +32,7 @@ class ScheduleRegisterListAdapter(
 ) : ListAdapter<ScheduleModel, ScheduleRegisterListAdapter.ScheduleViewHolder>(
     object : DiffUtil.ItemCallback<ScheduleModel>() {
         override fun areItemsTheSame(oldItem: ScheduleModel, newItem: ScheduleModel): Boolean =
-            oldItem.authId == newItem.authId
+            oldItem.key == newItem.key
 
         override fun areContentsTheSame(oldItem: ScheduleModel, newItem: ScheduleModel): Boolean =
             oldItem == newItem
