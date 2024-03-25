@@ -56,9 +56,7 @@ class ApplyRequestFragment : Fragment() {
                     }
                 }
             },
-            onChangeStatus = { item, status ->
-
-            }
+            onChangeStatus = { _, _ -> }
         )
     }
 
