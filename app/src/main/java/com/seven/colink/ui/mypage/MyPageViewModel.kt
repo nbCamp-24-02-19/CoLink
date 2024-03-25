@@ -34,7 +34,7 @@ class MyPageViewModel @Inject constructor(
         loadUserPost()
     }
 
-    private fun loadUserDetails() {
+    fun loadUserDetails() {
         viewModelScope.launch {
 
             _userDetails.value = UiState.Loading
@@ -134,7 +134,7 @@ class MyPageViewModel @Inject constructor(
         name = name,
         email = email,
         profile = photoUrl,
-        mainSpecialty = mainSpecialty,
+        mainSpecialty = specialty,
         specialty = specialty,
         skill = skill,
         level = level,
