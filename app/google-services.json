@@ -8,43 +8,6 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:656455146700:android:93bad13eb4918860aef669",
-        "android_client_info": {
-          "package_name": "com.example.colink"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "656455146700-l76gvhpoavqovduaun519f4fhke3nhdi.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.colink",
-            "certificate_hash": "d3820e153ed342fd7fc926c32c09eeaa109a4dae"
-          }
-        },
-        {
-          "client_id": "656455146700-2t7v7fmjicbp49jd0shc2aeblmn2gq6e.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyC6QiF3o_TMgFgI6SJ2D4_RdSjZmIYYaRs"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "656455146700-2t7v7fmjicbp49jd0shc2aeblmn2gq6e.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:656455146700:android:7dbe904a82145823aef669",
         "android_client_info": {
           "package_name": "com.seven.colink"
@@ -52,7 +15,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "656455146700-2t7v7fmjicbp49jd0shc2aeblmn2gq6e.apps.googleusercontent.com",
+          "client_id": "656455146700-2p02siaphrgm2kkvs9j3sbqs6ffsogvp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.seven.colink",
+            "certificate_hash": "d3820e153ed342fd7fc926c32c09eeaa109a4dae"
+          }
+        },
+        {
+          "client_id": "656455146700-4it82b9v7j6q8m0fv9hms81rr8gnccka.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
