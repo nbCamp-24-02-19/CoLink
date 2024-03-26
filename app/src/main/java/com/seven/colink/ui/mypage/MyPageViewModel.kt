@@ -5,16 +5,20 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.seven.colink.BuildConfig
 import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.repository.UserRepository
+import com.seven.colink.domain.usecase.GetChatRoomUseCase
 import com.seven.colink.util.convert.convertGradeFormat
 import com.seven.colink.util.convert.convertToDaysAgo
 import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,7 +26,8 @@ import javax.inject.Inject
 class MyPageViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
-    private val postRepository: PostRepository
+    private val postRepository: PostRepository,
+    private val getChatRoomUseCase: GetChatRoomUseCase,
 ) : ViewModel() {
 
     private val _userDetails = MutableLiveData<UiState<MyPageUserModel>>()
@@ -32,6 +37,8 @@ class MyPageViewModel @Inject constructor(
     val userPost: LiveData<List<MyPagePostModel>> = _userPosts
     val likePost : LiveData<List<MyPageLikeModel>?> = _likePost
 
+    private val _operatorChat = MutableSharedFlow<String>()
+    val operatorChat = _operatorChat.asSharedFlow()
 
     init {
         loadUserDetails()
@@ -169,5 +176,13 @@ class MyPageViewModel @Inject constructor(
         link = link,
         score = grade?.convertGradeFormat()
     )
+
+    fun setOperatorChat() {
+        viewModelScope.launch {
+            _operatorChat.emit(
+                getChatRoomUseCase(uid = BuildConfig.ADMIN_UID).key
+            )
+        }
+    }
 
 }
