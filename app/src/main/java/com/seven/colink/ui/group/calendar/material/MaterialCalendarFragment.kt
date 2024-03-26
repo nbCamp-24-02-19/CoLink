@@ -60,6 +60,7 @@ class MaterialCalendarFragment : Fragment() {
 
     private fun initView() = with(binding) {
         recyclerViewSchedule.adapter = scheduleListAdapter
+        recyclerViewSchedule.itemAnimator = null
         binding.ivCalendarFinish.setOnClickListener {
             if (!parentFragmentManager.isStateSaved) {
                 parentFragmentManager.popBackStack()
@@ -75,7 +76,7 @@ class MaterialCalendarFragment : Fragment() {
                     R.anim.enter_animation,
                     R.anim.exit_animation
                 )
-                add(
+                replace(
                     R.id.fg_activity_group,
                     RegisterScheduleFragment()
                 )
@@ -114,10 +115,15 @@ class MaterialCalendarFragment : Fragment() {
                     saturdayDecorator,
                     selectedMonthDecorator
                 )
-                val clickedDay = CalendarDay.from(date.year, date.month, 1)
+                val today = LocalDate.now()
+                val clickedDay = if (date.toLocalDate().month == today.month)
+                    CalendarDay.from(today.year, today.monthValue, today.dayOfMonth)
+                else
+                    CalendarDay.from(date.year, date.month, 1)
+
                 widget.setDateSelected(clickedDay, true)
-                viewModel.filterScheduleListByDate(date.toLocalDate())
-                viewModel.filterDataByMonth(date.toLocalDate())
+                viewModel.filterScheduleListByDate(clickedDay.toLocalDate())
+                viewModel.filterDataByMonth(clickedDay.toLocalDate())
             }
 
             setWeekDayFormatter(ArrayWeekDayFormatter(resources.getTextArray(R.array.custom_weekdays)))
@@ -147,7 +153,6 @@ class MaterialCalendarFragment : Fragment() {
 
             lifecycleScope.launch {
                 uiState.collect { uiState ->
-
                 }
             }
 
@@ -162,13 +167,14 @@ class MaterialCalendarFragment : Fragment() {
 
         sharedViewModel.apply {
             lifecycleScope.launch {
-                key.collect { it?.let { key -> viewModel.setEntity(key) } }
+                key.collect {
+                    it?.let { key ->
+                        val currentDate = binding.calendarView.currentDate.toLocalDate()
+                        viewModel.setEntity(key, currentDate)
+                    }
+                }
             }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
     }
 
     private fun onScheduleItemClick(item: ScheduleModel) {
@@ -181,16 +187,18 @@ class MaterialCalendarFragment : Fragment() {
                 R.anim.enter_animation,
                 R.anim.exit_animation
             )
-            add(
+            replace(
                 R.id.fg_activity_group,
                 RegisterScheduleFragment()
             )
             addToBackStack(null)
             commit()
         }
+        viewModel.clearFilteredByMonth()
     }
 
     private fun CalendarDay.toLocalDate(): LocalDate {
         return LocalDate.of(year, month, day)
     }
+
 }

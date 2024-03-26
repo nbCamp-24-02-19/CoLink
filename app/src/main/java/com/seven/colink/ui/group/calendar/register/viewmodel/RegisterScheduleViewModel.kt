@@ -29,8 +29,8 @@ class RegisterScheduleViewModel @Inject constructor(
     private lateinit var groupKey: String
     private lateinit var entryType: CalendarEntryType
 
-    private val _uiState = MutableStateFlow(ScheduleModel.init())
-    val uiState: StateFlow<ScheduleModel> = _uiState
+    private val _uiState = MutableStateFlow<List<ScheduleModel>?>(emptyList())
+    val uiState: StateFlow<List<ScheduleModel>?> = _uiState
 
     private val _complete = MutableSharedFlow<String>()
     val complete = _complete.asSharedFlow()
@@ -43,22 +43,22 @@ class RegisterScheduleViewModel @Inject constructor(
 
     fun setEntryType(postEntryType: CalendarEntryType) {
         entryType = postEntryType
-        updateButtonUiState()
-    }
-
-    fun setEntity(key: String) {
-        viewModelScope.launch {
-            val schedule = scheduleRepository.getScheduleDetail(key).getOrNull()?.setUi()
-                ?: ScheduleModel.init()
-            _uiState.value = schedule
+        if (entryType == CalendarEntryType.CREATE) {
+            createEntity()
         }
     }
 
-    private fun updateButtonUiState() {
-        viewModelScope.launch {
-            val authId = authRepository.getCurrentUser().message
-            _uiState.value = uiState.value.copy(buttonUiState = setButtonState(authId))
-        }
+    fun setEntity(key: String) = viewModelScope.launch {
+        _uiState.value =
+            scheduleRepository.getScheduleDetail(key).getOrNull()?.setUi() ?: emptyList()
+    }
+
+    private fun createEntity() = viewModelScope.launch {
+        _uiState.value = ScheduleEntity(
+            startDate = getDateByState(ScheduleDateType.CURRENT),
+            endDate = getDateByState(ScheduleDateType.AFTER_TWO_HOUR),
+            calendarColor = ColorEnum.UNKNOWN,
+        ).setUi()
     }
 
     private suspend fun setButtonState(authId: String?): CalendarButtonUiState {
@@ -76,14 +76,19 @@ class RegisterScheduleViewModel @Inject constructor(
 
     fun onChangedColor(color: ColorEnum) {
         updateTexts()
-        _uiState.value = uiState.value.copy(calendarColor = color)
+        _uiState.value = uiState.value?.map {
+            it.copy(calendarColor = color)
+        }
     }
 
     fun onChangedDateTime(key: String, datetime: String) {
         updateTexts()
-        when (key) {
-            "startDate" -> _uiState.value = uiState.value.copy(startDate = datetime)
-            "endDate" -> _uiState.value = uiState.value.copy(endDate = datetime)
+        _uiState.value = uiState.value?.map {
+            when (key) {
+                "startDate" -> it.copy(startDate = datetime)
+                "endDate" -> it.copy(endDate = datetime)
+                else -> it
+            }
         }
     }
 
@@ -93,17 +98,22 @@ class RegisterScheduleViewModel @Inject constructor(
     }
 
     private fun updateTexts() {
-        _uiState.value = uiState.value.copy(
-            title = textItemDataMap["schedule"] ?: uiState.value.title,
-            description = textItemDataMap["description"] ?: uiState.value.description
-        )
+        _uiState.value = uiState.value?.map {
+            it.copy(
+                title = textItemDataMap["schedule"] ?: it.title,
+                description = textItemDataMap["description"] ?: it.description
+            )
+        }
     }
 
     fun onClickCompleteButton() {
-        when (uiState.value.buttonUiState) {
+        when (uiState.value?.firstOrNull()?.buttonUiState) {
             CalendarButtonUiState.Create -> onClickCreate()
-            CalendarButtonUiState.Update -> _uiState.value =
-                uiState.value.copy(buttonUiState = CalendarButtonUiState.Editing)
+            CalendarButtonUiState.Update -> {
+                _uiState.value = uiState.value?.map {
+                    it.copy(buttonUiState = CalendarButtonUiState.Editing)
+                }
+            }
 
             CalendarButtonUiState.Editing -> onClickUpdate()
             else -> Unit
@@ -112,24 +122,28 @@ class RegisterScheduleViewModel @Inject constructor(
 
     private fun onClickCreate() {
         viewModelScope.launch {
-            val schedule = uiState.value.convert()
-            val result = scheduleRepository.registerSchedule(schedule)
-            handleResult(result)
+            val schedule = uiState.value?.firstOrNull()?.convert()
+            if (schedule != null) {
+                val result = scheduleRepository.registerSchedule(schedule)
+                handleResult(result)
+            }
         }
     }
 
     private fun onClickUpdate() {
         viewModelScope.launch {
-            val schedule = uiState.value.convert()
-            val result = scheduleRepository.updateSchedule(schedule.key, schedule)
-            handleResult(result)
+            val schedule = uiState.value?.firstOrNull()?.convert()
+            if (schedule != null) {
+                val result = scheduleRepository.updateSchedule(schedule.key, schedule)
+                handleResult(result)
+            }
         }
     }
 
     fun onClickDelete() {
         viewModelScope.launch {
-            if (uiState.value.buttonUiState != CalendarButtonUiState.Editing) return@launch
-            val result = scheduleRepository.deleteSchedule(uiState.value.key!!)
+            if (uiState.value?.firstOrNull()?.buttonUiState != CalendarButtonUiState.Editing) return@launch
+            val result = scheduleRepository.deleteSchedule(uiState.value?.firstOrNull()?.key ?: "")
             handleResult(result)
         }
     }
@@ -141,25 +155,28 @@ class RegisterScheduleViewModel @Inject constructor(
         }
     }
 
-    private suspend fun ScheduleEntity.setUi(): ScheduleModel {
-        val colorEnum = calendarColor ?: ColorEnum.UNKNOWN
-        return ScheduleModel(
-            key = key,
-            authId = authId,
-            groupId = groupId,
-            startDate = startDate,
-            endDate = endDate,
-            calendarColor = colorEnum,
-            title = title,
-            description = description,
-            buttonUiState = setButtonState(authId)
+    private suspend fun ScheduleEntity.setUi(): List<ScheduleModel> {
+        val authId = authRepository.getCurrentUser().message
+        return listOf(
+            ScheduleModel(
+                key = key,
+                authId = authId,
+                groupId = if (groupId.isNullOrBlank()) groupKey else groupId,
+                startDate = startDate,
+                endDate = endDate,
+                calendarColor = calendarColor ?: ColorEnum.UNKNOWN,
+                title = title,
+                description = description,
+                buttonUiState = setButtonState(authId)
+            )
         )
     }
+
 
     private suspend fun ScheduleModel.convert() = ScheduleEntity(
         key = key ?: ("SE_" + UUID.randomUUID()),
         authId = authId ?: authRepository.getCurrentUser().message,
-        groupId = groupId ?: groupKey,
+        groupId = groupId,
         startDate = startDate ?: getDateByState(ScheduleDateType.CURRENT),
         endDate = endDate ?: getDateByState(ScheduleDateType.AFTER_TWO_HOUR),
         calendarColor = calendarColor,
