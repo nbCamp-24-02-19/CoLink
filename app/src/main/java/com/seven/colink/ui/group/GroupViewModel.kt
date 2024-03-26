@@ -109,7 +109,6 @@ class GroupViewModel @Inject constructor(
             groupType = groupType,
             thumbnail = imageUrl,
             projectName = teamName,
-            days = "모집중",
             description = description,
             tags = tags,
             memberIds = memberIds
