@@ -137,7 +137,6 @@ class GroupAdapter(
     ) : GroupViewHolder(binding.root) {
         override fun onBind(item: GroupData) {
             if (item is GroupData.GroupList) {
-//                binding.tvGroupType.text = if (item.groupType==GroupType.PROJECT)"P" else "S"
                 if (item.groupType == GroupType.PROJECT) {
                     binding.tvGroupType.text = "P"
                 } else {

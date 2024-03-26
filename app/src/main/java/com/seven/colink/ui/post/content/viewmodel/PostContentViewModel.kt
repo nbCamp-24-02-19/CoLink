@@ -378,7 +378,6 @@ class PostContentViewModel @Inject constructor(
                     }
                 }
                 _uiState.value = updateUiState
-                Log.d("Evaluation","updateUiState = $updateUiState")
             } else {
                 _currentUser = currentUser!!.copy(likeList = currentUser!!.likeList?.minus(listOf(key).toSet()))
                 val updateUiState = _uiState.value?.map { item ->
@@ -389,7 +388,6 @@ class PostContentViewModel @Inject constructor(
                     }
                 }
                 _uiState.value = updateUiState
-                Log.d("Evaluation","updateUiState = $updateUiState")
             }
 
         }

@@ -72,7 +72,6 @@ class EvaluationViewModel @Inject constructor(
             }.mapNotNull {// map으로 해당 그룹에서 속해 있는 UserEntity 받아옴
                 userRepository.getUserDetails(it).getOrNull()?.convertEvalProjectData()
             }
-            Log.d("Evaluation", "evalMembersData = ${_evalProjectMembersData.value}")
         }
     }
 
@@ -97,7 +96,6 @@ class EvaluationViewModel @Inject constructor(
                 it.grade = ((it.communication!! + it.technic!! + it.diligence!! + it.flexibility!! + it.creativity!!) / 5).toDouble()
             }
             _evalProjectMembersData.value = projectMembers
-            Log.d("Evaluation", "### updateProjectMembers = $projectMembers")
         }
     }
 
@@ -153,7 +151,6 @@ class EvaluationViewModel @Inject constructor(
             }.mapNotNull {
                 userRepository.getUserDetails(it).getOrNull()?.convertEvalStudyData()
             }
-            Log.d("Evaluation", "evalStudyMembersData = ${_evalStudyMembersData.value}")
         }
     }
 
@@ -174,7 +171,6 @@ class EvaluationViewModel @Inject constructor(
                 it.grade = ((it.diligence!! + it.communication!! + it.flexibility!!) / 3).toDouble()
             }
             _evalStudyMembersData.value = studyMembers
-            Log.d("Evaluation", "### updateStudyMembers = $studyMembers")
         }
     }
 
@@ -230,6 +226,5 @@ class EvaluationViewModel @Inject constructor(
                     currentGroup.value.memberIds.size - 2 -> PageState.LAST
                     else -> PageState.MIDDLE
                 }.apply { num = position }
-        Log.d("Evaluation","currentPage = ${_currentPage.value}")
         }
 }
