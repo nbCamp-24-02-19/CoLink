@@ -1,5 +1,6 @@
 package com.seven.colink.ui.chat.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +18,7 @@ import com.seven.colink.ui.chat.type.ChatRoomItemType
 import com.seven.colink.ui.chat.type.MessageState
 
 class ChatRoomAdapter(
-
+    private val onClickLink: (String) -> Unit,
 ): ListAdapter<ChatRoomItem, ChatRoomAdapter.ViewHolder>(
     object : DiffUtil.ItemCallback<ChatRoomItem>(){
         override fun areItemsTheSame(
@@ -66,12 +67,14 @@ class ChatRoomAdapter(
     = when(ChatRoomItemType.from(viewType)) {
         ChatRoomItemType.MY -> {
             MyMessageViewHolder(
-                ItemChatMyMessageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ItemChatMyMessageBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                onClickLink
             )
         }
         ChatRoomItemType.OTHER -> {
             OtherMessageViewHolder(
-                ItemChatOtherMessageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ItemChatOtherMessageBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                onClickLink
             )
         }
         else -> UnknownViewHolder(
@@ -80,7 +83,8 @@ class ChatRoomAdapter(
     }
 
     class OtherMessageViewHolder(
-        private val binding: ItemChatOtherMessageBinding
+        private val binding: ItemChatOtherMessageBinding,
+        private val onClickLink: (String) -> Unit,
     ) : ViewHolder(binding.root) {
         override fun onBind(item: ChatRoomItem) = with(binding) {
             if (item !is ChatRoomItem.OtherMessage) return@with
@@ -102,6 +106,21 @@ class ChatRoomAdapter(
                 }
             } else {
                 ivChatMessageImg.isVisible = false
+            }
+
+            if (item.embed != null) {
+                clChatEmbed.isVisible = true
+                ivChatEmbed.load(item.embed.imageUrl)
+                tvChatEmbedTitle.text = item.embed.title
+                tvChatEmbedDescription.text = item.embed.description
+                tvChatEmbedDomain.text = item.embed.host
+                tvChatMessage.isVisible = false
+
+                binding.root.setOnClickListener {
+                    item.embed.link?.let { link -> onClickLink(link) }
+                }
+            } else {
+                clChatEmbed.isVisible = false
             }
         }
 
@@ -126,7 +145,8 @@ class ChatRoomAdapter(
     }
 
     class MyMessageViewHolder(
-        private val binding: ItemChatMyMessageBinding
+        private val binding: ItemChatMyMessageBinding,
+        private val onClickLink: (String) -> Unit,
     ): ViewHolder(binding.root) {
         override fun onBind(item: ChatRoomItem) = with(binding){
             if (item !is ChatRoomItem.MyMessage) return@with
@@ -147,6 +167,21 @@ class ChatRoomAdapter(
                 }
             }else {
                 ivChatMyMessageImg.isVisible = false
+            }
+
+            if (item.embed != null) {
+                clChatMyEmbed.isVisible = true
+                ivChatMyEmbed.load(item.embed.imageUrl)
+                tvChatEmbedTitle.text = item.embed.title
+                tvChatEmbedDescription.text = item.embed.description
+                tvChatEmbedDomain.text = item.embed.host
+                tvChatMyMessage.isVisible = false
+
+                binding.root.setOnClickListener {
+                    item.embed.link?.let { link -> onClickLink(link) }
+                }
+            } else {
+                clChatMyEmbed.isVisible = false
             }
         }
 

@@ -27,15 +27,16 @@ import com.seven.colink.ui.post.register.post.model.PostListItem
 import com.seven.colink.ui.post.register.post.model.TagListItem
 import com.seven.colink.util.Constants.Companion.LIMITED_PEOPLE
 import com.seven.colink.util.applyDarkFilter
+import com.seven.colink.util.dialog.setUpCalendarDialog
 import com.seven.colink.util.highlightNumbers
 import com.seven.colink.util.showToast
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.PostContentViewType
 
 class PostListAdapter(
-    private val onChangedFocus: (Int, String, String, PostListItem) -> Unit,
+    private val onTextChanged: (Int, String, String, PostListItem) -> Unit,
     private val onClickView: (View, PostListItem) -> Unit,
-    private val onGroupImageClick: (String) -> Unit,
+    private val onClickGroupTag: (String) -> Unit,
     private val tagAdapterOnClickItem: (Int, TagListItem) -> Unit,
     private val recruitAdapterOnClickItem: (Int, RecruitInfo) -> Unit
 ) : ListAdapter<PostListItem, PostListAdapter.PostViewHolder>(
@@ -55,6 +56,14 @@ class PostListAdapter(
 
                 oldItem is PostListItem.RecruitItem && newItem is PostListItem.RecruitItem -> {
                     oldItem.key == newItem.key
+                }
+
+                oldItem is PostListItem.TitleItem && newItem is PostListItem.TitleItem -> {
+                    oldItem.firstMessage == newItem.firstMessage
+                }
+
+                oldItem is PostListItem.ButtonItem && newItem is PostListItem.ButtonItem -> {
+                    oldItem.buttonText == newItem.buttonText
                 }
 
                 else -> {
@@ -81,9 +90,9 @@ class PostListAdapter(
                     parent,
                     false
                 ),
-                onChangedFocus,
+                onTextChanged,
                 onClickView,
-                onGroupImageClick,
+                onClickGroupTag,
                 tagAdapterOnClickItem
             )
 
@@ -93,7 +102,7 @@ class PostListAdapter(
                     parent,
                     false
                 ),
-                onChangedFocus
+                onTextChanged
             )
 
             PostContentViewType.GROUP_TYPE -> {
@@ -171,9 +180,9 @@ class PostListAdapter(
 
     class PostItemViewHolder(
         private val binding: ItemPostEditBinding,
-        private val onChangedFocus: (Int, String, String, PostListItem) -> Unit,
+        private val onTextChanged: (Int, String, String, PostListItem) -> Unit,
         private val onClickView: (View, PostListItem) -> Unit,
-        private val onGroupImageClick: (String) -> Unit,
+        private val onClickGroupTag: (String) -> Unit,
         private val tagAdapterOnClickItem: (Int, TagListItem) -> Unit
     ) : PostViewHolder(binding.root) {
         private var currentItem: PostListItem? = null
@@ -202,7 +211,7 @@ class PostListAdapter(
                 if ((actionId == EditorInfo.IME_ACTION_DONE || (event?.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER))
                     && binding.etGroupTag.text.toString().trim().isNotBlank()
                 ) {
-                    onGroupImageClick(binding.etGroupTag.text.toString().trim())
+                    onClickGroupTag(binding.etGroupTag.text.toString().trim())
                     binding.etGroupTag.text.clear()
                     return@setOnEditorActionListener true
                 }
@@ -257,20 +266,20 @@ class PostListAdapter(
         }
 
         private fun notifyTextChange(title: String, description: String, item: PostListItem?) {
-            item?.let { onChangedFocus(adapterPosition, title, description, it) }
+            item?.let { onTextChanged(adapterPosition, title, description, it) }
         }
     }
 
     class PostOptionItemViewHolder(
         private val binding: ItemPostSelectionTypeBinding,
-        private val onChangedFocus: (Int, String, String, PostListItem) -> Unit
+        private val onTextChanged: (Int, String, String, PostListItem) -> Unit,
     ) : PostViewHolder(binding.root) {
         private var currentItem: PostListItem? = null
         private val editTexts
             get() = with(binding) {
                 listOf(
                     etPrecautions,
-                    etRecruitInfo
+                    etEstimatedSchedule
                 )
             }
 
@@ -283,7 +292,7 @@ class PostListAdapter(
                 editText.addTextChangedListener {
                     notifyTextChange(
                         binding.etPrecautions.text.toString(),
-                        binding.etRecruitInfo.text.toString(),
+                        binding.etEstimatedSchedule.text.toString(),
                         currentItem
                     )
                 }
@@ -292,20 +301,45 @@ class PostListAdapter(
 
         override fun onBind(item: PostListItem) {
             if (item is PostListItem.PostOptionItem) {
+                val context = binding.root.context
                 currentItem = item
-                binding.etPrecautions.setText(item.precautions)
-                binding.etRecruitInfo.setText(item.recruitInfo)
-                binding.tvTitleAsterisk.isVisible = true
-                binding.tvDescriptionAsterisk.isVisible = true
+                with(binding) {
+                    val precautionsText = item.precautions ?: ""
+                    val startDateText = item.startDate
+                    val endDateText = item.endDate
+                    if (!startDateText.isNullOrBlank() && !endDateText.isNullOrBlank()) {
+                        etEstimatedSchedule.setText("$startDateText~$endDateText")
+                    }
+                    etPrecautions.setText(precautionsText)
+                    tvTitleAsterisk.isVisible = true
+                    tvCalendarAsterisk.isVisible = true
+                    etEstimatedSchedule.setOnClickListener {
+                        context.setUpCalendarDialog(
+                            etEstimatedSchedule.text.toString(),
+                            confirmAction = { startDate, endDate ->
+                                etEstimatedSchedule.setText("$startDate~$endDate")
+                            },
+                            cancelAction = {}
+                        )
+                    }
+                }
             }
         }
 
+
         private fun notifyTextChange(
             precautions: String,
-            description: String,
+            estimatedSchedule: String,
             item: PostListItem?
         ) {
-            item?.let { onChangedFocus(adapterPosition, precautions, description, it) }
+            item?.let {
+                onTextChanged(
+                    adapterPosition,
+                    precautions,
+                    estimatedSchedule,
+                    it
+                )
+            }
         }
     }
 

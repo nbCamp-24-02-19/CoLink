@@ -78,6 +78,7 @@ class SearchAdapter(val mItems: MutableList<SearchModel>) :
         holder.tag.text = item.tags?.map { "# " + it }?.joinToString("   ","","")
         holder.poster.text = item.authId
         holder.time.text = item.registeredDate
+        holder.heartCount.text = item.likes.toString()
         holder.viewCount.text = item.views.toString()
     }
 

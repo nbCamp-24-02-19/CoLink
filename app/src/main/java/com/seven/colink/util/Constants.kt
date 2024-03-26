@@ -2,7 +2,6 @@ package com.seven.colink.util
 
 class Constants {
     companion object {
-        // post
         const val EXTRA_ENTRY_TYPE = "extra_entry_type"
         const val EXTRA_POSITION_ENTITY = "extra_entity_position"
         const val EXTRA_ENTITY_KEY = "extra_entity_key"
@@ -11,14 +10,13 @@ class Constants {
         const val LIMITED_PEOPLE = 9
         const val LIMITED_TAG_COUNT = 5
 
-        // permission
         const val MEDIA_PERMISSION = android.Manifest.permission.READ_EXTERNAL_STORAGE
         const val IMAGE_PERMISSION = android.Manifest.permission.READ_MEDIA_IMAGES
 
-        // log-in
+        const val CALENDAR_TIME_FORMAT = "yyyy.MM.dd HH:mm"
+
         const val LOG_IN_TAG = "log_in_tag"
 
-        // product
         const val SAVE_SUCCESS = "save_success"
         const val SAVE_FAIL = "save_fail"
     }

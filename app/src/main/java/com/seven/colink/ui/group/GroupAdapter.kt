@@ -185,7 +185,7 @@ class GroupAdapter(
                 binding.ivHomeBottomThumubnail.load(item.img)
                 binding.tvHomeBottomTitle.text = item.title
                 binding.tvHomeBottomDes.text = item.description
-                binding.tvHomeBottomKind.text = item.kind
+                binding.tvHomeBottomKind.text = item.tags?.map { "# " + it }?.joinToString("   ","","")
                 binding.layBottom.setOnClickListener {
                     onClickItem(adapterPosition, item)
                 }

@@ -13,21 +13,19 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.seven.colink.R
 import com.seven.colink.databinding.ItemGroupContentBinding
-import com.seven.colink.databinding.ItemGroupProjectStatusBinding
 import com.seven.colink.databinding.ItemPostSelectionTypeBinding
 import com.seven.colink.databinding.ItemUnknownBinding
 import com.seven.colink.ui.group.board.board.GroupContentViewType
 import com.seven.colink.ui.group.content.GroupContentItem
 import com.seven.colink.ui.post.register.post.adapter.TagListAdapter
 import com.seven.colink.ui.post.register.post.model.TagListItem
+import com.seven.colink.util.dialog.setUpCalendarDialog
 import com.seven.colink.util.status.GroupType
-import com.seven.colink.util.status.ProjectStatus
 
 class GroupContentListAdapter(
     private val onClickItem: (View) -> Unit,
     private val onGroupImageClick: (String) -> Unit,
     private val tagAdapterOnClickItem: (TagListItem) -> Unit,
-    private val onChangeStatus: (ProjectStatus) -> Unit,
     private val onChangedFocus: (Int, String, String, GroupContentItem) -> Unit,
 ) : ListAdapter<GroupContentItem, GroupContentListAdapter.GroupContentViewHolder>(
     object : DiffUtil.ItemCallback<GroupContentItem>() {
@@ -42,10 +40,6 @@ class GroupContentListAdapter(
 
                 oldItem is GroupContentItem.GroupOptionItem && newItem is GroupContentItem.GroupOptionItem -> {
                     oldItem.key == newItem.key
-                }
-
-                oldItem is GroupContentItem.GroupProjectStatus && newItem is GroupContentItem.GroupProjectStatus -> {
-                    oldItem.status == newItem.status
                 }
 
                 else -> oldItem == newItem
@@ -65,7 +59,6 @@ class GroupContentListAdapter(
     override fun getItemViewType(position: Int): Int = when (getItem(position)) {
         is GroupContentItem.GroupContent -> GroupContentViewType.GROUP_ITEM.ordinal
         is GroupContentItem.GroupOptionItem -> GroupContentViewType.OPTION_ITEM.ordinal
-        is GroupContentItem.GroupProjectStatus -> GroupContentViewType.PROJECT_STATUS.ordinal
         else -> GroupContentViewType.UNKNOWN.ordinal
     }
 
@@ -93,15 +86,6 @@ class GroupContentListAdapter(
                     false
                 ),
                 onChangedFocus
-            )
-
-            GroupContentViewType.PROJECT_STATUS -> ProjectStatusItemViewHolder(
-                ItemGroupProjectStatusBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent,
-                    false
-                ),
-                onChangeStatus,
             )
 
             else -> GroupUnknownViewHolder(
@@ -201,7 +185,7 @@ class GroupContentListAdapter(
             get() = with(binding) {
                 listOf(
                     etPrecautions,
-                    etRecruitInfo
+                    etEstimatedSchedule
                 )
             }
 
@@ -214,7 +198,7 @@ class GroupContentListAdapter(
                 editText.addTextChangedListener {
                     notifyTextChange(
                         binding.etPrecautions.text.toString(),
-                        binding.etRecruitInfo.text.toString(),
+                        binding.etEstimatedSchedule.text.toString(),
                         currentItem
                     )
                 }
@@ -223,9 +207,23 @@ class GroupContentListAdapter(
 
         override fun onBind(item: GroupContentItem) {
             if (item is GroupContentItem.GroupOptionItem) {
+                val context = binding.root.context
                 currentItem = item
                 binding.etPrecautions.setText(item.precautions)
-                binding.etRecruitInfo.setText(item.recruitInfo)
+                val startDateText = item.startDate
+                val endDateText = item.endDate
+                if (!startDateText.isNullOrBlank() && !endDateText.isNullOrBlank()) {
+                    binding.etEstimatedSchedule.setText("$startDateText~$endDateText")
+                }
+                binding.etEstimatedSchedule.setOnClickListener {
+                    context.setUpCalendarDialog(
+                        binding.etEstimatedSchedule.text.toString(),
+                        confirmAction = { startDate, endDate ->
+                            binding.etEstimatedSchedule.setText("$startDate~$endDate")
+                        },
+                        cancelAction = {}
+                    )
+                }
             }
         }
 
@@ -235,57 +233,6 @@ class GroupContentListAdapter(
             item: GroupContentItem?
         ) {
             item?.let { onChangedFocus(adapterPosition, precautions, description, it) }
-        }
-    }
-
-    class ProjectStatusItemViewHolder(
-        private val binding: ItemGroupProjectStatusBinding,
-        private val onChangeStatus: (ProjectStatus) -> Unit
-    ) :
-        GroupContentViewHolder(binding.root) {
-        override fun onBind(item: GroupContentItem) {
-            val context = binding.root.context
-            if (item is GroupContentItem.GroupProjectStatus) {
-                when (item.status) {
-                    ProjectStatus.RECRUIT -> {
-                        binding.btGroupProjectStatus.setBackgroundResource(R.drawable.bg_round_corner_8dp_stroke)
-                        binding.btGroupProjectStatus.setTextColor(context.getColor(R.color.main_color))
-                        binding.btGroupProjectStatus.text = "프로젝트 시작하기"
-                    }
-
-                    ProjectStatus.START -> {
-                        binding.btGroupProjectStatus.setBackgroundResource(R.drawable.bg_round_corner_8dp_stroke)
-                        binding.btGroupProjectStatus.setTextColor(context.getColor(R.color.main_color))
-                        binding.btGroupProjectStatus.text = "프로젝트 종료하기"
-                    }
-
-                    ProjectStatus.END -> {
-                        binding.btGroupProjectStatus.text = "프로젝트 종료하기"
-                        binding.btGroupProjectStatus.setBackgroundResource(R.drawable.bg_round_corner_8dp_stroke_enabled)
-                        binding.btGroupProjectStatus.setTextColor(context.getColor(R.color.enable_stroke))
-                    }
-
-                    else -> Unit
-                }
-
-                binding.btGroupProjectStatus.setOnClickListener {
-                    when (item.status) {
-                        ProjectStatus.RECRUIT -> {
-                            onChangeStatus(ProjectStatus.START)
-                        }
-
-                        ProjectStatus.START -> {
-                            onChangeStatus(ProjectStatus.END)
-                        }
-
-                        ProjectStatus.END -> {
-                            onChangeStatus(ProjectStatus.RECRUIT)
-                        }
-
-                        else -> Unit
-                    }
-                }
-            }
         }
     }
 

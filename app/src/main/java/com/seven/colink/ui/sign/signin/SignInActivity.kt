@@ -2,6 +2,7 @@ package com.seven.colink.ui.sign.signin
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import android.util.Log
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
@@ -102,6 +103,7 @@ class SignInActivity : AppCompatActivity() {
         lifecycleScope.launch {
             entryType.collect {
                 if (it) {
+                    Toast.makeText(this@SignInActivity, "로그인 성공", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this@SignInActivity, MainActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)

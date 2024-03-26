@@ -2,16 +2,11 @@ package com.seven.colink.ui.post.content
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.ContextMenu
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -41,12 +36,9 @@ import kotlinx.coroutines.launch
 class PostContentFragment : Fragment() {
     private var _binding: FragmentPostContentBinding? = null
     private val binding: FragmentPostContentBinding get() = _binding!!
-
     private lateinit var commentBinding: ItemPostCommentBinding
-
     private val viewModel: PostContentViewModel by viewModels()
     private val sharedViewModel: PostSharedViewModel by activityViewModels()
-
     private val postContentListAdapter by lazy {
         PostContentListAdapter(
             onClickItem = { item ->
@@ -60,26 +52,11 @@ class PostContentFragment : Fragment() {
                         )
                     }
 
+                    // 좋아요 버튼 클릭 이벤트
                     is PostContentItem.Item -> {
-                        Log.d("Post", "isLike Clicked")
                         if (viewModel.checkLogin.value == true) {
-                            Log.d("Post", "State = Login")
-                            // 좋아요 버튼 클릭 이벤트
-                            // if문 안에 viewModel.discernLike(key)로 isLike 구분 하도록 바꾸기
-                            // ((contains(key) = true) == (isLike = true))
-                            if (item.key?.let { viewModel.discernLike(it) } == false){
-                                item.isLike = false
-                                item.like = item.like?.minus(1)
-                                Log.d("Post", "Like True to False = ${item.isLike}")
-                                Log.d("Post", "Like Count = ${item.like}")
-                            } else {
-                                item.isLike = true
-                                item.like = item.like?.plus(1)
-                                Log.d("Post", "Like False to True = ${item.isLike}")
-                                Log.d("Post", "Like Count = ${item.like}")
-                            }
+                            item.key?.let { viewModel.discernLike(it) }
                         } else {
-                            Log.d("Post", "State = Logout")
                             requireContext().setDialog(
                                 title = "로그인 필요",
                                 message = "서비스를 이용하기 위해서는 로그인이 필요합니다. \n로그인 페이지로 이동하시겠습니까?",
@@ -102,7 +79,6 @@ class PostContentFragment : Fragment() {
                         when (buttonUiState) {
                             ContentButtonUiState.User -> viewModel.createDialog(item)
                             ContentButtonUiState.Unknown -> {
-                                // TODO 로그인 화면으로 이동한다는 메세지 노출
                                 startActivity(Intent(requireContext(), SignInActivity::class.java))
                             }
 
@@ -189,7 +165,6 @@ class PostContentFragment : Fragment() {
             if (state == null) {
                 return@observe
             }
-
             showDialog(state)
         }
 
@@ -221,6 +196,11 @@ class PostContentFragment : Fragment() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        viewModel.updateUserInfo()
+    }
+
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
@@ -245,6 +225,4 @@ class PostContentFragment : Fragment() {
             ).show()
         }
     }
-
-
 }

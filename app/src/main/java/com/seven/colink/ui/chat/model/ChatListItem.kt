@@ -5,6 +5,6 @@ data class ChatListItem(
     val title: String,
     val message: String,
     val thumbnail: String?,
-    val recentTime: String,
-    val unreadCount: Int,
+    val recentTime: String?,
+    val unreadCount: Int?,
 )
