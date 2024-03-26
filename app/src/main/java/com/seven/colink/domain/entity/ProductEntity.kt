@@ -7,7 +7,7 @@ import java.util.UUID
 
 data class ProductEntity (
     val key: String = "PRD_" + UUID.randomUUID().toString(),
-    val teamId: String? = "",
+    val projectId: String? = "",
     val authId: String? = "",
     val memberIds: List<String>? = emptyList(),
     val title: String? = "",

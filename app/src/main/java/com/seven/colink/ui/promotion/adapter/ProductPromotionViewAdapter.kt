@@ -12,9 +12,12 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.seven.colink.databinding.ItemPostMemberInfoBinding
+import com.seven.colink.databinding.ItemProductDesImgBinding
 import com.seven.colink.databinding.ItemProductImgBinding
 import com.seven.colink.databinding.ItemProductLinkBinding
 import com.seven.colink.databinding.ItemProductMemberHeaderBinding
+import com.seven.colink.databinding.ItemProductNewLinkBinding
+import com.seven.colink.databinding.ItemProductNewTitleBinding
 import com.seven.colink.databinding.ItemProductProjectHeaderBinding
 import com.seven.colink.databinding.ItemProductTitleBinding
 import com.seven.colink.ui.promotion.model.LinkItem
@@ -96,16 +99,16 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
                 FirstViewHolder(first)
             }
             SECOND_TYPE -> {
-                val second = ItemProductTitleBinding.inflate(inflater,parent,false)
-                SecondViewHolder(second)
+                val second = ItemProductNewTitleBinding.inflate(inflater,parent,false)
+                TitleViewHolder(second)
             }
             THIRD_TYPE -> {
-                val third = ItemProductImgBinding.inflate(inflater,parent,false)
-                ThirdViewHolder(third)
+                val third = ItemProductDesImgBinding.inflate(inflater,parent,false)
+                DesImgViewHolder(third)
             }
             FORTH_TYPE -> {
-                val forth = ItemProductLinkBinding.inflate(inflater,parent,false)
-                ForthViewHolder(forth)
+                val forth = ItemProductNewLinkBinding.inflate(inflater,parent,false)
+                LinkViewHolder(forth)
             }
             FIFTH_TYPE -> {
                 val fifth = ItemProductProjectHeaderBinding.inflate(inflater,parent,false)
@@ -139,79 +142,75 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
         }
 
         if (item is ProductPromotionItems.Title) {
-            holder as SecondViewHolder
+            holder as TitleViewHolder
             with(holder) {
-                viewDes.visibility = View.VISIBLE
-                viewTitle.visibility = View.VISIBLE
-                date.visibility = View.VISIBLE
-                editDes.visibility = View.GONE
-                editTitle.visibility = View.GONE
-                editTeam.visibility = View.GONE
-                viewTeam.visibility = View.VISIBLE
+                tagAos.visibility = View.GONE
+                tagIos.visibility = View.GONE
 
+                title.text = item.title
                 date.text = item.date
-                viewDes.text = item.des
-                viewTitle.text = item.title
-                viewTeam.text = item.team
+                team.text = item.team
+                des.text = item.des
 
                 if (!item.web.isNullOrEmpty()) {
-                    ivWebLink.visibility = View.VISIBLE
+                    imgWeb.visibility = View.VISIBLE
                 }
                 if (!item.aos.isNullOrEmpty()) {
-                    ivAosLink.visibility = View.VISIBLE
-                    viewAosTag.visibility = View.VISIBLE
+                    imgAos.visibility = View.VISIBLE
+                    tagAos.visibility = View.VISIBLE
                 }
                 if (!item.ios.isNullOrEmpty()) {
-                    ivIosLink.visibility = View.VISIBLE
-                    viewIosTag.visibility = View.VISIBLE
+                    imgIos.visibility = View.VISIBLE
+                    tagIos.visibility = View.VISIBLE
                 }
             }
         }
 
         if (item is ProductPromotionItems.MiddleImg) {
-            holder as ThirdViewHolder
-            if (item.img == null) {
+            holder as DesImgViewHolder
+            holder.desExam.visibility = View.GONE
+
+            if (item.img.isNullOrEmpty()) {
                 holder.lay.visibility = View.GONE
+                holder.img.visibility = View.GONE
             }else {
                 holder.lay.visibility = View.VISIBLE
+                holder.img.visibility = View.VISIBLE
                 holder.img.load(item.img)
             }
         }
 
         if (item is ProductPromotionItems.Link) {
-            holder as ForthViewHolder
+            holder as LinkViewHolder
 
             with(holder) {
-                viewLink.visibility = View.VISIBLE
-                etWebLink.visibility = View.GONE
-                editLayLink.visibility = View.GONE
-                viewWebLink.text = item.webLink
-                viewWebLink.setOnClickListener {
+                web.text = item.webLink
+                web.setOnClickListener {
                     val url = item.webLink
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                     context.startActivity(intent)
                 }
 
                 if (item.aosLink?.isNotEmpty() == true) {
-                    viewPlayStore.visibility = View.VISIBLE
-                    viewPlayStore.setOnClickListener {
+                    aos.visibility = View.VISIBLE
+                    aos.setOnClickListener {
                         val url = item.aosLink
                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://$url"))
                         context.startActivity(intent)
                     }
                 }else {
-                    viewPlayStore.visibility = View.INVISIBLE
+                    aos.visibility = View.INVISIBLE
                 }
 
                 if (item.iosLink?.isNotEmpty() == true) {
-                    viewAppStore.visibility = View.VISIBLE
-                    viewAppStore.setOnClickListener {
+                    ios.visibility = View.VISIBLE
+                    ios.setOnClickListener {
                         val url = item.iosLink
                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://$url"))
                         context.startActivity(intent)
                     }
                 }else {
-                    viewAppStore.visibility = View.INVISIBLE
+                    ios.visibility = View.INVISIBLE
                 }
             }
         }
@@ -302,36 +301,28 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
         val img = binding.ivProductPromotion
     }
 
-    inner class SecondViewHolder(binding : ItemProductTitleBinding) : RecyclerView.ViewHolder(binding.root) {
-        val editTitle = binding.etProductTitle
-        val editDes = binding.etProductDes
-        val editTeam = binding.etProductTeam
-        val date = binding.tvProductDate
-        val viewTitle = binding.tvProductTitle
-        val viewDes = binding.tvProductDes
-        val viewTeam = binding.tvProductTeam
-        val viewAosTag = binding.tvProductAndroid
-        val viewIosTag = binding.tvProductApple
-        val ivWebLink = binding.ivWeb
-        val ivAosLink = binding.ivAos
-        val ivIosLink = binding.ivIos
-
+    inner class TitleViewHolder(binding: ItemProductNewTitleBinding) : RecyclerView.ViewHolder(binding.root) {
+        val title = binding.tvProductTitle
+        val date = binding.tvRegisterDatetime
+        val team = binding.tvTeam
+        val des = binding.tvContent
+        val tagAos = binding.tvTagAndroid
+        val tagIos = binding.tvTagApple
+        val imgWeb = binding.ivWeb
+        val imgAos = binding.ivAos
+        val imgIos = binding.ivIos
     }
 
-    inner class ThirdViewHolder(binding: ItemProductImgBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class DesImgViewHolder(binding: ItemProductDesImgBinding) : RecyclerView.ViewHolder(binding.root) {
         val img = binding.ivProductPromotion
         val lay = binding.layMiddle
+        val desExam = binding.tvProductExampleDesImg
     }
 
-    inner class ForthViewHolder(binding : ItemProductLinkBinding) : RecyclerView.ViewHolder(binding.root) {
-        val viewLink = binding.layProductViewLink
-        val viewPlayStore = binding.ivPlaystore
-        val viewAppStore = binding.ivAppstore
-        val viewWebLink = binding.tvProductWebLink
-        val editLayLink = binding.layProductEditLink
-        val etWebLink = binding.etProductWebLink
-        val etPlayStore = binding.etProductPlaystoreLink
-        val etAppStore = binding.etProductAppstoreLink
+    inner class LinkViewHolder(binding: ItemProductNewLinkBinding) : RecyclerView.ViewHolder(binding.root) {
+        val web = binding.tvProductWebLink
+        val aos = binding.ivPlaystore
+        val ios = binding.ivAppstore
     }
 
     inner class FifthViewHolder(binding: ItemProductProjectHeaderBinding) : RecyclerView.ViewHolder(binding.root) {

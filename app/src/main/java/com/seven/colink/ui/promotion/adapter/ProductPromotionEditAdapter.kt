@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.IBinder
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +16,9 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.load
 import com.seven.colink.databinding.ItemPostMemberInfoBinding
+import com.seven.colink.databinding.ItemProductDesImgBinding
+import com.seven.colink.databinding.ItemProductEditLinkBinding
+import com.seven.colink.databinding.ItemProductEditTitleBinding
 import com.seven.colink.databinding.ItemProductImgBinding
 import com.seven.colink.databinding.ItemProductLinkBinding
 import com.seven.colink.databinding.ItemProductMemberHeaderBinding
@@ -32,6 +37,7 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
     private var OnClickImgListener : ((ViewHolder) -> Unit)? = null
 
     private var itemClick : ItemClick? = null
+    private var firstBind = true
     var tempEntity = TempProductEntity()
 
     private val FIRST_TYPE = 0
@@ -47,13 +53,13 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
     fun editTextViewAllFocusOut() {  //포커스 아웃 시키기
         for (i in 0 until itemCount) {
             val viewHolder = recyclerView.findViewHolderForAdapterPosition(i)
-            if (viewHolder is SecondViewHolder) {
+            if (viewHolder is TitleViewHolder) {
                 viewHolder.editDes.clearFocus()
                 viewHolder.editTitle.clearFocus()
-            }else if (viewHolder is ForthViewHolder) {
-                viewHolder.etAppStore.clearFocus()
-                viewHolder.etWebLink.clearFocus()
-                viewHolder.etPlayStore.clearFocus()
+            }else if (viewHolder is LinkViewHolder) {
+                viewHolder.editAosLink.clearFocus()
+                viewHolder.editIosLink.clearFocus()
+                viewHolder.editWebLink.clearFocus()
             }
         }
     }
@@ -91,7 +97,7 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
                 is TopMainImgViewHolder -> {
                     openGallery(galleryResultLauncher1)
                 }
-                is ThirdViewHolder -> {
+                is DesImgViewHolder -> {
                     openGallery(galleryResultLauncher2)
                 }
             }
@@ -111,24 +117,16 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
             if (tempEntity.selectMainImgUri != null) {
                 mainImg.load(tempEntity.selectMainImgUri)
             }else{
+                tempEntity.mainImg = item.img
                 mainImg.load(item.img)
             }
         }
     }
 
-    inner class SecondViewHolder(binding : ItemProductTitleBinding) : ViewHolder(binding.root) {
-        val editTitle = binding.etProductTitle
-        val editDes = binding.etProductDes
-        val editTeam = binding.etProductTeam
-        val date = binding.tvProductDate
-        val viewTitle = binding.tvProductTitle
-        val viewDes = binding.tvProductDes
-        val viewTeam = binding.tvProductTeam
-        val viewAosTag = binding.tvProductAndroid
-        val viewIosTag = binding.tvProductApple
-        val ivWebLink = binding.ivWeb
-        val ivAosLink = binding.ivAos
-        val ivIosLink = binding.ivIos
+    inner class TitleViewHolder(binding : ItemProductEditTitleBinding) : ViewHolder(binding.root) {
+        val editTitle = binding.etProductNewTitle
+        val editTeam = binding.etProductNewTeam
+        val editDes = binding.etDescription
 
         private fun saveData(position: Int) {
             val title = editTitle.text.toString()
@@ -158,10 +156,29 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
                 }
             }
 
+            editTeam.addTextChangedListener(object : TextWatcher{
+                override fun beforeTextChanged(s: CharSequence?,start: Int,count: Int,after: Int
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    if (s != null) {
+                        if (s.length >= 9) {
+                            editTeam.setError("최대 9글자까지 입력 가능합니다.")
+                        }else{
+                            editTeam.setError(null)
+                        }
+                    }
+                }
+
+                override fun afterTextChanged(s: Editable?) {
+                }
+            })
+
             editTeam.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) {
                     saveData(adapterPosition)
-                    hideKeyboard(editDes)
+                    hideKeyboard(editTeam)
                 }
             }
 
@@ -171,43 +188,31 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
         }
 
         fun bind(item: ProductPromotionItems.Title) {
-            viewDes.visibility = View.GONE
-            viewTitle.visibility = View.GONE
-            date.visibility = View.INVISIBLE
-            editTitle.visibility = View.VISIBLE
-            editDes.visibility = View.VISIBLE
-            ivAosLink.visibility = View.GONE
-            ivWebLink.visibility = View.GONE
-            ivIosLink.visibility = View.GONE
-            viewTeam.visibility = View.GONE
-            viewAosTag.visibility = View.INVISIBLE
-            viewIosTag.visibility = View.INVISIBLE
-            editTeam.visibility = View.VISIBLE
 
             if (adapterPosition != RecyclerView.NO_POSITION) {
-                if (item.title?.isNotEmpty() == true) {
+                if (tempEntity.title.isNullOrEmpty()) {
                     editTitle.setText(item.title)
-                }else {
+                    tempEntity.title = item.title
+                }else{
                     editTitle.setText(tempEntity.title)
                 }
-
-                if (item.des?.isNotEmpty() == true) {
+                if (tempEntity.des.isNullOrEmpty()) {
                     editDes.setText(item.des)
-                }else {
+                    tempEntity.des = item.des
+                }else{
                     editDes.setText(tempEntity.des)
                 }
-
-                if (item.team?.isNotEmpty() == true) {
+                if (tempEntity.team.isNullOrEmpty()){
                     editTeam.setText(item.team)
-                }else {
+                    tempEntity.team = item.team
+                }else{
                     editTeam.setText(tempEntity.team)
-
                 }
             }
         }
     }
 
-    inner class ThirdViewHolder(binding: ItemProductImgBinding) : ViewHolder(binding.root) {
+    inner class DesImgViewHolder(binding: ItemProductDesImgBinding) : ViewHolder(binding.root) {
         val img = binding.ivProductPromotion
         val lay = binding.layMiddle
 
@@ -226,19 +231,15 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
         }
     }
 
-    inner class ForthViewHolder(binding : ItemProductLinkBinding) : ViewHolder(binding.root) {
-        val viewLink = binding.layProductViewLink
-        val viewPlayStore = binding.ivPlaystore
-        val viewAppStore = binding.ivAppstore
-        val viewWebLink = binding.tvProductWebLink
-        val etWebLink = binding.etProductWebLink
-        val etPlayStore = binding.etProductPlaystoreLink
-        val etAppStore = binding.etProductAppstoreLink
+    inner class LinkViewHolder(binding: ItemProductEditLinkBinding) : ViewHolder(binding.root) {
+        val editWebLink = binding.etProductWebLink
+        val editAosLink = binding.etProductAosLink
+        val editIosLink = binding.etProductIosLink
 
         private fun saveData(position: Int) {
-            val web = etWebLink.text.toString()
-            val aos = etPlayStore.text.toString()
-            val ios = etAppStore.text.toString()
+            val web = editWebLink.text.toString()
+            val aos = editAosLink.text.toString()
+            val ios = editIosLink.text.toString()
 
             if (tempEntity.web != web || tempEntity.aos != aos || tempEntity.ios != ios) {
                 tempEntity.web = web
@@ -249,56 +250,51 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
         }
 
         init {
-            etWebLink.setOnFocusChangeListener { _, hasFocus ->
+            editWebLink.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) {
                     saveData(adapterPosition)
-                    hideKeyboard(etWebLink)
+                    hideKeyboard(editWebLink)
                 }
             }
 
-            etPlayStore.setOnFocusChangeListener { _, hasFocus ->
+            editAosLink.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) {
                     saveData(adapterPosition)
-                    hideKeyboard(etPlayStore)
+                    hideKeyboard(editAosLink)
                 }
             }
 
-            etAppStore.setOnFocusChangeListener { _, hasFocus ->
+            editIosLink.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) {
                     saveData(adapterPosition)
-                    hideKeyboard(etAppStore)
+                    hideKeyboard(editIosLink)
                 }
             }
-            etPlayStore.setText(tempEntity.aos)
-            etWebLink.setText(tempEntity.web)
-            etAppStore.setText(tempEntity.ios)
+            editAosLink.setText(tempEntity.aos)
+            editWebLink.setText(tempEntity.web)
+            editIosLink.setText(tempEntity.ios)
 
         }
 
         fun bind (item: ProductPromotionItems.Link) {
-            viewLink.visibility = View.GONE
-            viewWebLink.visibility = View.GONE
-            etAppStore.visibility = View.VISIBLE
-            etPlayStore.visibility = View.VISIBLE
-            etWebLink.visibility = View.VISIBLE
-
             if (adapterPosition != RecyclerView.NO_POSITION) {
-                if (item.webLink?.isNotEmpty() == true) {
-                    etWebLink.setText(item.webLink)
-                }else {
-                    etWebLink.setText(tempEntity.web)
-                }
-
-                if (item.aosLink?.isNotEmpty() == true) {
-                    etPlayStore.setText(item.aosLink)
-                }else {
-                    etPlayStore.setText(tempEntity.aos)
-                }
-
-                if (item.iosLink?.isNotEmpty() == true) {
-                    etAppStore.setText(item.iosLink)
+                if (tempEntity.web.isNullOrEmpty()) {
+                    editWebLink.setText(item.webLink)
+                    tempEntity.web = item.webLink
                 }else{
-                    etAppStore.setText(tempEntity.ios)
+                    editWebLink.setText(tempEntity.web)
+                }
+                if (tempEntity.aos.isNullOrEmpty()) {
+                    editAosLink.setText(item.aosLink)
+                    tempEntity.aos = item.aosLink
+                }else{
+                    editAosLink.setText(tempEntity.aos)
+                }
+                if (tempEntity.ios.isNullOrEmpty()) {
+                    editIosLink.setText(item.iosLink)
+                    tempEntity.ios = item.iosLink
+                }else{
+                    editIosLink.setText(tempEntity.ios)
                 }
             }
         }
@@ -387,18 +383,18 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
             }
 
             SECOND_TYPE -> {
-                val second = ItemProductTitleBinding.inflate(inflater, parent, false)
-                SecondViewHolder(second)
+                val second = ItemProductEditTitleBinding.inflate(inflater, parent, false)
+                TitleViewHolder(second)
             }
 
             THIRD_TYPE -> {
-                val third = ItemProductImgBinding.inflate(inflater, parent, false)
-                ThirdViewHolder(third)
+                val third = ItemProductDesImgBinding.inflate(inflater, parent, false)
+                DesImgViewHolder(third)
             }
 
             FORTH_TYPE -> {
-                val forth = ItemProductLinkBinding.inflate(inflater, parent, false)
-                ForthViewHolder(forth)
+                val forth = ItemProductEditLinkBinding.inflate(inflater, parent, false)
+                LinkViewHolder(forth)
             }
 
             FIFTH_TYPE -> {
@@ -456,15 +452,15 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
                 item as ProductPromotionItems.Img
                 holder.bind(item)
             }
-            is SecondViewHolder -> {
+            is TitleViewHolder -> {
                 item as ProductPromotionItems.Title
                 holder.bind(item)
             }
-            is ThirdViewHolder -> {
+            is DesImgViewHolder -> {
                 item as ProductPromotionItems.MiddleImg
                 holder.bind(item)
             }
-            is ForthViewHolder -> {
+            is LinkViewHolder -> {
                 item as ProductPromotionItems.Link
                 holder.bind(item)
             }
