@@ -157,16 +157,21 @@ class EvaluationViewModel @Inject constructor(
         }
     }
 
-    fun updateStudyMembers(position: Int, q1: Float, q2: Float, q3: Float) {
+    fun updateStudyMembers(
+        position: Int,
+        q1: Float? = null,
+        q2: Float? = null,
+        q3: Float? = null
+    ) {
         val studyMembers = _evalStudyMembersData.value?.toMutableList() ?: return
 
         if (position >= 0 && position < studyMembers.size) {
             val member = studyMembers[position]
             member?.let {
-                it.diligence = q1
-                it.communication = q2
-                it.flexibility = q3
-                it.grade = ((q1 + q2 + q3) / 3).toDouble()
+                it.diligence = q1?: 2.5f
+                it.communication = q2?: 2.5f
+                it.flexibility = q3?: 2.5f
+                it.grade = ((it.diligence!! + it.communication!! + it.flexibility!!) / 3).toDouble()
             }
             _evalStudyMembersData.value = studyMembers
             Log.d("Evaluation", "### updateStudyMembers = $studyMembers")
@@ -175,24 +180,34 @@ class EvaluationViewModel @Inject constructor(
 
     fun updateStudyUserGrade(groupEntity: GroupEntity, currentUid: String) {
         viewModelScope.launch {
-            evalStudyMembersData.value?.map { data ->
-                userRepository.getUserDetails(data?.uid!!).getOrNull().let { member ->
-                    userRepository.updateUserInfo(
-                        member!!.copy(
-                            grade = (member.grade!! * member.evaluatedNumber + data.grade!! * 2) / ++data.evalCount,
-                            diligence = data.diligence,
-                            communication = data.communication,
-                            flexibility = data.flexibility,
-                            evaluatedNumber = ++data.evalCount
+            try {
+                evalStudyMembersData.value?.map { data ->
+                    async {
+                        userRepository.getUserDetails(data?.uid!!).getOrNull().let { member ->
+                            userRepository.updateUserInfo(
+                                member!!.copy(
+                                    grade = (member.grade!! * member.evaluatedNumber + data.grade!! * 2) / ++data.evalCount,
+                                    diligence = data.diligence,
+                                    communication = data.communication,
+                                    flexibility = data.flexibility,
+                                    evaluatedNumber = ++data.evalCount
+                                )
+                            )
+                        }
+                    }
+                }?.awaitAll()
+                _result.emit(groupRepository.registerGroup(
+                    groupEntity.let {
+                        it.copy(
+                            evaluateMember = it.evaluateMember?.plus(currentUid) ?: listOf(
+                                currentUid
+                            )
                         )
-                    )
-                }
+                    }
+                ))
+            }catch (e: Exception){
+                _result.emit(DataResultStatus.FAIL.apply { message = e.message?: "알 수 없는 에러" })
             }
-            groupRepository.registerGroup(
-                groupEntity.let {
-                    it.copy(evaluateMember = it.evaluateMember?.plus(currentUid)?: listOf(currentUid))
-                }
-            )
         }
     }
 
@@ -206,18 +221,6 @@ class EvaluationViewModel @Inject constructor(
             communication = communication,
             flexibility = flexibility,
             evalCount = evaluatedNumber
-        )
-
-    private fun EvaluationData.EvalStudy.convertStudyUserEntity() =
-        UserEntity(
-            uid = uid,
-            name = name,
-            photoUrl = photoUrl,
-            grade = grade,
-            diligence = diligence,
-            communication = communication,
-            flexibility = flexibility,
-            evaluatedNumber = evalCount
         )
 
     fun updatePage(position: Int) {
