@@ -2,14 +2,11 @@ package com.seven.colink.ui.promotion.viewmodel
 
 import android.app.Application
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.seven.colink.R
 import com.seven.colink.domain.entity.ProductEntity
-import com.seven.colink.domain.entity.TempProductEntity
 import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.domain.repository.ImageRepository
@@ -63,7 +60,7 @@ class ProductPromotionEditViewModel @Inject constructor(
 
             entity = ProductEntity(
                 key = "PRD_" + UUID.randomUUID().toString(),
-                teamId = "",
+                projectId = "",
                 authId = ids.getOrNull()?.authId ?: "",
                 memberIds = ids.getOrNull()?.memberIds ?: emptyList(),
                 title = "",
@@ -198,7 +195,7 @@ class ProductPromotionEditViewModel @Inject constructor(
         viewList.addAll(
             listOf(
                 ProductPromotionItems.Img(item?.imageUrl),
-                ProductPromotionItems.Title(item?.title, item?.registeredDate, item?.description,item?.teamId,item?.registeredDate,item?.aosUrl,item?.iosUrl),
+                ProductPromotionItems.Title(item?.title, item?.registeredDate, item?.description,item?.projectId,item?.registeredDate,item?.aosUrl,item?.iosUrl),
                 ProductPromotionItems.MiddleImg(item?.desImg),
                 ProductPromotionItems.Link(item?.referenceUrl, item?.iosUrl, item?.aosUrl),
             )
@@ -210,6 +207,7 @@ class ProductPromotionEditViewModel @Inject constructor(
         entity = entity.copy(
             title = nt.title,
             imageUrl = nt.imageUrl,
+            projectId = nt.projectId,
             description = nt.description,
             desImg = nt.desImg,
             referenceUrl = nt.referenceUrl,
