@@ -63,7 +63,9 @@ class ChatRoomViewModel @Inject constructor(
 
             if (chatRoom.value.type == ChatTabType.GENERAL) {
                 _chatRoom.value = _chatRoom.value.copy(
-                    title = userRepository.getUserDetails(uid).getOrNull()?.name
+                    title = userRepository.getUserDetails(
+                        chatRoom.value.participantsUid.filter { (key,_) ->  key != uid }.keys.first()
+                    ).getOrNull()?.name
                 )
             }
 
