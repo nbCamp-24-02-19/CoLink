@@ -153,15 +153,19 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
                 viewDes.text = item.des
                 viewTitle.text = item.title
                 viewTeam.text = item.team
+                Log.d("entity","#qqqqq #adapter item.viewTeam = ${item.team}")
 
                 if (!item.web.isNullOrEmpty()) {
                     ivWebLink.visibility = View.VISIBLE
+                    Log.d("entity","#qqqqq #adapter item.web = ${item.web}")
                 }
                 if (!item.aos.isNullOrEmpty()) {
+                    Log.d("entity","#qqqqq #adapter item.aos = ${item.aos}")
                     ivAosLink.visibility = View.VISIBLE
                     viewAosTag.visibility = View.VISIBLE
                 }
                 if (!item.ios.isNullOrEmpty()) {
+                    Log.d("entity","#qqqqq #adapter item.ios = ${item.ios}")
                     ivIosLink.visibility = View.VISIBLE
                     viewIosTag.visibility = View.VISIBLE
                 }
@@ -315,7 +319,6 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
         val ivWebLink = binding.ivWeb
         val ivAosLink = binding.ivAos
         val ivIosLink = binding.ivIos
-
     }
 
     inner class ThirdViewHolder(binding: ItemProductImgBinding) : RecyclerView.ViewHolder(binding.root) {

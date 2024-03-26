@@ -119,7 +119,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="팀 이름을 입력해 주세요."
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:fontFamily="@font/inter_bold"
             app:layout_constraintTop_toBottomOf="@id/tv_product_title"
             app:layout_constraintStart_toStartOf="parent"
@@ -178,7 +178,7 @@
             android:visibility="invisible"
             app:layout_constraintTop_toBottomOf="@id/tv_product_team"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="2dp"/>
 
 <!--        <View-->
 <!--            android:id="@+id/view_product_divide"-->
@@ -213,13 +213,13 @@
             android:id="@+id/tv_product_des"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="20dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_product_date"
             android:hint="@string/product_edit_des"
             android:fontFamily="@font/inter_bold"
-            android:textSize="15sp"
+            android:textSize="16sp"
             android:visibility="gone"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
