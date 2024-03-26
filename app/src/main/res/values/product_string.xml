@@ -7,6 +7,9 @@
     <string name="product_leader">리더</string>
     <string name="product_member">멤버</string>
 
+    <string name="product_android"># 안드로이드</string>
+    <string name="product_apple"># 애플</string>
+
     <string name="product_edit_date">홍보글을 올린 시간이 표시됩니다.</string>
     <string name="product_edit_title">홍보글에 올릴 제목을 입력해주세요.</string>
     <string name="product_edit_des">홍보글에 올릴 내용을 입력해주세요.</string>
