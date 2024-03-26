@@ -63,6 +63,8 @@
     <string name="description_precautions">주의 사항을 입력하세요</string>
     <string name="description_recruitInfo">진행 기간을 입력하세요</string>
     <string name="estimated_schedule">프로젝트 예상 기간을 선택하세요.</string>
+    <string name="project_estimated_start_date">프로젝트 시작 날짜를 선택하세요.</string>
+    <string name="project_estimated_end_date">프로젝트 종료 날짜를 선택하세요.</string>
 
     <string name="input_title_message">프로젝트 제목을 입력해주세요</string>
     <string name="input_description_message">프로젝트 설명란 입력해주세요</string>
