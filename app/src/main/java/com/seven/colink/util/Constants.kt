@@ -14,5 +14,10 @@ class Constants {
         const val IMAGE_PERMISSION = android.Manifest.permission.READ_MEDIA_IMAGES
 
         const val CALENDAR_TIME_FORMAT = "yyyy.MM.dd HH:mm"
+
+        const val LOG_IN_TAG = "log_in_tag"
+
+        const val SAVE_SUCCESS = "save_success"
+        const val SAVE_FAIL = "save_fail"
     }
 }
