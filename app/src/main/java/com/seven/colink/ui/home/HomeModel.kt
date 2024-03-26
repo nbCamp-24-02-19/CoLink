@@ -10,7 +10,7 @@ data class TopItems (
     val team : String?,
     val date : String?,
     val title : String?,
-    val key : String? = "POST_" + UUID.randomUUID().toString()
+    val key : String?
 )
 
 data class BottomItems (

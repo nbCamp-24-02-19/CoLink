@@ -1,4 +1,4 @@
-package com.seven.colink.data.login.api
+package com.seven.colink.data.login.google
 
 
 import com.google.gson.annotations.SerializedName

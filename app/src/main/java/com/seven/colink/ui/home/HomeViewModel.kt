@@ -7,7 +7,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seven.colink.domain.entity.PostEntity
+import com.seven.colink.domain.entity.ProductEntity
 import com.seven.colink.domain.repository.PostRepository
+import com.seven.colink.domain.repository.ProductRepository
 import com.seven.colink.util.status.GroupType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -16,6 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val postRepository: PostRepository,
+    private val productRepository: ProductRepository
 ) : ViewModel() {
 
     private val _topItems: MutableLiveData<List<TopItems>> = MutableLiveData(mutableListOf())
@@ -29,11 +32,12 @@ class HomeViewModel @Inject constructor(
 
         viewModelScope.launch {
             getTopItemList.clear()
-            val repository = postRepository.getRecentPost(num)
+//            val repository = postRepository.getRecentPost(num)
+            val repository = productRepository.getRecentPost(num)
 
             kotlin.runCatching {
                 repository.forEach {
-                    val topRecentItem = TopItems(it.imageUrl,it.recruitInfo,it.registeredDate,
+                    val topRecentItem = TopItems(it.imageUrl,it.teamId,it.registeredDate,
                         it.title,it.key)
                     getTopItemList.add(topRecentItem)
                 }

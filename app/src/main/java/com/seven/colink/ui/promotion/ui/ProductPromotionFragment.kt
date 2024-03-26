@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -20,6 +21,7 @@ import com.seven.colink.ui.promotion.viewmodel.ProductPromotionViewViewModel
 import com.seven.colink.util.Constants
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
+import com.seven.colink.util.status.DataResultStatus
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -33,10 +35,9 @@ class ProductPromotionFragment : Fragment() {
     private val promotionViewModel : ProductPromotionViewViewModel by viewModels()
     private val sharedViewModel : ProductPromotionSharedViewModel by activityViewModels()
     private var key : String? = null
-//    private lateinit var viewList : MutableList<ProductPromotionItems>
     private var viewList = mutableListOf(
         ProductPromotionItems.Img(""),
-        ProductPromotionItems.Title("","",""),
+        ProductPromotionItems.Title("","","","","","",""),
         ProductPromotionItems.MiddleImg(""),
         ProductPromotionItems.Link("","",""),
         ProductPromotionItems.ProjectHeader(""),
@@ -97,10 +98,25 @@ class ProductPromotionFragment : Fragment() {
             }
         }
 
+        promotionViewModel.key.observe(viewLifecycleOwner) { k ->
+            if (k != null) {
+                sharedViewModel.setKey(k)
+            }
+        }
+
         promotionViewModel.product.observe(viewLifecycleOwner) {
             viewList = promotionViewModel.getViewList()
             viewAdapter.submitList(viewList)
             viewAdapter.notifyDataSetChanged()
+            promotionViewModel.getIdCompareAuthId()
+        }
+
+        promotionViewModel.result.observe(viewLifecycleOwner) { result ->
+            if (result == DataResultStatus.SUCCESS) {
+                setButton()
+            }else {
+                binding.tvPromotionEdit.visibility = View.INVISIBLE
+            }
         }
 
         promotionViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
@@ -112,6 +128,21 @@ class ProductPromotionFragment : Fragment() {
                 binding.rvPromotion.visibility = View.VISIBLE
             }
             loading = !isLoading
+        }
+    }
+
+    private fun setButton() {
+        binding.tvPromotionEdit.visibility = View.VISIBLE
+        binding.tvPromotionEdit.setTextColor(ContextCompat.getColor(requireContext(),R.color.forth_color))
+        binding.tvPromotionEdit.text = getText(R.string.edit)
+
+        binding.tvPromotionEdit.setOnClickListener {
+            promotionViewModel.setProductKey()
+            val frag = ProductPromotionEditFragment()
+            val fragmentManager = requireActivity().supportFragmentManager
+            val trans = fragmentManager.beginTransaction()
+            trans.replace(R.id.frame_product_promotion,frag)
+            trans.commit()
         }
     }
 

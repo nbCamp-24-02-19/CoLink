@@ -17,7 +17,12 @@ import com.seven.colink.databinding.ItemProductLinkBinding
 import com.seven.colink.databinding.ItemProductMemberHeaderBinding
 import com.seven.colink.databinding.ItemProductProjectHeaderBinding
 import com.seven.colink.databinding.ItemProductTitleBinding
+import com.seven.colink.ui.promotion.model.LinkItem
 import com.seven.colink.ui.promotion.model.ProductPromotionItems
+import com.seven.colink.ui.promotion.model.ViewLinkImg
+import com.seven.colink.ui.userdetail.UserDetailActivity
+import com.seven.colink.ui.userdetail.UserDetailActivity.Companion.EXTRA_USER_KEY
+import com.seven.colink.util.Constants
 import com.seven.colink.util.setLevelIcon
 import okhttp3.internal.notify
 
@@ -141,10 +146,25 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
                 date.visibility = View.VISIBLE
                 editDes.visibility = View.GONE
                 editTitle.visibility = View.GONE
+                editTeam.visibility = View.GONE
+                viewTeam.visibility = View.VISIBLE
 
                 date.text = item.date
                 viewDes.text = item.des
                 viewTitle.text = item.title
+                viewTeam.text = item.team
+
+                if (!item.web.isNullOrEmpty()) {
+                    ivWebLink.visibility = View.VISIBLE
+                }
+                if (!item.aos.isNullOrEmpty()) {
+                    ivAosLink.visibility = View.VISIBLE
+                    viewAosTag.visibility = View.VISIBLE
+                }
+                if (!item.ios.isNullOrEmpty()) {
+                    ivIosLink.visibility = View.VISIBLE
+                    viewIosTag.visibility = View.VISIBLE
+                }
             }
         }
 
@@ -160,8 +180,10 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
 
         if (item is ProductPromotionItems.Link) {
             holder as ForthViewHolder
+
             with(holder) {
                 viewLink.visibility = View.VISIBLE
+                etWebLink.visibility = View.GONE
                 editLayLink.visibility = View.GONE
                 viewWebLink.text = item.webLink
                 viewWebLink.setOnClickListener {
@@ -191,7 +213,6 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
                 }else {
                     viewAppStore.visibility = View.INVISIBLE
                 }
-
             }
         }
 
@@ -209,6 +230,10 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
             holder as SeventhViewHolder
             holder.itemView.setOnClickListener {
                 itemClick?.onClick(it,position)
+
+                val intent = Intent(context,UserDetailActivity::class.java)
+                intent.putExtra(EXTRA_USER_KEY,item.userInfo?.getOrNull()?.uid)
+                context.startActivity(intent)
             }
             val items = item.userInfo
             with(holder) {
@@ -234,6 +259,10 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
             holder as NinethViewHolder
             holder.itemView.setOnClickListener {
                 itemClick?.onClick(it,position)
+
+                val intent = Intent(context,UserDetailActivity::class.java)
+                intent.putExtra(EXTRA_USER_KEY,item.userInfo?.uid)
+                context.startActivity(intent)
             }
             val items = item.userInfo
             with(holder) {
@@ -275,10 +304,17 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
 
     inner class SecondViewHolder(binding : ItemProductTitleBinding) : RecyclerView.ViewHolder(binding.root) {
         val editTitle = binding.etProductTitle
-        val date = binding.tvProductDate
         val editDes = binding.etProductDes
+        val editTeam = binding.etProductTeam
+        val date = binding.tvProductDate
         val viewTitle = binding.tvProductTitle
         val viewDes = binding.tvProductDes
+        val viewTeam = binding.tvProductTeam
+        val viewAosTag = binding.tvProductAndroid
+        val viewIosTag = binding.tvProductApple
+        val ivWebLink = binding.ivWeb
+        val ivAosLink = binding.ivAos
+        val ivIosLink = binding.ivIos
 
     }
 

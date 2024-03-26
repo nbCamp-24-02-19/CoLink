@@ -14,5 +14,12 @@ class Constants {
         // permission
         const val MEDIA_PERMISSION = android.Manifest.permission.READ_EXTERNAL_STORAGE
         const val IMAGE_PERMISSION = android.Manifest.permission.READ_MEDIA_IMAGES
+
+        // log-in
+        const val LOG_IN_TAG = "log_in_tag"
+
+        // product
+        const val SAVE_SUCCESS = "save_success"
+        const val SAVE_FAIL = "save_fail"
     }
 }

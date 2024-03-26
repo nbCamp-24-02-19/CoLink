@@ -118,18 +118,27 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
 
     inner class SecondViewHolder(binding : ItemProductTitleBinding) : ViewHolder(binding.root) {
         val editTitle = binding.etProductTitle
-        val date = binding.tvProductDate
         val editDes = binding.etProductDes
+        val editTeam = binding.etProductTeam
+        val date = binding.tvProductDate
         val viewTitle = binding.tvProductTitle
         val viewDes = binding.tvProductDes
+        val viewTeam = binding.tvProductTeam
+        val viewAosTag = binding.tvProductAndroid
+        val viewIosTag = binding.tvProductApple
+        val ivWebLink = binding.ivWeb
+        val ivAosLink = binding.ivAos
+        val ivIosLink = binding.ivIos
 
         private fun saveData(position: Int) {
             val title = editTitle.text.toString()
             val des = editDes.text.toString()
+            val team = editTeam.text.toString()
 
-            if (tempEntity.title != title || tempEntity.des != des) {
+            if (tempEntity.title != title || tempEntity.des != des || tempEntity.team != team) {
                 tempEntity.title = title
                 tempEntity.des = des
+                tempEntity.team = team
                 updateTempData(position,tempEntity)
             }
         }
@@ -148,8 +157,17 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
                     hideKeyboard(editDes)
                 }
             }
+
+            editTeam.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    saveData(adapterPosition)
+                    hideKeyboard(editDes)
+                }
+            }
+
             editTitle.setText(tempEntity.title)
             editDes.setText(tempEntity.des)
+            editTeam.setText(tempEntity.team)
         }
 
         fun bind(item: ProductPromotionItems.Title) {
@@ -158,6 +176,13 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
             date.visibility = View.INVISIBLE
             editTitle.visibility = View.VISIBLE
             editDes.visibility = View.VISIBLE
+            ivAosLink.visibility = View.GONE
+            ivWebLink.visibility = View.GONE
+            ivIosLink.visibility = View.GONE
+            viewTeam.visibility = View.GONE
+            viewAosTag.visibility = View.INVISIBLE
+            viewIosTag.visibility = View.INVISIBLE
+            editTeam.visibility = View.VISIBLE
 
             if (adapterPosition != RecyclerView.NO_POSITION) {
                 if (item.title?.isNotEmpty() == true) {
@@ -170,6 +195,13 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
                     editDes.setText(item.des)
                 }else {
                     editDes.setText(tempEntity.des)
+                }
+
+                if (item.team?.isNotEmpty() == true) {
+                    editTeam.setText(item.team)
+                }else {
+                    editTeam.setText(tempEntity.team)
+
                 }
             }
         }
@@ -240,6 +272,7 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
             etPlayStore.setText(tempEntity.aos)
             etWebLink.setText(tempEntity.web)
             etAppStore.setText(tempEntity.ios)
+
         }
 
         fun bind (item: ProductPromotionItems.Link) {

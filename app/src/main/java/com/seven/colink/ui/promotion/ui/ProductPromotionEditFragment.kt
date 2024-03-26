@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -26,7 +27,9 @@ import com.seven.colink.ui.promotion.viewmodel.ProductPromotionSharedViewModel
 import com.seven.colink.util.Constants
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
+import com.seven.colink.util.snackbar.setSnackBar
 import com.seven.colink.util.status.DataResultStatus
+import com.seven.colink.util.status.SnackType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -49,7 +52,7 @@ class ProductPromotionEditFragment : Fragment() {
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
     private var viewList = mutableListOf(
         ProductPromotionItems.Img(null),
-        ProductPromotionItems.Title("","",""),
+        ProductPromotionItems.Title("","","","","","",""),
         ProductPromotionItems.MiddleImg(null),
         ProductPromotionItems.Link("","",""),
         ProductPromotionItems.ProjectHeader("dd"),
@@ -91,7 +94,7 @@ class ProductPromotionEditFragment : Fragment() {
         viewList.clear()
         viewList.addAll(listOf(
             ProductPromotionItems.Img(null),
-            ProductPromotionItems.Title("","",""),
+            ProductPromotionItems.Title("","","","","","",""),
             ProductPromotionItems.MiddleImg(null),
             ProductPromotionItems.Link("","",""),
             ProductPromotionItems.ProjectHeader(""),
@@ -126,9 +129,19 @@ class ProductPromotionEditFragment : Fragment() {
     }
 
     private fun setObserve(){
-        key?.let { editViewModel.getMemberDetail(it) }
+        lifecycleScope.launch {
+            sharedViewModel.key.collect { k ->
+                if (k != null) {
+                    editViewModel.init(k)
+                }
+            }
+        }
         editViewModel.product.observe(viewLifecycleOwner) {
-            key?.let { key -> editViewModel.init(key) }
+            if (key != null && key?.isNotEmpty() == true) {
+                key?.let { key -> editViewModel.init(key) }
+            }
+            updateViewList(editViewModel.getViewList())
+            editAdapter.notifyDataSetChanged()
         }
 
         editViewModel.setLeader.observe(viewLifecycleOwner) { leader ->
@@ -141,11 +154,29 @@ class ProductPromotionEditFragment : Fragment() {
 
         editViewModel.result.observe(viewLifecycleOwner) { result ->
             if (result == DataResultStatus.SUCCESS) {
+                sharedViewModel.clickEventSnackBar(Constants.SAVE_SUCCESS)
                 val frag = ProductPromotionFragment()
                 val fragmentManager = requireActivity().supportFragmentManager
                 val trans = fragmentManager.beginTransaction()
                 trans.replace(R.id.frame_product_promotion,frag)
                 trans.commit()
+            }else {
+                sharedViewModel.clickEventSnackBar(Constants.SAVE_FAIL)
+            }
+        }
+    }
+
+    private fun updateViewList(newList : List<ProductPromotionItems>) {
+        val existItem = newList.filter { newItem ->
+            viewList.any { existItem ->
+                existItem::class == newItem::class
+            }
+        }
+        existItem.forEach { newItem ->
+            viewList.indexOfFirst { existItem ->
+                existItem::class == newItem::class
+            }.takeIf { index -> index != -1 }?.let { index ->
+                viewList[index] = newItem
             }
         }
     }
@@ -167,36 +198,41 @@ class ProductPromotionEditFragment : Fragment() {
         coroutineScope.launch {
             val tempData = editAdapter.getTempData()
 
-            val mainImg = withContext(Dispatchers.Main) {
-                val imgItem = editAdapter.getTempData()
-                imgItem.selectMainImgUri?.let { editViewModel.uploadImage(it) }
-            }
+            if (tempData.title != null && tempData.des != null && tempData.selectMainImgUri != null && tempData.team != null) {
+                val mainImg = withContext(Dispatchers.Main) {
+                    val imgItem = editAdapter.getTempData()
+                    imgItem.selectMainImgUri?.let { editViewModel.uploadImage(it) }
+                }
 
-            val desImg = withContext(Dispatchers.Main) {
-                val imgItem = editAdapter.getTempData()
-                imgItem.selectMiddleImgUri?.let { editViewModel.uploadImage(it) }
-            }
+                val desImg = withContext(Dispatchers.Main) {
+                    val imgItem = editAdapter.getTempData()
+                    imgItem.selectMiddleImgUri?.let { editViewModel.uploadImage(it) }
+                }
 
-            editAdapter.tempEntity.mainImg = mainImg
-            editAdapter.tempEntity.desImg = desImg
+                editAdapter.tempEntity.mainImg = mainImg
+                editAdapter.tempEntity.desImg = desImg
 
-            val entity = ProductEntity(
-                title = tempData.title,
-                imageUrl = tempData.mainImg,
-                description = tempData.des,
-                desImg = tempData.desImg,
-                referenceUrl = tempData.web,
-                aosUrl = tempData.aos,
-                iosUrl = tempData.ios
-            )
+                val entity = ProductEntity(
+                    title = tempData.title,
+                    imageUrl = tempData.mainImg,
+                    teamId = tempData.team,
+                    description = tempData.des,
+                    desImg = tempData.desImg,
+                    referenceUrl = tempData.web,
+                    aosUrl = tempData.aos,
+                    iosUrl = tempData.ios
+                )
 
-            editViewModel.key.observe(viewLifecycleOwner) { k ->
-                sharedViewModel.setKey(k)
-            }
+                editViewModel.key.observe(viewLifecycleOwner) { k ->
+                    sharedViewModel.setKey(k)
+                }
 
-            with(editViewModel) {
-                saveEntity(entity)
-                registerProduct()
+                with(editViewModel) {
+                    saveEntity(entity)
+                    registerProduct()
+                }
+            }else {
+                binding.tvPromotionEditComplete.setSnackBar(SnackType.Error,"제목, 소개글, 메인 이미지, 팀 이름은 필수로 들어가야 합니다.").show()
             }
         }
     }
