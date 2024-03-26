@@ -3,9 +3,11 @@ package com.seven.colink.data.firebase.repository
 import com.google.firebase.firestore.FirebaseFirestore
 import com.seven.colink.data.firebase.type.DataBaseType
 import com.seven.colink.domain.entity.GroupEntity
+import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.entity.ProductEntity
 import com.seven.colink.domain.repository.ProductRepository
 import com.seven.colink.util.status.DataResultStatus
+import com.seven.colink.util.status.GroupType
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -41,6 +43,16 @@ class ProductRepositoryImpl @Inject constructor(
             .documents.mapNotNull {
                 it.toObject(ProductEntity::class.java)
             }
+    }
+
+    override suspend fun getRecentPost(count: Int): List<ProductEntity> {
+        var query = firestore.collection(DataBaseType.PRODUCT.title)
+            .orderBy("registeredDate", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            .limit(count.toLong())
+
+        return query.get().await().documents.mapNotNull { snapshot ->
+            snapshot.toObject(ProductEntity::class.java)
+        }
     }
 
     override suspend fun deleteProduct(key: String) = suspendCoroutine { continuation ->

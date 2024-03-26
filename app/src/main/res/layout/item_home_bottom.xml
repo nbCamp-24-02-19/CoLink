@@ -60,6 +60,7 @@
             android:maxLines="1"
             android:text="@string/home_bottom_example_title"
             android:fontFamily="@font/inter_regular"
+            android:textColor="@color/black"
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@id/iv_home_bottom_thumubnail"
