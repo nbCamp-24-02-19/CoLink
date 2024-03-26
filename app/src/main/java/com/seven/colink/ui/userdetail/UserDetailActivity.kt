@@ -232,7 +232,7 @@ class UserDetailActivity : AppCompatActivity() {
     private fun initViewModel() = with(viewModel) {
         lifecycleScope.launch {
             chatRoom.collect {
-                startActivity(ChatRoomActivity.newIntent(this@UserDetailActivity,it.key, it.title?: ""))
+                startActivity(ChatRoomActivity.newIntent(this@UserDetailActivity,it.key))
             }
         }
 
