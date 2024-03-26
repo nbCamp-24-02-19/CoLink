@@ -105,7 +105,7 @@ class RecommendFragment : Fragment() {
         lifecycleScope.launch {
             chatRoomEvent.collect {
                 startActivity(
-                    ChatRoomActivity.newIntent(requireContext(), it.key, it.title.toString())
+                    ChatRoomActivity.newIntent(requireContext(), it.key)
                 )
             }
         }

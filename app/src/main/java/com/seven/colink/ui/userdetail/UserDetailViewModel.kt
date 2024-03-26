@@ -41,7 +41,7 @@ class UserDetailViewModel @Inject constructor(
     private val _currentUsersPostList = MutableSharedFlow<List<PostEntity>>()
     val currentUserPostList = _currentUsersPostList.asSharedFlow()
 
-    private val _chatRoom = MutableSharedFlow<ChatRoomEntity>()
+    private val _chatRoom = MutableSharedFlow<ChatInfo>()
     val chatRoom = _chatRoom.asSharedFlow()
 
     private val _detailEvent = MutableSharedFlow<String>()
@@ -79,7 +79,7 @@ class UserDetailViewModel @Inject constructor(
 
     fun registerChatRoom() {
         viewModelScope.launch {
-            _chatRoom.emit(getChatRoomUseCase(userId))
+            _chatRoom.emit(getChatRoomUseCase(userId).convert())
         }
     }
 
@@ -125,4 +125,9 @@ class UserDetailViewModel @Inject constructor(
         }
     }
 
+    private fun ChatRoomEntity.convert() = ChatInfo(
+        key = key,
+        userName = userDetails.value?.userName?: ""
+    )
 }
+
