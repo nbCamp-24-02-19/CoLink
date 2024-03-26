@@ -129,7 +129,6 @@ class ProductPromotionViewViewModel @Inject constructor(
                 ProductPromotionItems.ProjectMemberHeader(getString(R.string.product_member)),
             )
         )
-        Log.d("entity","#qqqqq viewmodel -> ${item?.projectId}")
         _setMember.value?.forEach { member ->
             viewList.add(member)
         }
