@@ -10,6 +10,7 @@ import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.repository.UserRepository
+import com.seven.colink.util.convert.convertGradeFormat
 import com.seven.colink.util.convert.convertToDaysAgo
 import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.UiState
@@ -26,15 +27,18 @@ class MyPageViewModel @Inject constructor(
 
     private val _userDetails = MutableLiveData<UiState<MyPageUserModel>>()
     private val _userPosts = MutableLiveData<List<MyPagePostModel>>()
+    private val _likePost = MutableLiveData<List<MyPageLikeModel>?>()
     val userDetails: LiveData<UiState<MyPageUserModel>> = _userDetails
     val userPost: LiveData<List<MyPagePostModel>> = _userPosts
+    val likePost : LiveData<List<MyPageLikeModel>?> = _likePost
+
 
     init {
         loadUserDetails()
         loadUserPost()
     }
 
-    private fun loadUserDetails() {
+    fun loadUserDetails() {
         viewModelScope.launch {
 
             _userDetails.value = UiState.Loading
@@ -77,6 +81,20 @@ class MyPageViewModel @Inject constructor(
                 _userPosts.postValue(post.sortedByDescending { it.registeredDate }
                     .map { it.convertPostEntity() })
 
+            }
+        }
+    }
+
+    fun loadLikePost(){
+        viewModelScope.launch {
+            val currentUser = authRepository.getCurrentUser()
+            val userDetails = userRepository.getUserDetails(currentUser.message)
+            val likeList = userDetails.getOrNull()?.likeList
+            val getLikeList = likeList?.map {
+                getPost(it)!!.convertMyLikeEntity()
+            }?.sortedByDescending { it.time }
+            _likePost.value = getLikeList?.map {
+                it.copy(time= it.time?.convertToDaysAgo())
             }
         }
     }
@@ -129,12 +147,19 @@ class MyPageViewModel @Inject constructor(
         time = registeredDate?.convertToDaysAgo()
     )
 
+    private fun PostEntity.convertMyLikeEntity() = MyPageLikeModel(
+        key = key,
+        title = title,
+        status = status,
+        time = registeredDate
+    )
+
 
     private fun UserEntity.convertUserEntity() = MyPageUserModel(
         name = name,
         email = email,
         profile = photoUrl,
-        mainSpecialty = mainSpecialty,
+        mainSpecialty = specialty,
         specialty = specialty,
         skill = skill,
         level = level,
@@ -142,7 +167,7 @@ class MyPageViewModel @Inject constructor(
         git = git,
         blog = blog,
         link = link,
-        score = grade
+        score = grade?.convertGradeFormat()
     )
 
 }

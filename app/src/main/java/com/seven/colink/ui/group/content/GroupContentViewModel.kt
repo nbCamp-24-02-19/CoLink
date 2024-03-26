@@ -10,7 +10,6 @@ import com.seven.colink.domain.repository.ImageRepository
 import com.seven.colink.util.Constants
 import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.PostEntryType
-import com.seven.colink.util.status.ProjectStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -61,11 +60,11 @@ class GroupContentViewModel @Inject constructor(
                     GroupContentItem.GroupOptionItem(
                         key = it.key,
                         precautions = it.precautions,
-                        recruitInfo = it.recruitInfo
+                        startDate = it.startDate,
+                        endDate = it.endDate
                     )
                 )
 
-                items.add(GroupContentItem.GroupProjectStatus(key = it.key, status = it.status))
                 items
             } ?: emptyList()
         }
@@ -73,8 +72,6 @@ class GroupContentViewModel @Inject constructor(
 
     fun onClickUpdate() = viewModelScope.launch {
         updateGroupContentItem()
-        val projectStatus =
-            uiState.value.find { it is GroupContentItem.GroupProjectStatus } as? GroupContentItem.GroupProjectStatus
         val groupContent =
             uiState.value.find { it is GroupContentItem.GroupContent } as? GroupContentItem.GroupContent
 
@@ -83,12 +80,6 @@ class GroupContentViewModel @Inject constructor(
 
         if (key != null) {
             resultPerformance(groupRepository.updateGroupSection(key, updatedGroupEntity))
-            resultPerformance(
-                groupRepository.updateGroupStatus(
-                    key,
-                    projectStatus?.status ?: ProjectStatus.RECRUIT
-                )
-            )
         }
     }
 
@@ -111,17 +102,9 @@ class GroupContentViewModel @Inject constructor(
             tags = groupItem?.tags,
             imageUrl = imageUrl,
             precautions = textItem?.precautions,
-            recruitInfo = textItem?.recruitInfo
+            startDate = textItem?.startDate,
+            endDate = textItem?.endDate
         )
-    }
-
-    fun onChangedStatus(status: ProjectStatus) {
-        _uiState.value = uiState.value.map { uiStateValue ->
-            when (uiStateValue) {
-                is GroupContentItem.GroupProjectStatus -> uiStateValue.copy(status = status)
-                else -> uiStateValue
-            }
-        }
     }
 
     fun checkValidAddTag(tag: String) {
@@ -181,7 +164,7 @@ class GroupContentViewModel @Inject constructor(
 
     fun updateGroupItemText(position: Int, title: String, description: String) {
         if (position >= 0 && position < _uiState.value.size) {
-            when (val uiStateValue = _uiState.value[position]) {
+            when (_uiState.value[position]) {
                 is GroupContentItem.GroupContent -> {
                     postItemDataMap["title"] = title
                     postItemDataMap["description"] = description
@@ -189,10 +172,13 @@ class GroupContentViewModel @Inject constructor(
 
                 is GroupContentItem.GroupOptionItem -> {
                     postItemDataMap["precautions"] = title
-                    postItemDataMap["recruitInfo"] = description
+                    if (description.isNotBlank()) {
+                        val (startDate, endDate) = description.split("~")
+                        postItemDataMap["startDate"] = startDate
+                        postItemDataMap["endDate"] = endDate
+                    }
                 }
 
-                else -> uiStateValue
             }
         }
     }
@@ -209,12 +195,13 @@ class GroupContentViewModel @Inject constructor(
                 is GroupContentItem.GroupOptionItem -> {
                     val precautions =
                         postItemDataMap["precautions"] ?: uiStateValue.precautions
-                    val recruitInfo =
-                        postItemDataMap["recruitInfo"] ?: uiStateValue.recruitInfo
-                    uiStateValue.copy(precautions = precautions, recruitInfo = recruitInfo)
+                    val startDate =
+                        postItemDataMap["startDate"] ?: uiStateValue.startDate
+                    val endDate =
+                        postItemDataMap["endDate"] ?: uiStateValue.endDate
+                    uiStateValue.copy(precautions = precautions, startDate = startDate, endDate = endDate)
                 }
 
-                else -> uiStateValue
             }
         }
     }

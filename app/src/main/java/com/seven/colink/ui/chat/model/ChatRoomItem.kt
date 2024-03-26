@@ -1,5 +1,7 @@
 package com.seven.colink.ui.chat.model
 
+import com.seven.colink.util.model.UrlMetaData
+
 sealed interface ChatRoomItem {
     data class MyMessage (
         val key: String,
@@ -7,6 +9,7 @@ sealed interface ChatRoomItem {
         val img: String? = null,
         val time: String,
         val viewCount: Int,
+        val embed: UrlMetaData? = null,
     ): ChatRoomItem
 
     data class OtherMessage (
@@ -17,5 +20,6 @@ sealed interface ChatRoomItem {
         val img: String? = null,
         val time: String,
         val viewCount: Int,
+        val embed: UrlMetaData? = null,
     ): ChatRoomItem
 }

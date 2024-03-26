@@ -2,7 +2,6 @@ package com.seven.colink.ui.group.content
 
 import android.net.Uri
 import com.seven.colink.util.status.GroupType
-import com.seven.colink.util.status.ProjectStatus
 
 sealed interface GroupTypeUiState {
     data object Project : GroupTypeUiState
@@ -30,11 +29,8 @@ sealed interface GroupContentItem {
     data class GroupOptionItem(
         val key: String?,
         val precautions: String?,
-        val recruitInfo: String?,
+        val startDate: String?,
+        val endDate: String?
     ) : GroupContentItem
 
-    data class GroupProjectStatus(
-        val key: String?,
-        val status: ProjectStatus?
-    ) : GroupContentItem
 }

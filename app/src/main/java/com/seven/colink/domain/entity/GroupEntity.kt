@@ -6,7 +6,7 @@ import com.seven.colink.util.status.ProjectStatus
 import java.time.LocalDateTime
 import java.util.UUID
 
-data class GroupEntity (
+data class GroupEntity(
     val key: String = "GROUP_" + UUID.randomUUID().toString(),
     val postKey: String = "",
     val authId: String? = "",
@@ -22,5 +22,8 @@ data class GroupEntity (
     val registeredDate: String? = LocalDateTime.now().convertLocalDateTime(),
     val startDate: String? = null,
     val endDate: String? = "",
-    val teamName: String? = null
+    val teamName: String? = null,
+    val evaluateMember: List<String>? = null,
+    val projectStartDate: String? = null,
+    val projectEndDate: String? = null
 )

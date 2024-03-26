@@ -144,6 +144,7 @@
                 android:layout_marginStart="25dp"
                 android:layout_marginTop="132dp"
                 android:src="@drawable/ic_blog"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -151,9 +152,10 @@
                 android:id="@+id/iv_mypage_git"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:layout_marginStart="11dp"
+                android:layout_marginStart="25dp"
                 android:layout_marginTop="132dp"
                 android:src="@drawable/ic_git2"
+                android:visibility="gone"
                 app:layout_constraintStart_toEndOf="@+id/iv_mypage_blog"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -161,10 +163,10 @@
                 android:id="@+id/iv_mypage_link"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:layout_marginStart="11dp"
+                android:layout_marginStart="25dp"
                 android:layout_marginTop="132dp"
                 android:src="@drawable/ic_link"
-                android:visibility= "gone"
+                android:visibility="gone"
                 app:layout_constraintStart_toEndOf="@+id/iv_mypage_git"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -174,7 +176,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="100dp"
                 android:layout_marginEnd="16dp"
                 android:padding="10dp"
                 android:background="@drawable/mypage_re_shape"
@@ -182,7 +184,7 @@
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/iv_mypage_git">
+                app:layout_constraintTop_toBottomOf="@+id/iv_mypage_profile">
 
                 <TextView
                     android:id="@+id/tv_mypage_text"
@@ -272,7 +274,7 @@
                     android:id="@+id/tv_like_more"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="15dp"
+                    android:layout_marginEnd="25dp"
                     android:layout_marginTop="16dp"
                     android:text="더보기"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -284,7 +286,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="16dp"
-                    android:text="등록글"
+                    android:text="즐겨찾기 목록"
                     android:textColor="@color/main_color"
                     android:textSize="14sp"
                     android:textStyle="bold"
