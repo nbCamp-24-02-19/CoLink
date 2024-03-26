@@ -1,11 +1,9 @@
 package com.seven.colink.ui.post.content.viewmodel
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.seven.colink.R
 import com.seven.colink.domain.entity.ApplicationInfo
@@ -378,7 +376,6 @@ class PostContentViewModel @Inject constructor(
                     }
                 }
                 _uiState.value = updateUiState
-                Log.d("Evaluation","updateUiState = $updateUiState")
             } else {
                 _currentUser = currentUser!!.copy(likeList = currentUser!!.likeList?.minus(listOf(key).toSet()))
                 val updateUiState = _uiState.value?.map { item ->
@@ -389,7 +386,6 @@ class PostContentViewModel @Inject constructor(
                     }
                 }
                 _uiState.value = updateUiState
-                Log.d("Evaluation","updateUiState = $updateUiState")
             }
 
         }

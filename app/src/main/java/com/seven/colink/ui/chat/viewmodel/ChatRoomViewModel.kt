@@ -13,6 +13,7 @@ import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.domain.usecase.SendNotificationUseCase
 import com.seven.colink.ui.chat.ChatRoomActivity.Companion.CHAT_ID
 import com.seven.colink.ui.chat.model.ChatRoomItem
+import com.seven.colink.ui.chat.type.ChatTabType
 import com.seven.colink.util.convert.convertTime
 import com.seven.colink.util.convert.containsUrl
 import com.seven.colink.util.convert.extractUrl
@@ -59,6 +60,14 @@ class ChatRoomViewModel @Inject constructor(
 
             _chatRoom.value = chatRoomDeferred.await()
             _uid = uidDeferred.await()
+
+            if (chatRoom.value.type == ChatTabType.GENERAL) {
+                _chatRoom.value = _chatRoom.value.copy(
+                    title = userRepository.getUserDetails(
+                        chatRoom.value.participantsUid.filter { (key,_) ->  key != uid }.keys.first()
+                    ).getOrNull()?.name
+                )
+            }
 
             setMessages(chatRoom.value)
         }

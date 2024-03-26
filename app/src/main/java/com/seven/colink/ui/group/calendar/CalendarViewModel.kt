@@ -26,11 +26,16 @@ class CalendarViewModel @Inject constructor(
     val filteredByDate: StateFlow<ScheduleItem> get() = _filteredByDate
     private val _filteredByMonth = MutableStateFlow<List<ScheduleModel>>(emptyList())
     val filteredByMonth: StateFlow<List<ScheduleModel>> get() = _filteredByMonth
-    fun setEntity(key: String) = viewModelScope.launch {
+
+    fun setEntity(key: String, date: LocalDate) = viewModelScope.launch {
         val scheduleList = scheduleRepository.getScheduleListByPostId(key).map { it.convert() }
         _uiState.value = scheduleList
-        filterScheduleListByDate(LocalDate.now())
-        filterDataByMonth(LocalDate.now())
+        filterScheduleListByDate(date)
+        filterDataByMonth(date)
+    }
+
+    fun clearFilteredByMonth() {
+        _filteredByMonth.value = emptyList()
     }
 
     fun filterScheduleListByDate(date: LocalDate) = viewModelScope.launch {
@@ -101,8 +106,10 @@ class CalendarViewModel @Inject constructor(
             }
 
             val isThisMonth = isSameMonth(startDate) || isSameMonth(endDate)
-            val isLastMonth = isSameMonth(startDate?.minusMonths(1)) || isSameMonth(endDate?.minusMonths(1))
-            val isNextMonth = isSameMonth(startDate?.plusMonths(1)) || isSameMonth(endDate?.plusMonths(1))
+            val isLastMonth =
+                isSameMonth(startDate?.minusMonths(1)) || isSameMonth(endDate?.minusMonths(1))
+            val isNextMonth =
+                isSameMonth(startDate?.plusMonths(1)) || isSameMonth(endDate?.plusMonths(1))
 
             isThisMonth || isLastMonth || isNextMonth
         }
@@ -141,6 +148,7 @@ class CalendarViewModel @Inject constructor(
             endDate = endDate,
             calendarColor = calendarColor ?: ColorEnum.UNKNOWN,
             title = title,
-            description = description
+            description = description,
+            buttonUiState = null
         )
 }

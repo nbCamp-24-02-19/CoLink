@@ -232,13 +232,13 @@ class UserDetailActivity : AppCompatActivity() {
     private fun initViewModel() = with(viewModel) {
         lifecycleScope.launch {
             chatRoom.collect {
-                startActivity(ChatRoomActivity.newIntent(this@UserDetailActivity,it.key, it.title?: ""))
+                startActivity(ChatRoomActivity.newIntent(this@UserDetailActivity,it.key))
             }
         }
 
         lifecycleScope.launch {
             currentUserPostList.collect{ list ->
-                if (list.isEmpty()) binding.root.setSnackBar(SnackType.Error, "초대 가능한 그룹이 없습니다")
+                if (list.isEmpty()) binding.root.setSnackBar(SnackType.Error, "초대 가능한 그룹이 없습니다").show()
                 else {
                     list.mapNotNull { it.title }.setDialog(this@UserDetailActivity, "그룹을 선택 해주세요") { title ->
                         list.find { it.title == title }.let { post -> viewModel.inviteGroup(post!!) }

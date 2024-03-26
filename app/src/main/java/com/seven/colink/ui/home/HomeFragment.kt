@@ -166,7 +166,7 @@ class HomeFragment : Fragment() {
                 intent.putExtra(Constants.EXTRA_ENTITY_KEY,item.key)
                 startActivity(intent)
             }else {
-                view.setSnackBar(SnackType.Error,"다음에 다시 시도해주세요")
+                view.setSnackBar(SnackType.Error,"다음에 다시 시도해주세요").show()
             }
 
         }

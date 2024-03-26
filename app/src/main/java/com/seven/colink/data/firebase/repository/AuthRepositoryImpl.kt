@@ -2,6 +2,7 @@ package com.seven.colink.data.firebase.repository
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.GoogleAuthProvider
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.util.status.DataResultStatus
 import kotlinx.coroutines.tasks.await
@@ -17,7 +18,9 @@ class AuthRepositoryImpl @Inject constructor(
             firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        continuation.resume(DataResultStatus.SUCCESS.apply { message = firebaseAuth.currentUser!!.uid })
+                        continuation.resume(DataResultStatus.SUCCESS.apply {
+                            message = firebaseAuth.currentUser!!.uid
+                        })
                     }
                 }
                 .addOnFailureListener { e ->
@@ -34,24 +37,27 @@ class AuthRepositoryImpl @Inject constructor(
                 }
         }
 
-    override suspend fun signIn(email: String, password: String) = suspendCoroutine { continuation ->
-        firebaseAuth.signInWithEmailAndPassword(email, password)
-            .addOnSuccessListener {
-                continuation.resume(DataResultStatus.SUCCESS.apply { message = firebaseAuth.currentUser!!.uid })
-            }
-            .addOnFailureListener { e ->
-                if (e is FirebaseAuthException) {
-                    val errorCode = e.errorCode
-                    continuation.resume(DataResultStatus.FAIL.apply {
-                        this.message = errorCode
-                    })
-                } else {
-                    continuation.resume(DataResultStatus.FAIL.apply {
-                        this.message = e.message ?: "Unknown error"
+    override suspend fun signIn(email: String, password: String) =
+        suspendCoroutine { continuation ->
+            firebaseAuth.signInWithEmailAndPassword(email, password)
+                .addOnSuccessListener {
+                    continuation.resume(DataResultStatus.SUCCESS.apply {
+                        message = firebaseAuth.currentUser!!.uid
                     })
                 }
-            }
-    }
+                .addOnFailureListener { e ->
+                    if (e is FirebaseAuthException) {
+                        val errorCode = e.errorCode
+                        continuation.resume(DataResultStatus.FAIL.apply {
+                            this.message = errorCode
+                        })
+                    } else {
+                        continuation.resume(DataResultStatus.FAIL.apply {
+                            this.message = e.message ?: "Unknown error"
+                        })
+                    }
+                }
+        }
 
 
     override suspend fun getCurrentUser(): DataResultStatus {
@@ -85,5 +91,14 @@ class AuthRepositoryImpl @Inject constructor(
                     })
                 }
             }
+    }
+
+    override suspend fun registerUserByGoogle(token: String) = try {
+        val result = firebaseAuth.signInWithCredential(
+            GoogleAuthProvider.getCredential(token, null)
+        ).await()
+        result.user ?: DataResultStatus.FAIL.apply { message = "유저를 찾을 수 없습니다." }
+    } catch (e: Exception) {
+        DataResultStatus.FAIL.apply { message = e.message ?: "알수없는 에러" }
     }
 }

@@ -105,7 +105,7 @@ class RecommendFragment : Fragment() {
         lifecycleScope.launch {
             chatRoomEvent.collect {
                 startActivity(
-                    ChatRoomActivity.newIntent(requireContext(), it.key, it.title.toString())
+                    ChatRoomActivity.newIntent(requireContext(), it.key)
                 )
             }
         }
@@ -136,7 +136,7 @@ class RecommendFragment : Fragment() {
 
         lifecycleScope.launch {
             inviteEvent.collect {
-                binding.root.setSnackBar(SnackType.Success, it)
+                binding.root.setSnackBar(SnackType.Success, it).show()
             }
         }
     }
