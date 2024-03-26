@@ -7,9 +7,9 @@ import java.util.UUID
 
 data class ProductEntity (
     val key: String = "PRD_" + UUID.randomUUID().toString(),
-    val projectId: String = "",
+    val teamId: String? = "",
     val authId: String? = "",
-    val memberIds: List<String> = emptyList(),
+    val memberIds: List<String>? = emptyList(),
     val title: String? = "",
     val imageUrl: String? = "",
     val description: String? = "",
@@ -29,6 +29,7 @@ data class TempProductEntity(
     var web : String? = "",
     var aos : String? = "",
     var ios : String? = "",
+    var team : String? = "",
     var selectMainImgUri : Uri? = null,
     var selectMiddleImgUri : Uri? = null
 )
