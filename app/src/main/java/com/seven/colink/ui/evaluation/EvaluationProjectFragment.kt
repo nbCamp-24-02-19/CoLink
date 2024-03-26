@@ -32,6 +32,18 @@ class EvaluationProjectFragment : Fragment() {
     private var currentPage: Int = 0
 
     private var projectUserListPosition: Int = 0
+
+    private val ratingBar by lazy {
+        with(binding){
+            listOf(
+                rbEvalQuestion1,
+                rbEvalQuestion2,
+                rbEvalQuestion3,
+                rbEvalQuestion4,
+                rbEvalQuestion5,
+            )
+        }
+    }
     companion object {
         fun newInstanceProject(position: Int)
                 : EvaluationProjectFragment {
@@ -63,7 +75,7 @@ class EvaluationProjectFragment : Fragment() {
 
     override fun onResume() {
         initViewModel()
-        currentPage = projectUserListPosition
+        setRatingListener()
         super.onResume()
     }
 
@@ -73,8 +85,7 @@ class EvaluationProjectFragment : Fragment() {
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-
-                if (projectUserListPosition == position) evaluationViewModel.updatePage(position)
+                evaluationViewModel.updatePage(position)
             }
         })
     }
@@ -90,15 +101,11 @@ class EvaluationProjectFragment : Fragment() {
 
         lifecycleScope.launch {
             currentPage.collect { state ->
-                if (projectUserListPosition == state.num) {
                     when (state) {
                         PageState.FIRST -> firstPage()
-                        PageState.MIDDLE -> Unit
+                        PageState.MIDDLE -> middlePage()
                         PageState.LAST -> lastPage()
                     }
-
-                    updateMembers(state.num)
-                }
             }
         }
     }
@@ -115,19 +122,21 @@ class EvaluationProjectFragment : Fragment() {
         }
     }
 
-    private fun updateMembers(position: Int) =
-        if (currentPage == position) {
-            evaluationViewModel.updateProjectMembers(
-                position,
-                binding.rbEvalQuestion1.rating,
-                binding.rbEvalQuestion2.rating,
-                binding.rbEvalQuestion3.rating,
-                binding.rbEvalQuestion4.rating,
-                binding.rbEvalQuestion5.rating
-            )
-        } else {
-
+    private fun setRatingListener() {
+        ratingBar.forEach { ratingBars ->
+            ratingBars.setOnRatingBarChangeListener { _, _, _ ->
+                val ratings = ratingBar.map { it.rating }
+                evaluationViewModel.updateProjectMembers(
+                    viewPager.currentItem,
+                    q1 = ratings.getOrNull(0),
+                    q2 = ratings.getOrNull(1),
+                    q3 = ratings.getOrNull(2),
+                    q4 = ratings.getOrNull(3),
+                    q5 = ratings.getOrNull(4),
+                )
+            }
         }
+    }
 
     private fun firstPage() = with(binding) {
         tvEvalPrev.visibility = View.INVISIBLE
@@ -169,7 +178,6 @@ class EvaluationProjectFragment : Fragment() {
                 title = getString(R.string.eval_dialog_title),
                 message = getString(R.string.eval_dialog_des),
                 confirmAction = {
-                    updateMembers(currentPage)
                     updateGrade()
                     it.dismiss()
                     activity?.finish()

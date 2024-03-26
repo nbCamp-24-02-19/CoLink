@@ -78,23 +78,23 @@ class EvaluationViewModel @Inject constructor(
 
     fun updateProjectMembers(
         position: Int,
-        q1: Float,
-        q2: Float,
-        q3: Float,
-        q4: Float,
-        q5: Float
+        q1: Float? = null,
+        q2: Float? = null,
+        q3: Float? = null,
+        q4: Float? = null,
+        q5: Float? = null
     ) {
         val projectMembers = _evalProjectMembersData.value?.toMutableList() ?: return
 
         if (position >= 0 && position < projectMembers.size) {
             val member = projectMembers[position]
             member?.let {
-                it.communication = q1
-                it.technic = q2
-                it.diligence = q3
-                it.flexibility = q4
-                it.creativity = q5
-                it.grade = ((q1 + q2 + q3 + q4 + q5) / 5).toDouble()
+                it.communication = q1?: 2.5F
+                it.technic = q2?: 2.5F
+                it.diligence = q3?: 2.5F
+                it.flexibility = q4?: 2.5F
+                it.creativity = q5?: 2.5F
+                it.grade = ((it.communication!! + it.technic!! + it.diligence!! + it.flexibility!! + it.creativity!!) / 5).toDouble()
             }
             _evalProjectMembersData.value = projectMembers
             Log.d("Evaluation", "### updateProjectMembers = $projectMembers")
@@ -116,7 +116,7 @@ class EvaluationViewModel @Inject constructor(
                                     diligence = data.diligence,
                                     flexibility = data.flexibility,
                                     creativity = data.creativity,
-                                    evaluatedNumber = ++data.evalCount,
+                                    evaluatedNumber = data.evalCount,
                                 )
                             )
                         }
@@ -124,7 +124,7 @@ class EvaluationViewModel @Inject constructor(
                 }?.awaitAll()
                     _result.emit(groupRepository.registerGroup(
                         groupEntity.let {
-                            it.copy(evaluateMember = it.evaluateMember?.plus(currentUid))
+                            it.copy(evaluateMember = it.evaluateMember?.plus(currentUid)?: listOf(currentUid))
                         }))
             } catch (e: Exception){
                 _result.emit(DataResultStatus.FAIL.apply { message = e.message?: "알수 없는 에러" })
@@ -190,7 +190,7 @@ class EvaluationViewModel @Inject constructor(
             }
             groupRepository.registerGroup(
                 groupEntity.let {
-                    it.copy(evaluateMember = it.evaluateMember?.plus(currentUid))
+                    it.copy(evaluateMember = it.evaluateMember?.plus(currentUid)?: listOf(currentUid))
                 }
             )
         }
