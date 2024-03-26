@@ -126,6 +126,6 @@ dependencies {
     // Indicator
     implementation("com.tbuonomo:dotsindicator:5.0")
 
-    //kakao
-    implementation("com.kakao.sdk:v2-user:2.10.0")
+    //google
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
 }
