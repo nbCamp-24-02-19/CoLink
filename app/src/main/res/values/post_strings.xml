@@ -5,6 +5,7 @@
     <string name="input_tag">태그를 추가해주세요</string>
     <string name="input_title">제목을 입력하세요</string>
     <string name="input_content_project">프로젝트를 소개해보세요!\n상세하게 적을 수록 매칭 확률이 올라가요.</string>
+    <string name="input_team">팀명은 최대 9글자까지 입력 가능합니다.</string>
     <string name="input_content_study">자유롭게 스터디를 소개해보세요!</string>
 
     <string name="bt_project">Project</string>

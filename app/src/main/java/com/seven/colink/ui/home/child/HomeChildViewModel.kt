@@ -26,7 +26,7 @@ class HomeChildViewModel @Inject constructor(
 
     fun getBottomItems(num: Int,type : GroupType?) {
         _isLoading.value = true
-        var getBottomItemList: MutableList<BottomItems> = mutableListOf()
+        val getBottomItemList: MutableList<BottomItems> = mutableListOf()
 
         viewModelScope.launch {
             getBottomItemList.clear()
