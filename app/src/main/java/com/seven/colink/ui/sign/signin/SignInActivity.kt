@@ -17,6 +17,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.seven.colink.BuildConfig
 import com.seven.colink.databinding.ActivitySignInBinding
 import com.seven.colink.ui.main.MainActivity
 import com.seven.colink.ui.sign.signin.viewmodel.SignInViewModel
@@ -41,7 +42,7 @@ class SignInActivity : AppCompatActivity() {
     private val viewModel: SignInViewModel by viewModels()
 
     private val signInGoogleRequest = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-        .requestIdToken("656455146700-4it82b9v7j6q8m0fv9hms81rr8gnccka.apps.googleusercontent.com")
+        .requestIdToken(BuildConfig.GOOGLE_SIGN)
         .requestEmail()
         .build()
 
