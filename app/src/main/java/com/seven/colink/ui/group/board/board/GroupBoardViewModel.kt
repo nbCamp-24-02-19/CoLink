@@ -69,14 +69,17 @@ class GroupBoardViewModel @Inject constructor(
                     tags = entity.tags,
                     startDate = entity.startDate,
                     endDate = entity.endDate,
-                    isOwner = entity.authId == getCurrentUser()
+                    isOwner = entity.authId == getCurrentUser(),
+                    projectStartDate = entity.projectStartDate,
+                    projectEndDate = entity.projectEndDate
                 )
             )
             items.add(
                 GroupBoardItem.GroupOptionItem(
                     key = entity.key,
                     precautions = entity.precautions,
-                    recruitInfo = entity.recruitInfo
+                    startDate = entity.startDate,
+                    endDate = entity.endDate
                 )
             )
             items.add(
@@ -131,8 +134,8 @@ class GroupBoardViewModel @Inject constructor(
             when (uiStateValue) {
                 is GroupBoardItem.GroupItem -> {
                     val (key, dateField) = when (status) {
-                        ProjectStatus.RECRUIT -> uiStateValue.key to "startDate"
-                        else -> uiStateValue.key to "endDate"
+                        ProjectStatus.RECRUIT -> uiStateValue.key to "projectStartDate"
+                        else -> uiStateValue.key to "projectEndDate"
                     }
 
                     val result = groupRepository.updateGroupStatus(
@@ -144,8 +147,8 @@ class GroupBoardViewModel @Inject constructor(
                     if (result == DataResultStatus.SUCCESS) {
                         uiStateValue.copy(
                             status = getNextStatus(status),
-                            startDate = if (status == ProjectStatus.RECRUIT) LocalDateTime.now().convertLocalDateTime() else uiStateValue.startDate,
-                            endDate = if (status != ProjectStatus.RECRUIT) LocalDateTime.now().convertLocalDateTime() else uiStateValue.endDate
+                            projectStartDate = if (status == ProjectStatus.RECRUIT) LocalDateTime.now().convertLocalDateTime() else uiStateValue.startDate,
+                            projectEndDate = if (status != ProjectStatus.RECRUIT) LocalDateTime.now().convertLocalDateTime() else uiStateValue.endDate
                         )
                     } else {
                         uiStateValue
