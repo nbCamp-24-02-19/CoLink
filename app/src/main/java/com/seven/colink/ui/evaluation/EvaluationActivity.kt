@@ -67,7 +67,7 @@ class EvaluationActivity : AppCompatActivity() {
         lifecycleScope.launch {
             result.collect {
                 if (it == DataResultStatus.SUCCESS) finish()
-                else binding.root.setSnackBar(SnackType.Error, it.message)
+                else binding.root.setSnackBar(SnackType.Error, it.message).show()
             }
         }
     }

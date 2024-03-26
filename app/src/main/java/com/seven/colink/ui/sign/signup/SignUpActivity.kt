@@ -136,7 +136,7 @@ class SignUpActivity : AppCompatActivity() {
                         }
 
                         SignUpErrorMessage.SPECIALTY, SignUpErrorMessage.SKILL, SignUpErrorMessage.LEVEL -> {
-                            binding.root.setSnackBar(SnackType.Error, getString(it.message))
+                            binding.root.setSnackBar(SnackType.Error, getString(it.message)).show()
                         }
 
                         SignUpErrorMessage.DUMMY -> Unit
@@ -157,10 +157,10 @@ class SignUpActivity : AppCompatActivity() {
             viewModel.registrationResult.collect{
                 this@SignUpActivity.hideProgressOverlay()
                 if (it == "등록 성공") {
-                    binding.root.setSnackBar(SnackType.Success, it)
+                    binding.root.setSnackBar(SnackType.Success, it).show()
                     finish()
                 } else {
-                    binding.root.setSnackBar(SnackType.Error, it)
+                    binding.root.setSnackBar(SnackType.Error, it).show()
                 }
             }
         }
