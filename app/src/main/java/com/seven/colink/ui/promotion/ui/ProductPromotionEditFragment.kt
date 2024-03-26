@@ -138,6 +138,7 @@ class ProductPromotionEditFragment : Fragment() {
                 key?.let { key -> editViewModel.init(key) }
             }
             updateViewList(editViewModel.getViewList())
+            Log.d("edit","#aaaaa getViewList의 데이터 = ${editViewModel.getViewList()}")
             editAdapter.notifyDataSetChanged()
         }
 
@@ -194,8 +195,9 @@ class ProductPromotionEditFragment : Fragment() {
     private fun saveDataToViewModel(){
         coroutineScope.launch {
             val tempData = editAdapter.getTempData()
+            Log.d("edit","#aaaaa tempdata = ${editAdapter.getTempData()}")
 
-            if (tempData.title != null && tempData.des != null && tempData.selectMainImgUri != null && tempData.team != null) {
+            if (tempData.title != null && tempData.des != null && tempData.team != null) {
                 val mainImg = withContext(Dispatchers.Main) {
                     val imgItem = editAdapter.getTempData()
                     imgItem.selectMainImgUri?.let { editViewModel.uploadImage(it) }
@@ -206,8 +208,12 @@ class ProductPromotionEditFragment : Fragment() {
                     imgItem.selectMiddleImgUri?.let { editViewModel.uploadImage(it) }
                 }
 
-                editAdapter.tempEntity.mainImg = mainImg
-                editAdapter.tempEntity.desImg = desImg
+                if (mainImg != null) {
+                    editAdapter.tempEntity.mainImg = mainImg
+                }
+                if (desImg != null) {
+                    editAdapter.tempEntity.desImg = desImg
+                }
 
                 val entity = ProductEntity(
                     title = tempData.title,
@@ -219,18 +225,19 @@ class ProductPromotionEditFragment : Fragment() {
                     aosUrl = tempData.aos,
                     iosUrl = tempData.ios
                 )
-                Log.d("entity","#qqqqq #entity = $entity")
+                Log.d("edit","#aaaaa entity.title = ${entity.title}")
+                Log.d("edit","#aaaaa tempData.title = ${tempData.title}")
 
                 editViewModel.key.observe(viewLifecycleOwner) { k ->
                     sharedViewModel.setKey(k)
                 }
 
                 with(editViewModel) {
-                     saveEntity(entity)
+                    saveEntity(entity)
                     registerProduct()
                 }
             }else {
-                binding.tvPromotionEditComplete.setSnackBar(SnackType.Error,"제목, 소개글, 메인 이미지, 팀 이름은 필수로 들어가야 합니다.").show()
+                binding.tvPromotionEditComplete.setSnackBar(SnackType.Error,"제목, 소개글, 팀 이름은 필수로 들어가야 합니다.").show()
             }
         }
     }
