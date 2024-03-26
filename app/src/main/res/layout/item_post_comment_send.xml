@@ -7,12 +7,14 @@
     android:background="@color/white">
 
     <View
+        android:id="@+id/view_line"
         android:layout_width="match_parent"
-        android:layout_height="2px"
-        android:background="@color/enable_stroke"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="12dp"
+        android:background="@color/border_line"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/et_post_comment_send"
@@ -26,9 +28,11 @@
         android:hint="댓글을 입력해주세요"
         android:padding="10dp"
         android:textColorHint="@color/hint_color"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/view_line"
+        app:layout_goneMarginTop="12dp" />
 
     <LinearLayout
         android:id="@+id/btn_post_comment_send"
@@ -37,11 +41,11 @@
         android:layout_marginEnd="19dp"
         android:background="@drawable/userdetail_shape"
         android:backgroundTint="@color/main_color"
+        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="@+id/et_post_comment_send"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/et_post_comment_send"
-        android:gravity="center">
-        
+        app:layout_constraintTop_toTopOf="@+id/et_post_comment_send">
+
         <ImageView
             android:layout_width="22dp"
             android:layout_height="22dp"
