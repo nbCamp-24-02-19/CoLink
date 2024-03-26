@@ -150,7 +150,6 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
                 title.text = item.title
                 date.text = item.date
                 team.text = item.team
-                Log.d("adapter","#qqqqq adapter item.team = ${item.team}")
                 des.text = item.des
 
                 if (!item.web.isNullOrEmpty()) {
