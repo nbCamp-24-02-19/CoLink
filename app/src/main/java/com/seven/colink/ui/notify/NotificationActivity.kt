@@ -111,7 +111,7 @@ class NotificationActivity : AppCompatActivity() {
 
                     is Error -> {
                         hideProgressOverlay()
-                        binding.root.setSnackBar(SnackType.Error, "${notifyList.throwable.message}")
+                        binding.root.setSnackBar(SnackType.Error, "${notifyList.throwable.message}").show()
                     }
                 }
             }
