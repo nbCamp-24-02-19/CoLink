@@ -80,45 +80,45 @@ class RegisterScheduleFragment : Fragment() {
 
     private fun initViewModel() = with(viewModel) {
         lifecycleScope.launch {
-            uiState.collect {
-                it.let {
-                    scheduleRegisterListAdapter.submitList(listOf(it))
-                    when (it.buttonUiState) {
-                        CalendarButtonUiState.Create -> {
-                            binding.tvComplete.apply {
-                                visibility = View.VISIBLE
-                                text = "등록"
-                            }
-                            binding.fbDeleteSchedule.visibility = View.GONE
+            uiState.collect { scheduleList ->
+                scheduleRegisterListAdapter.submitList(scheduleList)
+                when (scheduleList?.firstOrNull()?.buttonUiState) {
+                    CalendarButtonUiState.Create -> {
+                        binding.tvComplete.apply {
+                            visibility = View.VISIBLE
+                            text = "등록"
                         }
-
-                        CalendarButtonUiState.Editing -> {
-                            binding.tvComplete.apply {
-                                visibility = View.VISIBLE
-                                text = "완료"
-                            }
-                            binding.fbDeleteSchedule.visibility = View.VISIBLE
-                        }
-
-                        CalendarButtonUiState.Detail -> {
-                            binding.tvComplete.visibility = View.GONE
-                            binding.fbDeleteSchedule.visibility = View.GONE
-                        }
-
-                        CalendarButtonUiState.Update -> {
-                            binding.tvComplete.apply {
-                                visibility = View.VISIBLE
-                                text = "편집"
-                            }
-                            binding.fbDeleteSchedule.visibility = View.GONE
-                        }
-
-                        else -> Unit
+                        binding.fbDeleteSchedule.visibility = View.GONE
                     }
+
+                    CalendarButtonUiState.Editing -> {
+                        binding.tvComplete.apply {
+                            visibility = View.VISIBLE
+                            text = "완료"
+                        }
+                        binding.fbDeleteSchedule.visibility = View.VISIBLE
+                    }
+
+                    CalendarButtonUiState.Detail -> {
+                        binding.tvComplete.visibility = View.GONE
+                        binding.fbDeleteSchedule.visibility = View.GONE
+                    }
+
+                    CalendarButtonUiState.Update -> {
+                        binding.tvComplete.apply {
+                            visibility = View.VISIBLE
+                            text = "편집"
+                        }
+                        binding.fbDeleteSchedule.visibility = View.GONE
+                    }
+
+                    else -> Unit
                 }
             }
+
         }
     }
+
 
     private fun initSharedViewModel() = with(sharedViewModel) {
         lifecycleScope.launch {

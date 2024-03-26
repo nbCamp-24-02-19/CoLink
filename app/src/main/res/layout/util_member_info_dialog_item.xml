@@ -9,12 +9,13 @@
         layout="@layout/item_post_member_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="12dp" />
 
     <include
         android:id="@+id/includeDialogButton"
         layout="@layout/item_dialog_button"
         android:layout_width="match_parent"
+        android:layout_marginBottom="16dp"
         android:layout_height="wrap_content" />
 
 </LinearLayout>
