@@ -25,11 +25,11 @@ import java.time.LocalDate
 
 @AndroidEntryPoint
 class MaterialCalendarFragment : Fragment() {
-    private var _binding: FragmentMaterialCalendarBinding? = null
-    private val binding get() = _binding!!
+    private val binding: FragmentMaterialCalendarBinding by lazy {
+        FragmentMaterialCalendarBinding.inflate(layoutInflater)
+    }
     private val viewModel: CalendarViewModel by viewModels()
     private val sharedViewModel: GroupSharedViewModel by activityViewModels()
-
     private val scheduleListAdapter: ScheduleListAdapter by lazy {
         ScheduleListAdapter(
             onClickItem = { item ->
@@ -49,7 +49,6 @@ class MaterialCalendarFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentMaterialCalendarBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -76,7 +75,7 @@ class MaterialCalendarFragment : Fragment() {
                     R.anim.enter_animation,
                     R.anim.exit_animation
                 )
-                replace(
+                add(
                     R.id.fg_activity_group,
                     RegisterScheduleFragment()
                 )
@@ -133,11 +132,12 @@ class MaterialCalendarFragment : Fragment() {
     private fun initViewModel() {
         viewModel.apply {
             lifecycleScope.launch {
-                filteredByDate.collect {item ->
+                filteredByDate.collect { item ->
                     scheduleListAdapter.submitList(item.list)
 
                     val dayOfWeekString = item.date?.dayOfWeek?.let {
-                        val weekdaysArray = requireContext().resources.getStringArray(R.array.custom_weekdays)
+                        val weekdaysArray =
+                            requireContext().resources.getStringArray(R.array.custom_weekdays)
                         weekdaysArray.getOrNull(it.ordinal) ?: ""
                     } ?: ""
                     binding.tvDate.text =
@@ -168,7 +168,6 @@ class MaterialCalendarFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        _binding = null
         super.onDestroyView()
     }
 
@@ -182,7 +181,7 @@ class MaterialCalendarFragment : Fragment() {
                 R.anim.enter_animation,
                 R.anim.exit_animation
             )
-            replace(
+            add(
                 R.id.fg_activity_group,
                 RegisterScheduleFragment()
             )

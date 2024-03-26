@@ -19,6 +19,7 @@ import com.seven.colink.ui.group.board.board.GroupContentViewType
 import com.seven.colink.ui.group.content.GroupContentItem
 import com.seven.colink.ui.post.register.post.adapter.TagListAdapter
 import com.seven.colink.ui.post.register.post.model.TagListItem
+import com.seven.colink.util.dialog.setUpCalendarDialog
 import com.seven.colink.util.status.GroupType
 
 class GroupContentListAdapter(
@@ -184,7 +185,7 @@ class GroupContentListAdapter(
             get() = with(binding) {
                 listOf(
                     etPrecautions,
-                    etRecruitInfo
+                    etEstimatedSchedule
                 )
             }
 
@@ -197,7 +198,7 @@ class GroupContentListAdapter(
                 editText.addTextChangedListener {
                     notifyTextChange(
                         binding.etPrecautions.text.toString(),
-                        binding.etRecruitInfo.text.toString(),
+                        binding.etEstimatedSchedule.text.toString(),
                         currentItem
                     )
                 }
@@ -206,10 +207,23 @@ class GroupContentListAdapter(
 
         override fun onBind(item: GroupContentItem) {
             if (item is GroupContentItem.GroupOptionItem) {
+                val context = binding.root.context
                 currentItem = item
                 binding.etPrecautions.setText(item.precautions)
-                binding.etRecruitInfo.setText(item.recruitInfo)
-                binding.layoutDate.visibility = View.GONE
+                val startDateText = item.startDate
+                val endDateText = item.endDate
+                if (!startDateText.isNullOrBlank() && !endDateText.isNullOrBlank()) {
+                    binding.etEstimatedSchedule.setText("$startDateText~$endDateText")
+                }
+                binding.etEstimatedSchedule.setOnClickListener {
+                    context.setUpCalendarDialog(
+                        binding.etEstimatedSchedule.text.toString(),
+                        confirmAction = { startDate, endDate ->
+                            binding.etEstimatedSchedule.setText("$startDate~$endDate")
+                        },
+                        cancelAction = {}
+                    )
+                }
             }
         }
 
