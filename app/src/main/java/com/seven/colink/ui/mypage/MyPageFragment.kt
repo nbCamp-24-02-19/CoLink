@@ -81,7 +81,6 @@ class MyPageFragment : Fragment() {
                 skillCategory.setDialog(binding_.root.context, "사용 가능한 언어/툴을 선택해주세요") {
                     binding_.btSignUpSubCategoryBtn.text = it
                     viewModel.updateSkill(it)
-                    Log.d("tag", "skill = $it")
                 }.show()
             }
 
@@ -106,9 +105,7 @@ class MyPageFragment : Fragment() {
             override fun onClick(view: View, position: Int, item: MyPostItem.MyPagePostItem) {
                 lifecycleScope.launch {
                     var key = item.projectKey
-                    Log.d("postClick", "key = $key")
                     val post = key.let { viewModel.getPost(it) }
-                    Log.d("postClick", "post = $post")
                     if (post != null) {
                         startActivity(
                             PostActivity.newIntent(
@@ -129,9 +126,7 @@ class MyPageFragment : Fragment() {
             override fun onClick(view: View, position: Int, item: MyPostItem.MyPageStudyItem) {
                 lifecycleScope.launch {
                     var key = item.studyKey
-                    Log.d("postClick", "key = ${key}")
                     val post = key.let { viewModel.getPost(it) }
-                    Log.d("postClick", "post = ${post}")
                     if (post != null) {
                         startActivity(
                             PostActivity.newIntent(
@@ -246,7 +241,6 @@ class MyPageFragment : Fragment() {
                 startActivity(intent)
             }
         } else binding.ivMypageBlog.visibility = View.GONE
-
         //깃헙 주소가 없으면
         if (user.git != null){
             binding.ivMypageGit.visibility = View.VISIBLE
@@ -277,7 +271,6 @@ class MyPageFragment : Fragment() {
 
         binding.tvMypageScore.text = user.score.toString()
 
-        Log.d("Tag", "user = ${user}")
     }
 
 
