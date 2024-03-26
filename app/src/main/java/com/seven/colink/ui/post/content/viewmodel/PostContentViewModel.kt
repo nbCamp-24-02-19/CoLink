@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.seven.colink.R
 import com.seven.colink.domain.entity.ApplicationInfo
@@ -47,8 +48,8 @@ class PostContentViewModel @Inject constructor(
     private val groupRepository: GroupRepository
 ) : ViewModel() {
     private lateinit var entity: Post
-    private val _uiState = MutableLiveData<List<PostContentItem>>()
-    val uiState: LiveData<List<PostContentItem>> get() = _uiState
+    private val _uiState = MutableLiveData<List<PostContentItem>?>()
+    val uiState: LiveData<List<PostContentItem>?> get() = _uiState
 
     private val _dialogUiState = MutableLiveData(
         DialogUiState.init()
@@ -63,7 +64,6 @@ class PostContentViewModel @Inject constructor(
 
     private val _userComment = MutableLiveData<CommentEntity>()
     val userComments: LiveData<CommentEntity> = _userComment
-
 
     private val _checkLogin = MutableLiveData<Boolean>(false)
     val checkLogin: LiveData<Boolean> get() = _checkLogin
@@ -108,7 +108,6 @@ class PostContentViewModel @Inject constructor(
         }
     }
 
-
     fun registerComment(text: String) {
         viewModelScope.launch {
             commentRepository.registerComment(
@@ -150,7 +149,6 @@ class PostContentViewModel @Inject constructor(
         }
         setPostContentItems(entity.recruit)
     }
-
 
     fun deleteComment(key: String){
         viewModelScope.launch {
@@ -218,6 +216,7 @@ class PostContentViewModel @Inject constructor(
                     PostContentItem.CommentSendItem
                 )
                 _uiState.value = items
+                checkLike()
             }
         }
 
@@ -269,7 +268,6 @@ class PostContentViewModel @Inject constructor(
         }
     }
 
-    // 모집 분야 지원 했을 때
     suspend fun applyForProject(recruitItem: PostContentItem.RecruitItem) {
         val newApplicationInfo = ApplicationInfo(
             userId = getCurrentUser(),
@@ -279,7 +277,6 @@ class PostContentViewModel @Inject constructor(
         sendNotificationApplyUseCase(entity)
     }
 
-    // 지원한 회원 데이터 추가
     private suspend fun updateRecruitList(
         recruitItem: PostContentItem.RecruitItem,
         newApplicationInfo: ApplicationInfo
@@ -320,8 +317,6 @@ class PostContentViewModel @Inject constructor(
         }
     }
 
-
-    // 이미 지원 한 회원일 때
     private suspend fun isAlreadySupported(recruitItem: PostContentItem.RecruitItem): PostErrorMessage {
         val isAlreadySupported = entity.recruit?.any { recruitInfo ->
             recruitInfo.type == recruitItem.recruit.type &&
@@ -335,7 +330,6 @@ class PostContentViewModel @Inject constructor(
         }
     }
 
-    // 조회수
     private suspend fun incrementPostViews(): DataResultStatus =
         postRepository.incrementPostViews(entity.key)
 
@@ -350,7 +344,8 @@ class PostContentViewModel @Inject constructor(
         tags = tags,
         registeredDate = registeredDate,
         views = views,
-        like = like
+        like = like,
+        isLike = isLike
     )
 
     fun createDialog(recruitItem: PostContentItem.RecruitItem) {
@@ -371,45 +366,59 @@ class PostContentViewModel @Inject constructor(
         }
     }
 
-    fun discernLike(key: String) : Boolean? {
+    fun discernLike(key: String){
         viewModelScope.launch {
-            Log.d("Post", "@@@ LikeList = ${currentUser?.likeList}")
-
             if (currentUser?.likeList?.contains(key) == false){
                 _currentUser = currentUser!!.copy(likeList = currentUser!!.likeList?.plus(listOf(key)))
-                _isLike.value = true
-                Log.d("Post","!!! likeList containsNot key")
-                Log.d("Post","likeList = ${currentUser?.likeList}")
+                val updateUiState = _uiState.value?.map { item ->
+                    if (item is PostContentItem.Item && item.key == entity.key){
+                        item.copy(like = item.like?.plus(1), isLike = true)
+                    } else {
+                        item
+                    }
+                }
+                _uiState.value = updateUiState
+                Log.d("Evaluation","updateUiState = $updateUiState")
             } else {
                 _currentUser = currentUser!!.copy(likeList = currentUser!!.likeList?.minus(listOf(key).toSet()))
-                _isLike.value = false
-                Log.d("Post","### likeList contains key")
-                Log.d("Post","likeList = ${currentUser?.likeList}")
+                val updateUiState = _uiState.value?.map { item ->
+                    if (item is PostContentItem.Item && item.key == entity.key){
+                        item.copy(like = item.like?.minus(1), isLike = false)
+                    } else {
+                        item
+                    }
+                }
+                _uiState.value = updateUiState
+                Log.d("Evaluation","updateUiState = $updateUiState")
             }
-            Log.d("Post","_isLike.value = ${_isLike.value}")
+
         }
-        Log.d("Post","isLike.value = ${isLike.value}")
-        return _isLike.value
     }
 
-//    fun discernLike(key: String) {
-//        viewModelScope.launch {
-//            Log.d("Post", "@@@ LikeList = ${likeList.value}")
-//
-//            val currentList = likeList.value ?: emptyList()
-//
-//            if (!currentList.contains(key)){
-//                _likeList.value = currentList.plus(key)
-//                _isLike.value = true
-//                Log.d("Post","!!! likeList containsNot key")
-//                Log.d("Post","likeList = ${likeList}")
-//            } else {
-//                _likeList.value = currentList.minus(key)
-//                _isLike.value = false
-//                Log.d("Post","### likeList contains key")
-//                Log.d("Post","likeList = ${likeList}")
-//            }
-//        }
-//    }
+    private fun checkLike(){
+        viewModelScope.launch {
+            val currentUser = authRepository.getCurrentUser()
+            val checkLike = userRepository.getUserDetails(currentUser.message)
+
+            val isLikeCheck = checkLike.getOrNull()?.likeList?.contains(entity.key) ?: false
+            val updateUiState = _uiState.value?.map { item ->
+                if (item is PostContentItem.Item && item.key == entity.key){
+                    item.copy(isLike = isLikeCheck)
+                } else {
+                    item
+                }
+            }
+            _uiState.value = updateUiState
+        }
+    }
+
+    fun updateUserInfo(){
+        viewModelScope.launch {
+            val userLikeList = _currentUser
+            if (userLikeList != null) {
+                userRepository.updateUserInfo(userLikeList)
+            }
+        }
+    }
 
 }

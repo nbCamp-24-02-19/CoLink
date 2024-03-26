@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -14,11 +15,13 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.seven.colink.R
 import com.seven.colink.databinding.ActivityMainBinding
+import com.seven.colink.ui.evaluation.EvaluationActivity
 import com.seven.colink.ui.main.viewmodel.MainViewModel
 import com.seven.colink.ui.mypageedit.MyPageEditDetailActivity
 import com.seven.colink.ui.notify.NotificationActivity
 import com.seven.colink.util.Constants
 import com.seven.colink.util.snackbar.setSnackBar
+import com.seven.colink.util.status.ProjectStatus
 import com.seven.colink.util.status.SnackType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -61,6 +64,20 @@ class MainActivity : AppCompatActivity() {
             recruitApprove.collect {
                 it.forEach { data ->
                     viewModel.getChatRoom(data)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            groupState.collect {
+                it.forEach { data ->
+                    if (data.state == ProjectStatus.END) {
+                        startActivity(EvaluationActivity.newIntentEval(
+                            context = this@MainActivity,
+                            groupType = data.type,
+                            entityKey = data.groupId
+                        ))
+                    }
                 }
             }
         }

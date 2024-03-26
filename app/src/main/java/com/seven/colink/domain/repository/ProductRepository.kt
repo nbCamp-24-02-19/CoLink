@@ -12,5 +12,6 @@ interface ProductRepository {
     suspend fun getProductsByContainUserId(userId: String): Result<List<ProductEntity>>
     suspend fun deleteProduct(key: String): DataResultStatus
     suspend fun getProductDetail(key: String): Result<ProductEntity?>
+    suspend fun getRecentPost(count: Int) : List<ProductEntity>
 
 }

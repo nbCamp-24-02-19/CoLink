@@ -32,7 +32,7 @@ class ScheduleRegisterListAdapter(
 ) : ListAdapter<ScheduleModel, ScheduleRegisterListAdapter.ScheduleViewHolder>(
     object : DiffUtil.ItemCallback<ScheduleModel>() {
         override fun areItemsTheSame(oldItem: ScheduleModel, newItem: ScheduleModel): Boolean =
-            oldItem.authId == newItem.authId
+            oldItem.key == newItem.key
 
         override fun areContentsTheSame(oldItem: ScheduleModel, newItem: ScheduleModel): Boolean =
             oldItem == newItem
@@ -228,7 +228,7 @@ class ScheduleRegisterListAdapter(
                     if (!isStartDate) {
                         val startDateCalendar = binding.tvStartDate.text.toString().parseDateTime()
                         if (selectedDateTime.time.before(startDateCalendar)) {
-                            context.showToast("종료 시간은 시작 시간 이후여야 합니다.")
+                            context.showToast(context.getString(R.string.end_time_selection_error))
                             return
                         }
                     }

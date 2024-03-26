@@ -66,7 +66,7 @@ class MyPageEditDetailActivity : AppCompatActivity() {
 
                     is UiState.Error -> {
                         hideProgressOverlay()
-                        binding.root.setSnackBar(SnackType.Error, "저장을 실패하였습니다. ${state.throwable}")
+                        binding.root.setSnackBar(SnackType.Error, "저장을 실패하였습니다. ${state.throwable}").show()
                     }
                 }
             }
@@ -77,11 +77,11 @@ class MyPageEditDetailActivity : AppCompatActivity() {
                 with(binding.ivMypageEditProfile) {
                     when (state) {
                         SnackType.Success -> {
-                            setSnackBar(state, "성공적으로 저장되었습니다")
+                            setSnackBar(state, "성공적으로 저장되었습니다").show()
                         }
 
                         else -> {
-                            setSnackBar(state, "갱신 실패하였습니다.")
+                            setSnackBar(state, "갱신 실패하였습니다.").show()
                         }
                     }
                 }

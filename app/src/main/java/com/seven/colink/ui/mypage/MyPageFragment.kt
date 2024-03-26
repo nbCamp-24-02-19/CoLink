@@ -23,9 +23,12 @@ import com.seven.colink.R
 import com.seven.colink.databinding.FragmentMyPageBinding
 import com.seven.colink.databinding.ItemSignUpSkillBinding
 import com.seven.colink.databinding.MypageEditDialogBinding
+import com.seven.colink.ui.chat.ChatRoomActivity
 import com.seven.colink.ui.mypage.MyPageItem.skilItems
+import com.seven.colink.ui.mypage.adapter.MyPageLikeAdapter
 import com.seven.colink.ui.mypage.adapter.MyPagePostAdapter
 import com.seven.colink.ui.mypage.adapter.MyPageSkilAdapter
+import com.seven.colink.ui.mypage.showmore.MyPageLikeShowMoreActivity
 import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.ui.showmore.MyPageShowMoreActivity
 import com.seven.colink.ui.sign.signin.SignInActivity
@@ -39,6 +42,7 @@ import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
 import com.seven.colink.util.status.UiState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -48,6 +52,9 @@ class MyPageFragment : Fragment() {
     private lateinit var _binding: MypageEditDialogBinding
     private lateinit var skiladapter: MyPageSkilAdapter
     private lateinit var postadapter: MyPagePostAdapter
+    private lateinit var likeAdapter: MyPageLikeAdapter
+
+    private var likeList = mutableListOf<MyPageLikeModel>()
 
     companion object {
         fun newInstance() = MyPageFragment()
@@ -68,8 +75,12 @@ class MyPageFragment : Fragment() {
         privacypolicy()
         SkilRecyclerView()
         PostRecyclerView()
+        likeRecyclerView()
         setLogout()
         postShowMore()
+        likeShowMore()
+        inquiryOperator()
+        initViewModel()
 
 
 
@@ -142,6 +153,25 @@ class MyPageFragment : Fragment() {
             }
         }
 
+        likeAdapter.itemClick = object : MyPageLikeAdapter.ItemClick {
+            override fun onClick(item: MyPageLikeModel, position: Int) {
+                lifecycleScope.launch {
+                    val key = item.key
+                    val likePost = key.let { viewModel.getPost(it.toString()) }
+                    if (likePost != null) {
+                        startActivity(
+                            PostActivity.newIntent(
+                                context = requireActivity(),
+                                key= key
+                            )
+                        )
+                    } else {
+                        Toast.makeText(requireContext(), "다음에 다시 시도해 주세요.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+
 
         //파이어베이스 유저 정보 연결 & 스킬 연결
         viewModel.userDetails.observe(viewLifecycleOwner) { userDetails ->
@@ -198,13 +228,32 @@ class MyPageFragment : Fragment() {
             Log.e("Tag", "${it}")
         }
 
+        viewModel.likePost.observe(viewLifecycleOwner){
+            if (it != null) {
+                likeAdapter.mItems.clear()
+                likeAdapter.mItems.addAll(it)
+                likeAdapter.notifyDataSetChanged()
+            }
+        }
+
         return binding.root
+    }
+
+    private fun initViewModel() = with(viewModel) {
+        lifecycleScope.launch {
+            operatorChat.collect {
+                startActivity(
+                    ChatRoomActivity.newIntent(requireContext(), it)
+                )
+            }
+        }
     }
 
     override fun onResume() {
         super.onResume()
         viewModel.loadUserPost()
         viewModel.loadUserDetails()
+        viewModel.loadLikePost()
     }
 
     private fun updateUI(user: MyPageUserModel) {
@@ -281,10 +330,23 @@ class MyPageFragment : Fragment() {
         }
     }
 
+    private fun inquiryOperator() {
+        binding.ctMypage4.setOnClickListener {
+            viewModel.setOperatorChat()
+        }
+    }
+
     private fun postShowMore(){
         binding.tvMypagePostShowMore.setOnClickListener {
             val showMore = Intent(context, MyPageShowMoreActivity::class.java)
             startActivity(showMore)
+        }
+    }
+
+    private fun likeShowMore(){
+        binding.tvLikeMore.setOnClickListener {
+            val intent = Intent(requireContext(), MyPageLikeShowMoreActivity::class.java)
+            startActivity(intent)
         }
     }
 
@@ -300,6 +362,13 @@ class MyPageFragment : Fragment() {
         binding.reMypageProject.adapter = postadapter
         binding.reMypageProject.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+    }
+
+    private fun likeRecyclerView(){
+        likeAdapter = MyPageLikeAdapter(likeList)
+        binding.rvLike.adapter = likeAdapter
+        binding.rvLike.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        binding.rvLike.itemAnimator = null
     }
 
     private fun setLogout() = with(viewModel) {

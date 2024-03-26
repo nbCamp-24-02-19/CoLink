@@ -1,6 +1,7 @@
 package com.seven.colink.ui.home
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.TypedValue
@@ -19,8 +20,12 @@ import com.seven.colink.ui.home.adapter.HomeMainAdapter
 import com.seven.colink.ui.home.adapter.TopViewPagerAdapter
 import com.seven.colink.ui.home.child.HomeProjectFragment
 import com.seven.colink.ui.post.register.PostActivity
+import com.seven.colink.ui.promotion.ProductPromotionActivity
+import com.seven.colink.util.Constants
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
+import com.seven.colink.util.snackbar.setSnackBar
+import com.seven.colink.util.status.SnackType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -143,19 +148,27 @@ class HomeFragment : Fragment() {
 
     private fun topClickItem() = object : TopViewPagerAdapter.ItemClick {
         override fun onClick(view: View, position: Int, item: TopItems) {
-            lifecycleScope.launch {
-                val key = item.key
-                val entity = key?.let { homeViewModel.getPost(it) }
-                if (key != null && entity != null) {
-                    val intent = PostActivity.newIntent(
-                        context = requireActivity(),
-                        key = item.key
-                    )
-                    startActivity(intent)
-                }else {
-                    Toast.makeText(requireContext(), "다음에 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
-                }
+//            lifecycleScope.launch {
+//                val key = item.key
+//                val entity = key?.let { homeViewModel.getPost(it) }
+//                if (key != null && entity != null) {
+//                    val intent = PostActivity.newIntent(
+//                        context = requireActivity(),
+//                        key = item.key
+//                    )
+//                    startActivity(intent)
+//                }else {
+//                    Toast.makeText(requireContext(), "다음에 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+//                }
+//            }
+            val intent = Intent(requireContext(),ProductPromotionActivity::class.java)
+            if (item.key != null) {
+                intent.putExtra(Constants.EXTRA_ENTITY_KEY,item.key)
+                startActivity(intent)
+            }else {
+                view.setSnackBar(SnackType.Error,"다음에 다시 시도해주세요").show()
             }
+
         }
     }
 

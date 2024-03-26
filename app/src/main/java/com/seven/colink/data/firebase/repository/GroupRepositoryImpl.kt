@@ -1,18 +1,25 @@
 package com.seven.colink.data.firebase.repository
 
+import android.util.Log
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.seven.colink.data.firebase.type.DataBaseType
 import com.seven.colink.domain.entity.GroupEntity
 import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.ProjectStatus
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 class GroupRepositoryImpl @Inject constructor(
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val auth: FirebaseAuth
 ) : GroupRepository {
     override suspend fun registerGroup(group: GroupEntity) = suspendCoroutine { continuation ->
         firestore.collection(DataBaseType.GROUP.title).document(group.key).set(group)
@@ -39,7 +46,9 @@ class GroupRepositoryImpl @Inject constructor(
                 updatedGroup.tags?.let { put("tags", it) }
                 updatedGroup.imageUrl?.let { put("imageUrl", it) }
                 updatedGroup.precautions?.let { put("precautions", it) }
-                updatedGroup.recruitInfo?.let { put("recruitInfo", it) }
+                updatedGroup.startDate?.let { put("startDate", it) }
+                updatedGroup.endDate?.let { put("endDate", it) }
+
             }
 
             firestore.collection(DataBaseType.GROUP.title).document(key)
@@ -102,4 +111,26 @@ class GroupRepositoryImpl @Inject constructor(
         return updateFirestoreField(key, fieldMap)
     }
 
+    override suspend fun observeGroupState() = callbackFlow {
+        val uid = auth.currentUser?.uid ?: close()
+        val listener = firestore.collection(DataBaseType.GROUP.title).whereArrayContains("memberIds", uid)
+        .addSnapshotListener { snapshot, e ->
+                    if(e != null) {
+                        Log.w("observeGroupState", "failed", e)
+                    } else if (snapshot != null && !snapshot.isEmpty) {
+                        trySend(
+                            snapshot.toObjects(GroupEntity::class.java)
+                        ).isSuccess
+                    }
+        }
+        awaitClose {
+            listener.remove()
+        }
+    }.map { data ->
+        data.filter {
+            it.status != ProjectStatus.RECRUIT && it.evaluateMember?.contains(auth.currentUser?.uid)?.not()?: true
+        }.takeIf {
+            it.isNotEmpty()
+        }
+    }
 }

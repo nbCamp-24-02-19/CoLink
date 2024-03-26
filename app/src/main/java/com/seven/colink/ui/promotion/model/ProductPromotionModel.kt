@@ -19,6 +19,12 @@ data class LinkItem(
     val link : String?
 )
 
+data class ViewLinkImg(
+    val web : String?,
+    val aos : String?,
+    val ios : String?
+)
+
 data class MembersItem(
     val uid : String?,
     val name : String?,
@@ -36,7 +42,11 @@ sealed class ProductPromotionItems {
     data class Title(
         val title : String?,
         val date : String?,
-        val des : String?
+        val des : String?,
+        val team : String?,
+        val web : String?,
+        val aos : String?,
+        val ios : String?
     ) : ProductPromotionItems()
 
     data class MiddleImg(

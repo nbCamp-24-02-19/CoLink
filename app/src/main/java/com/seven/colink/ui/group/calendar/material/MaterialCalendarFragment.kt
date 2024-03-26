@@ -21,16 +21,15 @@ import com.seven.colink.ui.group.calendar.status.CalendarEntryType
 import com.seven.colink.ui.group.viewmodel.GroupSharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import java.time.DayOfWeek
 import java.time.LocalDate
 
 @AndroidEntryPoint
 class MaterialCalendarFragment : Fragment() {
-    private var _binding: FragmentMaterialCalendarBinding? = null
-    private val binding get() = _binding!!
+    private val binding: FragmentMaterialCalendarBinding by lazy {
+        FragmentMaterialCalendarBinding.inflate(layoutInflater)
+    }
     private val viewModel: CalendarViewModel by viewModels()
     private val sharedViewModel: GroupSharedViewModel by activityViewModels()
-
     private val scheduleListAdapter: ScheduleListAdapter by lazy {
         ScheduleListAdapter(
             onClickItem = { item ->
@@ -50,7 +49,6 @@ class MaterialCalendarFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentMaterialCalendarBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -77,7 +75,7 @@ class MaterialCalendarFragment : Fragment() {
                     R.anim.enter_animation,
                     R.anim.exit_animation
                 )
-                replace(
+                add(
                     R.id.fg_activity_group,
                     RegisterScheduleFragment()
                 )
@@ -123,38 +121,27 @@ class MaterialCalendarFragment : Fragment() {
             }
 
             setWeekDayFormatter(ArrayWeekDayFormatter(resources.getTextArray(R.array.custom_weekdays)))
-
             setHeaderTextAppearance(R.style.CalendarWidgetHeader)
-
-            setOnRangeSelectedListener { widget, dates -> }
-
-            setOnDateChangedListener { widget, date, selected ->
+            setOnDateChangedListener { _, date, _ ->
                 val localDate = date.toLocalDate()
                 viewModel.filterScheduleListByDate(localDate)
             }
-
-
         }
     }
 
     private fun initViewModel() {
         viewModel.apply {
             lifecycleScope.launch {
-                filteredByDate.collect {
-                    scheduleListAdapter.submitList(it.list)
+                filteredByDate.collect { item ->
+                    scheduleListAdapter.submitList(item.list)
 
-                    val dayOfWeekString = when (it.date?.dayOfWeek) {
-                        DayOfWeek.MONDAY -> "월"
-                        DayOfWeek.TUESDAY -> "화"
-                        DayOfWeek.WEDNESDAY -> "수"
-                        DayOfWeek.THURSDAY -> "목"
-                        DayOfWeek.FRIDAY -> "금"
-                        DayOfWeek.SATURDAY -> "토"
-                        DayOfWeek.SUNDAY -> "일"
-                        else -> ""
-                    }
+                    val dayOfWeekString = item.date?.dayOfWeek?.let {
+                        val weekdaysArray =
+                            requireContext().resources.getStringArray(R.array.custom_weekdays)
+                        weekdaysArray.getOrNull(it.ordinal) ?: ""
+                    } ?: ""
                     binding.tvDate.text =
-                        "${it.date?.monthValue}.${it.date?.dayOfMonth}. $dayOfWeekString"
+                        "${item.date?.monthValue}.${item.date?.dayOfMonth}. $dayOfWeekString"
                 }
             }
 
@@ -181,7 +168,6 @@ class MaterialCalendarFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        _binding = null
         super.onDestroyView()
     }
 
@@ -195,7 +181,7 @@ class MaterialCalendarFragment : Fragment() {
                 R.anim.enter_animation,
                 R.anim.exit_animation
             )
-            replace(
+            add(
                 R.id.fg_activity_group,
                 RegisterScheduleFragment()
             )

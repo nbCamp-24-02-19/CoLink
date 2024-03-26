@@ -39,19 +39,10 @@ class PostFragment : Fragment() {
 
     private val postListAdapter: PostListAdapter by lazy {
         PostListAdapter(
-            onChangedFocus = { position, title, description, item ->
+            onTextChanged = { position, title, description, item ->
                 when (item) {
-                    is PostListItem.PostItem -> {
+                    is PostListItem.PostItem, is PostListItem.PostOptionItem -> {
                         viewModel.updatePostItemText(position, title, description)
-                    }
-
-                    else -> Unit
-                }
-            },
-            onChangedSelectionFocus = { position, title, description, date, item ->
-                when (item) {
-                    is PostListItem.PostOptionItem -> {
-                        viewModel.updatePostOptionItemText(position, title, description, date)
                     }
 
                     else -> Unit
@@ -98,7 +89,7 @@ class PostFragment : Fragment() {
 
                 }
             },
-            onGroupImageClick = { tag ->
+            onClickGroupTag = { tag ->
                 viewModel.checkValidAddTag(tag)
             },
             tagAdapterOnClickItem = { _, item ->
@@ -197,6 +188,10 @@ class PostFragment : Fragment() {
         lifecycleScope.launch {
             complete.collect { newKey ->
                 sharedViewModel.setKey(newKey)
+                parentFragmentManager.beginTransaction().apply {
+                    replace(R.id.fg_activity_post, RecommendFragment())
+                    commit()
+                }
             }
         }
 
@@ -207,10 +202,6 @@ class PostFragment : Fragment() {
                     errorUiState.message == PostErrorMessage.PASS -> viewModel.createPost(
                         onSuccess = {
                             hideProgressOverlay()
-                            parentFragmentManager.beginTransaction().apply {
-                                replace(R.id.fg_activity_post, RecommendFragment())
-                                commit()
-                            }
                         },
                         onError = { exception ->
                             hideProgressOverlay()

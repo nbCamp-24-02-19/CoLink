@@ -17,8 +17,14 @@ class ProductPromotionSharedViewModel @Inject constructor(
 ) : ViewModel() {
     private val _key = MutableStateFlow(handle.get<String>(Constants.EXTRA_ENTITY_KEY))
     val key: StateFlow<String?> = _key
+    private val _clickSnackBar = MutableLiveData<String>()
+    val clickSnackBar : LiveData<String> get() = _clickSnackBar
 
     fun setKey(newKey: String) {
         _key.value = newKey
+    }
+
+    fun clickEventSnackBar(event : String) {
+        _clickSnackBar.value = event
     }
 }

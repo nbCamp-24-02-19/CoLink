@@ -28,6 +28,9 @@
         android:theme="@style/Theme.CoLink"
         tools:targetApi="31">
         <activity
+            android:name=".ui.mypage.showmore.MyPageLikeShowMoreActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.userdetailshowmore.UserDetailShowmoreActivity"
             android:exported="false" />
         <activity
@@ -73,7 +76,8 @@
         <activity
             android:name=".ui.sign.signin.SignInActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize">
+        </activity>
         <activity
             android:name=".ui.main.MainActivity"
             android:exported="true"

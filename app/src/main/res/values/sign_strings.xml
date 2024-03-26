@@ -35,6 +35,8 @@
     <string name="sign_up_blog">개발 블로그 주소</string>
     <string name="sign_up_blog_sub">나를 소개할 수 있는 블로그 주소를 입력해주세요.</string>
     <string name="sign_up_end">완료</string>
+    <string name="sign_in_kakao">카카오 로그인</string>
+    <string name="sign_in_google">구글 로그인</string>
 
     <!--valid check-->
     <string name="sign_up_id_error">아이디는 영문 혹은 숫자로만 입력해 주세요.</string>

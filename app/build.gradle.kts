@@ -28,6 +28,8 @@ android {
         buildConfigField("String", "ALGOLIA_API_KEY", properties.getProperty("ALGOLIA_API_KEY"))
         buildConfigField("String", "ALGOLIA_APP_ID", properties.getProperty("ALGOLIA_APP_ID"))
         buildConfigField("String", "FCM_KEY", properties.getProperty("FCM_KEY"))
+        buildConfigField("String", "ADMIN_UID", properties.getProperty("ADMIN_UID"))
+        buildConfigField("String", "GOOGLE_SIGN", properties.getProperty("GOOGLE_SIGN"))
     }
     packagingOptions {
         exclude("META-INF/DEPENDENCIES")
@@ -130,4 +132,8 @@ dependencies {
 
     // Calendar
     implementation("com.github.prolificinteractive:material-calendarview:2.0.1")
+    implementation("com.jakewharton.threetenabp:threetenabp:1.3.0")
+
+    //google
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
 }

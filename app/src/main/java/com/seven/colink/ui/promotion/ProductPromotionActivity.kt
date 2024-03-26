@@ -2,23 +2,29 @@ package com.seven.colink.ui.promotion
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import com.seven.colink.R
 import com.seven.colink.databinding.ActivityProductPromotionBinding
 import com.seven.colink.ui.promotion.ui.ProductPromotionEditFragment
 import com.seven.colink.ui.promotion.ui.ProductPromotionFragment
+import com.seven.colink.ui.promotion.viewmodel.ProductPromotionSharedViewModel
 import com.seven.colink.util.Constants
+import com.seven.colink.util.snackbar.setSnackBar
+import com.seven.colink.util.status.SnackType
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ProductPromotionActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityProductPromotionBinding.inflate(layoutInflater) }
+    private val viewModel : ProductPromotionSharedViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
         initView()
+        initObserve()
     }
 
     private fun initView() = with(binding) {
@@ -40,10 +46,19 @@ class ProductPromotionActivity : AppCompatActivity() {
         }
     }
 
+    private fun initObserve() = with(viewModel) {
+        clickSnackBar.observe(this@ProductPromotionActivity) {
+            when (it) {
+                Constants.SAVE_SUCCESS -> {binding.root.setSnackBar(SnackType.Success,"게시물 등록에 성공하였습니다.").show()}
+                Constants.SAVE_FAIL -> {binding.root.setSnackBar(SnackType.Error,"게시물 등록에 실패하였습니다.").show()}
+                else -> Unit
+            }
+        }
+    }
+
     private fun setFragment(frag : Fragment) {
         val tran = supportFragmentManager.beginTransaction()
         tran.replace(R.id.frame_product_promotion, frag)
-        tran.addToBackStack("")
         tran.commit()
     }
 }

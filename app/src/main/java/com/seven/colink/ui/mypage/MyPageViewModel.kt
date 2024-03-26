@@ -5,15 +5,20 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.seven.colink.BuildConfig
 import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.repository.UserRepository
+import com.seven.colink.domain.usecase.GetChatRoomUseCase
+import com.seven.colink.util.convert.convertGradeFormat
 import com.seven.colink.util.convert.convertToDaysAgo
 import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,13 +26,19 @@ import javax.inject.Inject
 class MyPageViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
-    private val postRepository: PostRepository
+    private val postRepository: PostRepository,
+    private val getChatRoomUseCase: GetChatRoomUseCase,
 ) : ViewModel() {
 
     private val _userDetails = MutableLiveData<UiState<MyPageUserModel>>()
     private val _userPosts = MutableLiveData<List<MyPagePostModel>>()
+    private val _likePost = MutableLiveData<List<MyPageLikeModel>?>()
     val userDetails: LiveData<UiState<MyPageUserModel>> = _userDetails
     val userPost: LiveData<List<MyPagePostModel>> = _userPosts
+    val likePost : LiveData<List<MyPageLikeModel>?> = _likePost
+
+    private val _operatorChat = MutableSharedFlow<String>()
+    val operatorChat = _operatorChat.asSharedFlow()
 
     init {
         loadUserDetails()
@@ -80,6 +91,20 @@ class MyPageViewModel @Inject constructor(
         }
     }
 
+    fun loadLikePost(){
+        viewModelScope.launch {
+            val currentUser = authRepository.getCurrentUser()
+            val userDetails = userRepository.getUserDetails(currentUser.message)
+            val likeList = userDetails.getOrNull()?.likeList
+            val getLikeList = likeList?.map {
+                getPost(it)!!.convertMyLikeEntity()
+            }?.sortedByDescending { it.time }
+            _likePost.value = getLikeList?.map {
+                it.copy(time= it.time?.convertToDaysAgo())
+            }
+        }
+    }
+
     fun updateSkill(skill: String) {
         viewModelScope.launch {
             val result = userRepository.getUserDetails(authRepository.getCurrentUser().message)
@@ -128,6 +153,13 @@ class MyPageViewModel @Inject constructor(
         time = registeredDate?.convertToDaysAgo()
     )
 
+    private fun PostEntity.convertMyLikeEntity() = MyPageLikeModel(
+        key = key,
+        title = title,
+        status = status,
+        time = registeredDate
+    )
+
 
     private fun UserEntity.convertUserEntity() = MyPageUserModel(
         name = name,
@@ -141,7 +173,15 @@ class MyPageViewModel @Inject constructor(
         git = git,
         blog = blog,
         link = link,
-        score = grade
+        score = grade?.convertGradeFormat()
     )
+
+    fun setOperatorChat() {
+        viewModelScope.launch {
+            _operatorChat.emit(
+                getChatRoomUseCase(uid = BuildConfig.ADMIN_UID).key
+            )
+        }
+    }
 
 }

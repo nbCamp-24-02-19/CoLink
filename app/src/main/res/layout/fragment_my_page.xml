@@ -125,7 +125,6 @@
                 android:textColor="@color/black"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:maxLength="3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -275,7 +274,7 @@
                     android:id="@+id/tv_like_more"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="15dp"
+                    android:layout_marginEnd="25dp"
                     android:layout_marginTop="16dp"
                     android:text="더보기"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -287,7 +286,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="16dp"
-                    android:text="등록글"
+                    android:text="즐겨찾기 목록"
                     android:textColor="@color/main_color"
                     android:textSize="14sp"
                     android:textStyle="bold"

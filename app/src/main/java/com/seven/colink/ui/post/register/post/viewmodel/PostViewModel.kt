@@ -3,6 +3,7 @@ package com.seven.colink.ui.post.register.post.viewmodel
 import android.app.Application
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seven.colink.R
@@ -173,7 +174,6 @@ class PostViewModel @Inject constructor(
         description = description,
         tags = tags,
         precautions = precautions,
-        recruitInfo = recruitInfo,
         memberIds = memberIds,
         registeredDate = registeredDate,
         startDate = startDate,
@@ -198,13 +198,14 @@ class PostViewModel @Inject constructor(
         val title = postItemDataMap["title"]
         val description = postItemDataMap["description"]
         val precautions = postItemDataMap["precautions"]
-        val recruitInfo = postItemDataMap["recruitInfo"]
+        val startDate = postItemDataMap["startDate"]
+        val endDate = postItemDataMap["endDate"]
 
         val errorMessage = when {
             title.isNullOrBlank() -> PostErrorMessage.TITLE_BLANK
             description.isNullOrBlank() -> PostErrorMessage.DESCRIPTION_BLANK
             precautions.isNullOrBlank() -> PostErrorMessage.PRECAUTIONS_BLANK
-            recruitInfo.isNullOrBlank() -> PostErrorMessage.RECRUIT_INFO_BLANK
+            startDate.isNullOrBlank() || endDate.isNullOrBlank() -> PostErrorMessage.EXPECTED_SCHEDULE_BLANK
             else -> PostErrorMessage.PASS
         }
 
@@ -303,8 +304,6 @@ class PostViewModel @Inject constructor(
             tags = postItem?.tags,
             precautions = _uiState.value.find { it is PostListItem.PostOptionItem }
                 .let { (it as? PostListItem.PostOptionItem)?.precautions },
-            recruitInfo = _uiState.value.find { it is PostListItem.PostOptionItem }
-                .let { (it as? PostListItem.PostOptionItem)?.recruitInfo },
             recruit = (_uiState.value.find { it is PostListItem.RecruitItem }
                     as? PostListItem.RecruitItem)?.recruit,
             memberIds = listOf(getCurrentUser()),
@@ -327,8 +326,6 @@ class PostViewModel @Inject constructor(
             tags = postItem?.tags,
             precautions = _uiState.value.find { it is PostListItem.PostOptionItem }
                 .let { (it as? PostListItem.PostOptionItem)?.precautions },
-            recruitInfo = _uiState.value.find { it is PostListItem.PostOptionItem }
-                .let { (it as? PostListItem.PostOptionItem)?.recruitInfo },
             recruit = (_uiState.value.find { it is PostListItem.RecruitItem }
                     as? PostListItem.RecruitItem)?.recruit,
             memberIds = entity.memberIds,
@@ -415,19 +412,10 @@ class PostViewModel @Inject constructor(
                     postItemDataMap["description"] = description
                 }
 
-                else -> uiStateValue
-            }
-        }
-    }
-
-    fun updatePostOptionItemText(position: Int, title: String, description: String, date: String?) {
-        if (position >= 0 && position < _uiState.value.size) {
-            when (val uiStateValue = _uiState.value[position]) {
                 is PostListItem.PostOptionItem -> {
                     postItemDataMap["precautions"] = title
-                    postItemDataMap["recruitInfo"] = description
-                    if (!date.isNullOrBlank()) {
-                        val (startDate, endDate) = date.split("~")
+                    if (description.isNotBlank()) {
+                        val (startDate, endDate) = description.split("~")
                         postItemDataMap["startDate"] = startDate
                         postItemDataMap["endDate"] = endDate
                     }
@@ -450,13 +438,11 @@ class PostViewModel @Inject constructor(
                 is PostListItem.PostOptionItem -> {
                     val precautions =
                         postItemDataMap["precautions"] ?: uiStateValue.precautions
-                    val recruitInfo =
-                        postItemDataMap["recruitInfo"] ?: uiStateValue.recruitInfo
                     val startDate =
                         postItemDataMap["startDate"] ?: uiStateValue.startDate
                     val endDate =
                         postItemDataMap["endDate"] ?: uiStateValue.endDate
-                    uiStateValue.copy(precautions = precautions, recruitInfo = recruitInfo, startDate = startDate, endDate = endDate)
+                    uiStateValue.copy(precautions = precautions, startDate = startDate, endDate = endDate)
                 }
 
                 else -> uiStateValue
