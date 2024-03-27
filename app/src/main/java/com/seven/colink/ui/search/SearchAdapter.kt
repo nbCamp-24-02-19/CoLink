@@ -55,7 +55,12 @@ class SearchAdapter(val mItems: MutableList<SearchModel>) :
         val item = mItems[position]
 
         holder.itemBox.setOnClickListener {
-            itemClick?.onClick(mItems[position], position)
+            if (mItems.isNullOrEmpty()) {
+                Log.e("Error", "Search mItems is NullOrEmpty")
+                return@setOnClickListener
+            } else {
+                itemClick?.onClick(mItems[position], position)
+            }
         }
 
         if (item.groupType == GroupType.PROJECT) {
@@ -75,7 +80,7 @@ class SearchAdapter(val mItems: MutableList<SearchModel>) :
         holder.thumbnail.load(item.thumbnail)
         holder.title.text = item.title
         holder.description.text = item.description
-        holder.tag.text = item.tags?.map { "# " + it }?.joinToString("   ","","")
+        holder.tag.text = item.tags?.map { "# " + it }?.joinToString("   ", "", "")
         holder.poster.text = item.authId
         holder.time.text = item.registeredDate
         holder.heartCount.text = item.likes.toString()

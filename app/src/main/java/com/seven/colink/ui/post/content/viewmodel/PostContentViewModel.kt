@@ -389,7 +389,6 @@ class PostContentViewModel @Inject constructor(
                 }
                 _uiState.value = updateUiState
             }
-
         }
     }
 
