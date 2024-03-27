@@ -14,7 +14,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val postRepository: PostRepository,
     private val productRepository: ProductRepository
 ) : ViewModel() {
 
@@ -29,7 +28,6 @@ class HomeViewModel @Inject constructor(
 
         viewModelScope.launch {
             getTopItemList.clear()
-//            val repository = postRepository.getRecentPost(num)
             val repository = productRepository.getRecentPost(num)
 
             kotlin.runCatching {
@@ -51,9 +49,5 @@ class HomeViewModel @Inject constructor(
                 Log.e("HomeViewModel","데이터를 불러오지 못 했습니다 $exception")
             }
         }
-    }
-
-    suspend fun getPost(key: String): PostEntity? {
-        return postRepository.getPost(key).getOrNull()
     }
 }

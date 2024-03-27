@@ -49,8 +49,8 @@ class ProductPromotionActivity : AppCompatActivity() {
     private fun initObserve() = with(viewModel) {
         clickSnackBar.observe(this@ProductPromotionActivity) {
             when (it) {
-                Constants.SAVE_SUCCESS -> {binding.root.setSnackBar(SnackType.Success,"게시물 등록에 성공하였습니다.").show()}
-                Constants.SAVE_FAIL -> {binding.root.setSnackBar(SnackType.Error,"게시물 등록에 실패하였습니다.").show()}
+                Constants.SAVE_SUCCESS -> {binding.root.setSnackBar(SnackType.Success,getString(R.string.product_success)).show()}
+                Constants.SAVE_FAIL -> {binding.root.setSnackBar(SnackType.Error,getString(R.string.product_fail)).show()}
                 else -> Unit
             }
         }

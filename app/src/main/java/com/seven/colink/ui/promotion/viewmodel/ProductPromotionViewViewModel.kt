@@ -1,7 +1,6 @@
 package com.seven.colink.ui.promotion.viewmodel
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -77,7 +76,6 @@ class ProductPromotionViewViewModel @Inject constructor(
                     iosUrl = getEntity.iosUrl
                     )
             }
-            Log.d("entity","#qqqqq get projectId = ${getEntity?.projectId}")
 
             val getLeaderDetail = getEntity?.authId?.let { userRepository.getUserDetails(it) }
 

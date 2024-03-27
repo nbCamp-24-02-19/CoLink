@@ -3,7 +3,6 @@ package com.seven.colink.ui.promotion.adapter
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,23 +10,18 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import com.seven.colink.R
 import com.seven.colink.databinding.ItemPostMemberInfoBinding
 import com.seven.colink.databinding.ItemProductDesImgBinding
 import com.seven.colink.databinding.ItemProductImgBinding
-import com.seven.colink.databinding.ItemProductLinkBinding
 import com.seven.colink.databinding.ItemProductMemberHeaderBinding
 import com.seven.colink.databinding.ItemProductNewLinkBinding
 import com.seven.colink.databinding.ItemProductNewTitleBinding
 import com.seven.colink.databinding.ItemProductProjectHeaderBinding
-import com.seven.colink.databinding.ItemProductTitleBinding
-import com.seven.colink.ui.promotion.model.LinkItem
 import com.seven.colink.ui.promotion.model.ProductPromotionItems
-import com.seven.colink.ui.promotion.model.ViewLinkImg
 import com.seven.colink.ui.userdetail.UserDetailActivity
 import com.seven.colink.ui.userdetail.UserDetailActivity.Companion.EXTRA_USER_KEY
-import com.seven.colink.util.Constants
 import com.seven.colink.util.setLevelIcon
-import okhttp3.internal.notify
 
 class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<ProductPromotionItems, RecyclerView.ViewHolder>(
     ProductPromotionDiffUtil
@@ -96,7 +90,7 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
         return when (viewType) {
             FIRST_TYPE -> {
                 val first = ItemProductImgBinding.inflate(inflater,parent,false)
-                FirstViewHolder(first)
+                MainImgViewHolder(first)
             }
             SECOND_TYPE -> {
                 val second = ItemProductNewTitleBinding.inflate(inflater,parent,false)
@@ -112,23 +106,23 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
             }
             FIFTH_TYPE -> {
                 val fifth = ItemProductProjectHeaderBinding.inflate(inflater,parent,false)
-                FifthViewHolder(fifth)
+                ProjectHeaderViewHolder(fifth)
             }
             SIXTH_TYPE -> {
                 val sixth = ItemProductMemberHeaderBinding.inflate(inflater,parent,false)
-                SixthViewHolder(sixth)
+                LeaderHeaderViewHolder(sixth)
             }
             SEVENTH_TYPE -> {
                 val seventh = ItemPostMemberInfoBinding.inflate(inflater,parent,false)
-                SeventhViewHolder(seventh)
+                LeaderItemViewHolder(seventh)
             }
             EIGHTH_TYPE -> {
                 val eighth = ItemProductMemberHeaderBinding.inflate(inflater,parent,false)
-                EighthViewHolder(eighth)
+                MemberHeaderViewHolder(eighth)
             }
             else -> {
                 val nineth = ItemPostMemberInfoBinding.inflate(inflater,parent,false)
-                NinethViewHolder(nineth)
+                MemberItemViewHolder(nineth)
             }
         }
     }
@@ -137,7 +131,7 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
         val item = getItem(position)
 
         if (item is ProductPromotionItems.Img) {
-            holder as FirstViewHolder
+            holder as MainImgViewHolder
             holder.img.load(item.img)
         }
 
@@ -216,17 +210,17 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
         }
 
         if (item is ProductPromotionItems.ProjectHeader) {
-            holder as FifthViewHolder
-            holder.header.text = "프로젝트 멤버"
+            holder as ProjectHeaderViewHolder
+            holder.header.text = getString(R.string.product_header)
         }
 
         if (item is ProductPromotionItems.ProjectLeaderHeader) {
-            holder as SixthViewHolder
-            holder.header.text = "리더"
+            holder as LeaderHeaderViewHolder
+            holder.header.text = getString(R.string.product_leader)
         }
 
         if (item is ProductPromotionItems.ProjectLeaderItem) {
-            holder as SeventhViewHolder
+            holder as LeaderItemViewHolder
             holder.itemView.setOnClickListener {
                 itemClick?.onClick(it,position)
 
@@ -250,12 +244,12 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
         }
 
         if (item is ProductPromotionItems.ProjectMemberHeader) {
-            holder as EighthViewHolder
-            holder.header.text = "멤버"
+            holder as MemberHeaderViewHolder
+            holder.header.text = getString(R.string.product_member)
         }
 
         if (item is ProductPromotionItems.ProjectMember) {
-            holder as NinethViewHolder
+            holder as MemberItemViewHolder
             holder.itemView.setOnClickListener {
                 itemClick?.onClick(it,position)
 
@@ -297,7 +291,11 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
         }
     }
 
-    inner class FirstViewHolder(binding: ItemProductImgBinding) : RecyclerView.ViewHolder(binding.root) {
+    private fun getString(stringKey : Int) : String {
+        return context.getString(stringKey)
+    }
+
+    inner class MainImgViewHolder(binding: ItemProductImgBinding) : RecyclerView.ViewHolder(binding.root) {
         val img = binding.ivProductPromotion
     }
 
@@ -325,15 +323,15 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
         val ios = binding.ivAppstore
     }
 
-    inner class FifthViewHolder(binding: ItemProductProjectHeaderBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ProjectHeaderViewHolder(binding: ItemProductProjectHeaderBinding) : RecyclerView.ViewHolder(binding.root) {
         val header = binding.tvProductPromotionHeader
     }
 
-    inner class SixthViewHolder(binding: ItemProductMemberHeaderBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class LeaderHeaderViewHolder(binding: ItemProductMemberHeaderBinding) : RecyclerView.ViewHolder(binding.root) {
         val header = binding.tvProductPromotionLeaderHeader
     }
 
-    inner class SeventhViewHolder(binding: ItemPostMemberInfoBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class LeaderItemViewHolder(binding: ItemPostMemberInfoBinding) : RecyclerView.ViewHolder(binding.root) {
         val img = binding.ivUser
         val name = binding.tvUserName
         val intro = binding.tvUserIntroduction
@@ -343,11 +341,11 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
         val lay = binding.layMember
     }
 
-    inner class EighthViewHolder(binding : ItemProductMemberHeaderBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class MemberHeaderViewHolder(binding : ItemProductMemberHeaderBinding) : RecyclerView.ViewHolder(binding.root) {
         val header = binding.tvProductPromotionLeaderHeader
     }
 
-    inner class NinethViewHolder(binding : ItemPostMemberInfoBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class MemberItemViewHolder(binding : ItemPostMemberInfoBinding) : RecyclerView.ViewHolder(binding.root) {
         val img = binding.ivUser
         val name = binding.tvUserName
         val intro = binding.tvUserIntroduction

@@ -3,10 +3,8 @@ package com.seven.colink.ui.promotion.adapter
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.IBinder
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,15 +13,14 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.load
+import com.seven.colink.R
 import com.seven.colink.databinding.ItemPostMemberInfoBinding
 import com.seven.colink.databinding.ItemProductDesImgBinding
 import com.seven.colink.databinding.ItemProductEditLinkBinding
 import com.seven.colink.databinding.ItemProductEditTitleBinding
 import com.seven.colink.databinding.ItemProductImgBinding
-import com.seven.colink.databinding.ItemProductLinkBinding
 import com.seven.colink.databinding.ItemProductMemberHeaderBinding
 import com.seven.colink.databinding.ItemProductProjectHeaderBinding
-import com.seven.colink.databinding.ItemProductTitleBinding
 import com.seven.colink.domain.entity.TempProductEntity
 import com.seven.colink.ui.promotion.model.ProductPromotionItems
 import com.seven.colink.util.openGallery
@@ -37,7 +34,6 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
     private var OnClickImgListener : ((ViewHolder) -> Unit)? = null
 
     private var itemClick : ItemClick? = null
-    private var firstBind = true
     var tempEntity = TempProductEntity()
 
     private val FIRST_TYPE = 0
@@ -49,6 +45,10 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
     private val SEVENTH_TYPE = 6
     private val EIGHTH_TYPE = 7
     private val NINETH_TYPE = 8
+
+    private fun getString(stringKey : Int) : String {
+        return mContext.getString(stringKey)
+    }
 
     fun editTextViewAllFocusOut() {  //포커스 아웃 시키기
         for (i in 0 until itemCount) {
@@ -164,7 +164,7 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     if (s != null) {
                         if (s.length >= 9) {
-                            editTeam.setError("최대 9글자까지 입력 가능합니다.")
+                            editTeam.setError(getString(R.string.input_team_length))
                         }else{
                             editTeam.setError(null)
                         }
@@ -300,23 +300,23 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
         }
     }
 
-    inner class FifthViewHolder(binding: ItemProductProjectHeaderBinding) : ViewHolder(binding.root) {
+    inner class ProjectHeaderViewHolder(binding: ItemProductProjectHeaderBinding) : ViewHolder(binding.root) {
         val header = binding.tvProductPromotionHeader
 
         fun bind(item: ProductPromotionItems.ProjectHeader) {
-            header.text = "프로젝트멤버"
+            header.text = getString(R.string.product_header)
         }
     }
 
-    inner class SixthViewHolder(binding: ItemProductMemberHeaderBinding) : ViewHolder(binding.root) {
+    inner class LeaderHeaderViewHolder(binding: ItemProductMemberHeaderBinding) : ViewHolder(binding.root) {
         val header = binding.tvProductPromotionLeaderHeader
 
         fun bind(item: ProductPromotionItems.ProjectLeaderHeader) {
-            header.text = "리더"
+            header.text = getString(R.string.product_leader)
         }
     }
 
-    inner class SeventhViewHolder(binding: ItemPostMemberInfoBinding) : ViewHolder(binding.root) {
+    inner class LeaderItemViewHolder(binding: ItemPostMemberInfoBinding) : ViewHolder(binding.root) {
         val img = binding.ivUser
         val name = binding.tvUserName
         val intro = binding.tvUserIntroduction
@@ -340,15 +340,15 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
         }
     }
 
-    inner class EighthViewHolder(binding : ItemProductMemberHeaderBinding) : ViewHolder(binding.root) {
+    inner class MemberHeaderViewHolder(binding : ItemProductMemberHeaderBinding) : ViewHolder(binding.root) {
         val header = binding.tvProductPromotionLeaderHeader
 
         fun bind(item: ProductPromotionItems.ProjectMemberHeader) {
-            header.text = "멤버"
+            header.text = getString(R.string.product_member)
         }
     }
 
-    inner class NinethViewHolder(binding : ItemPostMemberInfoBinding) : ViewHolder(binding.root) {
+    inner class MemberItemViewHolder(binding : ItemPostMemberInfoBinding) : ViewHolder(binding.root) {
         val img = binding.ivUser
         val name = binding.tvUserName
         val intro = binding.tvUserIntroduction
@@ -399,27 +399,27 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
 
             FIFTH_TYPE -> {
                 val fifth = ItemProductProjectHeaderBinding.inflate(inflater, parent, false)
-                FifthViewHolder(fifth)
+                ProjectHeaderViewHolder(fifth)
             }
 
             SIXTH_TYPE -> {
                 val sixth = ItemProductMemberHeaderBinding.inflate(inflater, parent, false)
-                SixthViewHolder(sixth)
+                LeaderHeaderViewHolder(sixth)
             }
 
             SEVENTH_TYPE -> {
                 val seventh = ItemPostMemberInfoBinding.inflate(inflater, parent, false)
-                SeventhViewHolder(seventh)
+                LeaderItemViewHolder(seventh)
             }
 
             EIGHTH_TYPE -> {
                 val eighth = ItemProductMemberHeaderBinding.inflate(inflater, parent, false)
-                EighthViewHolder(eighth)
+                MemberHeaderViewHolder(eighth)
             }
 
             else -> {
                 val nineth = ItemPostMemberInfoBinding.inflate(inflater, parent, false)
-                NinethViewHolder(nineth)
+                MemberItemViewHolder(nineth)
             }
         }
     }
@@ -464,23 +464,23 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
                 item as ProductPromotionItems.Link
                 holder.bind(item)
             }
-            is FifthViewHolder -> {
+            is ProjectHeaderViewHolder -> {
                 item as ProductPromotionItems.ProjectHeader
                 holder.bind(item)
             }
-            is SixthViewHolder -> {
+            is LeaderHeaderViewHolder -> {
                 item as ProductPromotionItems.ProjectLeaderHeader
                 holder.bind(item)
             }
-            is SeventhViewHolder -> {
+            is LeaderItemViewHolder -> {
                 item as ProductPromotionItems.ProjectLeaderItem
                 holder.bind(item)
             }
-            is EighthViewHolder -> {
+            is MemberHeaderViewHolder -> {
                 item as ProductPromotionItems.ProjectMemberHeader
                 holder.bind(item)
             }
-            is NinethViewHolder -> {
+            is MemberItemViewHolder -> {
                 item as ProductPromotionItems.ProjectMember
                 holder.bind(item)
             }
