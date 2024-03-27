@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import com.seven.colink.R
 import com.seven.colink.databinding.ItemPostMemberInfoBinding
 import com.seven.colink.databinding.ItemProductDesImgBinding
 import com.seven.colink.databinding.ItemProductImgBinding
@@ -210,12 +211,12 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
 
         if (item is ProductPromotionItems.ProjectHeader) {
             holder as FifthViewHolder
-            holder.header.text = "프로젝트 멤버"
+            holder.header.text = getString(R.string.product_header)
         }
 
         if (item is ProductPromotionItems.ProjectLeaderHeader) {
             holder as SixthViewHolder
-            holder.header.text = "리더"
+            holder.header.text = getString(R.string.product_leader)
         }
 
         if (item is ProductPromotionItems.ProjectLeaderItem) {
@@ -244,7 +245,7 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
 
         if (item is ProductPromotionItems.ProjectMemberHeader) {
             holder as EighthViewHolder
-            holder.header.text = "멤버"
+            holder.header.text = getString(R.string.product_member)
         }
 
         if (item is ProductPromotionItems.ProjectMember) {
@@ -288,6 +289,10 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
             is ProductPromotionItems.ProjectMemberHeader -> EIGHTH_TYPE
             is ProductPromotionItems.ProjectMember -> NINETH_TYPE
         }
+    }
+
+    private fun getString(stringKey : Int) : String {
+        return context.getString(stringKey)
     }
 
     inner class FirstViewHolder(binding: ItemProductImgBinding) : RecyclerView.ViewHolder(binding.root) {

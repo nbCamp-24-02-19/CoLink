@@ -13,6 +13,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.load
+import com.seven.colink.R
 import com.seven.colink.databinding.ItemPostMemberInfoBinding
 import com.seven.colink.databinding.ItemProductDesImgBinding
 import com.seven.colink.databinding.ItemProductEditLinkBinding
@@ -33,7 +34,6 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
     private var OnClickImgListener : ((ViewHolder) -> Unit)? = null
 
     private var itemClick : ItemClick? = null
-    private var firstBind = true
     var tempEntity = TempProductEntity()
 
     private val FIRST_TYPE = 0
@@ -45,6 +45,10 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
     private val SEVENTH_TYPE = 6
     private val EIGHTH_TYPE = 7
     private val NINETH_TYPE = 8
+
+    private fun getString(stringKey : Int) : String {
+        return mContext.getString(stringKey)
+    }
 
     fun editTextViewAllFocusOut() {  //포커스 아웃 시키기
         for (i in 0 until itemCount) {
@@ -160,7 +164,7 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     if (s != null) {
                         if (s.length >= 9) {
-                            editTeam.setError("최대 9글자까지 입력 가능합니다.")
+                            editTeam.setError(getString(R.string.input_team_length))
                         }else{
                             editTeam.setError(null)
                         }
@@ -300,7 +304,7 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
         val header = binding.tvProductPromotionHeader
 
         fun bind(item: ProductPromotionItems.ProjectHeader) {
-            header.text = "프로젝트멤버"
+            header.text = getString(R.string.product_header)
         }
     }
 
@@ -308,7 +312,7 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
         val header = binding.tvProductPromotionLeaderHeader
 
         fun bind(item: ProductPromotionItems.ProjectLeaderHeader) {
-            header.text = "리더"
+            header.text = getString(R.string.product_leader)
         }
     }
 
@@ -340,7 +344,7 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
         val header = binding.tvProductPromotionLeaderHeader
 
         fun bind(item: ProductPromotionItems.ProjectMemberHeader) {
-            header.text = "멤버"
+            header.text = getString(R.string.product_member)
         }
     }
 
