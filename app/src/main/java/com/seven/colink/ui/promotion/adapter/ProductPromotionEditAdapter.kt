@@ -3,10 +3,8 @@ package com.seven.colink.ui.promotion.adapter
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.IBinder
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,10 +18,8 @@ import com.seven.colink.databinding.ItemProductDesImgBinding
 import com.seven.colink.databinding.ItemProductEditLinkBinding
 import com.seven.colink.databinding.ItemProductEditTitleBinding
 import com.seven.colink.databinding.ItemProductImgBinding
-import com.seven.colink.databinding.ItemProductLinkBinding
 import com.seven.colink.databinding.ItemProductMemberHeaderBinding
 import com.seven.colink.databinding.ItemProductProjectHeaderBinding
-import com.seven.colink.databinding.ItemProductTitleBinding
 import com.seven.colink.domain.entity.TempProductEntity
 import com.seven.colink.ui.promotion.model.ProductPromotionItems
 import com.seven.colink.util.openGallery

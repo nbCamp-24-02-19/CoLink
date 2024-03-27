@@ -148,19 +148,6 @@ class HomeFragment : Fragment() {
 
     private fun topClickItem() = object : TopViewPagerAdapter.ItemClick {
         override fun onClick(view: View, position: Int, item: TopItems) {
-//            lifecycleScope.launch {
-//                val key = item.key
-//                val entity = key?.let { homeViewModel.getPost(it) }
-//                if (key != null && entity != null) {
-//                    val intent = PostActivity.newIntent(
-//                        context = requireActivity(),
-//                        key = item.key
-//                    )
-//                    startActivity(intent)
-//                }else {
-//                    Toast.makeText(requireContext(), "다음에 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
-//                }
-//            }
             val intent = Intent(requireContext(),ProductPromotionActivity::class.java)
             if (item.key != null) {
                 intent.putExtra(Constants.EXTRA_ENTITY_KEY,item.key)

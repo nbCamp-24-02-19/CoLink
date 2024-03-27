@@ -3,7 +3,6 @@ package com.seven.colink.ui.promotion.adapter
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,20 +13,14 @@ import coil.load
 import com.seven.colink.databinding.ItemPostMemberInfoBinding
 import com.seven.colink.databinding.ItemProductDesImgBinding
 import com.seven.colink.databinding.ItemProductImgBinding
-import com.seven.colink.databinding.ItemProductLinkBinding
 import com.seven.colink.databinding.ItemProductMemberHeaderBinding
 import com.seven.colink.databinding.ItemProductNewLinkBinding
 import com.seven.colink.databinding.ItemProductNewTitleBinding
 import com.seven.colink.databinding.ItemProductProjectHeaderBinding
-import com.seven.colink.databinding.ItemProductTitleBinding
-import com.seven.colink.ui.promotion.model.LinkItem
 import com.seven.colink.ui.promotion.model.ProductPromotionItems
-import com.seven.colink.ui.promotion.model.ViewLinkImg
 import com.seven.colink.ui.userdetail.UserDetailActivity
 import com.seven.colink.ui.userdetail.UserDetailActivity.Companion.EXTRA_USER_KEY
-import com.seven.colink.util.Constants
 import com.seven.colink.util.setLevelIcon
-import okhttp3.internal.notify
 
 class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<ProductPromotionItems, RecyclerView.ViewHolder>(
     ProductPromotionDiffUtil
