@@ -199,6 +199,7 @@ class PostContentFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         viewModel.updateUserInfo()
+        viewModel.updatePostLike()
     }
 
     override fun onDestroyView() {

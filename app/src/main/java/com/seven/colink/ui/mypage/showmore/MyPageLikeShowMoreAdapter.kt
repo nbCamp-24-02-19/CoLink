@@ -33,7 +33,6 @@ class MyPageLikeShowMoreAdapter(var mItems: MutableList<SearchModel>) :
         val tag = binding.tvSearchItemTag1
         val poster = binding.tvSearchItemPoster
         val time = binding.tvSearchItemTime
-        val heart = binding.ivSearchItemHeart
         val heartCount = binding.tvSearchItemHeartCount
         val viewCount = binding.tvSearchItemViewCount
     }
@@ -55,7 +54,7 @@ class MyPageLikeShowMoreAdapter(var mItems: MutableList<SearchModel>) :
 
         holder.itemBox.setOnClickListener {
             if (mItems.isNullOrEmpty()) {
-                Log.e("Error", "Like Show More mItems is NullOrEmpty")
+                Log.e("Error", "Like Show More mItems is NullOrEmpty02")
                 return@setOnClickListener
             } else {
                 itemClick?.onClick(mItems[position], position)

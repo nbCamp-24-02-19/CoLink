@@ -2,6 +2,7 @@ package com.seven.colink.ui.mypage.showmore
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -42,11 +43,8 @@ class MyPageLikeShowMoreActivity : AppCompatActivity() {
                             )
                         )
                     } else {
-                        Toast.makeText(
-                            this@MyPageLikeShowMoreActivity,
-                            "다음에 다시 시도해 주세요.",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Log.e("Error","Like Show More mItems is NullOrEmpty01")
+                        return@launch
                     }
                 }
             }

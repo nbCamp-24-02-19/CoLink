@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import com.seven.colink.R
 import com.seven.colink.databinding.ItemSearchPostBinding
 import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.util.convert.convertError
@@ -40,7 +41,6 @@ class SearchAdapter(val mItems: MutableList<SearchModel>) :
         val tag = binding.tvSearchItemTag1
         val poster = binding.tvSearchItemPoster
         val time = binding.tvSearchItemTime
-        val heart = binding.ivSearchItemHeart
         val heartCount = binding.tvSearchItemHeartCount
         val viewCount = binding.tvSearchItemViewCount
     }

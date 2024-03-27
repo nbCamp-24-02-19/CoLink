@@ -192,4 +192,16 @@ class PostRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    override suspend fun registerLike(key: String, likes:Int) = suspendCoroutine { continuation ->
+        firebaseFirestore.collection(DataBaseType.POST.title).document(key).update("like", likes)
+            .addOnSuccessListener {
+                continuation.resume(DataResultStatus.SUCCESS)
+            }
+            .addOnFailureListener { e ->
+                continuation.resume(DataResultStatus.FAIL.apply {
+                    message = e.message ?: "Unknown error"
+                })
+            }
+    }
 }
