@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import coil.load
+import com.seven.colink.R
 import com.seven.colink.databinding.FragmentHomeStudyBinding
 import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.util.progress.hideProgressOverlay
@@ -87,7 +88,7 @@ class HomeStudyFragment : Fragment() {
                             } else {
                                 Toast.makeText(
                                     requireContext(),
-                                    "다음에 다시 시도해주세요.",
+                                    getString(R.string.error_next_time),
                                     Toast.LENGTH_SHORT
                                 )
                                     .show()

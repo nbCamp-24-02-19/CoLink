@@ -23,8 +23,11 @@ import com.seven.colink.ui.promotion.ProductPromotionActivity
 import com.seven.colink.ui.userdetail.UserDetailActivity
 import com.seven.colink.util.Constants
 import com.seven.colink.util.dialog.setDialog
+import com.seven.colink.util.snackbar.setSnackBar
+import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.PostEntryType
 import com.seven.colink.util.status.ProjectStatus
+import com.seven.colink.util.status.SnackType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -92,6 +95,14 @@ class GroupBoardFragment : Fragment() {
                     ProjectStatus.END -> {
                         when (item) {
                             is GroupBoardItem.GroupItem -> {
+                                if (item.groupType == GroupType.STUDY) {
+                                    view?.setSnackBar(
+                                        SnackType.Error,
+                                        requireContext().getString(R.string.promotion_error_message)
+                                    )?.show()
+                                    return@GroupBoardListAdapter
+                                }
+
                                 val intent =
                                     Intent(requireContext(), ProductPromotionActivity::class.java)
                                 intent.putExtra(Constants.EXTRA_ENTITY_KEY, item.key)

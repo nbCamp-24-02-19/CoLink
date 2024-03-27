@@ -1,7 +1,6 @@
 package com.seven.colink.ui.post.content.adapter
 
 import android.content.Context
-import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,6 +29,7 @@ import com.seven.colink.ui.post.register.post.adapter.TagListAdapter
 import com.seven.colink.ui.post.register.post.model.TagListItem
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.content.model.PostContentItem
+import com.seven.colink.util.convert.convertGradeStringFormat
 import com.seven.colink.util.setLevelIcon
 import com.seven.colink.util.status.ApplicationStatus
 import com.seven.colink.util.status.GroupType
@@ -217,7 +217,7 @@ class PostContentListAdapter(
                 binding.ivUser.load(item.userInfo?.photoUrl)
                 binding.ivUser.clipToOutline = true
                 binding.tvUserName.text = item.userInfo?.name
-                binding.tvUserGrade.text = item.userInfo?.grade.toString()
+                binding.tvUserGrade.text = item.userInfo?.grade?.convertGradeStringFormat()
                 item.userInfo?.level?.let { binding.ivLevelDiaIcon.setLevelIcon(it) }
                 binding.tvLevelDiaIcon.text = item.userInfo?.level.toString()
                 binding.tvUserIntroduction.text = item.userInfo?.info
@@ -368,7 +368,7 @@ class PostContentListAdapter(
         override fun onBind(item: PostContentItem) {
             if (item is PostContentItem.AdditionalInfo) {
                 binding.etPrecautions.setText(item.precautions)
-                binding.etPrecautions.inputType = InputType.TYPE_NULL
+                binding.etPrecautions.isFocusable = false
                 val startDateText = item.startDate
                 val endDateText = item.endDate
                 if (!startDateText.isNullOrBlank() && !endDateText.isNullOrBlank()) {

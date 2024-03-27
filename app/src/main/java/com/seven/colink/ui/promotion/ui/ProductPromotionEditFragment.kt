@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -25,15 +24,12 @@ import com.seven.colink.ui.promotion.model.ProductPromotionItems
 import com.seven.colink.ui.promotion.viewmodel.ProductPromotionEditViewModel
 import com.seven.colink.ui.promotion.viewmodel.ProductPromotionSharedViewModel
 import com.seven.colink.util.Constants
-import com.seven.colink.util.progress.hideProgressOverlay
-import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.snackbar.setSnackBar
 import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.SnackType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -55,7 +51,7 @@ class ProductPromotionEditFragment : Fragment() {
         ProductPromotionItems.Title("","","","","","",""),
         ProductPromotionItems.MiddleImg(null),
         ProductPromotionItems.Link("","",""),
-        ProductPromotionItems.ProjectHeader("dd"),
+        ProductPromotionItems.ProjectHeader(""),
         ProductPromotionItems.ProjectLeaderHeader(""),
         ProductPromotionItems.ProjectLeaderItem(null),
         ProductPromotionItems.ProjectMemberHeader(""),
@@ -91,18 +87,6 @@ class ProductPromotionEditFragment : Fragment() {
     }
 
     private fun initView() {
-        viewList.clear()
-        viewList.addAll(listOf(
-            ProductPromotionItems.Img(null),
-            ProductPromotionItems.Title("","","","","","",""),
-            ProductPromotionItems.MiddleImg(null),
-            ProductPromotionItems.Link("","",""),
-            ProductPromotionItems.ProjectHeader(""),
-            ProductPromotionItems.ProjectLeaderHeader(""),
-            ProductPromotionItems.ProjectLeaderItem(null),
-            ProductPromotionItems.ProjectMemberHeader(""),
-            ProductPromotionItems.ProjectMember(null)
-        ))
         editAdapter = ProductPromotionEditAdapter(mContext,binding.rvPromotionEdit,viewList)
         binding.rvPromotionEdit.adapter = editAdapter
         binding.rvPromotionEdit.layoutManager = LinearLayoutManager(requireContext())
@@ -198,7 +182,7 @@ class ProductPromotionEditFragment : Fragment() {
         coroutineScope.launch {
             val tempData = editAdapter.getTempData()
 
-            if (tempData.title != null && tempData.des != null && tempData.selectMainImgUri != null && tempData.team != null) {
+            if (tempData.title != null && tempData.des != null && tempData.team != null) {
                 val mainImg = withContext(Dispatchers.Main) {
                     val imgItem = editAdapter.getTempData()
                     imgItem.selectMainImgUri?.let { editViewModel.uploadImage(it) }
@@ -209,30 +193,38 @@ class ProductPromotionEditFragment : Fragment() {
                     imgItem.selectMiddleImgUri?.let { editViewModel.uploadImage(it) }
                 }
 
-                editAdapter.tempEntity.mainImg = mainImg
-                editAdapter.tempEntity.desImg = desImg
-
-                val entity = ProductEntity(
-                    title = tempData.title,
-                    imageUrl = tempData.mainImg,
-                    teamId = tempData.team,
-                    description = tempData.des,
-                    desImg = tempData.desImg,
-                    referenceUrl = tempData.web,
-                    aosUrl = tempData.aos,
-                    iosUrl = tempData.ios
-                )
-
-                editViewModel.key.observe(viewLifecycleOwner) { k ->
-                    sharedViewModel.setKey(k)
+                if (mainImg != null) {
+                    editAdapter.tempEntity.mainImg = mainImg
+                }
+                if (desImg != null) {
+                    editAdapter.tempEntity.desImg = desImg
                 }
 
-                with(editViewModel) {
-                    saveEntity(entity)
-                    registerProduct()
+                if (!tempData.mainImg.isNullOrEmpty()){
+                    val entity = ProductEntity(
+                        title = tempData.title,
+                        imageUrl = tempData.mainImg,
+                        projectId = tempData.team,
+                        description = tempData.des,
+                        desImg = tempData.desImg,
+                        referenceUrl = tempData.web,
+                        aosUrl = tempData.aos,
+                        iosUrl = tempData.ios
+                    )
+
+                    editViewModel.key.observe(viewLifecycleOwner) { k ->
+                        sharedViewModel.setKey(k)
+                    }
+
+                    with(editViewModel) {
+                        saveEntity(entity)
+                        registerProduct()
+                    }
+                }else{
+                    binding.tvPromotionEditComplete.setSnackBar(SnackType.Error,getString(R.string.product_necessary_main_img)).show()
                 }
             }else {
-                binding.tvPromotionEditComplete.setSnackBar(SnackType.Error,"제목, 소개글, 메인 이미지, 팀 이름은 필수로 들어가야 합니다.").show()
+                binding.tvPromotionEditComplete.setSnackBar(SnackType.Error,getString(R.string.product_necessary_title_des_team)).show()
             }
         }
     }

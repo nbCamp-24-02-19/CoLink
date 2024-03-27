@@ -2,7 +2,6 @@ package com.seven.colink.ui.post.content
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -25,9 +24,10 @@ import com.seven.colink.ui.post.register.viewmodel.PostSharedViewModel
 import com.seven.colink.ui.sign.signin.SignInActivity
 import com.seven.colink.ui.userdetail.UserDetailActivity
 import com.seven.colink.util.dialog.setDialog
-import com.seven.colink.util.showToast
+import com.seven.colink.util.snackbar.setSnackBar
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.PostEntryType
+import com.seven.colink.util.status.SnackType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -52,7 +52,6 @@ class PostContentFragment : Fragment() {
                         )
                     }
 
-                    // 좋아요 버튼 클릭 이벤트
                     is PostContentItem.Item -> {
                         if (viewModel.checkLogin.value == true) {
                             item.key?.let { viewModel.discernLike(it) }
@@ -61,7 +60,8 @@ class PostContentFragment : Fragment() {
                                 title = "로그인 필요",
                                 message = "서비스를 이용하기 위해서는 로그인이 필요합니다. \n로그인 페이지로 이동하시겠습니까?",
                                 confirmAction = {
-                                    val intent = Intent(requireContext(), SignInActivity::class.java)
+                                    val intent =
+                                        Intent(requireContext(), SignInActivity::class.java)
                                     startActivity(intent)
                                     it.dismiss()
                                 },
@@ -106,10 +106,10 @@ class PostContentFragment : Fragment() {
             onClickCommentButton = {
                 viewModel.registerComment(it)
             },
-            onClickCommentDeleteButton = {item->
+            onClickCommentDeleteButton = { item ->
                 viewModel.deleteComment(item)
             },
-            onClickCommentEditButton = {key, comment ->
+            onClickCommentEditButton = { key, comment ->
                 viewModel.editComment(key, comment)
             }
         )
@@ -179,10 +179,8 @@ class PostContentFragment : Fragment() {
                 else -> return@observe
             }
 
-            requireContext().showToast(getString(messageResId))
+            view?.setSnackBar(SnackType.Success, getString(messageResId))?.show()
         }
-
-
     }
 
     private fun initSharedViewModel() = with(sharedViewModel) {

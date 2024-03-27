@@ -1,7 +1,6 @@
 package com.seven.colink.ui.group.calendar.material
 
 import android.content.Context
-import android.graphics.Color
 import android.text.style.ForegroundColorSpan
 import androidx.core.content.ContextCompat
 import com.prolificinteractive.materialcalendarview.CalendarDay
@@ -15,9 +14,9 @@ import java.time.format.DateTimeFormatter
 import java.util.Calendar
 
 object CalendarDecorators {
-    fun dayDecorator(context: Context): DayViewDecorator {
+    fun dayDecorator(context: Context, background: Int): DayViewDecorator {
         return object : DayViewDecorator {
-            private val drawable = ContextCompat.getDrawable(context, R.drawable.calendar_selector)
+            private val drawable = ContextCompat.getDrawable(context, background)
             override fun shouldDecorate(day: CalendarDay): Boolean = true
             override fun decorate(view: DayViewFacade) {
                 view.setSelectionDrawable(drawable!!)
@@ -65,7 +64,7 @@ object CalendarDecorators {
         }
     }
 
-    fun sundayDecorator(): DayViewDecorator {
+    fun sundayDecorator(context: Context): DayViewDecorator {
         return object : DayViewDecorator {
             override fun shouldDecorate(day: CalendarDay): Boolean {
                 val calendar = Calendar.getInstance()
@@ -74,12 +73,19 @@ object CalendarDecorators {
             }
 
             override fun decorate(view: DayViewFacade) {
-                view.addSpan(ForegroundColorSpan(Color.BLACK))
+                view.addSpan(
+                    ForegroundColorSpan(
+                        ContextCompat.getColor(
+                            context,
+                            R.color.calender_color_red
+                        )
+                    )
+                )
             }
         }
     }
 
-    fun saturdayDecorator(): DayViewDecorator {
+    fun saturdayDecorator(context: Context): DayViewDecorator {
         return object : DayViewDecorator {
             override fun shouldDecorate(day: CalendarDay): Boolean {
                 val calendar = Calendar.getInstance()
@@ -88,7 +94,14 @@ object CalendarDecorators {
             }
 
             override fun decorate(view: DayViewFacade) {
-                view.addSpan(ForegroundColorSpan(Color.BLACK))
+                view.addSpan(
+                    ForegroundColorSpan(
+                        ContextCompat.getColor(
+                            context,
+                            R.color.calender_color_blue
+                        )
+                    )
+                )
             }
         }
     }
@@ -122,7 +135,7 @@ object CalendarDecorators {
             }
 
             override fun decorate(view: DayViewFacade) {
-                view.addSpan(DotSpan(10F, ContextCompat.getColor(context, R.color.main_color)))
+                view.addSpan(DotSpan(7F, ContextCompat.getColor(context, R.color.main_color)))
             }
 
             private fun getDateRange(startDate: LocalDate, endDate: LocalDate): List<CalendarDay> {
@@ -142,4 +155,6 @@ object CalendarDecorators {
             }
         }
     }
+
 }
+

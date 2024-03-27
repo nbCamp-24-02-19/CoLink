@@ -11,25 +11,22 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.prolificinteractive.materialcalendarview.CalendarDay
+import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.format.ArrayWeekDayFormatter
 import com.seven.colink.R
 import com.seven.colink.databinding.UtilCustomBasicDialogBinding
 import com.seven.colink.databinding.UtilCustomCalendarDialogBinding
-import com.seven.colink.databinding.UtilCustomGroupDialogBinding
 import com.seven.colink.databinding.UtilCustomLevelDialogBinding
 import com.seven.colink.databinding.UtilCustomListDialogBinding
 import com.seven.colink.databinding.UtilCustomScheduleColorDialogBinding
-import com.seven.colink.databinding.UtilMemberInfoDialogBinding
-import com.seven.colink.domain.entity.UserEntity
+import com.seven.colink.ui.group.calendar.material.CalendarDecorators
 import org.threeten.bp.LocalDate
 import com.seven.colink.util.dialog.adapter.DialogAdapter
 import com.seven.colink.util.dialog.adapter.LevelDialogAdapter
-import com.seven.colink.util.dialog.adapter.MemberListAdapter
 import com.seven.colink.util.dialog.adapter.ScheduleColorAdapter
 import com.seven.colink.util.dialog.enum.ColorEnum
 import com.seven.colink.util.dialog.enum.LevelEnum
 import com.seven.colink.util.scheduleAlarm
-import com.seven.colink.util.status.GroupType
 
 fun Context.setDialog(
     title: String,
@@ -158,62 +155,6 @@ fun Context.setLevelDialog(
     return dialog
 }
 
-fun List<UserEntity>.setUserInfoDialog(
-    context: Context,
-    action: (UserEntity, isRefuseButton: Boolean) -> Unit,
-): AlertDialog {
-    val binding = UtilMemberInfoDialogBinding.inflate(LayoutInflater.from(context))
-    val dialog = AlertDialog.Builder(context)
-        .setView(binding.root)
-        .show()
-
-    dialog.window?.setLayout(
-        ViewGroup.LayoutParams.MATCH_PARENT,
-        ViewGroup.LayoutParams.MATCH_PARENT
-    )
-
-    val adapter = MemberListAdapter { position, user, isRefuseButton ->
-        action(user, isRefuseButton)
-        dialog.dismiss()
-    }
-
-    binding.recyclerViewMember.adapter = adapter
-    adapter.submitList(this)
-
-    return dialog
-}
-
-
-fun setUpGroupDialog(
-    context: Context,
-    groupType: GroupType,
-    confirmAction: (AlertDialog) -> Unit,
-    cancelAction: (AlertDialog) -> Unit
-): AlertDialog {
-    val binding = UtilCustomGroupDialogBinding.inflate(LayoutInflater.from(context))
-    val dialog = AlertDialog.Builder(context)
-        .setView(binding.root)
-        .show()
-
-    dialog.window?.setLayout(
-        ViewGroup.LayoutParams.MATCH_PARENT,
-        ViewGroup.LayoutParams.MATCH_PARENT
-    )
-
-    binding.tvDialogDescription.text = context.getString(
-        R.string.group_dialog_description, context.getString(
-            if (
-                groupType == GroupType.PROJECT
-            ) R.string.project_kor else R.string.study_kor
-        )
-    )
-
-    binding.btMoveGroupPage.setOnClickListener { confirmAction(dialog) }
-    binding.btFinish.setOnClickListener { cancelAction(dialog) }
-
-    return dialog
-}
-
 fun Context.setScheduleColor(
     nowColor: Int = 5,
     action: (ColorEnum) -> Unit,
@@ -253,6 +194,10 @@ fun Context.setScheduleColor(
     binding.rcScheduleColor.adapter = adapter
     binding.rcScheduleColor.layoutManager = LinearLayoutManager(this)
     binding.tvDialogTitle.text = "색상"
+
+    binding.ivFinish.setOnClickListener {
+        dialog.dismiss()
+    }
 
     val nowColorEnum = ColorEnum.values().find { it.color == nowColor }
     if (nowColorEnum != null) {
@@ -302,13 +247,14 @@ fun Context.setScheduleAlarm(
     return dialog
 }
 
-fun Context.setUpCalendarDialog(
+fun setUpCalendarDialog(
+    context: Context,
     date: String?,
     confirmAction: (startDate: String, endDate: String) -> Unit,
     cancelAction: () -> Unit,
 ): AlertDialog {
-    val binding = UtilCustomCalendarDialogBinding.inflate(LayoutInflater.from(this))
-    val dialog = AlertDialog.Builder(this)
+    val binding = UtilCustomCalendarDialogBinding.inflate(LayoutInflater.from(context))
+    val dialog = AlertDialog.Builder(context)
         .setView(binding.root)
         .show()
 
@@ -319,7 +265,7 @@ fun Context.setUpCalendarDialog(
 
     val calendarView = binding.calendarView
     calendarView.setHeaderTextAppearance(R.style.CalendarWidgetHeader)
-    calendarView.setWeekDayFormatter(ArrayWeekDayFormatter(resources.getTextArray(R.array.custom_weekdays)))
+    calendarView.setWeekDayFormatter(ArrayWeekDayFormatter(context.resources.getTextArray(R.array.custom_weekdays)))
 
     val dateRange = date?.split("~")
     val startDate = dateRange?.getOrNull(0)?.trim()
@@ -355,6 +301,13 @@ fun Context.setUpCalendarDialog(
             confirmAction(selectedStartDate, selectedEndDate)
         }
         dialog.dismiss()
+    }
+
+    val decorators = mutableListOf<DayViewDecorator>()
+    decorators.add(CalendarDecorators.sundayDecorator(context))
+    decorators.add(CalendarDecorators.saturdayDecorator(context))
+    decorators.forEach { decorator ->
+        calendarView.addDecorator(decorator)
     }
 
     return dialog
