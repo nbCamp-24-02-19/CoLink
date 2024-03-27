@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -88,18 +87,6 @@ class ProductPromotionEditFragment : Fragment() {
     }
 
     private fun initView() {
-        viewList.clear()
-        viewList.addAll(listOf(
-            ProductPromotionItems.Img(null),
-            ProductPromotionItems.Title("","","","","","",""),
-            ProductPromotionItems.MiddleImg(null),
-            ProductPromotionItems.Link("","",""),
-            ProductPromotionItems.ProjectHeader(""),
-            ProductPromotionItems.ProjectLeaderHeader(""),
-            ProductPromotionItems.ProjectLeaderItem(null),
-            ProductPromotionItems.ProjectMemberHeader(""),
-            ProductPromotionItems.ProjectMember(null)
-        ))
         editAdapter = ProductPromotionEditAdapter(mContext,binding.rvPromotionEdit,viewList)
         binding.rvPromotionEdit.adapter = editAdapter
         binding.rvPromotionEdit.layoutManager = LinearLayoutManager(requireContext())
