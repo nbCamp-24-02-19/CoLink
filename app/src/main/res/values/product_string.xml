@@ -16,6 +16,8 @@
     <string name="product_input_team">팀명을 입력하세요.</string>
     <string name="product_input_example_des">해당 홍보 게시물의 소개글을 적어주세요 !\n상세하게 적을수록 홍보하는데 도움이 됩니다!</string>
     <string name="product_input_example_des_img">프로젝트를 부가적으로 소개할 이미지가 있다면 넣어주세요.</string>
+    <string name="input_team">팀명은 최대 9글자까지 입력 가능합니다.</string>
+    <string name="input_team_length">최대 9글자까지 입력 가능합니다.</string>
 
     <string name="product_edit_date">홍보글을 올린 시간이 표시됩니다.</string>
     <string name="product_edit_title">홍보글에 올릴 제목을 입력해주세요.</string>
@@ -25,5 +27,9 @@
     <string name="product_edit_store_link">https://</string>
     <string name="product_necessary_img">이미지를 등록 해 주세요</string>
     <string name="product_necessary_title_des">제목과 설명은 필수 등록 사항입니다.</string>
+    <string name="product_necessary_title_des_team">제목,설명 그리고 팀 이름은 필수 등록 사항입니다.</string>
+    <string name="product_necessary_main_img">메인 이미지는 반드시 들어가야 합니다.</string>
+    <string name="product_success">게시물 등록에 성공하였습니다.</string>
+    <string name="product_fail">게시물 등록에 실패하였습니다.</string>
 
 </resources>
