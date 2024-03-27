@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.ui.home.BottomItems
-import com.seven.colink.ui.home.TopItems
 import com.seven.colink.util.status.GroupType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

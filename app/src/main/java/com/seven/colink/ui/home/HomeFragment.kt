@@ -8,18 +8,15 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
+import com.seven.colink.R
 import com.seven.colink.databinding.FragmentHomeBinding
 import com.seven.colink.ui.home.adapter.BottomViewPagerAdapter
 import com.seven.colink.ui.home.adapter.HomeMainAdapter
 import com.seven.colink.ui.home.adapter.TopViewPagerAdapter
-import com.seven.colink.ui.home.child.HomeProjectFragment
-import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.ui.promotion.ProductPromotionActivity
 import com.seven.colink.util.Constants
 import com.seven.colink.util.progress.hideProgressOverlay
@@ -27,7 +24,6 @@ import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.snackbar.setSnackBar
 import com.seven.colink.util.status.SnackType
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 @AndroidEntryPoint
@@ -41,7 +37,7 @@ class HomeFragment : Fragment() {
     private val homeViewModel : HomeViewModel by viewModels()
     private var homeItem = mutableListOf<HomeAdapterItems>(
         HomeAdapterItems.TopView(TopViewPagerAdapter()),
-        HomeAdapterItems.Header("그룹 추천")
+        HomeAdapterItems.Header("")
     )
     private var loading = true
 
@@ -128,7 +124,7 @@ class HomeFragment : Fragment() {
             topAdapter.notifyDataSetChanged()
             homeItem = mutableListOf(
                 HomeAdapterItems.TopView(topAdapter),
-                HomeAdapterItems.Header("그룹 추천")
+                HomeAdapterItems.Header(getString(R.string.home_header))
             )
             mainAdapter.submitList(homeItem)
             mainAdapter.notifyDataSetChanged()
@@ -153,9 +149,8 @@ class HomeFragment : Fragment() {
                 intent.putExtra(Constants.EXTRA_ENTITY_KEY,item.key)
                 startActivity(intent)
             }else {
-                view.setSnackBar(SnackType.Error,"다음에 다시 시도해주세요").show()
+                view.setSnackBar(SnackType.Error,getString(R.string.error_next_time)).show()
             }
-
         }
     }
 
