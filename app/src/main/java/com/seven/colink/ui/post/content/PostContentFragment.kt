@@ -2,7 +2,6 @@ package com.seven.colink.ui.post.content
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -52,7 +51,6 @@ class PostContentFragment : Fragment() {
                         )
                     }
 
-                    // 좋아요 버튼 클릭 이벤트
                     is PostContentItem.Item -> {
                         if (viewModel.checkLogin.value == true) {
                             item.key?.let { viewModel.discernLike(it) }
@@ -181,8 +179,6 @@ class PostContentFragment : Fragment() {
 
             requireContext().showToast(getString(messageResId))
         }
-
-
     }
 
     private fun initSharedViewModel() = with(sharedViewModel) {

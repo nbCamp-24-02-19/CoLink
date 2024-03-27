@@ -1,12 +1,10 @@
 package com.seven.colink.ui.promotion.viewmodel
 
 import android.app.Application
-import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algolia.search.helper.toUserID
 import com.seven.colink.R
 import com.seven.colink.domain.entity.ProductEntity
 import com.seven.colink.domain.entity.UserEntity
@@ -14,11 +12,8 @@ import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.ProductRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.ui.promotion.model.ProductPromotionItems
-import com.seven.colink.ui.promotion.model.ViewLinkImg
 import com.seven.colink.util.status.DataResultStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -69,6 +64,7 @@ class ProductPromotionViewViewModel @Inject constructor(
                     key = key,
                     authId = getEntity.authId,
                     memberIds = mem,
+                    projectId = getEntity.projectId,
                     title = getEntity.title,
                     imageUrl = getEntity.imageUrl,
                     description = getEntity.description,
@@ -122,7 +118,7 @@ class ProductPromotionViewViewModel @Inject constructor(
         viewList.addAll(
             listOf(
                 ProductPromotionItems.Img(item?.imageUrl),
-                ProductPromotionItems.Title(item?.title, item?.registeredDate, item?.description,item?.referenceUrl,item?.aosUrl,item?.iosUrl,item?.teamId),
+                ProductPromotionItems.Title(item?.title, item?.registeredDate, item?.description,item?.projectId,item?.referenceUrl,item?.aosUrl,item?.iosUrl),
                 ProductPromotionItems.MiddleImg(item?.desImg),
                 ProductPromotionItems.Link(item?.referenceUrl, item?.iosUrl, item?.aosUrl),
                 ProductPromotionItems.ProjectHeader(getString(R.string.product_header)),

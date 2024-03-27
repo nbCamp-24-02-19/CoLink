@@ -1,7 +1,6 @@
 package com.seven.colink.ui.group.board.board.adapter
 
 import android.content.Context
-import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,7 +26,6 @@ import com.seven.colink.ui.group.board.board.GroupContentViewType
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
 import com.seven.colink.ui.post.register.post.adapter.TagListAdapter
 import com.seven.colink.ui.post.register.post.model.TagListItem
-import com.seven.colink.util.convert.convertGradeFormat
 import com.seven.colink.util.convert.convertGradeStringFormat
 import com.seven.colink.util.setLevelIcon
 import com.seven.colink.util.status.ApplicationStatus
@@ -215,7 +213,7 @@ class GroupBoardListAdapter(
 
                 val startDate =
                     if (item.status == ProjectStatus.RECRUIT) item.startDate else item.projectStartDate
-                tvStatusMessage.text = getStatusMessage(context, item.status, startDate)
+                tvStatusMessage.text = getStatusMessage(context, item, startDate)
                 btStatus.text = getStatusButtonText(item.status)
             }
         }
@@ -304,31 +302,38 @@ class GroupBoardListAdapter(
 
         private fun getStatusMessage(
             context: Context,
-            status: ProjectStatus,
+            item: GroupBoardItem.GroupItem,
             startDate: String?
         ): String {
             val daysSinceStart = startDate?.daysSinceTargetDate()?.toInt() ?: 0
-            val message = when (status) {
-                ProjectStatus.RECRUIT ->
-                    if (daysSinceStart > 0) {
-                        context.getString(
-                            R.string.progress_status_recruit,
-                            daysSinceStart.toString()
-                        )
-                    } else {
-                        context.getString(
-                            R.string.progress_status_recruit_d_day,
-                            daysSinceStart.absoluteValue.toString()
-                        )
-                    }
+            return when (item.status) {
+                ProjectStatus.RECRUIT -> {
+                    val resourceId = if (item.groupType == GroupType.STUDY)
+                        if (daysSinceStart > 0) R.string.progress_study_recruit else R.string.progress_study_recruit_previous
+                    else
+                        if (daysSinceStart > 0) R.string.progress_project_recruit else R.string.progress_project_recruit_previous
 
-                ProjectStatus.START ->
-                    context.getString(R.string.progress_status_ongoing, daysSinceStart.toString())
+                    context.getString(resourceId, daysSinceStart.absoluteValue.toString())
+                }
 
-                ProjectStatus.END ->
-                    context.getString(R.string.progress_status_completion)
+                ProjectStatus.START -> {
+                    val resourceId = if (item.groupType == GroupType.STUDY)
+                        R.string.progress_study_ongoing
+                    else
+                        R.string.progress_project_ongoing
+
+                    context.getString(resourceId, daysSinceStart.toString())
+                }
+
+                ProjectStatus.END -> {
+                    val resourceId = if (item.groupType == GroupType.STUDY)
+                        R.string.progress_study_completion
+                    else
+                        R.string.progress_project_completion
+
+                    context.getString(resourceId)
+                }
             }
-            return message
         }
 
         private fun getStatusButtonText(status: ProjectStatus): String {
@@ -359,7 +364,7 @@ class GroupBoardListAdapter(
         override fun onBind(item: GroupBoardItem) {
             if (item is GroupBoardItem.GroupOptionItem) {
                 binding.etPrecautions.setText(item.precautions)
-                binding.etPrecautions.inputType = InputType.TYPE_NULL
+                binding.etPrecautions.isFocusable = false
                 val startDateText = item.startDate
                 val endDateText = item.endDate
                 if (!startDateText.isNullOrBlank() && !endDateText.isNullOrBlank()) {

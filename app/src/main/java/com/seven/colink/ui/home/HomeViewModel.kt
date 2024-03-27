@@ -1,23 +1,19 @@
 package com.seven.colink.ui.home
 
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seven.colink.domain.entity.PostEntity
-import com.seven.colink.domain.entity.ProductEntity
 import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.repository.ProductRepository
-import com.seven.colink.util.status.GroupType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val postRepository: PostRepository,
     private val productRepository: ProductRepository
 ) : ViewModel() {
 
@@ -32,12 +28,11 @@ class HomeViewModel @Inject constructor(
 
         viewModelScope.launch {
             getTopItemList.clear()
-//            val repository = postRepository.getRecentPost(num)
             val repository = productRepository.getRecentPost(num)
 
             kotlin.runCatching {
                 repository.forEach {
-                    val topRecentItem = TopItems(it.imageUrl,it.teamId,it.registeredDate,
+                    val topRecentItem = TopItems(it.imageUrl,it.projectId,it.registeredDate,
                         it.title,it.key)
                     getTopItemList.add(topRecentItem)
                 }
@@ -54,9 +49,5 @@ class HomeViewModel @Inject constructor(
                 Log.e("HomeViewModel","데이터를 불러오지 못 했습니다 $exception")
             }
         }
-    }
-
-    suspend fun getPost(key: String): PostEntity? {
-        return postRepository.getPost(key).getOrNull()
     }
 }
