@@ -15,7 +15,7 @@
         android:layout_marginVertical="12dp"
         android:text="@string/title_precautions"
         android:textColor="@color/black"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -42,7 +42,7 @@
         android:background="@android:color/transparent"
         android:hint="@string/description_precautions"
         android:textColorHint="@color/edit_hint_color"
-        android:textSize="13sp"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_title" />
@@ -79,8 +79,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
-            android:text="프로젝트 예상 일정"
+            android:text="예상 일정"
             android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@id/ic_calendar"
             app:layout_constraintStart_toEndOf="@id/ic_calendar"
             app:layout_constraintTop_toTopOf="@id/ic_calendar" />
@@ -110,7 +112,7 @@
             android:focusable="false"
             android:hint="@string/estimated_schedule"
             android:textColorHint="@color/edit_hint_color"
-            android:textSize="13sp"
+            android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/ic_calendar" />

@@ -314,7 +314,8 @@ class PostListAdapter(
                     tvTitleAsterisk.isVisible = true
                     tvCalendarAsterisk.isVisible = true
                     etEstimatedSchedule.setOnClickListener {
-                        context.setUpCalendarDialog(
+                        setUpCalendarDialog(
+                            context,
                             etEstimatedSchedule.text.toString(),
                             confirmAction = { startDate, endDate ->
                                 etEstimatedSchedule.setText("$startDate~$endDate")
