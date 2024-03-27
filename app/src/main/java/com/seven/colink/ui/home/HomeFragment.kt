@@ -3,11 +3,15 @@ package com.seven.colink.ui.home
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -40,6 +44,7 @@ class HomeFragment : Fragment() {
         HomeAdapterItems.Header("")
     )
     private var loading = true
+    private var backPressedOnce = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,6 +59,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setTopItems()
         initViews()
+        onBackPressed()
     }
 
     private fun initViews() {
@@ -140,6 +146,21 @@ class HomeFragment : Fragment() {
             }
             loading = !isLoading
         }
+    }
+
+    private fun onBackPressed() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,object : OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                if (backPressedOnce) {
+                    isEnabled = false
+                    requireActivity().finish()
+                }else{
+                    backPressedOnce = true
+                    Toast.makeText(requireContext(),getString(R.string.exit_app),Toast.LENGTH_SHORT).show()
+                    Handler(Looper.getMainLooper()).postDelayed({backPressedOnce = false},2000)
+                }
+            }
+        })
     }
 
     private fun topClickItem() = object : TopViewPagerAdapter.ItemClick {
