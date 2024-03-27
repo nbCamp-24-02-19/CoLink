@@ -133,7 +133,7 @@ class FirebaseMessagingService : FirebaseMessagingService() {
         registeredDate: String
     ) = withContext(Dispatchers.Main) {
         val code = key.hashCode()
-        val intent = ChatRoomActivity.newIntent(this@FirebaseMessagingService, key, title)
+        val intent = ChatRoomActivity.newIntent(this@FirebaseMessagingService, key)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
         val pendingIntent = pendingIntent(code, intent)

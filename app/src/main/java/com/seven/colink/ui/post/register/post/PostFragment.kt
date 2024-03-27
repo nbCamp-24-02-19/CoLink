@@ -188,6 +188,10 @@ class PostFragment : Fragment() {
         lifecycleScope.launch {
             complete.collect { newKey ->
                 sharedViewModel.setKey(newKey)
+                parentFragmentManager.beginTransaction().apply {
+                    replace(R.id.fg_activity_post, RecommendFragment())
+                    commit()
+                }
             }
         }
 
@@ -198,10 +202,6 @@ class PostFragment : Fragment() {
                     errorUiState.message == PostErrorMessage.PASS -> viewModel.createPost(
                         onSuccess = {
                             hideProgressOverlay()
-                            parentFragmentManager.beginTransaction().apply {
-                                replace(R.id.fg_activity_post, RecommendFragment())
-                                commit()
-                            }
                         },
                         onError = { exception ->
                             hideProgressOverlay()

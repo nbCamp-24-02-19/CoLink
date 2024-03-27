@@ -4,19 +4,20 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import android.util.Log
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.auth.api.identity.BeginSignInRequest
+import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
+import com.google.android.gms.tasks.Task
+import com.seven.colink.BuildConfig
 import com.seven.colink.databinding.ActivitySignInBinding
 import com.seven.colink.ui.main.MainActivity
 import com.seven.colink.ui.sign.signin.viewmodel.SignInViewModel
@@ -32,57 +33,28 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class SignInActivity : AppCompatActivity() {
 
+    companion object{
+        const val TAG = "SignInActivity"
+    }
     private val binding by lazy {
         ActivitySignInBinding.inflate(layoutInflater)
     }
     private val viewModel: SignInViewModel by viewModels()
-    private lateinit var launcher: ActivityResultLauncher<Intent>
-    private lateinit var firebaseAuth: FirebaseAuth
-    private lateinit var mGoogleSignInClient: GoogleSignInClient
 
-    private fun googleInit() {
-        val webClientId = "656455146700-4it82b9v7j6q8m0fv9hms81rr8gnccka.apps.googleusercontent.com"
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(webClientId)
-            .requestEmail()
-            .build()
+    private val signInGoogleRequest = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        .requestIdToken(BuildConfig.GOOGLE_SIGN)
+        .requestEmail()
+        .build()
 
-        mGoogleSignInClient = GoogleSignIn.getClient(this,gso)
-
-        launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-            if (result.resultCode == RESULT_OK) {
-                result.data?.let { data ->
-                    val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-
-                    try {
-                        val account = task.getResult(ApiException::class.java)
-                        Log.d(Constants.LOG_IN_TAG,"firebaseAuthWithGoogle" + account.id)
-                        account.id?.let { firebaseAuthWithGoogle(it) }
-                    }catch (e: ApiException) {
-                        Log.e(Constants.LOG_IN_TAG,"failed",e)
-                    }
-                }
-            }else {
-                Log.e(Constants.LOG_IN_TAG,"Error $result")
-            }
-        }
+    private val mGoogleSignInClient by lazy {
+        GoogleSignIn.getClient(this, signInGoogleRequest)
     }
 
-    private fun firebaseAuthWithGoogle(token: String) {
-        val credential = GoogleAuthProvider.getCredential(token,null)
-        firebaseAuth.signInWithCredential(credential)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    Log.d(Constants.LOG_IN_TAG,"success")
-                    val user = firebaseAuth.currentUser
-                    //이제 처리를 뷰모델에서 만들어야?
-
-                }else {
-                    Log.e(Constants.LOG_IN_TAG,"failure",task.exception)
-                    //실패시 할 처리
-
-                }
-            }
+    private val signInResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK && result.data != null) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            handleSignInResult(task)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,7 +63,6 @@ class SignInActivity : AppCompatActivity() {
 
         initView()
         initViewModel()
-        googleInit()
     }
 
     override fun onStart() {
@@ -127,6 +98,12 @@ class SignInActivity : AppCompatActivity() {
                 viewModel.isSignIn(it)
             }
         }
+
+        lifecycleScope.launch {
+            updateEvent.collect {
+                startActivity(SignUpActivity.newIntent(this@SignInActivity, it))
+            }
+        }
     }
 
     private fun initView() {
@@ -155,8 +132,18 @@ class SignInActivity : AppCompatActivity() {
         }
 
         btSignInGoogle.setOnClickListener {
-            val signInIntent = mGoogleSignInClient.signInIntent
-            launcher.launch(signInIntent)
+            lifecycleScope.launch {
+                signInResultLauncher.launch(mGoogleSignInClient.signInIntent)
+            }
+        }
+    }
+
+    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
+        try {
+            val account = completedTask.getResult(ApiException::class.java)
+            viewModel.sendTokenByGoogle(account?.idToken)
+        } catch (e: ApiException) {
+            Log.w(TAG, "signInResult:failed code=" + e.statusCode)
         }
     }
 

@@ -30,15 +30,12 @@ class ChatRoomActivity : AppCompatActivity() {
 
     companion object {
         const val CHAT_ID = "chatId"
-        const val CHAT_TITLE = "title"
 
         fun newIntent(
             context: Context,
             roomId: String,
-            title: String? = null,
             ) = Intent(context, ChatRoomActivity()::class.java).apply {
             putExtra(CHAT_ID, roomId)
-            putExtra(CHAT_TITLE, title)
         }
     }
 
@@ -77,7 +74,7 @@ class ChatRoomActivity : AppCompatActivity() {
         lifecycleScope.launch {
             chatRoom.collect{ chatRoomEntity ->
                 observeMessage(chatRoomEntity)
-                binding.tvChatRoomTitle.text = intent.getStringExtra(CHAT_TITLE) ?: chatRoomEntity.title
+                binding.tvChatRoomTitle.text = chatRoomEntity.title
             }
         }
 

@@ -9,4 +9,5 @@ interface AuthRepository {
     suspend fun signOut()
     suspend fun deleteUser(): DataResultStatus
     suspend fun getCurrentUser(): DataResultStatus
+    suspend fun registerUserByGoogle(token: String): Any
 }
