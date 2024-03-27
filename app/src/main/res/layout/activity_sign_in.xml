@@ -99,21 +99,42 @@
         android:layout_marginTop="12dp"
         android:text="@string/sign_in_register"
         android:textSize="14sp"
-        android:textColor="@color/main_color"
-        android:background="@drawable/bg_round_corner_8dp_stroke"
+        android:textColor="@color/forth_color"
+        android:background="@android:color/transparent"
         android:clipToOutline="true"
         android:fontFamily="@font/inter_bold"
-        app:layout_constraintTop_toBottomOf="@+id/bt_sign_in_google"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:targetApi="s" />
 
-    <com.google.android.gms.common.SignInButton
+
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/bt_sign_in_google"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginTop="12dp"
-        app:layout_constraintTop_toBottomOf="@id/bt_sign_in_kakao"/>
+        android:text="구글 계정으로 로그인"
+        android:textSize="14sp"
+        android:fontFamily="@font/inter_bold"
+        android:textColor="@color/typo_color"
+        android:background="@drawable/bg_round_corner_8dp"
+        android:clipToOutline="true"
+        android:backgroundTint="@color/white"
+        app:layout_constraintTop_toBottomOf="@+id/bt_sign_in_login"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:targetApi="s" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/android_neutral_rd_na"
+        android:elevation="4dp"
+        android:paddingStart="8dp"
+        app:layout_constraintTop_toTopOf="@+id/bt_sign_in_google"
+        app:layout_constraintBottom_toBottomOf="@+id/bt_sign_in_google"
+        app:layout_constraintStart_toStartOf="@+id/bt_sign_in_google"/>
 
 <!--    <androidx.constraintlayout.widget.ConstraintLayout-->
 <!--        android:id="@+id/bt_sign_in_google"-->
@@ -154,7 +175,7 @@
 
 <!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
 
-    <androidx.appcompat.widget.AppCompatButton
+<!--    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/bt_sign_in_kakao"
         android:layout_width="match_parent"
         android:layout_height="48dp"
@@ -168,7 +189,7 @@
         app:layout_constraintTop_toBottomOf="@+id/bt_sign_in_login"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:targetApi="s" />
+        tools:targetApi="s" />-->
 
 
 
