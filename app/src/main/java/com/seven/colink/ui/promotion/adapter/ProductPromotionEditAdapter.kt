@@ -300,7 +300,7 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
         }
     }
 
-    inner class FifthViewHolder(binding: ItemProductProjectHeaderBinding) : ViewHolder(binding.root) {
+    inner class ProjectHeaderViewHolder(binding: ItemProductProjectHeaderBinding) : ViewHolder(binding.root) {
         val header = binding.tvProductPromotionHeader
 
         fun bind(item: ProductPromotionItems.ProjectHeader) {
@@ -308,7 +308,7 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
         }
     }
 
-    inner class SixthViewHolder(binding: ItemProductMemberHeaderBinding) : ViewHolder(binding.root) {
+    inner class LeaderHeaderViewHolder(binding: ItemProductMemberHeaderBinding) : ViewHolder(binding.root) {
         val header = binding.tvProductPromotionLeaderHeader
 
         fun bind(item: ProductPromotionItems.ProjectLeaderHeader) {
@@ -316,7 +316,7 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
         }
     }
 
-    inner class SeventhViewHolder(binding: ItemPostMemberInfoBinding) : ViewHolder(binding.root) {
+    inner class LeaderItemViewHolder(binding: ItemPostMemberInfoBinding) : ViewHolder(binding.root) {
         val img = binding.ivUser
         val name = binding.tvUserName
         val intro = binding.tvUserIntroduction
@@ -340,7 +340,7 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
         }
     }
 
-    inner class EighthViewHolder(binding : ItemProductMemberHeaderBinding) : ViewHolder(binding.root) {
+    inner class MemberHeaderViewHolder(binding : ItemProductMemberHeaderBinding) : ViewHolder(binding.root) {
         val header = binding.tvProductPromotionLeaderHeader
 
         fun bind(item: ProductPromotionItems.ProjectMemberHeader) {
@@ -348,7 +348,7 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
         }
     }
 
-    inner class NinethViewHolder(binding : ItemPostMemberInfoBinding) : ViewHolder(binding.root) {
+    inner class MemberItemViewHolder(binding : ItemPostMemberInfoBinding) : ViewHolder(binding.root) {
         val img = binding.ivUser
         val name = binding.tvUserName
         val intro = binding.tvUserIntroduction
@@ -399,27 +399,27 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
 
             FIFTH_TYPE -> {
                 val fifth = ItemProductProjectHeaderBinding.inflate(inflater, parent, false)
-                FifthViewHolder(fifth)
+                ProjectHeaderViewHolder(fifth)
             }
 
             SIXTH_TYPE -> {
                 val sixth = ItemProductMemberHeaderBinding.inflate(inflater, parent, false)
-                SixthViewHolder(sixth)
+                LeaderHeaderViewHolder(sixth)
             }
 
             SEVENTH_TYPE -> {
                 val seventh = ItemPostMemberInfoBinding.inflate(inflater, parent, false)
-                SeventhViewHolder(seventh)
+                LeaderItemViewHolder(seventh)
             }
 
             EIGHTH_TYPE -> {
                 val eighth = ItemProductMemberHeaderBinding.inflate(inflater, parent, false)
-                EighthViewHolder(eighth)
+                MemberHeaderViewHolder(eighth)
             }
 
             else -> {
                 val nineth = ItemPostMemberInfoBinding.inflate(inflater, parent, false)
-                NinethViewHolder(nineth)
+                MemberItemViewHolder(nineth)
             }
         }
     }
@@ -464,23 +464,23 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
                 item as ProductPromotionItems.Link
                 holder.bind(item)
             }
-            is FifthViewHolder -> {
+            is ProjectHeaderViewHolder -> {
                 item as ProductPromotionItems.ProjectHeader
                 holder.bind(item)
             }
-            is SixthViewHolder -> {
+            is LeaderHeaderViewHolder -> {
                 item as ProductPromotionItems.ProjectLeaderHeader
                 holder.bind(item)
             }
-            is SeventhViewHolder -> {
+            is LeaderItemViewHolder -> {
                 item as ProductPromotionItems.ProjectLeaderItem
                 holder.bind(item)
             }
-            is EighthViewHolder -> {
+            is MemberHeaderViewHolder -> {
                 item as ProductPromotionItems.ProjectMemberHeader
                 holder.bind(item)
             }
-            is NinethViewHolder -> {
+            is MemberItemViewHolder -> {
                 item as ProductPromotionItems.ProjectMember
                 holder.bind(item)
             }
