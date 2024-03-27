@@ -186,7 +186,7 @@
         android:background="@drawable/kakao_login_shape_vector"
         android:clipToOutline="true"
         android:fontFamily="@font/inter_bold"
-        app:layout_constraintTop_toBottomOf="@+id/bt_sign_in_login"
+        app:layout_constraintTop_toBottomOf="@+id/bt_sign_in_google"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:targetApi="s" />-->

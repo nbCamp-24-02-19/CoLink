@@ -1,5 +1,6 @@
 package com.seven.colink.ui.sign.signin
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -17,6 +18,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.kakao.sdk.auth.model.OAuthToken
+import com.kakao.sdk.common.model.ClientError
+import com.kakao.sdk.common.model.ClientErrorCause
+import com.kakao.sdk.user.UserApiClient
 import com.seven.colink.BuildConfig
 import com.seven.colink.databinding.ActivitySignInBinding
 import com.seven.colink.ui.main.MainActivity
@@ -29,6 +34,10 @@ import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.status.DataResultStatus
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.util.concurrent.CancellationException
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 @AndroidEntryPoint
 class SignInActivity : AppCompatActivity() {
@@ -131,9 +140,10 @@ class SignInActivity : AppCompatActivity() {
             )
         }
 
-/*        btSignInKakao.setOnClickListener {
-            
-        }*/
+//        btSignInKakao.setOnClickListener {
+//            viewModel.getTokenByKakao()
+////            kakaoLogin()
+//        }
 
         btSignInGoogle.setOnClickListener {
             lifecycleScope.launch {
@@ -150,5 +160,33 @@ class SignInActivity : AppCompatActivity() {
             Log.w(TAG, "signInResult:failed code=" + e.statusCode)
         }
     }
+
+/*    private fun kakaoLogin() =
+        if (UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {
+            UserApiClient.instance.loginWithKakaoTalk(this) { token, error ->
+                if (error != null) {
+                    if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
+                        return@loginWithKakaoTalk
+                    } else {
+                        loginWithKaKaoAccount(this)
+                    }
+                } else if (token != null) {
+                    viewModel.getTokenByKakao(token.accessToken)
+                }
+            }
+        } else {
+            loginWithKaKaoAccount(this)
+        }
+
+    private fun loginWithKaKaoAccount(context: Context) {
+        UserApiClient.instance.loginWithKakaoAccount(context) { token: OAuthToken?, error: Throwable? ->
+            if (token != null) {
+                viewModel.getTokenByKakao(token.accessToken)
+            }
+            if (error != null) {
+                Log.d(TAG, "$error")
+            }
+        }
+    }*/
 
 }

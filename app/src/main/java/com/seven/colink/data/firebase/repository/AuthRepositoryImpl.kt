@@ -1,8 +1,11 @@
 package com.seven.colink.data.firebase.repository
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.functions.ktx.functions
+import com.google.firebase.ktx.Firebase
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.util.status.DataResultStatus
 import kotlinx.coroutines.tasks.await
@@ -101,4 +104,34 @@ class AuthRepositoryImpl @Inject constructor(
     } catch (e: Exception) {
         DataResultStatus.FAIL.apply { message = e.message ?: "알수없는 에러" }
     }
+
+    override suspend fun getCustomToken(token: String) {
+        val function = Firebase.functions("asia-northeast3")
+        val data = hashMapOf(
+            "token" to token
+        )
+
+        function.getHttpsCallable("kakaoCustomAuth")
+            .call(data)
+            .addOnSuccessListener {
+                val result = it.data as HashMap<*, *>
+                var mKey: String? = null
+                for (key in result.keys) {
+                    mKey = key.toString()
+                }
+                firebaseAuthWithKakao(result[mKey]!!.toString())
+            }
+            .addOnFailureListener {
+                Log.d("2ee", "$it")
+            }
+    }
+
+    private fun firebaseAuthWithKakao(customToken: String) =
+        firebaseAuth.signInWithCustomToken(customToken)
+            .addOnSuccessListener {
+                DataResultStatus.SUCCESS.apply { message = it.user!!.uid }
+            }
+            .addOnFailureListener {
+                DataResultStatus.FAIL.apply { message = it.toString() }
+            }
 }

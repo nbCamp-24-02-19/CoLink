@@ -6,6 +6,7 @@ import com.google.android.gms.auth.api.identity.BeginSignInResult
 import com.google.firebase.auth.FirebaseUser
 import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.domain.repository.AuthRepository
+import com.seven.colink.domain.repository.KakaoRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.ui.sign.signup.type.SignUpEntryType
 import com.seven.colink.util.status.DataResultStatus
@@ -23,6 +24,7 @@ import kotlin.coroutines.suspendCoroutine
 class SignInViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
+    private val kakaoRepository: KakaoRepository,
 ) : ViewModel() {
 
     private val _entryType = MutableStateFlow(false)
@@ -59,6 +61,14 @@ class SignInViewModel @Inject constructor(
                         _updateEvent.emit(SignUpEntryType.UPDATE_PROFILE)
                     }
                 }
+            }
+        }
+    }
+
+    fun getTokenByKakao() {
+        viewModelScope.launch {
+            kakaoRepository.kakaoLogin().getOrNull().let { token ->
+                if (token != null) authRepository.getCustomToken(token)
             }
         }
     }
