@@ -51,7 +51,7 @@ class ProductPromotionEditFragment : Fragment() {
         ProductPromotionItems.Title("","","","","","",""),
         ProductPromotionItems.MiddleImg(null),
         ProductPromotionItems.Link("","",""),
-        ProductPromotionItems.ProjectHeader("dd"),
+        ProductPromotionItems.ProjectHeader(""),
         ProductPromotionItems.ProjectLeaderHeader(""),
         ProductPromotionItems.ProjectLeaderItem(null),
         ProductPromotionItems.ProjectMemberHeader(""),
@@ -221,10 +221,10 @@ class ProductPromotionEditFragment : Fragment() {
                         registerProduct()
                     }
                 }else{
-                    binding.tvPromotionEditComplete.setSnackBar(SnackType.Error,"메인 이미지는 필수로 들어가야 합니다.").show()
+                    binding.tvPromotionEditComplete.setSnackBar(SnackType.Error,getString(R.string.product_necessary_main_img)).show()
                 }
             }else {
-                binding.tvPromotionEditComplete.setSnackBar(SnackType.Error,"제목, 소개글, 팀 이름은 필수로 들어가야 합니다.").show()
+                binding.tvPromotionEditComplete.setSnackBar(SnackType.Error,getString(R.string.product_necessary_title_des_team)).show()
             }
         }
     }
