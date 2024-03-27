@@ -44,7 +44,7 @@ class HomeFragment : Fragment() {
         HomeAdapterItems.Header("")
     )
     private var loading = true
-    private var backPressedOnce = false
+    private var backPressed = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -151,13 +151,13 @@ class HomeFragment : Fragment() {
     private fun onBackPressed() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,object : OnBackPressedCallback(true){
             override fun handleOnBackPressed() {
-                if (backPressedOnce) {
+                if (backPressed) {
                     isEnabled = false
                     requireActivity().finish()
                 }else{
-                    backPressedOnce = true
+                    backPressed = true
                     Toast.makeText(requireContext(),getString(R.string.exit_app),Toast.LENGTH_SHORT).show()
-                    Handler(Looper.getMainLooper()).postDelayed({backPressedOnce = false},2000)
+                    Handler(Looper.getMainLooper()).postDelayed({backPressed = false},2000)
                 }
             }
         })
