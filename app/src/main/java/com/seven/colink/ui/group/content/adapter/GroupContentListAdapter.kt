@@ -216,7 +216,8 @@ class GroupContentListAdapter(
                     binding.etEstimatedSchedule.setText("$startDateText~$endDateText")
                 }
                 binding.etEstimatedSchedule.setOnClickListener {
-                    context.setUpCalendarDialog(
+                    setUpCalendarDialog(
+                        context,
                         binding.etEstimatedSchedule.text.toString(),
                         confirmAction = { startDate, endDate ->
                             binding.etEstimatedSchedule.setText("$startDate~$endDate")

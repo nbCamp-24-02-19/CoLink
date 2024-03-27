@@ -58,7 +58,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:gravity="center"
+            android:gravity="start"
             android:text="프로젝트 시작일로부터 1일이 경과되었습니다.\n프로젝트를 시작해주세요! "
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
@@ -69,8 +69,8 @@
             android:id="@+id/progressBar"
             style="@style/CustomProgressBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_height="18dp"
+            android:layout_marginTop="20dp"
             android:progress="66"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -120,7 +120,8 @@
             android:background="@drawable/bg_button_main_color"
             android:clickable="true"
             android:foreground="?android:attr/selectableItemBackground"
-            android:padding="4dp"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="4dp"
             android:text="@string/promotion"
             android:textColor="@color/white"
             android:textSize="12sp"
@@ -138,7 +139,7 @@
             android:src="@drawable/ic_calendar_today_24"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_status_recruit"
-            app:tint="@color/calender_fab" />
+            app:tint="@color/typo_color" />
 
         <TextView
             android:id="@+id/tv_calendar"
@@ -148,7 +149,7 @@
             android:clickable="true"
             android:foreground="?android:attr/selectableItemBackground"
             android:text="스케줄 보기"
-            android:textColor="@color/calender_fab"
+            android:textColor="@color/typo_color"
             app:layout_constraintBottom_toBottomOf="@id/iv_calendar"
             app:layout_constraintStart_toEndOf="@id/iv_calendar"
             app:layout_constraintTop_toTopOf="@id/iv_calendar" />

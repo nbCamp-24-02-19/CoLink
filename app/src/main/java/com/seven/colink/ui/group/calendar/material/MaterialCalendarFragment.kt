@@ -85,10 +85,10 @@ class MaterialCalendarFragment : Fragment() {
             }
         }
         with(calendarView) {
-            dayDecorator = CalendarDecorators.dayDecorator(requireContext())
+            dayDecorator = CalendarDecorators.dayDecorator(requireContext(), R.drawable.calendar_selector)
             todayDecorator = CalendarDecorators.todayDecorator(requireContext())
-            sundayDecorator = CalendarDecorators.sundayDecorator()
-            saturdayDecorator = CalendarDecorators.saturdayDecorator()
+            sundayDecorator = CalendarDecorators.sundayDecorator(requireContext())
+            saturdayDecorator = CalendarDecorators.saturdayDecorator(requireContext())
             selectedMonthDecorator = CalendarDecorators.selectedMonthDecorator(
                 requireContext(),
                 CalendarDay.today().month
@@ -153,6 +153,7 @@ class MaterialCalendarFragment : Fragment() {
 
             lifecycleScope.launch {
                 uiState.collect { uiState ->
+
                 }
             }
 
@@ -194,7 +195,6 @@ class MaterialCalendarFragment : Fragment() {
             addToBackStack(null)
             commit()
         }
-        viewModel.clearFilteredByMonth()
     }
 
     private fun CalendarDay.toLocalDate(): LocalDate {
