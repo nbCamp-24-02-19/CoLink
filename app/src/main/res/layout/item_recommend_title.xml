@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="24dp"
+    android:background="@android:color/background_light"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/recommend_title_edit_complete"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:textSize="28sp"
+        android:textColor="@color/black"
+        style="@style/BoldTextStyle"/>
+
+    <TextView
+        android:id="@+id/tv_recommend_title_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="24dp"
+        android:text="@string/recommend_user_recommend_one"
+        android:textColor="@color/black"
+        android:fontFamily="@font/inter_medium"/>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

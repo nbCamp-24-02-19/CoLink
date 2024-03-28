@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#E5F8F4"
+        android:paddingHorizontal="24dp"
+        android:paddingVertical="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/iv_group_image"
+                android:layout_width="58dp"
+                android:layout_height="58dp"
+                android:background="@drawable/bg_background_circle"
+                android:scaleType="centerCrop"
+                android:src="@drawable/bg_post_image_background"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_teamName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:background="@android:color/transparent"
+                android:text="CoLink"
+                android:textColor="@color/black"
+                android:textColorHint="@color/edit_hint_color"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/recycler_view_tags"
+                app:layout_constraintStart_toEndOf="@id/iv_group_image"
+                app:layout_constraintTop_toTopOf="@id/iv_group_image" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_tags"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/tv_teamName"
+                app:layout_constraintTop_toBottomOf="@id/tv_teamName"
+                tools:listitem="@layout/item_list_group_tag" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/tv_status_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="start"
+            android:text="프로젝트 시작일로부터 1일이 경과되었습니다.\n프로젝트를 시작해주세요! "
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layout_info" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="@style/CustomProgressBar"
+            android:layout_width="match_parent"
+            android:layout_height="18dp"
+            android:layout_marginTop="20dp"
+            android:progress="66"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_status_message" />
+
+        <TextView
+            android:id="@+id/tv_status_recruit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center_horizontal"
+            android:text="멤버 모집 "
+            android:textColor="@color/enabled_color"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toStartOf="@id/tv_status_ongoing"
+            app:layout_constraintStart_toStartOf="@id/progressBar"
+            app:layout_constraintTop_toBottomOf="@id/progressBar" />
+
+        <TextView
+            android:id="@+id/tv_status_ongoing"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="프로젝트 진행 "
+            android:textColor="@color/enabled_color"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toStartOf="@id/tv_status_completion"
+            app:layout_constraintStart_toEndOf="@id/tv_status_recruit"
+            app:layout_constraintTop_toTopOf="@id/tv_status_recruit" />
+
+        <TextView
+            android:id="@+id/tv_status_completion"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="프로젝트 완료"
+            android:textColor="@color/enabled_color"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_status_ongoing"
+            app:layout_constraintTop_toTopOf="@id/tv_status_recruit" />
+
+        <Button
+            android:id="@+id/bt_status"
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:background="@drawable/bg_button_main_color"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="4dp"
+            android:text="@string/promotion"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/iv_calendar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/iv_calendar" />
+
+        <ImageView
+            android:id="@+id/iv_calendar"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginVertical="24dp"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:src="@drawable/ic_calendar_today_24"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_status_recruit"
+            app:tint="@color/typo_color" />
+
+        <TextView
+            android:id="@+id/tv_calendar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:text="스케줄 보기"
+            android:textColor="@color/typo_color"
+            app:layout_constraintBottom_toBottomOf="@id/iv_calendar"
+            app:layout_constraintStart_toEndOf="@id/iv_calendar"
+            app:layout_constraintTop_toTopOf="@id/iv_calendar" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/et_description"
+        style="@style/PostEditTextStyle"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="24dp"
+        android:gravity="top"
+        android:hint="@string/group_content_description"
+        android:minHeight="250dp"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_status" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

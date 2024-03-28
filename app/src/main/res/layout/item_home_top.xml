@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/iv_top"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/img_temporary"
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <ImageView
+        android:id="@+id/iv_top_gradient"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/frame_coner_radius_5dp"
+        android:src="@drawable/bg_gradient_left"
+        app:layout_constraintBottom_toBottomOf="@id/iv_top"
+        app:layout_constraintEnd_toEndOf="@id/iv_top"
+        app:layout_constraintStart_toStartOf="@id/iv_top"
+        app:layout_constraintTop_toTopOf="@id/iv_top" />
+
+    <TextView
+        android:id="@+id/tv_top_team"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/home_top_example_team"
+        android:textColor="@color/white"
+        android:fontFamily="@font/inter_regular"
+        android:textSize="14sp"
+        android:layout_marginStart="24dp"
+        app:layout_constraintVertical_bias="0.96"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_top_divide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:fontFamily="@font/inter_regular"
+        android:text="@string/search_post_divider"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:textSize="11sp"
+        app:layout_constraintTop_toTopOf="@id/tv_top_team"
+        app:layout_constraintBottom_toBottomOf="@id/tv_top_team"
+        app:layout_constraintStart_toEndOf="@id/tv_top_team"/>
+
+    <TextView
+        android:id="@+id/tv_top_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/home_top_example_date"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:layout_marginStart="5dp"
+        android:fontFamily="@font/inter_regular"
+        app:layout_constraintBottom_toBottomOf="@id/tv_top_team"
+        app:layout_constraintTop_toTopOf="@id/tv_top_team"
+        app:layout_constraintStart_toEndOf="@id/tv_top_divide"/>
+
+    <TextView
+        android:id="@+id/tv_top_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/home_top_example_title"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginStart="24dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:fontFamily="@font/inter_regular"
+        app:layout_constraintBottom_toTopOf="@id/tv_top_date"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.8"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/bg">
+
+    <ImageView
+        android:id="@+id/iv_group_add"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="4dp"
+        android:background="@drawable/ic_add"
+        android:backgroundTint="@color/typo_color"
+        android:clipToOutline="true"
+        android:paddingBottom="24dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toStartOf="@id/tv_group_add"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/tv_group_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_regular"
+        android:text="@string/group_add_group"
+        android:textColor="@color/typo_color"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_group_add"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_group_add"
+        app:layout_constraintTop_toTopOf="@id/iv_group_add" />
+
+    <View
+        android:layout_width="2000dp"
+        android:layout_height="8dp"
+        android:paddingStart="-24dp"
+        android:layout_marginTop="24dp"
+        android:background="@color/border_line"
+        app:layout_constraintTop_toBottomOf="@id/tv_group_add"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_group_applied_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:fontFamily="@font/inter_bold"
+        android:paddingBottom="16dp"
+        android:text="@string/group_applied_group"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        android:layout_marginStart="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_group_add" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

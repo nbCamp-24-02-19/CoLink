@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="8dp"
+    android:background="@drawable/bg_round_corner_8dp"
+    android:backgroundTint="@color/white"
+    android:padding="12dp">
+
+    <ImageView
+        android:id="@+id/iv_notify_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="@drawable/bg_background_circle"
+        android:backgroundTint="@color/main_color"
+        android:padding="4dp"
+        android:src="@drawable/ic_colink_chat"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_notify_title"
+        style="@style/BoldTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/notify_new_message"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@id/iv_notify_icon"
+        app:layout_constraintStart_toEndOf="@id/iv_notify_icon"
+        app:layout_constraintTop_toTopOf="@id/iv_notify_icon" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_notify_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_notify_icon">
+
+        <ImageView
+            android:id="@+id/iv_notify_profile"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_background_circle"
+            android:clipToOutline="true"
+            android:scaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_notify_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintStart_toEndOf="@id/iv_notify_profile"
+            app:layout_constraintTop_toTopOf="@id/iv_notify_profile" />
+
+        <TextView
+            android:id="@+id/tv_notify_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:textColor="@color/typo_color"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/tv_notify_name"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_notify_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/typo_color"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/tv_notify_name"
+            app:layout_constraintTop_toBottomOf="@id/tv_notify_name" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

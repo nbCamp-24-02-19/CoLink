@@ -1,16 +1,74 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.CoLink" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.CoLink" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnPrimary">?attr/backgroundColor</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>
         <item name="colorSecondaryVariant">@color/teal_700</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor">@color/main_color</item>
         <!-- Customize your theme here. -->
+    </style>
+
+    <!--    Post   -->
+    <style name="PostButtonStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="PostEditTextStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:layout_marginTop">17dp</item>
+        <item name="android:textColorHint">@color/edit_hint_color</item>
+    </style>
+
+    <style name="PostSpinnerStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">40dp</item>
+    </style>
+
+    <style name="BoldTextStyle">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="DialogSlide" parent="@android:style/Animation.Dialog">
+        <item name="android:windowEnterAnimation">@anim/slide_in_up</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_down</item>
+    </style>
+
+    <style name="CustomProgressBar" parent="@android:style/Widget.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/bg_progressbar</item>
+    </style>
+
+    <!-- 캘린더의 날짜(Day)의 스타일 설정 -->
+    <style name="CalenderViewCustom" parent="Theme.AppCompat">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textStyle">bold</item>
+        <item name="fontFamily">@font/roboto_regular</item>
+    </style>
+
+    <!-- 캘린더의 날짜(Day)의 스타일 설정 -->
+    <style name="CalenderViewDateCustomText" parent="android:TextAppearance.DeviceDefault.Small">
+        <item name="android:textColor">@color/black</item>
+        <item name="fontFamily">@font/roboto_regular</item>
+    </style>
+
+    <!-- 캘린더의 요일에 적용되는 스타일 -->
+    <style name="CalenderViewWeekCustomText" parent="android:TextAppearance.DeviceDefault.Small">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <!-- 연, 월을 표시하는 헤더에 적용되는 스타일 -->
+    <style name="CalendarWidgetHeader">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/main_color</item>
+        <item name="fontFamily">@font/roboto_regular</item>
     </style>
 </resources>

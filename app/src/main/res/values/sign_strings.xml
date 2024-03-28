@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--sign in-->
+    <string name="sign_in_id">아이디</string>
+    <string name="sign_in_password">비밀번호</string>
+    <string name="sign_in_login">로그인</string>
+    <string name="sign_in_register">회원가입</string>
+
+    <!--sign up-->
+    <string name="sign_up_input_id">아이디를\n입력해주세요</string>
+    <string name="sign_up_id">아이디</string>
+    <string name="sign_up_input_name">이름을\n입력해주세요</string>
+    <string name="sign_up_name">이름</string>
+    <string name="sign_up_valid_name">이름은 1글자 이상 16자 이하여야 합니다</string>
+    <string name="sign_up_input_email">이메일을\n입력해주세요</string>
+    <string name="sign_up_email">이메일</string>
+    <string name="sign_up_valid_email">이메일 형식에 맞춰 작성해 주세요</string>
+    <string name="sign_up_input_password">비밀번호를\n입력해주세요</string>
+    <string name="sign_up_valid_password">비밀번호는 6자 이상이어야 합니다.</string>
+    <string name="sign_up_password">비밀번호</string>
+    <string name="sign_up_password_check">비밀번호 확인</string>
+    <string name="sign_up_next">다음</string>
+    <string name="sign_up_choose_major">나의 전문 분야를 선택해주세요</string>
+    <string name="sign_up_choose_major_sub">내가 선택한 전문분야로 나와 연관 된 그룹을 추천 받을 수 있어요!</string>
+    <string name="sign_up_main_category">대분류</string>
+    <string name="sign_up_sub_category">소분류</string>
+    <string name="sign_up_skill">보유 스킬을 선택해주세요</string>
+    <string name="sign_up_choose_skill">나의 보유 스킬을 선택해주세요</string>
+    <string name="sign_up_choose_skill_sub">내가 선택한 보유 스킬로 나와 연관 된 그룹을 추천 받을 수 있어요!</string>
+    <string name="sign_up_choose_level">나의 레벨을 선택해주세요</string>
+    <string name="sign_up_info">자기소개를 입력해주세요</string>
+    <string name="sign_up_info_sub">자기소개를 자세히 입력할수록 매칭될 가능성이 높아져요</string>
+    <string name="sign_up_info_hint">프로젝트 경험 등을 자세히 기재해 보세요.</string>
+    <string name="sign_up_blog">개발 블로그 주소</string>
+    <string name="sign_up_blog_sub">나를 소개할 수 있는 블로그 주소를 입력해주세요.</string>
+    <string name="sign_up_end">완료</string>
+    <string name="sign_in_kakao">카카오 로그인</string>
+    <string name="sign_in_google">구글 로그인</string>
+
+    <!--valid check-->
+    <string name="sign_up_id_error">아이디는 영문 혹은 숫자로만 입력해 주세요.</string>
+    <string name="sign_up_name_error">이름을 확인해 주세요.</string>
+    <string name="sign_up_email_error">이메일 형식이 맞는지 확인해 주세요.</string>
+    <string name="sign_up_password_error">비밀번호를 확인해 주세요</string>
+    <string name="sign_up_confirm_error">비밀번호가 다릅니다.</string>
+    <string name="sign_up_pass" />
+    <string name="sign_up_specialty">전문 분야를 선택해주세요</string>
+    <string name="sign_up_level">레벨을 선택해주세요</string>
+    <string name="sign_up_email_duplication_error">이미 사용중인 이메일 입니다</string>
+</resources>

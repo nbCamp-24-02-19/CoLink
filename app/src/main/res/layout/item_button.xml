@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/bt_item_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:minHeight="48dp"
+        android:background="@drawable/bg_round_corner_8dp"
+        android:backgroundTint="@color/main_color"
+        android:text="@string/recommend_next"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:fontFamily="@font/inter_bold"/>
+
+</FrameLayout>

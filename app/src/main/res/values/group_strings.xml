@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="group_title">참여중인 그룹</string>
+    <string name="group_proejct_title">CoLink</string>
+    <string name="group_plus">+</string>
+    <string name="group_days">142일째</string>
+    <string name="group_description">자율작성: 프로젝트 목적, 프로젝트 목적, 프로젝트 목적 \n프로젝트 목적 프로젝트 목적 \n팀 규칙 등등</string>
+    <string name="group_tag"># 안드로이드</string>
+    <string name="group_add_group">모집 글 작성하기</string>
+    <string name="group_applied_group">지원한 그룹</string>
+    <string name="group_insignia_type_project">P</string>
+    <string name="group_insignia_type_study">S</string>
+    <string name="group_content_description">프로젝트를 소개해보세요 !\n팀원과 일정, 팀의 목표 등을 작성해보세요.</string>
+    <string name="group_no_join_list">참여 중인 그룹이 없습니다.</string>
+    <string name="group_no_want_list">지원한 그룹이 없습니다.</string>
+    <string name="group_post_title">그룹에서 작성한 게시물</string>
+    <string name="input_team_name">팀명을 설정해주세요</string>
+    <string name="promotion">홍보하기</string>
+    <string name="title_apply_request">지원 요청자 보기</string>
+    <string name="apply_request_list">지원 요청 목록</string>
+    <string name="project_status">프로젝트 시작여부</string>
+    <string name="project_start">프로젝트 시작하기</string>
+    <string name="project_end">프로젝트 종료하기</string>
+    <string name="participating_group_empty">참여중인 그룹이 없습니다</string>
+    <string name="apply_group_empty">지원한 그룹이 없습니다</string>
+    <string name="progress_project_recruit">프로젝트 예상 시작일로부터 %1$s일을 경과했습니다.\n프로젝트를 시작해주세요!</string>
+    <string name="progress_project_recruit_previous">프로젝트 예상 시작일 %1$s일 전입니다.\n프로젝트를 시작해주세요!</string>
+    <string name="progress_project_ongoing">프로젝트가 %1$s일째 진행 중입니다. 이번 기간 동안의 성과를 돌아보고, 개선할 점은 없는지 함께 논의해요.</string>
+    <string name="progress_project_completion">드디어 프로젝트가 완료되었습니다!\n홍보를 통해 더 많은 사람들에게 우리의 성과를 보여줄 준비를 해볼까요?</string>
+
+    <string name="progress_study_recruit">스터디 예상 시작일 %1$s일 전입니다.\n스터디를 시작해주세요!</string>
+    <string name="progress_study_recruit_previous">스터디 예상 시작일 %1$s일 전입니다.\n스터디를 시작해주세요!</string>
+    <string name="progress_study_ongoing">스터디가 %1$s일째 진행 중입니다. 남은 기간 동안의 스터디 일정을 잘 관리하여 매일의 목표를 세우세요.</string>
+    <string name="progress_study_completion">스터디가 완료되었습니다!\n세웠던 목표들을 돌아보며, 얼마나 많은 목표가 달성되었는지 확인해보세요.</string>
+
+    <string name="project_status_changed">프로젝트 상태 변경</string>
+    <string name="project_status_changed_message">프로젝트 상태를 %1$s로 변경하시겠습니까?</string>
+    <string name="status_text_start">시작하기</string>
+    <string name="status_text_end">종료하기</string>
+    <string name="no_list_supported">지원한 목록이 없습니다.</string>
+    <string name="no_schedule">일정이 없습니다. </string>
+    <string name="promotion_error_message">홍보하기는 프로젝트만 가능합니다.</string>
+</resources>

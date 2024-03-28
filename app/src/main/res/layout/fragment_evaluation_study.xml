@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    tools:context=".ui.evaluation.EvaluationStudyFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="24dp"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/iv_eval_profile_image"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/bg_stepper_circle"
+                android:clipToOutline="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_profile" />
+
+            <TextView
+                android:id="@+id/tv_eval_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="20dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_bold"
+                android:maxLines="2"
+                android:text="@string/eval_study_name_title"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="start"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_eval_question_num1"
+                    android:layout_width="16sp"
+                    android:layout_height="16sp"
+                    android:layout_gravity="center|top"
+                    android:background="@drawable/bg_stepper_circle"
+                    android:backgroundTint="@color/main_color"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="center"
+                    android:text="@string/eval_project_question_1"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tv_eval_question1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:fontFamily="@font/inter_regular"
+                    android:text="@string/eval_study_active"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+            <RatingBar
+                android:id="@+id/rb_eval_question1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="12dp"
+                android:numStars="5"
+                android:progressTint="@color/star_color"
+                android:rating="2.5"
+                android:secondaryProgressTint="@android:color/transparent"
+                android:stepSize="0.5" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="start"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_eval_question_num2"
+                    android:layout_width="16sp"
+                    android:layout_height="16sp"
+                    android:layout_gravity="center|top"
+                    android:background="@drawable/bg_stepper_circle"
+                    android:backgroundTint="@color/main_color"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="center"
+                    android:text="@string/eval_project_question_2"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tv_eval_question2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:fontFamily="@font/inter_regular"
+                    android:text="@string/eval_study_name_communication"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+            <RatingBar
+                android:id="@+id/rb_eval_question2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="12dp"
+                android:numStars="5"
+                android:progressTint="@color/star_color"
+                android:rating="2.5"
+                android:secondaryProgressTint="@android:color/transparent"
+                android:stepSize="0.5" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="start"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_eval_question_num3"
+                    android:layout_width="16sp"
+                    android:layout_height="16sp"
+                    android:layout_gravity="center|top"
+                    android:background="@drawable/bg_stepper_circle"
+                    android:backgroundTint="@color/main_color"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="center"
+                    android:text="@string/eval_project_question_3"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tv_eval_question3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:fontFamily="@font/inter_regular"
+                    android:text="@string/eval_study_name_respect"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+            <RatingBar
+                android:id="@+id/rb_eval_question3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="12dp"
+                android:numStars="5"
+                android:progressTint="@color/star_color"
+                android:rating="2.5"
+                android:secondaryProgressTint="@android:color/transparent"
+                android:stepSize="0.5" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_eval_prev"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:fontFamily="@font/inter_regular"
+                    android:padding="4dp"
+                    android:text="@string/eval_project_prev"
+                    android:textColor="@color/main_color"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/tv_eval_next"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp"
+                    android:fontFamily="@font/inter_regular"
+                    android:padding="4dp"
+                    android:text="@string/eval_project_next"
+                    android:textColor="@color/main_color"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_eval_next"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/bg_round_corner_4dp"
+                android:backgroundTint="@color/main_color"
+                android:fontFamily="@font/inter_bold"
+                android:text="@string/eval_project_next"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</FrameLayout>
