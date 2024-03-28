@@ -1,6 +1,7 @@
 package com.seven.colink.ui.group.calendar.register.adapter
 
 import android.graphics.drawable.GradientDrawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -208,8 +209,17 @@ class ScheduleRegisterListAdapter(
             dateTime: Date,
             isStartDate: Boolean
         ) {
-            val calendar = Calendar.getInstance().apply { time = dateTime }
+            Log.d("1234", "datetime=$dateTime")
+            val calendar = Calendar.getInstance().apply {
+                time = dateTime
+            }
             val dateFormat = SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault())
+
+            // dateTime에서 시간 및 분 정보 추출
+            val hourOfDay = calendar.get(Calendar.HOUR_OF_DAY)
+            val minute = calendar.get(Calendar.MINUTE)
+
+            Log.d("1234", "hourOfDay=$hourOfDay, minute=$minute")
 
             fun updateDateText(selectedDateTime: Calendar, isStart: Boolean) {
                 val formattedDateTime = dateFormat.format(selectedDateTime.time)
@@ -247,14 +257,17 @@ class ScheduleRegisterListAdapter(
 
             updateDateText(calendar, isStartDate)
 
-            timePicker.setOnTimeChangedListener { _, hourOfDay, minute ->
-                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
-                calendar.set(Calendar.MINUTE, minute)
-                updateDateText(calendar, isStartDate)
+            timePicker.setOnTimeChangedListener { _, newHourOfDay, newMinute ->
+                Log.d("1234", "newHourOfDay=$newHourOfDay, newMinute=$newMinute")
+                updateDateText(calendar.apply {
+                    set(Calendar.HOUR_OF_DAY, newHourOfDay)
+                    set(Calendar.MINUTE, newMinute)
+                }, isStartDate)
+
             }
 
-            timePicker.hour = calendar.get(Calendar.HOUR_OF_DAY)
-            timePicker.minute = calendar.get(Calendar.MINUTE)
+            timePicker.hour = hourOfDay
+            timePicker.minute = minute
         }
     }
 
