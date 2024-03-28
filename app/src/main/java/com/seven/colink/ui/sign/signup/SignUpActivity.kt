@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textfield.TextInputLayout
 import com.seven.colink.R
 import com.seven.colink.databinding.ActivitySignUpBinding
+import com.seven.colink.ui.main.MainActivity
 import com.seven.colink.ui.sign.signup.adater.SignUpProfileAdapter
 import com.seven.colink.ui.sign.signup.adater.SkillAdapter
 import com.seven.colink.ui.sign.signup.type.SignUpEntryType
@@ -159,6 +160,11 @@ class SignUpActivity : AppCompatActivity() {
                 this@SignUpActivity.hideProgressOverlay()
                 if (it == "등록 성공") {
                     binding.root.setSnackBar(SnackType.Success, it).show()
+                    startActivity(
+                        Intent(this@SignUpActivity,MainActivity::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        }
+                    )
                     finish()
                 } else {
                     binding.root.setSnackBar(SnackType.Error, it).show()
