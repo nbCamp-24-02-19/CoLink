@@ -1,6 +1,7 @@
 package com.seven.colink.domain.repository
 
 import com.google.firebase.auth.FirebaseUser
+import com.seven.colink.data.firebase.type.DataResult
 import com.seven.colink.util.status.DataResultStatus
 
 interface AuthRepository {
@@ -10,4 +11,5 @@ interface AuthRepository {
     suspend fun deleteUser(): DataResultStatus
     suspend fun getCurrentUser(): DataResultStatus
     suspend fun registerUserByGoogle(token: String): Any
+    suspend fun getCustomToken(token: String): DataResult<FirebaseUser>
 }

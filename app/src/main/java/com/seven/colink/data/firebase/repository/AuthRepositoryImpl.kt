@@ -1,8 +1,13 @@
 package com.seven.colink.data.firebase.repository
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.functions.ktx.functions
+import com.google.firebase.ktx.Firebase
+import com.seven.colink.data.firebase.type.DataResult
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.util.status.DataResultStatus
 import kotlinx.coroutines.tasks.await
@@ -100,5 +105,35 @@ class AuthRepositoryImpl @Inject constructor(
         result.user ?: DataResultStatus.FAIL.apply { message = "유저를 찾을 수 없습니다." }
     } catch (e: Exception) {
         DataResultStatus.FAIL.apply { message = e.message ?: "알수없는 에러" }
+    }
+
+    override suspend fun getCustomToken(token: String):DataResult<FirebaseUser> = suspendCoroutine { continuation ->
+        val function = Firebase.functions("asia-northeast3")
+        val data = hashMapOf(
+            "token" to token
+        )
+
+        function.getHttpsCallable("kakaoCustomAuth")
+            .call(data)
+            .addOnSuccessListener { functionResult ->
+                val result = functionResult.data as HashMap<*, *>
+                val mKey = result.keys.firstOrNull()?.toString()
+                if (mKey != null) {
+                    firebaseAuth.signInWithCustomToken(result[mKey]!!.toString())
+                        .addOnSuccessListener { authResult ->
+                            authResult.user?.let { user ->
+                                continuation.resume(DataResult.Success(data = user))
+                            } ?: continuation.resume(DataResult.Error(Exception("Authentication succeeded but no user found")))
+                        }
+                        .addOnFailureListener { exception ->
+                            continuation.resume(DataResult.Error(error = exception))
+                        }
+                } else {
+                    continuation.resume(DataResult.Error(Exception("No data returned from function")))
+                }
+            }
+            .addOnFailureListener { exception ->
+                continuation.resume(DataResult.Error(error = exception))
+            }
     }
 }

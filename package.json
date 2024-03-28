@@ -1,23 +1,7 @@
 {
-  "name": "colink",
-  "version": "1.0.5",
-  "description": "cli",
-  "main": "server.js",
-  "scripts": {
-    "test": "test",
-    "start": "node colink_server.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Guri999/CoLinkCLI.git"
-  },
-  "keywords": [
-    "CoLinkCLI"
-  ],
-  "author": "guri999",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Guri999/CoLinkCLI/issues"
-  },
-  "homepage": "https://github.com/Guri999/CoLinkCLI#readme"
+  "dependencies": {
+    "request": "^2.88.2",
+    "request-promise": "^4.2.6",
+    "request-promise-native": "^1.0.9"
+  }
 }

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seven.colink.domain.entity.ApplicationInfoEntity
 import com.seven.colink.domain.entity.GroupEntity
+import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.domain.repository.RecruitRepository
 import com.seven.colink.domain.repository.UserRepository
@@ -18,6 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
+    private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
     private val recruitRepository: RecruitRepository,
     private val groupRepository: GroupRepository,
