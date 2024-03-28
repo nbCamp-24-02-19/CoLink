@@ -139,10 +139,12 @@ class NotificationAdapter (
             tvNotifyBody.text = item.body
             tvNotifyRegisteredDate.text = item.registeredDate
 
-            when (item.type) {
-                APPLY, JOIN -> onGroup(item.key!!)
-                INVITE -> onPost(item.key!!)
-                else -> Unit
+            root.setOnClickListener {
+                when (item.type) {
+                    APPLY, JOIN -> onGroup(item.key!!)
+                    INVITE -> onPost(item.key!!)
+                    else -> Unit
+                }
             }
         }
     }
