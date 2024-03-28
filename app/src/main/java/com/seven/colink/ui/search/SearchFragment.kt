@@ -7,11 +7,14 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.view.isEmpty
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -24,13 +27,18 @@ import com.seven.colink.R.color.white
 import com.seven.colink.databinding.FragmentSearchBinding
 import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.ui.sign.signin.SignInActivity
+import com.seven.colink.util.convert.onThrottleClick
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.UiState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import okhttp3.internal.wait
 
 @AndroidEntryPoint
 class SearchFragment : Fragment() {
@@ -114,38 +122,37 @@ class SearchFragment : Fragment() {
             }
         }
 
-        binding.ivSearchButton.setOnClickListener {
+        binding.ivSearchButton.onThrottleClick({
             searchViewModel.doSearch(binding.etSearchSearch.text.toString())
             hideKeyboard()
-        }
-
+        }, 1000)
 
 
         // 프로젝트 필터버튼
-        binding.tvSearchProject.setOnClickListener {
+        binding.tvSearchProject.onThrottleClick {
             binding.etSearchSearch.text.toString().let { query ->
-            if (project) {
-                project = false
-                offColor(binding.tvSearchProject)
-                if (!project && study) {
-                    searchViewModel.setStudyFilter(query)
+                if (project) {
+                    project = false
+                    offColor(binding.tvSearchProject)
+                    if (!project && study) {
+                        searchViewModel.setStudyFilter(query)
+                    } else {
+                        searchViewModel.setGroupNone(query)
+                    }
                 } else {
-                    searchViewModel.setGroupNone(query)
-                }
-            } else {
-                project = true
-                onColor(binding.tvSearchProject)
-                if (project && !study) {
-                    searchViewModel.setProjectFilter(query)
-                } else {
-                    searchViewModel.setGroupBoth(query)
+                    project = true
+                    onColor(binding.tvSearchProject)
+                    if (project && !study) {
+                        searchViewModel.setProjectFilter(query)
+                    } else {
+                        searchViewModel.setGroupBoth(query)
+                    }
                 }
             }
         }
-        }
 
         // 스터디 필터버튼
-        binding.tvSearchStudy.setOnClickListener {
+        binding.tvSearchStudy.onThrottleClick {
             binding.etSearchSearch.text.toString().let { query ->
                 if (study) {
                     study = false
@@ -168,48 +175,59 @@ class SearchFragment : Fragment() {
         }
 
         // 모집완료 필터버튼
-        binding.tvSearchRecruitEnd.setOnClickListener {
+        binding.tvSearchRecruitEnd.onThrottleClick {
             binding.etSearchSearch.text.toString().let { query ->
                 if (recruitEnd) {
                     recruitEnd = false
                     offColor(binding.tvSearchRecruitEnd)
                     if (!recruitEnd && recruit) {
                         searchViewModel.setRecruitFilter(query)
+                        Log.d("123", "setRecruitFilter")
                     } else {
                         searchViewModel.setRecruitNone(query)
+//                        searchViewModel.setRecruitEndFilter(query)
+                        Log.d("123", "setRecruitNone")
                     }
                 } else {
                     recruitEnd = true
                     onColor(binding.tvSearchRecruitEnd)
                     if (recruitEnd && !recruit) {
                         searchViewModel.setRecruitEndFilter(query)
+                        Log.d("123", "setRecruitEndFilter")
                     } else {
                         searchViewModel.setRecruitBoth(query)
+                        Log.d("123", "setRecruitBoth")
                     }
                 }
+                Log.d("123", "123 recruit, recruitEnd = $recruit, $recruitEnd")
             }
         }
 
         // 모집중 필터버튼
-        binding.tvSearchRecruit.setOnClickListener {
+        binding.tvSearchRecruit.onThrottleClick {
             binding.etSearchSearch.text.toString().let { query ->
                 if (recruit) {
                     recruit = false
                     offColor(binding.tvSearchRecruit)
                     if (!recruit && recruitEnd) {
                         searchViewModel.setRecruitEndFilter(query)
+                        Log.d("123", "setRecruitEndFilter")
                     } else {
                         searchViewModel.setRecruitNone(query)
+                        Log.d("123", "setRecruitNone")
                     }
                 } else {
                     recruit = true
                     onColor(binding.tvSearchRecruit)
                     if (recruit && !recruitEnd) {
                         searchViewModel.setRecruitFilter(query)
+                        Log.d("123", "setRecruitFilter")
                     } else {
                         searchViewModel.setRecruitBoth(query)
+                        Log.d("123", "setRecruitBoth")
                     }
                 }
+                Log.d("123", "456 recruit, recruitEnd = $recruit, $recruitEnd")
             }
         }
 
@@ -228,21 +246,31 @@ class SearchFragment : Fragment() {
     }
 
     private fun setObserve() {
-        searchViewModel.searchModel.observe(viewLifecycleOwner) {state ->
-            when(state) {
+        searchViewModel.searchModel.observe(viewLifecycleOwner) { state ->
+            when (state) {
                 is UiState.Loading -> {
-                    showProgressOverlay()
+                    if (study.not() && project.not()) {
+                        showEmpty()
+                    } else if (recruit.not() && recruitEnd.not()) {
+                        showEmpty()
+                    } else {
+                        showProgressOverlay()
+                    }
                 }
+
                 is UiState.Success -> {
                     hideProgressOverlay()
                     binding.clSearchEmpty.isVisible = state.data.isNullOrEmpty()
+                    binding.rvSearchRecyclerView.visibility = View.VISIBLE
                     searchAdapter.mItems.clear()
                     searchAdapter.mItems.addAll(state.data)
                     searchAdapter.notifyDataSetChanged()
                 }
+
                 is UiState.Error -> {
                     hideProgressOverlay()
-                    Toast.makeText(requireContext(), "${state.throwable}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "${state.throwable}", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         }
@@ -251,7 +279,9 @@ class SearchFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         setSearchAppbar()
-        searchViewModel.doSearch("")
+        lifecycleScope.launch {
+            searchViewModel.doSearch("")
+        }
     }
 
     override fun onPause() {
@@ -259,14 +289,16 @@ class SearchFragment : Fragment() {
         returnAppbar()
     }
 
-    private fun setSearchAppbar(){
-        activity?.findViewById<ImageView>(R.id.iv_main_toolbar_image)?.setImageResource(R.drawable.logo_co_link_search)
+    private fun setSearchAppbar() {
+        activity?.findViewById<ImageView>(R.id.iv_main_toolbar_image)
+            ?.setImageResource(R.drawable.logo_co_link_search)
         activity?.findViewById<AppBarLayout>(R.id.al_main_appbar)?.elevation = 0f
         activity?.findViewById<AppBarLayout>(R.id.al_main_appbar)?.setBackgroundResource(main_color)
     }
 
-    private fun returnAppbar(){
-        activity?.findViewById<ImageView>(R.id.iv_main_toolbar_image)?.setImageResource(R.drawable.logo_co_link)
+    private fun returnAppbar() {
+        activity?.findViewById<ImageView>(R.id.iv_main_toolbar_image)
+            ?.setImageResource(R.drawable.logo_co_link)
         activity?.findViewById<AppBarLayout>(R.id.al_main_appbar)?.elevation = 5f
         activity?.findViewById<AppBarLayout>(R.id.al_main_appbar)?.setBackgroundResource(white)
     }
@@ -306,6 +338,9 @@ class SearchFragment : Fragment() {
         text.setTextColor(Color.parseColor("#FFFFFF"))
     }
 
-
-
+    private fun showEmpty() {
+        searchAdapter.mItems.clear()
+        binding.rvSearchRecyclerView.visibility = View.INVISIBLE
+        binding.clSearchEmpty.visibility = View.VISIBLE
+    }
 }

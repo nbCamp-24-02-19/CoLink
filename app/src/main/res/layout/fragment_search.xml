@@ -129,6 +129,7 @@
                             android:hint="@string/search_edittext"
                             android:imeOptions="actionDone"
                             android:inputType="text"
+                            android:maxLength="50"
                             android:maxLines="1"
                             android:paddingStart="12dp"
                             android:textColor="@color/typo_color"

@@ -108,13 +108,13 @@ class EvaluationViewModel @Inject constructor(
                         userRepository.getUserDetails(data?.uid!!).getOrNull().let { member ->
                                 userRepository.updateUserInfo(
                                 member!!.copy(
-                                    grade = (member.grade!! * member.evaluatedNumber + data.grade!! * 2) / ++data.evalCount,
+                                    grade = ((member.grade!! * member.evaluatedNumber) + (data.grade!! * 2)) / ++data.evalCount,
                                     communication = data.communication,
                                     technicalSkill = data.technic,
                                     diligence = data.diligence,
                                     flexibility = data.flexibility,
                                     creativity = data.creativity,
-                                    evaluatedNumber = data.evalCount,
+                                    evaluatedNumber = ++data.evalCount,
                                 )
                             )
                         }
@@ -182,7 +182,7 @@ class EvaluationViewModel @Inject constructor(
                         userRepository.getUserDetails(data?.uid!!).getOrNull().let { member ->
                             userRepository.updateUserInfo(
                                 member!!.copy(
-                                    grade = (member.grade!! * member.evaluatedNumber + data.grade!! * 2) / ++data.evalCount,
+                                    grade = ((member.grade!! * member.evaluatedNumber) + (data.grade!! * 2)) / ++data.evalCount,
                                     diligence = data.diligence,
                                     communication = data.communication,
                                     flexibility = data.flexibility,

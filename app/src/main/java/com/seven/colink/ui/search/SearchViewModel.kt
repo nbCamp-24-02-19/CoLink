@@ -1,11 +1,14 @@
 package com.seven.colink.ui.search
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.seven.colink.domain.entity.GroupEntity
 import com.seven.colink.domain.entity.PostEntity
 import com.seven.colink.domain.repository.AuthRepository
+import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.util.convert.convertToDaysAgo
@@ -15,6 +18,7 @@ import com.seven.colink.util.status.ProjectStatus
 import com.seven.colink.util.status.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -23,7 +27,8 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(
     private val postRepository: PostRepository,
     private val authRepository: AuthRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val groupRepository: GroupRepository
 ) : ViewModel() {
     private val _searchModel = MutableLiveData<UiState<List<SearchModel>>>()
     val searchModel: LiveData<UiState<List<SearchModel>>> get() = _searchModel
@@ -66,8 +71,8 @@ class SearchViewModel @Inject constructor(
                             .sortedByDescending {
                                 it.registeredDate
                             }.map {
-                            it.convertSearchModel()
-                        }
+                                it.convertSearchModel()
+                            }
                     UiState.Success(result)
                 } catch (e: Exception) {
                     UiState.Error(e)
@@ -134,7 +139,7 @@ class SearchViewModel @Inject constructor(
                 userRepository.getUserDetails(authId.toString()).getOrNull()?.name.toString()
             },
             title = title,
-            status = status,
+            status = groupRepository.getGroupDetail(key).getOrNull()?.status,
             groupType = groupType,
             description = description,
             tags = tags,
