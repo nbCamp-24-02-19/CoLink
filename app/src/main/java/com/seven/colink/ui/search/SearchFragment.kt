@@ -231,12 +231,12 @@ class SearchFragment : Fragment() {
         searchViewModel.searchModel.observe(viewLifecycleOwner) {state ->
             when(state) {
                 is UiState.Loading -> {
-                    searchAdapter.mItems.clear()
                     showProgressOverlay()
                 }
                 is UiState.Success -> {
                     hideProgressOverlay()
                     binding.clSearchEmpty.isVisible = state.data.isNullOrEmpty()
+                    searchAdapter.mItems.clear()
                     searchAdapter.mItems.addAll(state.data)
                     searchAdapter.notifyDataSetChanged()
                 }
