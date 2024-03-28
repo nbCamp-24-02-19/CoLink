@@ -12,11 +12,13 @@ import com.seven.colink.domain.repository.KakaoRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.ui.sign.signup.type.SignUpEntryType
 import com.seven.colink.util.status.DataResultStatus
+import com.seven.colink.util.status.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -39,6 +41,9 @@ class SignInViewModel @Inject constructor(
     private val _updateEvent = MutableSharedFlow<SignUpEntryType>()
     val updateEvent = _updateEvent.asSharedFlow()
 
+    private val _progressState = MutableStateFlow<UiState<String>>(UiState.Success(""))
+    val progressState = _progressState.asStateFlow()
+
     fun signInCheck() {
         viewModelScope.launch {
             _entryType.value = authRepository.getCurrentUser() == DataResultStatus.SUCCESS
@@ -54,20 +59,26 @@ class SignInViewModel @Inject constructor(
     }
 
     fun sendTokenByGoogle(idToken: String?) {
+        _progressState.value = UiState.Loading
         viewModelScope.launch {
             if (idToken != null) {
                 authRepository.registerUserByGoogle(idToken).let {
-                    it as FirebaseUser
-                    if (userRepository.getUserDetails(it.uid).getOrNull() == null) {
-                        userRepository.registerUser(it.convert())
-                        _updateEvent.emit(SignUpEntryType.UPDATE_PROFILE)
+                    if (it is FirebaseUser) {
+                        if (userRepository.getUserDetails(it.uid).getOrNull() == null) {
+                            userRepository.registerUser(it.convert())
+                            _updateEvent.emit(SignUpEntryType.UPDATE_PROFILE)
+                        } else {
+                            signInCheck()
+                        }
                     }
                 }
             }
+            _progressState.value = UiState.Success("")
         }
     }
 
     fun getTokenByKakao() {
+        _progressState.value = UiState.Loading
         viewModelScope.launch {
             kakaoRepository.kakaoLogin().getOrNull().let { token ->
                 if (token != null) authRepository.getCustomToken(token).let { result ->
@@ -77,10 +88,13 @@ class SignInViewModel @Inject constructor(
                                 userRepository.registerUser(result.data.convert())
                                 _updateEvent.emit(SignUpEntryType.UPDATE_PROFILE)
                             }
+                        } else {
+                            signInCheck()
                         }
                     }
                 }
             }
+            _progressState.value = UiState.Success("")
         }
     }
     private fun FirebaseUser.convert() = UserEntity(
