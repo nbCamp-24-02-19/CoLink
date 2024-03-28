@@ -73,8 +73,10 @@ class SignInViewModel @Inject constructor(
                 if (token != null) authRepository.getCustomToken(token).let { result ->
                     if (result is DataResult.Success) {
                         if (userRepository.getUserDetails(result.data.uid).getOrNull() == null) {
-                            userRepository.registerUser(result.data.convert())
-                            _updateEvent.emit(SignUpEntryType.UPDATE_PROFILE)
+                            if (userRepository.getUserDetails(result.data.uid).isFailure) {
+                                userRepository.registerUser(result.data.convert())
+                                _updateEvent.emit(SignUpEntryType.UPDATE_PROFILE)
+                            }
                         }
                     }
                 }
