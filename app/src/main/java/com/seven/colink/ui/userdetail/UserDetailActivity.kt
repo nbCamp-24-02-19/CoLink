@@ -145,7 +145,7 @@ class UserDetailActivity : AppCompatActivity() {
         } else {
             binding.ivUserdetailLink.visibility = View.VISIBLE
             binding.ivUserdetailLink.setOnClickListener {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(user.userLink))
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://"+user.userLink))
                 startActivity(intent)
             }
         }
@@ -178,7 +178,7 @@ class UserDetailActivity : AppCompatActivity() {
         if(user.userBlog != null){
             binding.ivUserdetailBlog.visibility = View.VISIBLE
             binding.ivUserdetailBlog.setOnClickListener {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(user.userBlog))
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://"+user.userBlog))
                 startActivity(intent)
             }
         } else binding.ivUserdetailBlog.visibility = View.GONE
@@ -187,7 +187,7 @@ class UserDetailActivity : AppCompatActivity() {
         if (user.userGit != null){
             binding.ivUserdetailGit.visibility = View.VISIBLE
             binding.ivUserdetailGit.setOnClickListener {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(user.userGit))
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://"+user.userGit))
                 startActivity(intent)
             }
         } else binding.ivUserdetailGit.visibility = View.GONE
