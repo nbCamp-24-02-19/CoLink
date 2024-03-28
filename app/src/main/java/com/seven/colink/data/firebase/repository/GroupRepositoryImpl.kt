@@ -128,7 +128,7 @@ class GroupRepositoryImpl @Inject constructor(
         }
     }.map { data ->
         data.filter {
-            it.status != ProjectStatus.RECRUIT && it.evaluateMember?.contains(auth.currentUser?.uid)?.not()?: true
+            it.status != ProjectStatus.RECRUIT && it.evaluateMember?.contains(auth.currentUser?.uid)?.not()?: true && it.memberIds.size != 1
         }.takeIf {
             it.isNotEmpty()
         }
