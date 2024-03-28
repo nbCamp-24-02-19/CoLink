@@ -20,8 +20,8 @@ data class BottomItems (
     val kind : List<String>?,
     val img : String?,
     val key : String? = "POST_" + UUID.randomUUID().toString(),
-    val blind : ProjectStatus?,
-    val complete : ProjectStatus?,
+    val blind : ProjectStatus? = ProjectStatus.RECRUIT,
+    val complete : ProjectStatus? = ProjectStatus.RECRUIT,
     val lv : String? = "0"
 )
 
