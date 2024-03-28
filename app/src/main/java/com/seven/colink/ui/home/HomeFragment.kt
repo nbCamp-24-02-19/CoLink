@@ -57,14 +57,14 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setTopItems()
         initViews()
-        onBackPressed()
     }
 
     private fun initViews() {
+        setTopItems()
         initViewAdapter()
         setObserve()
+        onBackPressed()
     }
 
     private fun initViewAdapter() {
@@ -138,10 +138,8 @@ class HomeFragment : Fragment() {
 
         homeViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             if (isLoading) {
-                showProgressOverlay()
                 binding.svHome.visibility = View.INVISIBLE
             }else {
-                hideProgressOverlay()
                 binding.svHome.visibility = View.VISIBLE
             }
             loading = !isLoading
@@ -173,6 +171,18 @@ class HomeFragment : Fragment() {
                 view.setSnackBar(SnackType.Error,getString(R.string.error_next_time)).show()
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setTopItems()
+        initViews()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        setTopItems()
+        initViews()
     }
 
     override fun onDestroyView() {
