@@ -319,8 +319,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="android_neutral_rd_na" />
-                            <entry key="sourceFile" value="C:\Users\zaq86\Downloads\signin-assets\Android\svg\neutral\android_neutral_rd_na.svg" />
+                            <entry key="outputName" value="kakao_icon" />
+                            <entry key="sourceFile" value="C:\Users\zaq86\Downloads\kakao_icon.svg" />
                           </map>
                         </option>
                       </PersistentState>

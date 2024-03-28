@@ -144,12 +144,23 @@
         android:text="@string/sign_in_kakao"
         android:textSize="14sp"
         android:textColor="@color/black"
-        android:background="@drawable/kakao_login_shape_vector"
+        android:background="@drawable/bg_round_corner_8dp"
+        android:backgroundTint="#fee500"
         android:clipToOutline="true"
         android:fontFamily="@font/inter_bold"
         app:layout_constraintTop_toBottomOf="@+id/bt_sign_in_google"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:targetApi="s" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="16dp"
+        android:src="@drawable/kakao_icon"
+        android:elevation="4dp"
+        app:layout_constraintTop_toTopOf="@+id/bt_sign_in_kakao"
+        app:layout_constraintBottom_toBottomOf="@+id/bt_sign_in_kakao"
+        app:layout_constraintStart_toStartOf="@+id/bt_sign_in_kakao"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
