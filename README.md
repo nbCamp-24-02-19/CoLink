@@ -1,5 +1,7 @@
 # CoLink
 
+[연습용 이미지](https://github.com/nbCamp-24-02-19/CoLink/blob/readme/colink_main.png)
+
 **바로가기 링크**
 
 [구글 플레이스토어 링크](https://play.google.com/store/apps/details?id=com.seven.colink)
