@@ -87,7 +87,7 @@ class NotificationAdapter (
             cvNotifyAll.setup(FilterType.ALL, tvNotifyAll, item.state)
             cvNotifyChat.setup(FilterType.CHAT, tvNotifyChat, item.state)
             cvNotifyRecruit.setup(FilterType.RECRUIT, tvNotifyRecruit, item.state)
-            tvNotifyDelete.setOnClickListener { deleteAll }
+            tvNotifyDelete.setOnClickListener { deleteAll() }
         }
 
         private fun MaterialCardView.setup(filterType: FilterType, text: TextView, state: FilterType) {
