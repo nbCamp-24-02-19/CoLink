@@ -1,6 +1,6 @@
 # CoLink
 
-[연습용 이미지](https://github.com/nbCamp-24-02-19/CoLink/blob/readme/colink_main.png)
+![연습용 이미지](https://github.com/nbCamp-24-02-19/CoLink/blob/readme/colink_main.png)
 
 **바로가기 링크**
 
