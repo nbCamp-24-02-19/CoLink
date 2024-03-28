@@ -28,15 +28,13 @@ class CalendarViewModel @Inject constructor(
     val filteredByMonth: StateFlow<List<ScheduleModel>> get() = _filteredByMonth
 
     fun setEntity(key: String, date: LocalDate) = viewModelScope.launch {
-        resetFilters()
-
         val scheduleList = scheduleRepository.getScheduleListByPostId(key).map { it.convert() }
         _uiState.value = scheduleList
         filterScheduleListByDate(date)
         filterDataByMonth(date)
     }
 
-    private fun resetFilters() {
+    fun resetFilters() {
         _filteredByDate.value = ScheduleItem.init()
         _filteredByMonth.value = emptyList()
     }
