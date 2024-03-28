@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import android.util.Log
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -122,10 +123,26 @@ class SignInActivity : AppCompatActivity() {
 
     private fun initView() {
         setButton()
+        backPressed()
+    }
+
+    private fun backPressed() {
+        onBackPressedDispatcher.addCallback(this,
+            object : OnBackPressedCallback(true){
+                override fun handleOnBackPressed() {
+                    val intent = Intent(this@SignInActivity, MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                    finish()
+                }
+            })
     }
 
     private fun setButton() = with(binding) {
         ivSignInBack.setOnClickListener {
+            val intent = Intent(this@SignInActivity, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
             finish()
         }
 
