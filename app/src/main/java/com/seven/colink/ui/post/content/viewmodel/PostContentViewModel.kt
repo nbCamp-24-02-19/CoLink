@@ -29,6 +29,7 @@ import com.seven.colink.util.convert.convertTime
 import com.seven.colink.util.status.ApplicationStatus
 import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.GroupType
+import com.seven.colink.util.status.ProjectStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -61,9 +62,8 @@ class PostContentViewModel @Inject constructor(
     val errorUiState: LiveData<PostErrorUiState> get() = _errorUiState
 
     private val _userComment = MutableLiveData<CommentEntity>()
-    val userComments: LiveData<CommentEntity> = _userComment
 
-    private val _checkLogin = MutableLiveData<Boolean>(false)
+    private val _checkLogin = MutableLiveData(false)
     val checkLogin: LiveData<Boolean> get() = _checkLogin
 
     private var _currentUser: UserEntity? = null
@@ -105,49 +105,30 @@ class PostContentViewModel @Inject constructor(
                         postId = entity.key,
                         description = text
                     )
-                }?: return@launch
+                } ?: return@launch
             )
         }
         setPostContentItems(entity.recruit)
     }
-//수정을 하려면 일단 그 댓글의 키값을 가져와서 그 키값이랑 맞는 댓글의 description을 수정해야 하는것이지?????????????????????
-    //근데???????????밑에 이 친구는 그냥 댓글 추가 하는 거잖아???????????????ㅎ..ㅋ.ㅎ..ㅎ.ㅎ..ㅎ.
-//    fun editComment(text: String) {
-//        viewModelScope.launch {
-//            commentRepository.registerComment(
-//                getCurrentUser()?.let {
-//                    CommentEntity(
-////                        key = ,
-//                        authId = it,
-//                        postId = entity.key,
-//                        description = text
-//                    )
-//                }?: return@launch
-//            )
-//        }
-//        setPostContentItems(entity.recruit)
-//    }
-//해당 댓글의 키값 가져오기...registerComment는 댓글 작성하는 것,,getComment는 댓글 가져오는 것..
-    //근데 댓글...음?..음???? 그 가져온 댓글에서 description만 수정하기..ㅋ.ㅋ..가능?ㅎㅎ
-    //getComment는 suspend를 사용해야 사용 가능 그럼 이걸 사용하는 것이 아닌듯
 
-    fun editComment(key: String, comment: String){
+    fun editComment(key: String, comment: String) {
         viewModelScope.launch {
             commentRepository.editComment(key, comment)
         }
         setPostContentItems(entity.recruit)
     }
 
-    fun deleteComment(key: String){
+    fun deleteComment(key: String) {
         viewModelScope.launch {
             commentRepository.deleteComment(key)
         }
         setPostContentItems(entity.recruit)
     }
+
     private suspend fun getComment() =
-            commentRepository.getComment(
-                postId = entity.key
-            ).getOrNull()?.sortedBy { it.registeredDate }
+        commentRepository.getComment(
+            postId = entity.key
+        ).getOrNull()?.sortedBy { it.registeredDate }
 
     private fun setPostContentItems(updatedRecruitList: List<RecruitInfo>?) =
         viewModelScope.launch {
@@ -186,12 +167,12 @@ class PostContentViewModel @Inject constructor(
                 }
                 items.add(PostContentItem.CommentTitle(R.string.comment))
                 getComment()?.forEach {
-                    userRepository.getUserDetails(it.authId).getOrNull().let {user ->
+                    userRepository.getUserDetails(it.authId).getOrNull().let { user ->
                         items.add(
                             PostContentItem.CommentItem(
                                 key = it.key,
-                                name = user?.name?:"",
-                                profile = user?.photoUrl?: "",
+                                name = user?.name ?: "",
+                                profile = user?.photoUrl ?: "",
                                 description = it.description,
                                 registeredDate = it.registeredDate.convertTime(),
                                 authId = it.authId,
@@ -208,17 +189,20 @@ class PostContentViewModel @Inject constructor(
             }
         }
 
-    private fun createPostRecruit(recruitList: List<RecruitInfo>?) =
-        recruitList?.map { recruitInfo ->
+    private suspend fun createPostRecruit(recruitList: List<RecruitInfo>?): List<PostContentItem> {
+        val group = groupRepository.getGroupDetail(entity.key).getOrNull()
+        return recruitList?.map { recruitInfo ->
             PostContentItem.RecruitItem(
                 key = entity.key,
                 recruit = recruitInfo,
-                buttonUiState = updateButtonUiState.value ?: ContentButtonUiState.User
+                buttonUiState = updateButtonUiState.value ?: ContentButtonUiState.User,
+                status = group?.status ?: ProjectStatus.RECRUIT
             )
         } ?: emptyList()
+    }
 
     private suspend fun createMember(uiState: Post): List<PostContentItem> {
-        val group = groupRepository.getGroupDetail(uiState.key).getOrNull()
+        val group = groupRepository.getGroupDetail(entity.key).getOrNull()
         val memberItems = mutableListOf<PostContentItem>()
         var leaderTitleAdded = false
         val memberIdsSet = group?.memberIds?.toSet()
@@ -347,19 +331,20 @@ class PostContentViewModel @Inject constructor(
         )
     }
 
-    fun checkLogin(){
+    fun checkLogin() {
         viewModelScope.launch {
             val currentUser = authRepository.getCurrentUser()
             _checkLogin.value = currentUser == DataResultStatus.SUCCESS
         }
     }
 
-    fun discernLike(key: String){
+    fun discernLike(key: String) {
         viewModelScope.launch {
-            if (currentUser?.likeList?.contains(key) == false){
-                _currentUser = currentUser!!.copy(likeList = currentUser!!.likeList?.plus(listOf(key)))
+            if (currentUser?.likeList?.contains(key) == false) {
+                _currentUser =
+                    currentUser!!.copy(likeList = currentUser!!.likeList?.plus(listOf(key)))
                 val updateUiState = _uiState.value?.map { item ->
-                    if (item is PostContentItem.Item && item.key == entity.key){
+                    if (item is PostContentItem.Item && item.key == entity.key) {
                         item.copy(like = item.like?.plus(1), isLike = true)
                     } else {
                         item
@@ -367,9 +352,10 @@ class PostContentViewModel @Inject constructor(
                 }
                 _uiState.value = updateUiState
             } else {
-                _currentUser = currentUser!!.copy(likeList = currentUser!!.likeList?.minus(listOf(key).toSet()))
+                _currentUser =
+                    currentUser!!.copy(likeList = currentUser!!.likeList?.minus(listOf(key).toSet()))
                 val updateUiState = _uiState.value?.map { item ->
-                    if (item is PostContentItem.Item && item.key == entity.key){
+                    if (item is PostContentItem.Item && item.key == entity.key) {
                         item.copy(like = item.like?.minus(1), isLike = false)
                     } else {
                         item
@@ -380,14 +366,14 @@ class PostContentViewModel @Inject constructor(
         }
     }
 
-    private fun checkLike(){
+    private fun checkLike() {
         viewModelScope.launch {
             val currentUser = authRepository.getCurrentUser()
             val checkLike = userRepository.getUserDetails(currentUser.message)
             val isLikeCheck = checkLike.getOrNull()?.likeList?.contains(entity.key) ?: false
             val getPost = postRepository.getPost(entity.key).getOrNull()?.like
             val updateUiState = _uiState.value?.map { item ->
-                if (item is PostContentItem.Item && item.key == entity.key){
+                if (item is PostContentItem.Item && item.key == entity.key) {
                     item.copy(isLike = isLikeCheck, like = getPost)
                 } else {
                     item
@@ -397,7 +383,7 @@ class PostContentViewModel @Inject constructor(
         }
     }
 
-    fun updateUserInfo(){
+    fun updateUserInfo() {
         viewModelScope.launch {
             val userLikeList = _currentUser
             if (userLikeList != null) {
@@ -406,10 +392,10 @@ class PostContentViewModel @Inject constructor(
         }
     }
 
-    fun updatePostLike(){
+    fun updatePostLike() {
         viewModelScope.launch {
-             _uiState.value?.map { item ->
-                if (item is PostContentItem.Item && item.key == entity.key){
+            _uiState.value?.map { item ->
+                if (item is PostContentItem.Item && item.key == entity.key) {
                     item.like?.let { postRepository.registerLike(item.key, item.like) }
                 } else {
                     item
