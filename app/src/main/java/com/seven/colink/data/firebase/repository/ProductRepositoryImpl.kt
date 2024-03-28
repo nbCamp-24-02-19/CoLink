@@ -1,6 +1,7 @@
 package com.seven.colink.data.firebase.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.toObject
 import com.seven.colink.data.firebase.type.DataBaseType
 import com.seven.colink.domain.entity.GroupEntity
 import com.seven.colink.domain.entity.PostEntity
@@ -53,6 +54,11 @@ class ProductRepositoryImpl @Inject constructor(
         return query.get().await().documents.mapNotNull { snapshot ->
             snapshot.toObject(ProductEntity::class.java)
         }
+    }
+
+    override suspend fun getProduct(postKey: String) = runCatching {
+        firestore.collection(DataBaseType.PRODUCT.title).whereEqualTo("postKey",postKey)
+            .get().await().documents.first().toObject(ProductEntity::class.java)
     }
 
     override suspend fun deleteProduct(key: String) = suspendCoroutine { continuation ->
