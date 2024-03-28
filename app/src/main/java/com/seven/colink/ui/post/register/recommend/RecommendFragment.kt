@@ -41,6 +41,7 @@ class RecommendFragment : Fragment() {
         RecommendAdapter(
             inviteGroup = {
                 viewModel.invitePost(it)
+                binding.root.setSnackBar(SnackType.Success, "알림을 전송했습니다.")
             },
             editGroup = {
                 startActivity(
