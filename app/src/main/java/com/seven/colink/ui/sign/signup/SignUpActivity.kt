@@ -239,7 +239,7 @@ class SignUpActivity : AppCompatActivity() {
         btSignUpBtn.setOnClickListener {
             it.isEnabled = false
             when(state) {
-                SignUpUIState.EMAIL -> viewModel.checkValid(state, etSignUpEmailId.text.toString(), etSignUpEmailService.text.toString())
+                SignUpUIState.EMAIL -> viewModel.checkValid(state, etSignUpEmailId.text.toString().lowercase(), etSignUpEmailService.text.toString().lowercase())
                 SignUpUIState.PASSWORD -> viewModel.checkValid(state, etSignUpEdit1.text.toString(), etSignUpPasswordCheck.text.toString())
                 else -> viewModel.checkValid(state, etSignUpEdit1.text.toString())
             }
