@@ -2,16 +2,19 @@ package com.seven.colink.ui.post.content
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputFilter
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.seven.colink.R
 import com.seven.colink.databinding.FragmentPostContentBinding
 import com.seven.colink.databinding.ItemPostCommentBinding
+import com.seven.colink.databinding.ItemPostCommentSendBinding
 import com.seven.colink.ui.group.board.list.ApplyRequestFragment
 import com.seven.colink.ui.post.content.adapter.PostContentListAdapter
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
@@ -39,6 +42,7 @@ class PostContentFragment : Fragment() {
     private lateinit var commentBinding: ItemPostCommentBinding
     private val viewModel: PostContentViewModel by viewModels()
     private val sharedViewModel: PostSharedViewModel by activityViewModels()
+    private lateinit var sendcommentBinding: ItemPostCommentSendBinding
     private val postContentListAdapter by lazy {
         PostContentListAdapter(
             onClickItem = { item ->
@@ -104,7 +108,7 @@ class PostContentFragment : Fragment() {
                 }
             },
             onClickCommentButton = {
-                viewModel.registerComment(it)
+                    viewModel.registerComment(it)
             },
             onClickCommentDeleteButton = { item ->
                 viewModel.deleteComment(item)
