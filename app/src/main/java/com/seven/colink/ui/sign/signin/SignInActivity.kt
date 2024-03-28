@@ -1,5 +1,6 @@
 package com.seven.colink.ui.sign.signin
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -17,6 +18,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.kakao.sdk.auth.model.OAuthToken
+import com.kakao.sdk.common.model.ClientError
+import com.kakao.sdk.common.model.ClientErrorCause
+import com.kakao.sdk.user.UserApiClient
 import com.seven.colink.BuildConfig
 import com.seven.colink.databinding.ActivitySignInBinding
 import com.seven.colink.ui.main.MainActivity
@@ -29,6 +34,10 @@ import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.status.DataResultStatus
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.util.concurrent.CancellationException
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 @AndroidEntryPoint
 class SignInActivity : AppCompatActivity() {
@@ -68,6 +77,11 @@ class SignInActivity : AppCompatActivity() {
     override fun onStart() {
         viewModel.signInCheck()
         super.onStart()
+    }
+
+    override fun onResume() {
+        viewModel.signInCheck()
+        super.onResume()
     }
 
     private fun initViewModel() = with(viewModel) {
@@ -131,6 +145,10 @@ class SignInActivity : AppCompatActivity() {
             )
         }
 
+        btSignInKakao.setOnClickListener {
+            viewModel.getTokenByKakao()
+        }
+
         btSignInGoogle.setOnClickListener {
             lifecycleScope.launch {
                 signInResultLauncher.launch(mGoogleSignInClient.signInIntent)
@@ -146,5 +164,4 @@ class SignInActivity : AppCompatActivity() {
             Log.w(TAG, "signInResult:failed code=" + e.statusCode)
         }
     }
-
 }
