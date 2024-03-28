@@ -1,9 +1,11 @@
 package com.seven.colink.ui.sign.signin
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import android.util.Log
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -17,6 +19,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.kakao.sdk.auth.model.OAuthToken
+import com.kakao.sdk.common.model.ClientError
+import com.kakao.sdk.common.model.ClientErrorCause
+import com.kakao.sdk.user.UserApiClient
 import com.seven.colink.BuildConfig
 import com.seven.colink.databinding.ActivitySignInBinding
 import com.seven.colink.ui.main.MainActivity
@@ -29,6 +35,10 @@ import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.status.DataResultStatus
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.util.concurrent.CancellationException
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 @AndroidEntryPoint
 class SignInActivity : AppCompatActivity() {
@@ -70,6 +80,11 @@ class SignInActivity : AppCompatActivity() {
         super.onStart()
     }
 
+    override fun onResume() {
+        viewModel.signInCheck()
+        super.onResume()
+    }
+
     private fun initViewModel() = with(viewModel) {
         lifecycleScope.launch {
             entryType.collect {
@@ -108,10 +123,26 @@ class SignInActivity : AppCompatActivity() {
 
     private fun initView() {
         setButton()
+        backPressed()
+    }
+
+    private fun backPressed() {
+        onBackPressedDispatcher.addCallback(this,
+            object : OnBackPressedCallback(true){
+                override fun handleOnBackPressed() {
+                    val intent = Intent(this@SignInActivity, MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                    finish()
+                }
+            })
     }
 
     private fun setButton() = with(binding) {
         ivSignInBack.setOnClickListener {
+            val intent = Intent(this@SignInActivity, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
             finish()
         }
 
@@ -131,6 +162,10 @@ class SignInActivity : AppCompatActivity() {
             )
         }
 
+        btSignInKakao.setOnClickListener {
+            viewModel.getTokenByKakao()
+        }
+
         btSignInGoogle.setOnClickListener {
             lifecycleScope.launch {
                 signInResultLauncher.launch(mGoogleSignInClient.signInIntent)
@@ -146,5 +181,4 @@ class SignInActivity : AppCompatActivity() {
             Log.w(TAG, "signInResult:failed code=" + e.statusCode)
         }
     }
-
 }

@@ -36,8 +36,6 @@ class EvaluationActivity : AppCompatActivity() {
         }
     }
 
-    private var projectUserList = mutableListOf<EvaluationData.EvalProject>()
-    private var studyUserList = mutableListOf<EvaluationData.EvalStudy>()
     private lateinit var evalProjectAdapter: EvaluationProjectAdapter
     private lateinit var evalStudyAdapter: EvaluationStudyAdapter
     private lateinit var evalViewModel: EvaluationViewModel

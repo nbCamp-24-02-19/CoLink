@@ -9,6 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,7 +28,7 @@ class GetChatRoomUseCase @Inject constructor(
             participantsUid = mapOf(uid to true, currentUid to true),
             type = type
         )
-        CoroutineScope(Dispatchers.IO).launch {
+        coroutineScope {
             val userDeferred = async { userRepository.getUserDetails(uid) }
             val myDeferred = async { userRepository.getUserDetails(currentUid) }
 
@@ -57,14 +58,14 @@ class GetChatRoomUseCase @Inject constructor(
                     )
                 }
             }
-            this.cancel()
         }
-        val chatRoom = chatRepository.getChatRoom(newChat.key)
-        return if (chatRoom == null) {
-            chatRepository.createChatRoom(newChat)
-            newChat
-        } else {
-            chatRoom
+        return chatRepository.getChatRoom(newChat.key).let {
+            if (it == null) {
+                chatRepository.createChatRoom(newChat)
+                newChat
+            } else {
+                it
+            }
         }
     }
 
@@ -82,23 +83,21 @@ class GetChatRoomUseCase @Inject constructor(
             thumbnail = thumbnail,
             type = type
         )
-        CoroutineScope(Dispatchers.IO).launch {
+        coroutineScope {
             uids.forEach {
-                launch {
+                launch(Dispatchers.IO) {
                     userRepository.getUserDetails(it).getOrNull().let {
                         if (it != null && it.participantsChatRoomIds?.contains(newChat.key)
                                 ?.not() != false
                         )
                             it.copy(
-                                participantsChatRoomIds = it.participantsChatRoomIds?.plus(key)
+                                participantsChatRoomIds = it.participantsChatRoomIds?.plus("CR_$key")
                             )
                                 .let { it1 -> userRepository.registerUser(it1) }
                     }
-
+                    chatRepository.createChatRoom(newChat)
                 }
             }
-            chatRepository.createChatRoom(newChat)
-            this.cancel()
         }
         return chatRepository.getChatRoom(newChat.key) ?: newChat
     }

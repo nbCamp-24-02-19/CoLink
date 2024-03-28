@@ -17,60 +17,74 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/iv_group_image"
-            android:layout_width="58dp"
-            android:layout_height="58dp"
-            android:background="@drawable/bg_background_circle"
-            android:scaleType="centerCrop"
-            android:src="@drawable/bg_post_image_background"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/tv_teamName"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_info"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="24dp"
-            android:background="@android:color/transparent"
-            android:text="CoLink"
-            android:textColor="@color/black"
-            android:textColorHint="@color/edit_hint_color"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@id/iv_group_image"
-            app:layout_constraintTop_toTopOf="@id/iv_group_image" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view_tags"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toBottomOf="@id/iv_group_image"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@id/tv_teamName"
-            app:layout_constraintTop_toBottomOf="@id/tv_teamName"
-            tools:listitem="@layout/item_list_group_tag" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/iv_group_image"
+                android:layout_width="58dp"
+                android:layout_height="58dp"
+                android:background="@drawable/bg_background_circle"
+                android:scaleType="centerCrop"
+                android:src="@drawable/bg_post_image_background"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_teamName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:background="@android:color/transparent"
+                android:text="CoLink"
+                android:textColor="@color/black"
+                android:textColorHint="@color/edit_hint_color"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/recycler_view_tags"
+                app:layout_constraintStart_toEndOf="@id/iv_group_image"
+                app:layout_constraintTop_toTopOf="@id/iv_group_image" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_tags"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/tv_teamName"
+                app:layout_constraintTop_toBottomOf="@id/tv_teamName"
+                tools:listitem="@layout/item_list_group_tag" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/tv_status_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:gravity="center"
+            android:gravity="start"
             android:text="프로젝트 시작일로부터 1일이 경과되었습니다.\n프로젝트를 시작해주세요! "
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iv_group_image" />
+            app:layout_constraintTop_toBottomOf="@id/layout_info" />
 
         <ProgressBar
             android:id="@+id/progressBar"
             style="@style/CustomProgressBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_height="18dp"
+            android:layout_marginTop="20dp"
             android:progress="66"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -120,7 +134,8 @@
             android:background="@drawable/bg_button_main_color"
             android:clickable="true"
             android:foreground="?android:attr/selectableItemBackground"
-            android:padding="4dp"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="4dp"
             android:text="@string/promotion"
             android:textColor="@color/white"
             android:textSize="12sp"
@@ -138,7 +153,7 @@
             android:src="@drawable/ic_calendar_today_24"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_status_recruit"
-            app:tint="@color/calender_fab" />
+            app:tint="@color/typo_color" />
 
         <TextView
             android:id="@+id/tv_calendar"
@@ -148,7 +163,7 @@
             android:clickable="true"
             android:foreground="?android:attr/selectableItemBackground"
             android:text="스케줄 보기"
-            android:textColor="@color/calender_fab"
+            android:textColor="@color/typo_color"
             app:layout_constraintBottom_toBottomOf="@id/iv_calendar"
             app:layout_constraintStart_toEndOf="@id/iv_calendar"
             app:layout_constraintTop_toTopOf="@id/iv_calendar" />

@@ -8,16 +8,6 @@
         ".git",
         "firebase-debug.log",
         "firebase-debug.*.log"
-      ]
-    },
-    {
-      "source": "fcm",
-      "codebase": "colink_cli",
-      "ignore": [
-        "node_modules",
-        ".git",
-        "firebase-debug.log",
-        "firebase-debug.*.log"
       ],
       "predeploy": [
         "npm --prefix \"$RESOURCE_DIR\" run lint"

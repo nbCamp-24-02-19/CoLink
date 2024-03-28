@@ -20,11 +20,12 @@ android {
         applicationId = "com.seven.colink"
         minSdk = 26
         targetSdk = 34
-        versionCode = 5
-        versionName = "1.0.5"
+        versionCode = 6
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
+        manifestPlaceholders["kakaoAppKey"] = properties["KAKAO_APP_KEY"] as String
         buildConfigField("String", "ALGOLIA_API_KEY", properties.getProperty("ALGOLIA_API_KEY"))
         buildConfigField("String", "ALGOLIA_APP_ID", properties.getProperty("ALGOLIA_APP_ID"))
         buildConfigField("String", "FCM_KEY", properties.getProperty("FCM_KEY"))
@@ -136,4 +137,12 @@ dependencies {
 
     //google
     implementation("com.google.android.gms:play-services-auth:21.0.0")
+
+    //kakao
+    implementation ("com.kakao.sdk:v2-all:2.20.1") // 전체 모듈 설치, 2.11.0 버전부터 지원
+    implementation ("com.kakao.sdk:v2-user:2.20.1") // 카카오 로그인 API 모듈
+    implementation ("com.kakao.sdk:v2-cert:2.20.1") // 카카오톡 인증 서비스 API 모듈
+
+    //firebase Function
+    implementation ("com.google.firebase:firebase-functions-ktx:20.4.0")
 }

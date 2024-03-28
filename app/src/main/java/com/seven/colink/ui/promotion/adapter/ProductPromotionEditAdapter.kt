@@ -23,6 +23,7 @@ import com.seven.colink.databinding.ItemProductMemberHeaderBinding
 import com.seven.colink.databinding.ItemProductProjectHeaderBinding
 import com.seven.colink.domain.entity.TempProductEntity
 import com.seven.colink.ui.promotion.model.ProductPromotionItems
+import com.seven.colink.util.convert.convertGradeFormat
 import com.seven.colink.util.openGallery
 import com.seven.colink.util.setLevelIcon
 
@@ -330,7 +331,7 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
             img.load(items?.getOrNull()?.photoUrl)
             name.text = items?.getOrNull()?.name
             intro.text = items?.getOrNull()?.info
-            grade.text = items?.getOrNull()?.grade.toString()
+            grade.text = items?.getOrNull()?.grade!!.convertGradeFormat().toString()
             level.text = items?.getOrNull()?.level.toString()
             items?.getOrNull()?.level.let { color ->
                 if (color != null) {
@@ -362,7 +363,7 @@ class ProductPromotionEditAdapter (private val mContext: Context,private val rec
                 img.load(member.photoUrl)
                 name.text = member.name
                 intro.text = member.info
-                grade.text = member.grade.toString()
+                grade.text = member.grade!!.convertGradeFormat().toString()
                 level.text = member.level.toString()
                 member.level.let { color ->
                     if (color != null) {

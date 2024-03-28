@@ -24,6 +24,9 @@
         android:layout_height="48dp"
         android:layout_marginBottom="20dp"
         android:src="@drawable/ic_profile"
+        android:background="@drawable/bg_background_circle"
+        android:clipToOutline="true"
+        android:scaleType="centerCrop"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>

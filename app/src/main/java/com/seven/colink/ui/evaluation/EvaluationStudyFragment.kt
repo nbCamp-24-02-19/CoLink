@@ -27,12 +27,22 @@ class EvaluationStudyFragment : Fragment() {
     private var _binding: FragmentEvaluationStudyBinding? = null
     private val binding get() = _binding!!
 
-    private var studyUserList: Int = 0
-
     private val evaluationViewModel: EvaluationViewModel by activityViewModels()
 
     private lateinit var viewPager: ViewPager2
     private var currentPage: Int = 0
+
+    private var studyUserListPosition: Int = 0
+
+    private val ratingBar by lazy {
+        with(binding) {
+            listOf(
+                rbEvalQuestion1,
+                rbEvalQuestion2,
+                rbEvalQuestion3
+            )
+        }
+    }
 
     companion object {
         fun newInstanceStudy(position: Int)
@@ -50,15 +60,22 @@ class EvaluationStudyFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentEvaluationStudyBinding.inflate(inflater, container, false)
-
+        arguments?.let {
+            studyUserListPosition = it.getInt("studyUserList", 0)
+        }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initViewModel()
         initView()
+    }
+
+    override fun onResume() {
+        initViewModel()
+        setRatingListener()
+        super.onResume()
     }
 
     private fun initView() {
@@ -88,8 +105,6 @@ class EvaluationStudyFragment : Fragment() {
                     PageState.MIDDLE -> middlePage()
                     PageState.LAST -> lastPage()
                 }
-
-                updateMembers(state.num)
             }
         }
     }
@@ -102,18 +117,23 @@ class EvaluationStudyFragment : Fragment() {
                 it.third == PageState.LAST
             }.collect { (group, uid, _) ->
                 updateStudyUserGrade(group, uid)
-                requireActivity().finish()
             }
         }
     }
 
-    private fun updateMembers(position: Int) =
-        evaluationViewModel.updateStudyMembers(
-            position,
-            binding.rbEvalQuestion1.rating,
-            binding.rbEvalQuestion2.rating,
-            binding.rbEvalQuestion3.rating
-        )
+    private fun setRatingListener() {
+        ratingBar.forEach{ ratingBars ->
+            ratingBars.setOnRatingBarChangeListener{_, _, _ ->
+                val ratings = ratingBar.map { it.rating }
+                evaluationViewModel.updateStudyMembers(
+                    viewPager.currentItem,
+                    q1 = ratings.getOrNull(0),
+                    q2 = ratings.getOrNull(1),
+                    q3 = ratings.getOrNull(2),
+                )
+            }
+        }
+    }
 
     private fun firstPage() = with(binding) {
         tvEvalPrev.visibility = View.INVISIBLE
@@ -154,12 +174,12 @@ class EvaluationStudyFragment : Fragment() {
                 message = getString(R.string.eval_dialog_des),
                 confirmAction = {
                     updateGrade()
+                    it.dismiss()
                     activity?.finish()
                 },
                 cancelAction = { it.dismiss() }
             ).show()
         }
-
     }
 
     private fun setViewPager() {

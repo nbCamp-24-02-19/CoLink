@@ -22,6 +22,7 @@ import com.seven.colink.ui.group.viewmodel.GroupSharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @AndroidEntryPoint
 class MaterialCalendarFragment : Fragment() {
@@ -67,28 +68,14 @@ class MaterialCalendarFragment : Fragment() {
             }
         }
         binding.fbRegisterSchedule.setOnClickListener {
-            sharedViewModel.setScheduleKey(null)
-            sharedViewModel.setScheduleEntryType(CalendarEntryType.CREATE)
-            parentFragmentManager.beginTransaction().apply {
-                setCustomAnimations(
-                    R.anim.enter_animation,
-                    R.anim.exit_animation,
-                    R.anim.enter_animation,
-                    R.anim.exit_animation
-                )
-                replace(
-                    R.id.fg_activity_group,
-                    RegisterScheduleFragment()
-                )
-                addToBackStack(null)
-                commit()
-            }
+            navigateToRegisterScheduleFragment(entryType = CalendarEntryType.CREATE)
         }
         with(calendarView) {
-            dayDecorator = CalendarDecorators.dayDecorator(requireContext())
+            dayDecorator =
+                CalendarDecorators.dayDecorator(requireContext(), R.drawable.calendar_selector)
             todayDecorator = CalendarDecorators.todayDecorator(requireContext())
-            sundayDecorator = CalendarDecorators.sundayDecorator()
-            saturdayDecorator = CalendarDecorators.saturdayDecorator()
+            sundayDecorator = CalendarDecorators.sundayDecorator(requireContext())
+            saturdayDecorator = CalendarDecorators.saturdayDecorator(requireContext())
             selectedMonthDecorator = CalendarDecorators.selectedMonthDecorator(
                 requireContext(),
                 CalendarDay.today().month
@@ -152,17 +139,16 @@ class MaterialCalendarFragment : Fragment() {
             }
 
             lifecycleScope.launch {
-                uiState.collect { uiState ->
+                filteredByMonth.collect { uiState ->
+                    val eventDates = getCalendarDayWithColor(uiState)
+                    for ((date, colorRes) in eventDates) {
+                        val eventDecorator =
+                            CalendarDecorators.eventDecorator(requireContext(), colorRes, date)
+                        binding.calendarView.addDecorator(eventDecorator)
+                    }
                 }
             }
 
-            lifecycleScope.launch {
-                filteredByMonth.collect { uiState ->
-                    val eventDecorator =
-                        CalendarDecorators.eventDecorator(requireContext(), uiState)
-                    binding.calendarView.addDecorator(eventDecorator)
-                }
-            }
         }
 
         sharedViewModel.apply {
@@ -178,8 +164,15 @@ class MaterialCalendarFragment : Fragment() {
     }
 
     private fun onScheduleItemClick(item: ScheduleModel) {
-        sharedViewModel.setScheduleKey(item.key!!)
-        sharedViewModel.setScheduleEntryType(CalendarEntryType.DETAIL)
+        navigateToRegisterScheduleFragment(item.key!!, CalendarEntryType.DETAIL)
+    }
+
+    private fun navigateToRegisterScheduleFragment(
+        scheduleKey: String? = null,
+        entryType: CalendarEntryType
+    ) {
+        sharedViewModel.setScheduleKey(scheduleKey)
+        sharedViewModel.setScheduleEntryType(entryType)
         parentFragmentManager.beginTransaction().apply {
             setCustomAnimations(
                 R.anim.enter_animation,
@@ -194,11 +187,58 @@ class MaterialCalendarFragment : Fragment() {
             addToBackStack(null)
             commit()
         }
-        viewModel.clearFilteredByMonth()
     }
 
     private fun CalendarDay.toLocalDate(): LocalDate {
         return LocalDate.of(year, month, day)
+    }
+
+    private fun getCalendarDayWithColor(scheduleList: List<ScheduleModel>): Map<CalendarDay, IntArray> {
+        val eventDatesColors = mutableMapOf<CalendarDay, MutableList<Int>>()
+        scheduleList.forEach { schedule ->
+            schedule.startDate?.let { startDate ->
+                val startDateTime = LocalDate.parse(
+                    startDate,
+                    DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")
+                )
+                val endDate = schedule.endDate?.let { endDate ->
+                    LocalDate.parse(
+                        endDate,
+                        DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")
+                    )
+                } ?: startDateTime
+
+                val datesInRange = getDateRange(startDateTime, endDate)
+                datesInRange.forEach { date ->
+                    val color = schedule.calendarColor?.color
+                    val colorList = eventDatesColors.getOrPut(date) { mutableListOf() }
+                    color?.let { colorList.add(it) }
+                }
+            }
+        }
+
+        val eventDatesCount = mutableMapOf<CalendarDay, IntArray>()
+        eventDatesColors.forEach { (date, colors) ->
+            eventDatesCount[date] = colors.toIntArray()
+        }
+
+        return eventDatesCount
+    }
+
+    private fun getDateRange(startDate: LocalDate, endDate: LocalDate): List<CalendarDay> {
+        val datesInRange = mutableListOf<CalendarDay>()
+        var currentDate = startDate
+        while (!currentDate.isAfter(endDate)) {
+            datesInRange.add(
+                CalendarDay.from(
+                    currentDate.year,
+                    currentDate.monthValue,
+                    currentDate.dayOfMonth
+                )
+            )
+            currentDate = currentDate.plusDays(1)
+        }
+        return datesInRange
     }
 
 }

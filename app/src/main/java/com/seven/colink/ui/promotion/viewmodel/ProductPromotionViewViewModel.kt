@@ -45,7 +45,6 @@ class ProductPromotionViewViewModel @Inject constructor(
     private val _key = MutableLiveData<String?>()
     val key : LiveData<String?> get() =_key
 
-
     fun initProduct(keyValue: String) {
         getData(keyValue)
     }
@@ -69,7 +68,7 @@ class ProductPromotionViewViewModel @Inject constructor(
                     imageUrl = getEntity.imageUrl,
                     description = getEntity.description,
                     desImg = getEntity.desImg,
-                    tags = getEntity.tags,
+                    postKey = getEntity.postKey,
                     registeredDate = getEntity.registeredDate,
                     referenceUrl = getEntity.referenceUrl,
                     aosUrl = getEntity.aosUrl,

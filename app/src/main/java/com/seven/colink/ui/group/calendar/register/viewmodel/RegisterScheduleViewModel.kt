@@ -50,7 +50,7 @@ class RegisterScheduleViewModel @Inject constructor(
 
     fun setEntity(key: String) = viewModelScope.launch {
         _uiState.value =
-            scheduleRepository.getScheduleDetail(key).getOrNull()?.setUi() ?: emptyList()
+            scheduleRepository.getScheduleDetail(key).getOrNull()?.setUi()
     }
 
     private fun createEntity() = viewModelScope.launch {
@@ -121,6 +121,7 @@ class RegisterScheduleViewModel @Inject constructor(
     }
 
     private fun onClickCreate() {
+        updateTexts()
         viewModelScope.launch {
             val schedule = uiState.value?.firstOrNull()?.convert()
             if (schedule != null) {
@@ -131,6 +132,7 @@ class RegisterScheduleViewModel @Inject constructor(
     }
 
     private fun onClickUpdate() {
+        updateTexts()
         viewModelScope.launch {
             val schedule = uiState.value?.firstOrNull()?.convert()
             if (schedule != null) {
@@ -177,8 +179,8 @@ class RegisterScheduleViewModel @Inject constructor(
         key = key ?: ("SE_" + UUID.randomUUID()),
         authId = authId ?: authRepository.getCurrentUser().message,
         groupId = groupId,
-        startDate = startDate ?: getDateByState(ScheduleDateType.CURRENT),
-        endDate = endDate ?: getDateByState(ScheduleDateType.AFTER_TWO_HOUR),
+        startDate = startDate,
+        endDate = endDate,
         calendarColor = calendarColor,
         title = title?.ifBlank { "제목 없음" },
         description = description

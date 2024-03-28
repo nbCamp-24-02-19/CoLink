@@ -263,17 +263,17 @@ class PostViewModel @Inject constructor(
                     registerPostUseCase(entity)
                     groupRepository.registerGroup(entity.convertGroupEntity())
                     onSuccess(context.getString(R.string.post_register_success))
-                    getChatRoomUseCase(
-                        key = entity.key,
-                        uids = entity.memberIds,
-                        title = entity.title!!,
-                        type = when (entity.groupType) {
-                            GroupType.PROJECT -> ChatTabType.PROJECT
-                            GroupType.STUDY -> ChatTabType.STUDY
-                            else -> return@launch
-                        },
-                        thumbnail = entity.imageUrl
-                    )
+                        getChatRoomUseCase(
+                            key = entity.key,
+                            uids = entity.memberIds,
+                            title = entity.title!!,
+                            type = when (entity.groupType) {
+                                GroupType.PROJECT -> ChatTabType.PROJECT
+                                GroupType.STUDY -> ChatTabType.STUDY
+                                else -> return@launch
+                            },
+                            thumbnail = entity.imageUrl
+                        )
                     _complete.emit(entity.key)
                 } catch (groupException: Exception) {
                     onError(groupException)
