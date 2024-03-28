@@ -6,9 +6,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seven.colink.domain.entity.PostEntity
+import com.seven.colink.domain.repository.GroupRepository
 import com.seven.colink.domain.repository.PostRepository
 import com.seven.colink.ui.home.BottomItems
 import com.seven.colink.util.status.GroupType
+import com.seven.colink.util.status.ProjectStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,6 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeChildViewModel @Inject constructor(
     private val postRepository: PostRepository,
+    private val groupRepository: GroupRepository,
 ) : ViewModel() {
 
     private val _bottomItems: MutableLiveData<List<BottomItems>> = MutableLiveData(mutableListOf())
@@ -35,11 +38,28 @@ class HomeChildViewModel @Inject constructor(
                 repository.forEach {
                     while (true) {
                         if (getBottomItemList.size < num) {
-                            var bottomRecentItem = BottomItems(it.groupType,it.title,it.description
-                                ,it.tags,it.imageUrl,it.key,it.status,it.status)
+                            val bottomRecentItem = BottomItems(typeId = it.groupType, title = it.title, des = it.description,
+                                kind = it.tags, img = it.imageUrl, key = it.key)
                             getBottomItemList.add(bottomRecentItem)
+                            getBottomItemList.forEachIndexed { index, item ->
+                                val key = item.key
+                                val group = key?.let { items -> groupRepository.getGroupDetail(items) }?.getOrNull()
+                                val updateItem = item.copy(blind = group?.status, complete = group?.status)
+                                getBottomItemList[index] = updateItem
+                            }
+                            val endStatusItems = getBottomItemList.filter { end -> end.complete == ProjectStatus.END }
+                            if (endStatusItems.isNotEmpty()) {
+                                getBottomItemList.removeAll(endStatusItems)
+                                getBottomItemList.addAll(endStatusItems)
+                            }
                         }else if (getBottomItemList.size > num) {
-                            getBottomItemList.removeAt(num +1)
+                            getBottomItemList.forEachIndexed { index, remove ->
+                                if (remove.complete == ProjectStatus.END) {
+                                    getBottomItemList.removeAt(index)
+                                }else{
+                                    getBottomItemList.removeAt(num +1)
+                                }
+                            }
                         }
                         break
                     }
