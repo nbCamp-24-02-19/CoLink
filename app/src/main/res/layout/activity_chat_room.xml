@@ -134,6 +134,7 @@
                     android:layout_marginStart="32dp"
                     android:layout_marginEnd="56dp"
                     android:background="@android:color/transparent"
+                    android:maxLength="1000"
                     app:boxBackgroundColor="@android:color/transparent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/bt_chatroom_plus"

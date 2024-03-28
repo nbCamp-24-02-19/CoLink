@@ -49,6 +49,7 @@
             android:paddingHorizontal="12dp"
             android:paddingVertical="8dp"
             android:text="안녕하세요"
+            android:maxLength="1000"
             android:textColor="@color/white"
             android:textSize="14sp"
             android:autoLink="all"
