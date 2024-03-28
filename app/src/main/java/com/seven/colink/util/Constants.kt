@@ -12,6 +12,7 @@ class Constants {
 
         const val MEDIA_PERMISSION = android.Manifest.permission.READ_EXTERNAL_STORAGE
         const val IMAGE_PERMISSION = android.Manifest.permission.READ_MEDIA_IMAGES
+        const val NOTIFY_PERMISSION = android.Manifest.permission.POST_NOTIFICATIONS
 
         const val CALENDAR_TIME_FORMAT = "yyyy.MM.dd HH:mm"
 
