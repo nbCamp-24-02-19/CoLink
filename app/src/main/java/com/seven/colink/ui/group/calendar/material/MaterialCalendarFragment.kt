@@ -68,22 +68,7 @@ class MaterialCalendarFragment : Fragment() {
             }
         }
         binding.fbRegisterSchedule.setOnClickListener {
-            sharedViewModel.setScheduleKey(null)
-            sharedViewModel.setScheduleEntryType(CalendarEntryType.CREATE)
-            parentFragmentManager.beginTransaction().apply {
-                setCustomAnimations(
-                    R.anim.enter_animation,
-                    R.anim.exit_animation,
-                    R.anim.enter_animation,
-                    R.anim.exit_animation
-                )
-                replace(
-                    R.id.fg_activity_group,
-                    RegisterScheduleFragment()
-                )
-                addToBackStack(null)
-                commit()
-            }
+            navigateToRegisterScheduleFragment(entryType = CalendarEntryType.CREATE)
         }
         with(calendarView) {
             dayDecorator =
@@ -155,10 +140,10 @@ class MaterialCalendarFragment : Fragment() {
 
             lifecycleScope.launch {
                 filteredByMonth.collect { uiState ->
-                    binding.calendarView.removeDecorators()
                     val eventDates = getCalendarDayWithColor(uiState)
                     for ((date, colorRes) in eventDates) {
-                        val eventDecorator = CalendarDecorators.eventDecorator(requireContext(), colorRes, date)
+                        val eventDecorator =
+                            CalendarDecorators.eventDecorator(requireContext(), colorRes, date)
                         binding.calendarView.addDecorator(eventDecorator)
                     }
                 }
@@ -179,9 +164,15 @@ class MaterialCalendarFragment : Fragment() {
     }
 
     private fun onScheduleItemClick(item: ScheduleModel) {
-        viewModel.resetFilters()
-        sharedViewModel.setScheduleKey(item.key!!)
-        sharedViewModel.setScheduleEntryType(CalendarEntryType.DETAIL)
+        navigateToRegisterScheduleFragment(item.key!!, CalendarEntryType.DETAIL)
+    }
+
+    private fun navigateToRegisterScheduleFragment(
+        scheduleKey: String? = null,
+        entryType: CalendarEntryType
+    ) {
+        sharedViewModel.setScheduleKey(scheduleKey)
+        sharedViewModel.setScheduleEntryType(entryType)
         parentFragmentManager.beginTransaction().apply {
             setCustomAnimations(
                 R.anim.enter_animation,
@@ -204,7 +195,6 @@ class MaterialCalendarFragment : Fragment() {
 
     private fun getCalendarDayWithColor(scheduleList: List<ScheduleModel>): Map<CalendarDay, IntArray> {
         val eventDatesColors = mutableMapOf<CalendarDay, MutableList<Int>>()
-
         scheduleList.forEach { schedule ->
             schedule.startDate?.let { startDate ->
                 val startDateTime = LocalDate.parse(
