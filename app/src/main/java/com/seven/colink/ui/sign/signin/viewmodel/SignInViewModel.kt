@@ -1,9 +1,11 @@
 package com.seven.colink.ui.sign.signin.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.identity.BeginSignInResult
 import com.google.firebase.auth.FirebaseUser
+import com.seven.colink.data.firebase.type.DataResult
 import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.KakaoRepository
@@ -68,7 +70,14 @@ class SignInViewModel @Inject constructor(
     fun getTokenByKakao() {
         viewModelScope.launch {
             kakaoRepository.kakaoLogin().getOrNull().let { token ->
-                if (token != null) authRepository.getCustomToken(token)
+                if (token != null) authRepository.getCustomToken(token).let { result ->
+                    if (result is DataResult.Success) {
+                        if (userRepository.getUserDetails(result.data.uid).getOrNull() == null) {
+                            userRepository.registerUser(result.data.convert())
+                            _updateEvent.emit(SignUpEntryType.UPDATE_PROFILE)
+                        }
+                    }
+                }
             }
         }
     }

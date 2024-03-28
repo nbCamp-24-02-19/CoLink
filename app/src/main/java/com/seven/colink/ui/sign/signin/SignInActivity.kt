@@ -79,6 +79,11 @@ class SignInActivity : AppCompatActivity() {
         super.onStart()
     }
 
+    override fun onResume() {
+        viewModel.signInCheck()
+        super.onResume()
+    }
+
     private fun initViewModel() = with(viewModel) {
         lifecycleScope.launch {
             entryType.collect {
@@ -140,10 +145,9 @@ class SignInActivity : AppCompatActivity() {
             )
         }
 
-//        btSignInKakao.setOnClickListener {
-//            viewModel.getTokenByKakao()
-////            kakaoLogin()
-//        }
+        btSignInKakao.setOnClickListener {
+            viewModel.getTokenByKakao()
+        }
 
         btSignInGoogle.setOnClickListener {
             lifecycleScope.launch {
@@ -160,33 +164,4 @@ class SignInActivity : AppCompatActivity() {
             Log.w(TAG, "signInResult:failed code=" + e.statusCode)
         }
     }
-
-/*    private fun kakaoLogin() =
-        if (UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {
-            UserApiClient.instance.loginWithKakaoTalk(this) { token, error ->
-                if (error != null) {
-                    if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
-                        return@loginWithKakaoTalk
-                    } else {
-                        loginWithKaKaoAccount(this)
-                    }
-                } else if (token != null) {
-                    viewModel.getTokenByKakao(token.accessToken)
-                }
-            }
-        } else {
-            loginWithKaKaoAccount(this)
-        }
-
-    private fun loginWithKaKaoAccount(context: Context) {
-        UserApiClient.instance.loginWithKakaoAccount(context) { token: OAuthToken?, error: Throwable? ->
-            if (token != null) {
-                viewModel.getTokenByKakao(token.accessToken)
-            }
-            if (error != null) {
-                Log.d(TAG, "$error")
-            }
-        }
-    }*/
-
 }
