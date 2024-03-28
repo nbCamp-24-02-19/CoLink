@@ -24,7 +24,9 @@ import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.snackbar.setSnackBar
 import com.seven.colink.util.status.SnackType
+import com.seven.colink.util.status.UiState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
@@ -107,7 +109,6 @@ class SignUpActivity : AppCompatActivity() {
                 Pair(uiStatus, entryType)
             }.collect { (uiStatus, entryType) ->
                 setUi(uiStatus, entryType)
-                this@SignUpActivity.hideProgressOverlay()
             }
         }
 
@@ -176,6 +177,19 @@ class SignUpActivity : AppCompatActivity() {
                 skillAdapter.submitList(it)
             }
         }
+
+        lifecycleScope.launch {
+            progressState.collect {
+                when(it) {
+                    UiState.Loading -> {
+                        showProgressOverlay()
+                    }
+                    else -> {
+                        hideProgressOverlay()
+                    }
+                }
+            }
+        }
     }
     private fun setUi(
         state: SignUpUIState,
@@ -217,7 +231,6 @@ class SignUpActivity : AppCompatActivity() {
     }
     private fun setButton(state: SignUpUIState, entryType: SignUpEntryType) = with(binding){
         btSignUpBtn.setOnClickListener {
-            this@SignUpActivity.showProgressOverlay()
             it.isEnabled = false
             when(state) {
                 SignUpUIState.EMAIL -> viewModel.checkValid(state, etSignUpEmailId.text.toString(), etSignUpEmailService.text.toString())
@@ -277,7 +290,6 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun onClickEnd(map: Map<String, Any?>) {
-        this.showProgressOverlay()
         viewModel.checkValid(map)
     }
 }
