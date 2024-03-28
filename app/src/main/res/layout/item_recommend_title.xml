@@ -14,13 +14,6 @@
         android:textSize="28sp"
         android:textColor="@color/black"
         style="@style/BoldTextStyle"/>
-    <TextView
-        android:id="@+id/tv_recommend_edit_group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/recommend_edit_group"
-        android:textColor="@color/main_color"
-        style="@style/BoldTextStyle"/>
 
     <TextView
         android:id="@+id/tv_recommend_title_name"

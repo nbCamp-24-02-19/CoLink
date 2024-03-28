@@ -87,7 +87,7 @@ class NotificationAdapter (
             cvNotifyAll.setup(FilterType.ALL, tvNotifyAll, item.state)
             cvNotifyChat.setup(FilterType.CHAT, tvNotifyChat, item.state)
             cvNotifyRecruit.setup(FilterType.RECRUIT, tvNotifyRecruit, item.state)
-            tvNotifyDelete.setOnClickListener { deleteAll }
+            tvNotifyDelete.setOnClickListener { deleteAll() }
         }
 
         private fun MaterialCardView.setup(filterType: FilterType, text: TextView, state: FilterType) {
@@ -139,10 +139,12 @@ class NotificationAdapter (
             tvNotifyBody.text = item.body
             tvNotifyRegisteredDate.text = item.registeredDate
 
-            when (item.type) {
-                APPLY, JOIN -> onGroup(item.key!!)
-                INVITE -> onPost(item.key!!)
-                else -> Unit
+            root.setOnClickListener {
+                when (item.type) {
+                    APPLY, JOIN -> onGroup(item.key!!)
+                    INVITE -> onPost(item.key!!)
+                    else -> Unit
+                }
             }
         }
     }

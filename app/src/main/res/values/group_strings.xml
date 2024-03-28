@@ -36,7 +36,7 @@
     <string name="project_status_changed">프로젝트 상태 변경</string>
     <string name="project_status_changed_message">프로젝트 상태를 %1$s로 변경하시겠습니까?</string>
     <string name="status_text_start">시작하기</string>
-    <string name="status_text_end">종료하록</string>
+    <string name="status_text_end">종료하기</string>
     <string name="no_list_supported">지원한 목록이 없습니다.</string>
     <string name="no_schedule">일정이 없습니다. </string>
     <string name="promotion_error_message">홍보하기는 프로젝트만 가능합니다.</string>

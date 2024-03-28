@@ -220,10 +220,11 @@ class EvaluationViewModel @Inject constructor(
         )
 
     fun updatePage(position: Int) {
+        Log.d("qwew", "postion $position \n size ${currentGroup.value.memberIds}")
             _currentPage.value =
                 when (position) {
-                    0 -> if (currentGroup.value.memberIds.size - 2 != position) PageState.FIRST else PageState.LAST
                     currentGroup.value.memberIds.size - 2 -> PageState.LAST
+                    0 -> if (currentGroup.value.memberIds.size != 2) PageState.FIRST else PageState.LAST
                     else -> PageState.MIDDLE
                 }.apply { num = position }
         }

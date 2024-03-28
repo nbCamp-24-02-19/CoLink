@@ -119,9 +119,6 @@ class RecommendAdapter(
         override fun onBind(item: RecommendType) = with(binding) {
             item as RecommendType.Title
             tvRecommendTitleName.text = item.name.setFontType(root.context.getString(R.string.recommend_user_recommend_one), itemView.interBold())
-            tvRecommendEditGroup.setOnClickListener {
-                editGroup(item.key)
-            }
         }
     }
 

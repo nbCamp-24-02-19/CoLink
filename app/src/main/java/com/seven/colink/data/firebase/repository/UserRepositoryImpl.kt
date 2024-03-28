@@ -83,6 +83,8 @@ class UserRepositoryImpl @Inject constructor(
             .get().await()
             .documents.mapNotNull {
                 it.toObject(UserEntity::class.java)
+            }.filter {
+                it.uid != firebaseAuth.currentUser?.uid
             }
     }.onFailure {
         return@onFailure

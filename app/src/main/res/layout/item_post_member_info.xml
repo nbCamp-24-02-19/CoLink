@@ -13,6 +13,7 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:background="@drawable/bg_background_circle"
+        android:clipToOutline="true"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_user_24dp"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -33,7 +33,6 @@ class RegisterScheduleFragment : Fragment() {
                 viewModel.onChangedColor(selectedColor)
             },
             notifyOnClickItem = { position, item ->
-                // TODO 알림
             },
             dateChangeListener = { key, datetime ->
                 viewModel.onChangedDateTime(key, datetime)

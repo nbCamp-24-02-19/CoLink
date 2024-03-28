@@ -142,7 +142,7 @@ class CustomMultipleDotSpan(private val radius: Float, private val colors: IntAr
         lineNumber: Int
     ) {
         val totalDots = minOf(colors.size, 5)
-        val dotSpacing = 24
+        val dotSpacing = 18
         val startX = (left + right) / 2 - (totalDots - 1) * dotSpacing / 2
 
         for (i in 0 until totalDots) {

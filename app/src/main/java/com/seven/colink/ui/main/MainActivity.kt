@@ -134,11 +134,22 @@ class MainActivity : AppCompatActivity() {
         when (requestCode) {
             100, 200 -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // TODO: 권한 부여시 작업 수행
+                    notifyPermission()
+                } else {
+                    finish()
+                }
+            }
+            300 -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
                 } else {
                     finish()
                 }
             }
         }
+    }
+
+    private fun notifyPermission() {
+        requestPermission(Constants.NOTIFY_PERMISSION, 300)
     }
 }

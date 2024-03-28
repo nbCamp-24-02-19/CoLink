@@ -34,9 +34,12 @@ class CalendarViewModel @Inject constructor(
         filterDataByMonth(date)
     }
 
-    fun filterScheduleListByDate(date: LocalDate) = viewModelScope.launch {
+    fun resetFilters() {
+        _filteredByDate.value = ScheduleItem.init()
         _filteredByMonth.value = emptyList()
+    }
 
+    fun filterScheduleListByDate(date: LocalDate) = viewModelScope.launch {
         val allScheduleList = uiState.value
         val filteredScheduleList = mutableListOf<ScheduleModel?>()
         allScheduleList.forEach { schedule ->
@@ -102,28 +105,25 @@ class CalendarViewModel @Inject constructor(
             val isSameMonth = { dateToCheck: LocalDate? ->
                 dateToCheck?.month == date.month
             }
-
-            val isThisMonth = isSameMonth(startDate) || isSameMonth(endDate)
-            val isLastMonth =
-                isSameMonth(startDate?.minusMonths(1)) || isSameMonth(endDate?.minusMonths(1))
-            val isNextMonth =
-                isSameMonth(startDate?.plusMonths(1)) || isSameMonth(endDate?.plusMonths(1))
-
-            isThisMonth || isLastMonth || isNextMonth
+            isSameMonth(startDate) || isSameMonth(endDate)
         }
 
-        _filteredByMonth.value = monthData.map { schedule ->
-            ScheduleModel(
-                schedule.key,
-                schedule.authId,
-                schedule.groupId,
-                schedule.startDate,
-                schedule.endDate,
-                schedule.calendarColor,
-                schedule.title,
-                schedule.description,
-                schedule.buttonUiState
-            )
+        _filteredByMonth.value = if (monthData.isEmpty()) {
+            emptyList()
+        } else {
+            monthData.map { schedule ->
+                ScheduleModel(
+                    schedule.key,
+                    schedule.authId,
+                    schedule.groupId,
+                    schedule.startDate,
+                    schedule.endDate,
+                    schedule.calendarColor,
+                    schedule.title,
+                    schedule.description,
+                    schedule.buttonUiState
+                )
+            }
         }
     }
 

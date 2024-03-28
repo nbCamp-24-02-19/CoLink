@@ -12,6 +12,7 @@ import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.domain.usecase.GetChatRoomUseCase
 import com.seven.colink.domain.usecase.SendNotificationInviteUseCase
 import com.seven.colink.ui.post.register.recommend.type.RecommendType
+import com.seven.colink.util.convert.convertGradeFormat
 import com.seven.colink.util.model.MemberCard
 import com.seven.colink.util.model.MemberInfo
 import com.seven.colink.util.status.UiState
@@ -116,7 +117,7 @@ class RecommendViewModel @Inject constructor(
         name = name,
         profileUrl = photoUrl,
         level = level,
-        grade = grade,
+        grade = grade?.convertGradeFormat(),
         info = info,
         recruits = 1,
     )
@@ -126,7 +127,7 @@ class RecommendViewModel @Inject constructor(
         name = name,
         profileUrl = photoUrl,
         info = info,
-        grade = grade,
+        grade = grade?.convertGradeFormat(),
         level = level,
     )
 }
