@@ -1,6 +1,5 @@
 package com.seven.colink.ui.group.board.board
 
-
 import com.seven.colink.ui.group.calendar.material.MaterialCalendarFragment
 import android.content.Intent
 import android.os.Bundle
@@ -24,13 +23,13 @@ import com.seven.colink.ui.userdetail.UserDetailActivity
 import com.seven.colink.util.Constants
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.snackbar.setSnackBar
+import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.PostEntryType
 import com.seven.colink.util.status.ProjectStatus
 import com.seven.colink.util.status.SnackType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-
 
 @AndroidEntryPoint
 class GroupBoardFragment : Fragment() {
@@ -102,13 +101,23 @@ class GroupBoardFragment : Fragment() {
                                     )?.show()
                                     return@GroupBoardListAdapter
                                 }
-
-                                val intent =
-                                    Intent(requireContext(), ProductPromotionActivity::class.java)
-                                intent.putExtra(Constants.EXTRA_ENTITY_KEY, item.key)
-                                startActivity(intent)
+                                viewModel.result.observe(viewLifecycleOwner) { result ->
+                                    when(result) {
+                                        DataResultStatus.SUCCESS -> {
+                                            val intent =
+                                                Intent(requireContext(), ProductPromotionActivity::class.java)
+                                            intent.putExtra(Constants.EXTRA_ENTITY_KEY, viewModel.productKey)
+                                            startActivity(intent)
+                                        }
+                                        DataResultStatus.FAIL -> {
+                                            val intent =
+                                                Intent(requireContext(), ProductPromotionActivity::class.java)
+                                            intent.putExtra(Constants.EXTRA_ENTITY_KEY, item.key)
+                                            startActivity(intent)
+                                        }
+                                    }
+                                }
                             }
-
                             else -> Unit
                         }
                     }

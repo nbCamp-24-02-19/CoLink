@@ -6,8 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seven.colink.R
 import com.seven.colink.domain.entity.GroupEntity
+import com.seven.colink.domain.entity.ProductEntity
 import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.GroupRepository
+import com.seven.colink.domain.repository.ProductRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.domain.usecase.GetPostUseCase
 import com.seven.colink.ui.post.content.model.ContentButtonUiState
@@ -24,13 +26,33 @@ class GroupBoardViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository,
     private val groupRepository: GroupRepository,
-    private val postUseCase: GetPostUseCase
+    private val postUseCase: GetPostUseCase,
+    private val productRepository: ProductRepository
 ) : ViewModel() {
     private val _uiStateList = MutableLiveData<List<GroupBoardItem>?>()
     val uiStateList: LiveData<List<GroupBoardItem>?> get() = _uiStateList
 
     private val _entity = MutableLiveData(GroupBoardUiState.init())
     val entity: LiveData<GroupBoardUiState?> get() = _entity
+
+    private val _result = MutableLiveData<DataResultStatus>()
+    val result : LiveData<DataResultStatus> get() = _result
+    lateinit var productKey : String
+
+    private suspend fun getProduct(postKey: String) : ProductEntity? {
+        return productRepository.getProduct(postKey).getOrNull()
+    }
+
+    private fun compareKey(key: String)  {
+        viewModelScope.launch {
+            val compareItem = getProduct(key)
+            if (key == compareItem?.postKey) {
+                _result.value = DataResultStatus.SUCCESS
+            }else {
+                _result.value = DataResultStatus.FAIL
+            }
+        }
+    }
 
     fun setEntity(key: String) = viewModelScope.launch {
         val groupEntity = key.let { groupRepository.getGroupDetail(it).getOrNull() }
@@ -39,6 +61,8 @@ class GroupBoardViewModel @Inject constructor(
             checkCurrentUser(it.groupEntity)
             groupContentItems()
         }
+        compareKey(key)
+        productKey = productRepository.getProduct(key).getOrNull()?.key.toString()
     }
 
     private fun checkCurrentUser(groupEntity: GroupEntity?) = viewModelScope.launch {

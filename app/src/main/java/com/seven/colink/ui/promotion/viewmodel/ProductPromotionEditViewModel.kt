@@ -67,7 +67,7 @@ class ProductPromotionEditViewModel @Inject constructor(
                 imageUrl = "",
                 description = "",
                 desImg = "",
-                tags = emptyList(),
+                postKey = ids.getOrNull()?.postKey,
                 registeredDate = LocalDateTime.now().convertLocalDateTime(),
                 referenceUrl = null,
                 aosUrl = null,
@@ -122,7 +122,7 @@ class ProductPromotionEditViewModel @Inject constructor(
                         it.userInfo?.uid?.let { uid -> list.add(uid) }
                     }
                     memberDetailList = delList.toMutableList()
-                    entity = entity.copy(memberIds = list)
+                    entity = entity.copy(memberIds = list, postKey = key)
 
                 }
                 val setMemberItem = memberDetailList
@@ -150,7 +150,7 @@ class ProductPromotionEditViewModel @Inject constructor(
                 imageUrl = detail?.imageUrl,
                 description = detail?.description,
                 desImg = detail?.desImg,
-                tags = detail?.tags,
+                postKey = detail?.postKey,
                 registeredDate = detail?.registeredDate,
                 referenceUrl = detail?.referenceUrl,
                 aosUrl = detail?.aosUrl,
