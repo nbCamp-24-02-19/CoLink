@@ -1,6 +1,5 @@
 package com.seven.colink.ui.search
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -73,9 +72,6 @@ class SearchViewModel @Inject constructor(
                 } catch (e: Exception) {
                     UiState.Error(e)
                 }
-            Log.d("doSearch", "SearchValue = ${groupType} , ${recruitType}")
-            Log.d("doSearch", "SearchValueResult = ${_searchModel.value}")
-
         }
     }
 
@@ -87,9 +83,7 @@ class SearchViewModel @Inject constructor(
     }
 
     suspend fun getPost(key: String): PostEntity? {
-        val post = postRepository.getPost(key).getOrNull()
-        Log.d("getPost", "post = ${post}")
-        return post
+        return postRepository.getPost(key).getOrNull()
     }
 
     fun setGroupBoth(query: String) {

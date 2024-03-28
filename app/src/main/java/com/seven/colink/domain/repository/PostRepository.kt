@@ -21,4 +21,5 @@ interface PostRepository {
     suspend fun incrementPostViews(key: String): DataResultStatus
     suspend fun getRecentPost(count: Int, groupType: GroupType?= null): List<PostEntity>
     suspend fun synchronizeFirestoreToAlgolia()
+    suspend fun registerLike(key: String, likes: Int): DataResultStatus
 }

@@ -2,7 +2,7 @@
     <string name="app_name">CoLink</string>
     <string name="title_home">홈</string>
     <string name="title_post">게시판</string>
-    <string name="title_member">멤버</string>
+    <string name="title_member">그룹</string>
     <string name="title_chat">채팅</string>
     <string name="title_my_info">내정보</string>
     <string name="util_dialog_confirm">확인</string>
