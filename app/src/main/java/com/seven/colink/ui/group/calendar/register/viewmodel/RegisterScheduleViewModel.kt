@@ -158,12 +158,12 @@ class RegisterScheduleViewModel @Inject constructor(
     }
 
     private suspend fun ScheduleEntity.setUi(): List<ScheduleModel> {
-        val authId = authRepository.getCurrentUser().message
+        val id = if (groupId.isNullOrBlank()) groupKey else groupId
         return listOf(
             ScheduleModel(
                 key = key,
                 authId = authId,
-                groupId = if (groupId.isNullOrBlank()) groupKey else groupId,
+                groupId = id,
                 startDate = startDate,
                 endDate = endDate,
                 calendarColor = calendarColor ?: ColorEnum.UNKNOWN,
@@ -173,7 +173,6 @@ class RegisterScheduleViewModel @Inject constructor(
             )
         )
     }
-
 
     private suspend fun ScheduleModel.convert() = ScheduleEntity(
         key = key ?: ("SE_" + UUID.randomUUID()),

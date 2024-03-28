@@ -25,7 +25,8 @@ sealed interface PostContentItem {
     data class RecruitItem(
         val key: String?,
         val recruit: RecruitInfo,
-        val buttonUiState: ContentButtonUiState
+        val buttonUiState: ContentButtonUiState,
+        val status: ProjectStatus?
     ) : PostContentItem
 
     data class MemberItem(

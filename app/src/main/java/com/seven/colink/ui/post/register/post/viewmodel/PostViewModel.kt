@@ -3,7 +3,6 @@ package com.seven.colink.ui.post.register.post.viewmodel
 import android.app.Application
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seven.colink.R
@@ -263,17 +262,17 @@ class PostViewModel @Inject constructor(
                     registerPostUseCase(entity)
                     groupRepository.registerGroup(entity.convertGroupEntity())
                     onSuccess(context.getString(R.string.post_register_success))
-                        getChatRoomUseCase(
-                            key = entity.key,
-                            uids = entity.memberIds,
-                            title = entity.title!!,
-                            type = when (entity.groupType) {
-                                GroupType.PROJECT -> ChatTabType.PROJECT
-                                GroupType.STUDY -> ChatTabType.STUDY
-                                else -> return@launch
-                            },
-                            thumbnail = entity.imageUrl
-                        )
+                    getChatRoomUseCase(
+                        key = entity.key,
+                        uids = entity.memberIds,
+                        title = entity.title!!,
+                        type = when (entity.groupType) {
+                            GroupType.PROJECT -> ChatTabType.PROJECT
+                            GroupType.STUDY -> ChatTabType.STUDY
+                            else -> return@launch
+                        },
+                        thumbnail = entity.imageUrl
+                    )
                     _complete.emit(entity.key)
                 } catch (groupException: Exception) {
                     onError(groupException)
@@ -282,6 +281,7 @@ class PostViewModel @Inject constructor(
                 try {
                     registerPostUseCase(entity)
                     onSuccess(context.getString(R.string.post_update_success))
+                    _complete.emit(entity.key)
                 } catch (e: Exception) {
                     onError(e)
                 }
@@ -442,7 +442,11 @@ class PostViewModel @Inject constructor(
                         postItemDataMap["startDate"] ?: uiStateValue.startDate
                     val endDate =
                         postItemDataMap["endDate"] ?: uiStateValue.endDate
-                    uiStateValue.copy(precautions = precautions, startDate = startDate, endDate = endDate)
+                    uiStateValue.copy(
+                        precautions = precautions,
+                        startDate = startDate,
+                        endDate = endDate
+                    )
                 }
 
                 else -> uiStateValue

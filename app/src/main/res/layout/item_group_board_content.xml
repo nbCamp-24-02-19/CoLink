@@ -32,13 +32,12 @@
                 android:background="@drawable/bg_background_circle"
                 android:scaleType="centerCrop"
                 android:src="@drawable/bg_post_image_background"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/tv_teamName"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="24dp"
                 android:background="@android:color/transparent"
@@ -48,6 +47,7 @@
                 android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@id/recycler_view_tags"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/iv_group_image"
                 app:layout_constraintTop_toTopOf="@id/iv_group_image" />
 
