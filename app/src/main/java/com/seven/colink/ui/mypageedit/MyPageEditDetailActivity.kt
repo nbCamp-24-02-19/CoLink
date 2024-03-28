@@ -93,6 +93,7 @@ class MyPageEditDetailActivity : AppCompatActivity() {
                     when (state) {
                         SnackType.Success -> {
                             setSnackBar(state, "성공적으로 저장되었습니다").show()
+                            finish()
                         }
 
                         else -> {
