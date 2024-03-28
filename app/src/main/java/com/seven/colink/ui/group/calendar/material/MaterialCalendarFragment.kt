@@ -155,6 +155,7 @@ class MaterialCalendarFragment : Fragment() {
 
             lifecycleScope.launch {
                 filteredByMonth.collect { uiState ->
+                    binding.calendarView.removeDecorators()
                     val eventDates = getCalendarDayWithColor(uiState)
                     for ((date, colorRes) in eventDates) {
                         val eventDecorator = CalendarDecorators.eventDecorator(requireContext(), colorRes, date)
@@ -178,6 +179,7 @@ class MaterialCalendarFragment : Fragment() {
     }
 
     private fun onScheduleItemClick(item: ScheduleModel) {
+        viewModel.resetFilters()
         sharedViewModel.setScheduleKey(item.key!!)
         sharedViewModel.setScheduleEntryType(CalendarEntryType.DETAIL)
         parentFragmentManager.beginTransaction().apply {
