@@ -49,15 +49,12 @@ class GroupViewModel @Inject constructor(
             if (checkLogin.value == true) {
                 if (joinList.value.isNullOrEmpty()) {
                     items.add(getEmptyJoinList())
-                    Log.d("GroupTest", "### getEmptyJoinList1")
                 } else {
                     joinList.value?.map { items.add(it) }
-                    Log.d("GroupTest", "### getEmptyJoinList2")
                 }
             }
             else {
                 items.add(getEmptyJoinList())
-                Log.d("GroupTest", "### getEmptyJoinList3")
             }
             items.add(getAdd())
             if (wantList.value.isNullOrEmpty()) {
@@ -109,7 +106,6 @@ class GroupViewModel @Inject constructor(
             groupType = groupType,
             thumbnail = imageUrl,
             projectName = teamName,
-            days = "모집중",
             description = description,
             tags = tags,
             memberIds = memberIds

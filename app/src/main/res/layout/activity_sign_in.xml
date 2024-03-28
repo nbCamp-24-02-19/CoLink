@@ -136,45 +136,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/bt_sign_in_google"
         app:layout_constraintStart_toStartOf="@+id/bt_sign_in_google"/>
 
-<!--    <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--        android:id="@+id/bt_sign_in_google"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="48dp"-->
-<!--        android:layout_marginTop="12dp"-->
-<!--        android:background="@drawable/bg_round_corner_8dp_stroke_black"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/bt_sign_in_kakao"-->
-<!--        tools:layout_editor_absoluteX="24dp">-->
-
-<!--        <ImageView-->
-<!--            android:id="@+id/iv_google"-->
-<!--            android:layout_width="32dp"-->
-<!--            android:layout_height="32dp"-->
-<!--            android:src="@drawable/ic_google_logo"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            app:layout_constraintEnd_toStartOf="@+id/tv_google_login"-->
-<!--            app:layout_constraintHorizontal_bias="0.4"-->
-<!--            app:layout_constraintHorizontal_chainStyle="packed"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/tv_google_login"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="0dp"-->
-<!--            android:layout_marginStart="10dp"-->
-<!--            android:gravity="center"-->
-<!--            android:text="구글 로그인"-->
-<!--            android:textSize="14sp"-->
-<!--            android:fontFamily="@font/inter_bold"-->
-<!--            android:textColor="@color/black"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintHorizontal_bias="0.5"-->
-<!--            app:layout_constraintStart_toEndOf="@+id/iv_google"-->
-<!--            app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
-
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/bt_sign_in_kakao"
         android:layout_width="match_parent"
@@ -190,7 +151,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:targetApi="s" />
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

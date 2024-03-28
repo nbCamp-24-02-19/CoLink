@@ -34,7 +34,7 @@ class EvaluationProjectFragment : Fragment() {
     private var projectUserListPosition: Int = 0
 
     private val ratingBar by lazy {
-        with(binding){
+        with(binding) {
             listOf(
                 rbEvalQuestion1,
                 rbEvalQuestion2,
@@ -44,6 +44,7 @@ class EvaluationProjectFragment : Fragment() {
             )
         }
     }
+
     companion object {
         fun newInstanceProject(position: Int)
                 : EvaluationProjectFragment {
@@ -101,11 +102,11 @@ class EvaluationProjectFragment : Fragment() {
 
         lifecycleScope.launch {
             currentPage.collect { state ->
-                    when (state) {
-                        PageState.FIRST -> firstPage()
-                        PageState.MIDDLE -> middlePage()
-                        PageState.LAST -> lastPage()
-                    }
+                when (state) {
+                    PageState.FIRST -> firstPage()
+                    PageState.MIDDLE -> middlePage()
+                    PageState.LAST -> lastPage()
+                }
             }
         }
     }

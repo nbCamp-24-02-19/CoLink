@@ -140,7 +140,8 @@
                             android:layout_height="18dp"
                             android:layout_gravity="end|center_vertical"
                             android:layout_margin="8dp"
-                            android:src="@drawable/ic_search" />
+                            android:src="@drawable/ic_search"
+                            android:background="@drawable/selector_view_whitebg"/>
 
                     </LinearLayout>
 

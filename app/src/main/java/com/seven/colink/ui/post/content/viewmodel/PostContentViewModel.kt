@@ -66,24 +66,14 @@ class PostContentViewModel @Inject constructor(
     private val _checkLogin = MutableLiveData<Boolean>(false)
     val checkLogin: LiveData<Boolean> get() = _checkLogin
 
-    private val _isLike = MutableLiveData<Boolean>()
-    val isLike: LiveData<Boolean> get() = _isLike
-
     private var _currentUser: UserEntity? = null
     private val currentUser get() = _currentUser
-
-    private val _likeList = MutableLiveData<List<String>?>()
-    val likeList: LiveData<List<String>?> get() = _likeList
 
     init {
         viewModelScope.launch {
             _currentUser = authRepository.getCurrentUser().message.let {
                 userRepository.getUserDetails(it)
             }.getOrNull()
-
-//            _likeList.value = authRepository.getCurrentUser().message.let {
-//                userRepository.getUserDetails(it)
-//            }.getOrNull()?.likeList
         }
     }
 
@@ -387,7 +377,6 @@ class PostContentViewModel @Inject constructor(
                 }
                 _uiState.value = updateUiState
             }
-
         }
     }
 
@@ -395,11 +384,11 @@ class PostContentViewModel @Inject constructor(
         viewModelScope.launch {
             val currentUser = authRepository.getCurrentUser()
             val checkLike = userRepository.getUserDetails(currentUser.message)
-
             val isLikeCheck = checkLike.getOrNull()?.likeList?.contains(entity.key) ?: false
+            val getPost = postRepository.getPost(entity.key).getOrNull()?.like
             val updateUiState = _uiState.value?.map { item ->
                 if (item is PostContentItem.Item && item.key == entity.key){
-                    item.copy(isLike = isLikeCheck)
+                    item.copy(isLike = isLikeCheck, like = getPost)
                 } else {
                     item
                 }
@@ -417,4 +406,15 @@ class PostContentViewModel @Inject constructor(
         }
     }
 
+    fun updatePostLike(){
+        viewModelScope.launch {
+             _uiState.value?.map { item ->
+                if (item is PostContentItem.Item && item.key == entity.key){
+                    item.like?.let { postRepository.registerLike(item.key, item.like) }
+                } else {
+                    item
+                }
+            }
+        }
+    }
 }

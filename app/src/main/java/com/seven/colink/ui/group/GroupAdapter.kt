@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -136,7 +137,6 @@ class GroupAdapter(
     ) : GroupViewHolder(binding.root) {
         override fun onBind(item: GroupData) {
             if (item is GroupData.GroupList) {
-//                binding.tvGroupType.text = if (item.groupType==GroupType.PROJECT)"P" else "S"
                 if (item.groupType == GroupType.PROJECT) {
                     binding.tvGroupType.text = "P"
                 } else {
@@ -149,7 +149,6 @@ class GroupAdapter(
                 }
                 binding.tvGroupProjectTitle.text = item.projectName
                 binding.tvGroupDescription.text = item.description
-                binding.tvGroupDays.text = item.days.toString()
                 binding.tvGroupTags.text = item.tags?.map { "# " + it }?.joinToString("   ", "", "")
             }
         }
@@ -182,6 +181,13 @@ class GroupAdapter(
     ) : GroupViewHolder(binding.root) {
         override fun onBind(item: GroupData) {
             if (item is GroupData.GroupWant) {
+                if (item.groupType == GroupType.PROJECT) {
+                    binding.tvHomeBottomProject.visibility = View.VISIBLE
+                    binding.tvHomeBottomStudy.visibility = View.INVISIBLE
+                } else {
+                    binding.tvHomeBottomProject.visibility = View.INVISIBLE
+                    binding.tvHomeBottomStudy.visibility = View.VISIBLE
+                }
                 binding.ivHomeBottomThumubnail.load(item.img)
                 binding.tvHomeBottomTitle.text = item.title
                 binding.tvHomeBottomDes.text = item.description

@@ -1,5 +1,6 @@
 package com.seven.colink.ui.mypage.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -32,7 +33,12 @@ class MyPageLikeAdapter(var mItems: MutableList<MyPageLikeModel>) :
         val item = mItems[position]
 
         holder.itemBox.setOnClickListener {
-            itemClick?.onClick(mItems[position], position)
+            if (mItems.isNullOrEmpty()) {
+                Log.e("Error", "MyPage Like mItems is NullOrEmpty")
+                return@setOnClickListener
+            } else {
+                itemClick?.onClick(mItems[position], position)
+            }
         }
 
         if (item.status == ProjectStatus.RECRUIT) {

@@ -1,16 +1,15 @@
 package com.seven.colink.ui.group.calendar.material
 
 import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Paint
 import android.text.style.ForegroundColorSpan
+import android.text.style.LineBackgroundSpan
 import androidx.core.content.ContextCompat
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.DayViewFacade
-import com.prolificinteractive.materialcalendarview.spans.DotSpan
 import com.seven.colink.R
-import com.seven.colink.ui.group.calendar.model.ScheduleModel
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.Calendar
 
 object CalendarDecorators {
@@ -106,55 +105,53 @@ object CalendarDecorators {
         }
     }
 
-    fun eventDecorator(context: Context, scheduleList: List<ScheduleModel>): DayViewDecorator {
+    fun eventDecorator(context: Context, colorRes: IntArray, date: CalendarDay): DayViewDecorator {
         return object : DayViewDecorator {
-            private val eventDates = HashSet<CalendarDay>()
+            private val colors: IntArray = IntArray(colorRes.size)
 
             init {
-                scheduleList.forEach { schedule ->
-                    schedule.startDate?.let { startDate ->
-                        val startDateTime = LocalDate.parse(
-                            startDate,
-                            DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")
-                        )
-                        val endDateTime = schedule.endDate?.let { endDate ->
-                            LocalDate.parse(
-                                endDate,
-                                DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")
-                            )
-                        } ?: startDateTime
-
-                        val datesInRange = getDateRange(startDateTime, endDateTime)
-                        eventDates.addAll(datesInRange)
-                    }
+                for (i in colorRes.indices) {
+                    colors[i] = ContextCompat.getColor(context, colorRes[i])
                 }
             }
 
             override fun shouldDecorate(day: CalendarDay?): Boolean {
-                return eventDates.contains(day)
+                return date == day
             }
 
             override fun decorate(view: DayViewFacade) {
-                view.addSpan(DotSpan(7F, ContextCompat.getColor(context, R.color.main_color)))
-            }
-
-            private fun getDateRange(startDate: LocalDate, endDate: LocalDate): List<CalendarDay> {
-                val datesInRange = mutableListOf<CalendarDay>()
-                var currentDate = startDate
-                while (!currentDate.isAfter(endDate)) {
-                    datesInRange.add(
-                        CalendarDay.from(
-                            currentDate.year,
-                            currentDate.monthValue,
-                            currentDate.dayOfMonth
-                        )
-                    )
-                    currentDate = currentDate.plusDays(1)
-                }
-                return datesInRange
+                view.addSpan(CustomMultipleDotSpan(7f, colors))
             }
         }
     }
-
 }
 
+class CustomMultipleDotSpan(private val radius: Float, private val colors: IntArray) :
+    LineBackgroundSpan {
+    override fun drawBackground(
+        canvas: Canvas,
+        paint: Paint,
+        left: Int,
+        right: Int,
+        top: Int,
+        baseline: Int,
+        bottom: Int,
+        text: CharSequence,
+        start: Int,
+        end: Int,
+        lineNumber: Int
+    ) {
+        val totalDots = minOf(colors.size, 5)
+        val dotSpacing = 18
+        val startX = (left + right) / 2 - (totalDots - 1) * dotSpacing / 2
+
+        for (i in 0 until totalDots) {
+            val oldColor = paint.color
+            if (colors[i] != 0) {
+                paint.color = colors[i]
+            }
+            canvas.drawCircle(startX + i * dotSpacing.toFloat(), bottom + radius, radius, paint)
+            paint.color = oldColor
+        }
+    }
+}

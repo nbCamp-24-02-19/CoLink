@@ -1,5 +1,6 @@
 package com.seven.colink.ui.mypage.showmore
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,7 +33,6 @@ class MyPageLikeShowMoreAdapter(var mItems: MutableList<SearchModel>) :
         val tag = binding.tvSearchItemTag1
         val poster = binding.tvSearchItemPoster
         val time = binding.tvSearchItemTime
-        val heart = binding.ivSearchItemHeart
         val heartCount = binding.tvSearchItemHeartCount
         val viewCount = binding.tvSearchItemViewCount
     }
@@ -53,7 +53,12 @@ class MyPageLikeShowMoreAdapter(var mItems: MutableList<SearchModel>) :
         val item = mItems[position]
 
         holder.itemBox.setOnClickListener {
-            itemClick?.onClick(mItems[position], position)
+            if (mItems.isNullOrEmpty()) {
+                Log.e("Error", "Like Show More mItems is NullOrEmpty02")
+                return@setOnClickListener
+            } else {
+                itemClick?.onClick(mItems[position], position)
+            }
         }
 
         if (item.groupType == GroupType.PROJECT) {
