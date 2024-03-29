@@ -61,16 +61,23 @@ class MyPageEditDetailViewModel @Inject constructor(
         val img = data.selectUrl?.let { imageRepository.uploadImage(it) }?.getOrNull()
         _userDetail.value = Loading
         try {
-            userRepository.updateUserInfo(
-                userRepository.getUserDetails(data.uid!!).getOrNull()?.copy(
-                    name = text,
-                    photoUrl = img?.toString()?: data.profileUrl
-                )?: return
-            )
-            _uploadState.emit(
-                SnackType.Success
-            )
-            _userDetail.value = Success(data.copy(name = text, profileUrl = data.profileUrl))
+            if (text.length >= 4) {
+                userRepository.updateUserInfo(
+                    userRepository.getUserDetails(data.uid!!).getOrNull()?.copy(
+                        name = text,
+                        photoUrl = img?.toString() ?: data.profileUrl
+                    ) ?: return
+                )
+                _uploadState.emit(
+                    SnackType.Success
+                )
+                _userDetail.value = Success(data.copy(name = text, profileUrl = data.profileUrl))
+            } else {
+                _userDetail.value = Error(Exception(message = "닉네임은 4글자 이상 이어야 합니다"))
+                _uploadState.emit(
+                    SnackType.Notice
+                )
+            }
         } catch (e: Exception) {
             _userDetail.value = Error(e)
             _uploadState.emit(
