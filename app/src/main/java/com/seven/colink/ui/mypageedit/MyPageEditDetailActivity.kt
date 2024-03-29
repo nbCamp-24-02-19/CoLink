@@ -25,6 +25,7 @@ import com.seven.colink.util.status.SnackType
 import com.seven.colink.util.status.UiState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -102,6 +103,17 @@ class MyPageEditDetailActivity : AppCompatActivity() {
                     }
                     buttons.forEach { it.isEnabled = true }
                 }
+            }
+        }
+
+        lifecycleScope.launch {
+            combine(userDetail, uploadState) { state, snack ->
+                Pair(state,snack)
+            }.collect { (state , snack) ->
+                if (state is UiState.Error) {
+                    binding.root.setSnackBar(snack, "${state.throwable.message}")
+                }
+                buttons.forEach { it.isEnabled = true }
             }
         }
     }
