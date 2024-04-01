@@ -2,9 +2,9 @@ package com.seven.colink.ui.home.adapter
 
 import android.os.Build
 import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.DiffUtil
@@ -91,16 +91,13 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
 
         private var currentState = 0
         private var currentPos = 0
-        private var ignoreCallback = false
 
-        private val handler = Handler()
+        private val handler = Handler(Looper.getMainLooper())
         private val autoScrollRunnable = object : Runnable {
             override fun run() {
                 val nextPos = (currentPos + 1 ) % 7
                 pos.text = (nextPos + 1).toString()
-                ignoreCallback = true
                 pager.setCurrentItem(nextPos, true)
-                ignoreCallback = false
                 currentPos = nextPos
                 handler.postDelayed(this, AUTO_SCROLL_DELAY + PAGE_SCROLL_DELAY)
             }
