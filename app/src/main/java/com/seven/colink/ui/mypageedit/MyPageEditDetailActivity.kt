@@ -96,24 +96,13 @@ class MyPageEditDetailActivity : AppCompatActivity() {
                             setSnackBar(state, "성공적으로 저장되었습니다").show()
                             finish()
                         }
-
-                        else -> {
+                        SnackType.Notice -> setSnackBar(state, "닉네임은 2글자 이상 이어야 합니다")
+                        SnackType.Error -> {
                             setSnackBar(state, "갱신 실패하였습니다.").show()
                         }
                     }
                     buttons.forEach { it.isEnabled = true }
                 }
-            }
-        }
-
-        lifecycleScope.launch {
-            combine(userDetail, uploadState) { state, snack ->
-                Pair(state,snack)
-            }.collect { (state , snack) ->
-                if (state is UiState.Error) {
-                    binding.root.setSnackBar(snack, "${state.throwable.message}")
-                }
-                buttons.forEach { it.isEnabled = true }
             }
         }
     }
@@ -128,6 +117,7 @@ class MyPageEditDetailActivity : AppCompatActivity() {
     private fun initView() {
         setButton()
         focusListener()
+        setupLayoutTouchListener()
     }
 
     private fun focusListener() = with(binding) {
@@ -136,6 +126,10 @@ class MyPageEditDetailActivity : AppCompatActivity() {
                 val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(v.windowToken, 0)
                 tvMypageEditName.isEnabled = false
+
+                tvMypageEditName.setOnClickListener {
+                    editName()
+                }
             }
         }
     }
@@ -150,24 +144,15 @@ class MyPageEditDetailActivity : AppCompatActivity() {
         }
 
         ivMypageEditName.setOnClickListener {
-            tvMypageEditName.isEnabled = true
-            tvMypageEditName.requestFocus()
-
-            tvMypageEditName.setSelection(tvMypageEditName.text.length)
-
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.showSoftInput(tvMypageEditName, InputMethodManager.SHOW_IMPLICIT)
+            editName()
         }
 
         ctMypageEdit1.setOnClickListener {
-            val intent = SignUpActivity.newIntent(
+            startActivity(
+                SignUpActivity.newIntent(
                 context = this@MyPageEditDetailActivity,
                 entryType = SignUpEntryType.UPDATE_PROFILE
-            ).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            }
-            startActivity(intent)
-            finish()
+            ))
         }
 
         btMypageSave.setOnClickListener {
@@ -186,4 +171,24 @@ class MyPageEditDetailActivity : AppCompatActivity() {
         )
     }
 
+    private fun editName() = with(binding) {
+        tvMypageEditName.isEnabled = true
+        tvMypageEditName.requestFocus()
+
+        tvMypageEditName.setSelection(tvMypageEditName.text.length)
+
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(tvMypageEditName, InputMethodManager.SHOW_IMPLICIT)
+    }
+
+    private fun setupLayoutTouchListener() = with(binding){
+        root.setOnTouchListener { v, event ->
+            if (tvMypageEditName.isFocused) {
+                tvMypageEditName.clearFocus()
+                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(v.windowToken, 0)
+            }
+            false
+        }
+    }
 }
