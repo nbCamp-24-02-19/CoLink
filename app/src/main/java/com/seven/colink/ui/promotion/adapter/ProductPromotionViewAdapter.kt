@@ -192,7 +192,7 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
                         val url = item.aosLink
                         var editUrl = url
                         if (!url.startsWith("http://") && !url.startsWith("https://")) {
-                            editUrl = "http://$url"
+                            editUrl = url
                         }else{
                             if (url.startsWith("http://")){
                                 editUrl = url.substring(7)
@@ -213,7 +213,7 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
                         val url = item.iosLink
                         var editUrl = url
                         if (!url.startsWith("http://") || !url.startsWith("https://")) {
-                            editUrl = "$url"
+                            editUrl = url
                         }else{
                             if (url.startsWith("http://")){
                                 editUrl = url.substring(7)
