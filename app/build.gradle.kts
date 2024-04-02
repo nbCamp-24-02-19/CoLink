@@ -145,4 +145,7 @@ dependencies {
 
     //firebase Function
     implementation ("com.google.firebase:firebase-functions-ktx:20.4.0")
+
+    // 더보기
+    implementation("kr.co.prnd:readmore-textview:1.0.0")
 }
