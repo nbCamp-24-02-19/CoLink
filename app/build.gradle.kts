@@ -20,8 +20,8 @@ android {
         applicationId = "com.seven.colink"
         minSdk = 26
         targetSdk = 34
-        versionCode = 7
-        versionName = "1.0.0"
+        versionCode = 9
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -145,4 +145,7 @@ dependencies {
 
     //firebase Function
     implementation ("com.google.firebase:firebase-functions-ktx:20.4.0")
+
+    // 더보기
+    implementation("kr.co.prnd:readmore-textview:1.0.0")
 }
