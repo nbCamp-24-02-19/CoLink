@@ -53,9 +53,9 @@ class MyPageEditDetailActivity : AppCompatActivity() {
                 ivMypageEditName,
                 ivMypageEditProfile,
                 ivMypageDetailBack,
-                ctMypageEdit2,
+//                ctMypageEdit2,
                 ctMypageEdit1,
-                ctMypageEdit3,
+//                ctMypageEdit3,
                 btMypageSave,
             )
         }
