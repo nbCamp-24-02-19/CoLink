@@ -75,6 +75,8 @@
                 android:id="@+id/et_sign_up_edit1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:lines="1"
                 android:maxLength="16"/>
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -101,6 +103,8 @@
                     android:id="@+id/et_sign_up_email_id"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:lines="1"
                     android:maxLength="16"/>
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -124,6 +128,8 @@
                     android:id="@+id/et_sign_up_email_service"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:lines="1"
                     android:maxLength="16"/>
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
@@ -137,6 +143,7 @@
             android:fontFamily="@font/inter_bold"
             android:text="@string/sign_up_password_check"
             android:textColor="@color/black"
+            android:lines="1"
             android:textSize="14sp"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
@@ -159,6 +166,8 @@
                 android:id="@+id/et_sign_up_password_check"
                 android:layout_width="match_parent"
                 android:inputType="textPassword"
+                android:singleLine="true"
+                android:lines="1"
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
 

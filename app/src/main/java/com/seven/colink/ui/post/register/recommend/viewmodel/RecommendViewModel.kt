@@ -48,6 +48,7 @@ class RecommendViewModel @Inject constructor(
     private var _postEntity: PostEntity? = null
     private val postEntity get() = _postEntity!!
     fun loadList(key: String) {
+        _recommendList.value = UiState.Loading
         viewModelScope.launch {
             val titleDeferred = async {
                 try {
@@ -55,7 +56,7 @@ class RecommendViewModel @Inject constructor(
                         authRepository.getCurrentUser().message
                     ).getOrNull()?.name
                 } catch (e: Exception) {
-                    e
+                    UiState.Error(e)
                 }
             }
 

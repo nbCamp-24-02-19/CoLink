@@ -123,13 +123,11 @@ class RecommendFragment : Fragment() {
                     is UiState.Error -> {
                         /*TODO 예외 처리 다이얼로그*/
                         hideProgressOverlay()
-                        Toast.makeText(
-                            requireContext(),
-                            "${uiState.throwable.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
                         Log.e("RecommendFragment", "${uiState.throwable.message}")
-                        requireActivity().finish()
+                        parentFragmentManager.beginTransaction().apply {
+                            replace(R.id.fg_activity_post, SetGroupFragment())
+                            commit()
+                        }
                     }
                 }
             }
@@ -144,6 +142,11 @@ class RecommendFragment : Fragment() {
 
     private fun initView() = with(binding) {
         rcRecommendList.adapter = adapter
+    }
+
+    override fun onDestroy() {
+        hideProgressOverlay()
+        super.onDestroy()
     }
 
 }

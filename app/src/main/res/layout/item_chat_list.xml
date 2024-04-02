@@ -19,20 +19,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:orientation="vertical"
         app:layout_constraintStart_toEndOf="@id/iv_chat_list_profile"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/layout2"
         app:layout_constraintBottom_toBottomOf="parent">
     <TextView
         android:id="@+id/tv_chat_list_name"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:text="이름"
         android:textSize="16sp"
+        android:maxLines="1"
         android:fontFamily="@font/inter_bold"
         android:textColor="@color/black"/>
 
@@ -49,6 +51,7 @@
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/layout2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"

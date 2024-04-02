@@ -57,25 +57,37 @@ class MyPageEditDetailViewModel @Inject constructor(
     }
 
     suspend fun update(text: String) {
-        val data = (userDetail.value as Success<MyPageEditModel>).data
-        val img = data.selectUrl?.let { imageRepository.uploadImage(it) }?.getOrNull()
-        _userDetail.value = Loading
-        try {
-            userRepository.updateUserInfo(
-                userRepository.getUserDetails(data.uid!!).getOrNull()?.copy(
-                    name = text,
-                    photoUrl = img?.toString()?: data.profileUrl
-                )?: return
-            )
-            _uploadState.emit(
-                SnackType.Success
-            )
-            _userDetail.value = Success(data.copy(name = text, profileUrl = data.profileUrl))
-        } catch (e: Exception) {
-            _userDetail.value = Error(e)
-            _uploadState.emit(
-                SnackType.Error
-            )
+        if (userDetail.value is Success<MyPageEditModel>) {
+            val data = (userDetail.value as Success<MyPageEditModel>).data
+            val img = data.selectUrl?.let { imageRepository.uploadImage(it) }?.getOrNull()
+            _userDetail.value = Loading
+            try {
+                if (text.length >= 2) {
+                    userRepository.updateUserInfo(
+                        userRepository.getUserDetails(data.uid!!).getOrNull()?.copy(
+                            name = text,
+                            photoUrl = img?.toString() ?: data.profileUrl
+                        ) ?: return
+                    )
+                    _uploadState.emit(
+                        SnackType.Success
+                    )
+                    _userDetail.value =
+                        Success(data.copy(name = text, profileUrl = data.profileUrl))
+                } else {
+                    _userDetail.value = Success(data.copy(name = text, profileUrl = data.profileUrl))
+                    _uploadState.emit(
+                        SnackType.Notice
+                    )
+                }
+            } catch (e: Exception) {
+                _userDetail.value = Error(e)
+                _uploadState.emit(
+                    SnackType.Error
+                )
+            }
+        } else {
+            return
         }
     }
 

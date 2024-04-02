@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textfield.TextInputLayout
 import com.seven.colink.R
 import com.seven.colink.databinding.ActivitySignUpBinding
+import com.seven.colink.ui.main.MainActivity
 import com.seven.colink.ui.sign.signup.adater.SignUpProfileAdapter
 import com.seven.colink.ui.sign.signup.adater.SkillAdapter
 import com.seven.colink.ui.sign.signup.type.SignUpEntryType
@@ -24,7 +25,9 @@ import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.snackbar.setSnackBar
 import com.seven.colink.util.status.SnackType
+import com.seven.colink.util.status.UiState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
@@ -107,7 +110,6 @@ class SignUpActivity : AppCompatActivity() {
                 Pair(uiStatus, entryType)
             }.collect { (uiStatus, entryType) ->
                 setUi(uiStatus, entryType)
-                this@SignUpActivity.hideProgressOverlay()
             }
         }
 
@@ -158,6 +160,11 @@ class SignUpActivity : AppCompatActivity() {
                 this@SignUpActivity.hideProgressOverlay()
                 if (it == "등록 성공") {
                     binding.root.setSnackBar(SnackType.Success, it).show()
+                    startActivity(
+                        Intent(this@SignUpActivity,MainActivity::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        }
+                    )
                     finish()
                 } else {
                     binding.root.setSnackBar(SnackType.Error, it).show()
@@ -174,6 +181,19 @@ class SignUpActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.skills.collect{
                 skillAdapter.submitList(it)
+            }
+        }
+
+        lifecycleScope.launch {
+            progressState.collect {
+                when(it) {
+                    UiState.Loading -> {
+                        showProgressOverlay()
+                    }
+                    else -> {
+                        hideProgressOverlay()
+                    }
+                }
             }
         }
     }
@@ -217,10 +237,9 @@ class SignUpActivity : AppCompatActivity() {
     }
     private fun setButton(state: SignUpUIState, entryType: SignUpEntryType) = with(binding){
         btSignUpBtn.setOnClickListener {
-            this@SignUpActivity.showProgressOverlay()
             it.isEnabled = false
             when(state) {
-                SignUpUIState.EMAIL -> viewModel.checkValid(state, etSignUpEmailId.text.toString(), etSignUpEmailService.text.toString())
+                SignUpUIState.EMAIL -> viewModel.checkValid(state, etSignUpEmailId.text.toString().lowercase(), etSignUpEmailService.text.toString().lowercase())
                 SignUpUIState.PASSWORD -> viewModel.checkValid(state, etSignUpEdit1.text.toString(), etSignUpPasswordCheck.text.toString())
                 else -> viewModel.checkValid(state, etSignUpEdit1.text.toString())
             }
@@ -277,7 +296,6 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun onClickEnd(map: Map<String, Any?>) {
-        this.showProgressOverlay()
         viewModel.checkValid(map)
     }
 }

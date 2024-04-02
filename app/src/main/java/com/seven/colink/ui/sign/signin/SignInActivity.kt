@@ -1,44 +1,32 @@
 package com.seven.colink.ui.sign.signin
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.auth.api.identity.BeginSignInRequest
-import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
-import com.kakao.sdk.auth.model.OAuthToken
-import com.kakao.sdk.common.model.ClientError
-import com.kakao.sdk.common.model.ClientErrorCause
-import com.kakao.sdk.user.UserApiClient
 import com.seven.colink.BuildConfig
 import com.seven.colink.databinding.ActivitySignInBinding
 import com.seven.colink.ui.main.MainActivity
 import com.seven.colink.ui.sign.signin.viewmodel.SignInViewModel
 import com.seven.colink.ui.sign.signup.SignUpActivity
-import com.seven.colink.util.Constants
 import com.seven.colink.util.convert.convertError
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.status.DataResultStatus
+import com.seven.colink.util.status.UiState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import java.util.concurrent.CancellationException
-import kotlin.coroutines.Continuation
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 @AndroidEntryPoint
 class SignInActivity : AppCompatActivity() {
@@ -64,6 +52,17 @@ class SignInActivity : AppCompatActivity() {
         if (result.resultCode == RESULT_OK && result.data != null) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
             handleSignInResult(task)
+        }
+    }
+
+    private val buttons by lazy {
+        with(binding) {
+            listOf(
+                btSignInKakao,
+                btSignInGoogle,
+                btSignInLogin,
+                btSignInRegister
+            )
         }
     }
 
@@ -116,7 +115,25 @@ class SignInActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             updateEvent.collect {
-                startActivity(SignUpActivity.newIntent(this@SignInActivity, it))
+                val intent = SignUpActivity.newIntent(this@SignInActivity, it)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                finish()
+            }
+        }
+
+        lifecycleScope.launch {
+            progressState.collect {
+                when(it) {
+                    UiState.Loading -> {
+                        this@SignInActivity.showProgressOverlay()
+                        buttons.forEach { it.isEnabled = false }
+                    }
+                    else -> {
+                        this@SignInActivity.hideProgressOverlay()
+                        buttons.forEach { it.isEnabled = true }
+                    }
+                }
             }
         }
     }
