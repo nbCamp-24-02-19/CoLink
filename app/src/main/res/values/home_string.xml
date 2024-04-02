@@ -5,7 +5,7 @@
     <string name="home_bottom_example_title">영화 커뮤니티서비스 프로젝...</string>
     <string name="home_bottom_example_des">안드로이드 개발자들 모셔봅니다, 저...</string>
     <string name="home_bottom_example_kind">안드로이드</string>
-    <string name="home_bottom_example_lv">Lv4 이상</string>
+    <string name="home_bottom_example_team">팀 어쩌구저쩌구</string>
     <string name="home_bottom_example_complete">모집 완료</string>
     <string name="home_header">그룹 추천</string>
     <string name="home_top_example_date">24.02.23 19:00</string>

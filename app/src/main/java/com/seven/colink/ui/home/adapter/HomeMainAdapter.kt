@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.viewpager2.widget.ViewPager2
+import com.seven.colink.databinding.ItemHomeBottomBinding
 import com.seven.colink.databinding.ItemHomeHeaderBinding
 import com.seven.colink.databinding.ItemHomeTopViewpagerBinding
 import com.seven.colink.ui.home.HomeAdapterItems
@@ -31,7 +32,9 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
     }
 
     private val TOP_TYPE = 0
-    private val HEADER_TYPE = 1
+    private val PROMOTION_HEADER_TYPE = 1
+    private val PROMOTION_TYPE = 2
+    private val HEADER_TYPE = 3
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -40,6 +43,16 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
             TOP_TYPE -> {
                 val topItem = ItemHomeTopViewpagerBinding.inflate(inflater, parent, false)
                 TopViewHolder(topItem)
+            }
+
+            PROMOTION_HEADER_TYPE -> {
+                val header = ItemHomeHeaderBinding.inflate(inflater, parent, false)
+                PromotionHeaderViewHolder(header)
+            }
+
+            PROMOTION_TYPE->{
+                val promotion = ItemHomeBottomBinding.inflate(inflater,parent,false)
+                PromotionViewHolder(promotion)
             }
 
             else -> {
@@ -55,15 +68,16 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
         val item = currentList[position]
 
         if (item is HomeAdapterItems.TopView) {
-            with(holder as TopViewHolder) {
+            holder as TopViewHolder
+            with(holder) {
                 pager.adapter = item.adapter
-                sum.text = "7"
                 pager.post{
                     pager.setCurrentItem(1,false)
+                    sum.text = pager.adapter?.itemCount?.minus(2).toString()
                 }
             }
         }
-        if (item is HomeAdapterItems.Header) {
+        if (item is HomeAdapterItems.GroupHeader) {
             holder as HeaderViewHolder
             holder.header.text = item.header
         }
@@ -72,7 +86,9 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
             is HomeAdapterItems.TopView -> TOP_TYPE
-            is HomeAdapterItems.Header -> HEADER_TYPE
+            is HomeAdapterItems.PromotionHeader -> PROMOTION_HEADER_TYPE
+            is HomeAdapterItems.PromotionView -> PROMOTION_TYPE
+            is HomeAdapterItems.GroupHeader -> HEADER_TYPE
         }
     }
 
@@ -124,8 +140,9 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
                         startAutoScroll()
 
                         if (currentPos == 0) {
-                            pager.setCurrentItem(7,false)
-                        }else if (currentPos == 8) {
+                            pager.adapter?.itemCount?.minus(2)
+                                ?.let { pager.setCurrentItem(it,false) }
+                        }else if (currentPos == pager.adapter?.itemCount?.minus(1)) {
                             pager.setCurrentItem(1,false)
                         }
                     }
@@ -177,22 +194,35 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
         private fun handleLeftButtonClick() {
             handler.removeCallbacks(autoScrollRunnable)
             if (currentPos == 1) {
-                pager.setCurrentItem(7, true)
+                pager.adapter?.itemCount?.minus(2)?.let { pager.setCurrentItem(it,true) }
             } else {
-                pager.setCurrentItem(currentPos - 1, true)
+                pager.setCurrentItem(currentPos -1,true)
             }
             handler.postDelayed(autoScrollRunnable, AUTO_SCROLL_DELAY + PAGE_SCROLL_DELAY)
         }
 
         private fun handleRightButtonClick() {
             handler.removeCallbacks(autoScrollRunnable)
-            if (currentPos == 7) {
-                pager.setCurrentItem(1, true)
+            if (currentPos == pager.adapter?.itemCount?.minus(2)) {
+                pager.setCurrentItem(1,true)
             } else {
-                pager.setCurrentItem(currentPos + 1, true)
+                pager.setCurrentItem(currentPos +1,true)
             }
             handler.postDelayed(autoScrollRunnable, AUTO_SCROLL_DELAY + PAGE_SCROLL_DELAY)
         }
+    }
+
+    inner class PromotionHeaderViewHolder(binding: ItemHomeHeaderBinding) : ViewHolder(binding.root) {
+        val header = binding.tvHomeHeader
+    }
+
+    inner class PromotionViewHolder(binding: ItemHomeBottomBinding) : ViewHolder(binding.root) {
+        val title = binding.tvHomeBottomTitle
+        val des = binding.tvHomeBottomDes
+        val tag = binding.tvHomeBottomKind
+        val divider = binding.viewHomeBottomDivider
+        val team = binding.tvHomeBottomTeam
+        val img = binding.ivHomeBottomThumubnail
     }
 
     inner class HeaderViewHolder(binding: ItemHomeHeaderBinding) : ViewHolder(binding.root) {

@@ -23,8 +23,6 @@ import com.seven.colink.ui.home.adapter.HomeMainAdapter
 import com.seven.colink.ui.home.adapter.TopViewPagerAdapter
 import com.seven.colink.ui.promotion.ProductPromotionActivity
 import com.seven.colink.util.Constants
-import com.seven.colink.util.progress.hideProgressOverlay
-import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.snackbar.setSnackBar
 import com.seven.colink.util.status.SnackType
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,7 +39,7 @@ class HomeFragment : Fragment() {
     private val homeViewModel : HomeViewModel by viewModels()
     private var homeItem = mutableListOf<HomeAdapterItems>(
         HomeAdapterItems.TopView(TopViewPagerAdapter()),
-        HomeAdapterItems.Header("")
+        HomeAdapterItems.GroupHeader("")
     )
     private var loading = true
     private var backPressed = false
@@ -130,7 +128,7 @@ class HomeFragment : Fragment() {
             topAdapter.notifyDataSetChanged()
             homeItem = mutableListOf(
                 HomeAdapterItems.TopView(topAdapter),
-                HomeAdapterItems.Header(getString(R.string.home_header))
+                HomeAdapterItems.GroupHeader(getString(R.string.home_header))
             )
             mainAdapter.submitList(homeItem)
             mainAdapter.notifyDataSetChanged()

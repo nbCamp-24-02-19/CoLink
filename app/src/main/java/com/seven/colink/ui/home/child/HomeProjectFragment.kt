@@ -66,7 +66,7 @@ class HomeProjectFragment : Fragment() {
                     tvHomeBottomKind.text =
                         bottom.kind?.map { "# " + it }?.joinToString("   ", "", "")
                     viewHomeBottomDivider.visibility = View.INVISIBLE
-                    tvHomeBottomLv.visibility = View.INVISIBLE
+                    tvHomeBottomTeam.visibility = View.INVISIBLE
                     ivHomeBottomThumubnail.load(bottom.img)
                     if (bottom.blind == ProjectStatus.END) {
                         viewHomeBottomBlind.visibility = View.VISIBLE

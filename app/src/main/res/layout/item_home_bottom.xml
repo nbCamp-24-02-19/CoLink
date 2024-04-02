@@ -115,18 +115,19 @@
                 android:background="@color/typo_color"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/tv_home_bottom_lv"
+                app:layout_constraintEnd_toStartOf="@+id/tv_home_bottom_team"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/tv_home_bottom_kind"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/tv_home_bottom_lv"
+                android:id="@+id/tv_home_bottom_team"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="1dp"
-                android:text="@string/home_bottom_example_lv"
+                android:text="@string/home_bottom_example_team"
+                android:textColor="@color/black"
                 android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"

@@ -30,7 +30,20 @@ sealed class HomeAdapterItems {
         var adapter : TopViewPagerAdapter
     ) : HomeAdapterItems()
 
-    data class Header(
+    data class PromotionHeader(
+        val header : String
+    ) : HomeAdapterItems()
+
+    data class PromotionView(
+        val title : String?,
+        val des : String?,
+        val team : String?,
+        val kind : List<String>?,
+        val img : String?,
+        val key: String?
+    ) : HomeAdapterItems()
+
+    data class GroupHeader(
         val header: String
     ) : HomeAdapterItems()
 }
