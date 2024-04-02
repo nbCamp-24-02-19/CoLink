@@ -1,9 +1,12 @@
 package com.seven.colink.ui.home.adapter
 
+import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.annotation.RequiresApi
@@ -11,12 +14,15 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.viewpager2.widget.ViewPager2
+import coil.load
 import com.seven.colink.databinding.ItemHomeBottomBinding
 import com.seven.colink.databinding.ItemHomeHeaderBinding
 import com.seven.colink.databinding.ItemHomeTopViewpagerBinding
 import com.seven.colink.ui.home.HomeAdapterItems
+import com.seven.colink.ui.promotion.ProductPromotionActivity
+import com.seven.colink.util.Constants
 
-class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUtil) {
+class HomeMainAdapter(private val context: Context) : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUtil) {
     object HomeMainDiffUtil : DiffUtil.ItemCallback<HomeAdapterItems>() {
         override fun areItemsTheSame(
             oldItem: HomeAdapterItems, newItem: HomeAdapterItems
@@ -35,6 +41,12 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
     private val PROMOTION_HEADER_TYPE = 1
     private val PROMOTION_TYPE = 2
     private val HEADER_TYPE = 3
+
+    interface ItemClick {
+        fun onClick(view: View,position: Int, items: HomeAdapterItems)
+    }
+
+    var itemClick : ItemClick? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -77,6 +89,33 @@ class HomeMainAdapter : ListAdapter<HomeAdapterItems, ViewHolder>(HomeMainDiffUt
                 }
             }
         }
+
+        if (item is HomeAdapterItems.PromotionHeader) {
+            holder as PromotionHeaderViewHolder
+            holder.header.text = item.header
+        }
+
+        if (item is HomeAdapterItems.PromotionView) {
+            holder as PromotionViewHolder
+
+            holder.itemView.setOnClickListener{
+                itemClick?.onClick(it,position,item)
+                val intent = Intent(context,ProductPromotionActivity::class.java)
+                intent.putExtra(Constants.EXTRA_ENTITY_KEY,item.info.key)
+                context.startActivity(intent)
+            }
+
+            with(holder) {
+                title.text = item.info.title
+                des.text = item.info.des
+                tag.visibility = View.GONE
+                divider.visibility = View.GONE
+                team.visibility = View.VISIBLE
+                team.text = item.info.team
+                img.load(item.info.img)
+            }
+        }
+
         if (item is HomeAdapterItems.GroupHeader) {
             holder as HeaderViewHolder
             holder.header.text = item.header

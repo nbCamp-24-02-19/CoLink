@@ -25,6 +25,15 @@ data class BottomItems (
     val lv : String? = "0"
 )
 
+data class MiddlePromotionItems(
+    val title : String?,
+    val des : String?,
+    val team : String?,
+//        val kind : List<String>?,
+    val img : String?,
+    val key: String?
+)
+
 sealed class HomeAdapterItems {
     data class TopView(
         var adapter : TopViewPagerAdapter
@@ -35,12 +44,7 @@ sealed class HomeAdapterItems {
     ) : HomeAdapterItems()
 
     data class PromotionView(
-        val title : String?,
-        val des : String?,
-        val team : String?,
-        val kind : List<String>?,
-        val img : String?,
-        val key: String?
+        val info : MiddlePromotionItems
     ) : HomeAdapterItems()
 
     data class GroupHeader(

@@ -19,10 +19,13 @@ class HomeViewModel @Inject constructor(
 
     private val _topItems: MutableLiveData<List<TopItems>> = MutableLiveData(mutableListOf())
     val topItems: LiveData<List<TopItems>> get() = _topItems
+    private val _promotionItems: MutableLiveData<MutableList<HomeAdapterItems.PromotionView>> = MutableLiveData()
+    val promotionItems: LiveData<MutableList<HomeAdapterItems.PromotionView>> get() = _promotionItems
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading : LiveData<Boolean> get() = _isLoading
 
     fun getTopItems(num : Int) {
+//        getMiddlePromotionItem(2)
         _isLoading.value = true
         val getTopItemList: MutableList<TopItems> = mutableListOf()
 
@@ -48,6 +51,22 @@ class HomeViewModel @Inject constructor(
             }.onFailure { exception ->
                 Log.e("HomeViewModel","데이터를 불러오지 못 했습니다 $exception")
             }
+        }
+    }
+
+    fun getMiddlePromotionItem(num: Int) {
+        val getMiddleItemList : MutableList<HomeAdapterItems.PromotionView> = mutableListOf()
+
+        viewModelScope.launch {
+            getMiddleItemList.clear()
+            val repository = productRepository.getRecentPost(num)
+
+            repository.forEach {
+                val recentItem = MiddlePromotionItems(it.title,it.description,it.projectId,it.imageUrl,it.key)
+                val item = HomeAdapterItems.PromotionView(recentItem)
+                getMiddleItemList.add(item)
+            }
+            _promotionItems.value = getMiddleItemList
         }
     }
 }

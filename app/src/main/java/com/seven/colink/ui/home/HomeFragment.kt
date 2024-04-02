@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.DisplayMetrics
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,8 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.seven.colink.R
@@ -33,14 +36,11 @@ class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private val mainAdapter by lazy { HomeMainAdapter() }
+    private val mainAdapter by lazy { HomeMainAdapter(requireContext()) }
     private lateinit var bottomAdapter : BottomViewPagerAdapter
     private lateinit var topAdapter : TopViewPagerAdapter
     private val homeViewModel : HomeViewModel by viewModels()
-    private var homeItem = mutableListOf<HomeAdapterItems>(
-        HomeAdapterItems.TopView(TopViewPagerAdapter()),
-        HomeAdapterItems.GroupHeader("")
-    )
+    private var homeItem = mutableListOf<HomeAdapterItems>()
     private var loading = true
     private var backPressed = false
 
@@ -120,18 +120,26 @@ class HomeFragment : Fragment() {
 
     private fun setTopItems() {
         homeViewModel.getTopItems(7)
+        homeViewModel.getMiddlePromotionItem(2)
     }
 
     private fun setObserve() {
         homeViewModel.topItems.observe(viewLifecycleOwner){
             topAdapter.submitList(it)
             topAdapter.notifyDataSetChanged()
-            homeItem = mutableListOf(
-                HomeAdapterItems.TopView(topAdapter),
-                HomeAdapterItems.GroupHeader(getString(R.string.home_header))
-            )
+        }
+
+        homeViewModel.promotionItems.observe(viewLifecycleOwner) { newList ->
+            homeItem.apply {
+                clear()
+                addAll(listOf(
+                    HomeAdapterItems.TopView(topAdapter),
+                    HomeAdapterItems.PromotionHeader(getString(R.string.home_promotion_header)),
+                ))
+                addAll(newList)
+                add(HomeAdapterItems.GroupHeader(getString(R.string.home_header)))
+            }
             mainAdapter.submitList(homeItem)
-            mainAdapter.notifyDataSetChanged()
         }
 
         homeViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
