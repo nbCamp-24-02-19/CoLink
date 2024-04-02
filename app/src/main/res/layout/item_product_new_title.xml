@@ -176,7 +176,7 @@
         style="@style/PostEditTextStyle"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
-        android:minHeight="250dp"
+        android:minHeight="150dp"
         android:textColor="@color/black"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"

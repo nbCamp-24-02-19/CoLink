@@ -190,7 +190,17 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
                     aos.visibility = View.VISIBLE
                     aos.setOnClickListener {
                         val url = item.aosLink
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://$url"))
+                        var editUrl = url
+                        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                            editUrl = "http://$url"
+                        }else{
+                            if (url.startsWith("http://")){
+                                editUrl = url.substring(7)
+                            }else if (url.startsWith("https://")) {
+                                editUrl = url.substring(8)
+                            }
+                        }
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://$editUrl"))
                         context.startActivity(intent)
                     }
                 }else {
@@ -201,7 +211,17 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
                     ios.visibility = View.VISIBLE
                     ios.setOnClickListener {
                         val url = item.iosLink
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://$url"))
+                        var editUrl = url
+                        if (!url.startsWith("http://") || !url.startsWith("https://")) {
+                            editUrl = "$url"
+                        }else{
+                            if (url.startsWith("http://")){
+                                editUrl = url.substring(7)
+                            }else if (url.startsWith("https://")) {
+                                editUrl = url.substring(8)
+                            }
+                        }
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://$editUrl"))
                         context.startActivity(intent)
                     }
                 }else {

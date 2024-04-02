@@ -42,6 +42,7 @@
         android:textSize="12sp"
         android:inputType="text"
         android:layout_marginTop="5dp"
+        android:maxLength="100"
         app:layout_constraintStart_toEndOf="@id/iv_product_link"
         app:layout_constraintTop_toBottomOf="@id/tv_product_link_header"
         app:layout_constraintEnd_toEndOf="parent"/>
@@ -81,6 +82,7 @@
         android:padding="8dp"
         android:textSize="12sp"
         android:inputType="text"
+        android:maxLength="100"
         android:layout_marginTop="5dp"
         app:layout_constraintStart_toEndOf="@id/iv_product_aos_link"
         app:layout_constraintTop_toBottomOf="@id/tv_product_store_header"
@@ -109,6 +111,7 @@
         android:textSize="12sp"
         android:inputType="text"
         android:layout_marginTop="5dp"
+        android:maxLength="100"
         app:layout_constraintStart_toEndOf="@id/iv_product_ios_link"
         app:layout_constraintTop_toBottomOf="@id/et_product_aos_link"
         app:layout_constraintEnd_toEndOf="parent"/>
