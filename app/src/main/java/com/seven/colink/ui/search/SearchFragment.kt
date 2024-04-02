@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
@@ -117,6 +118,16 @@ class SearchFragment : Fragment() {
         binding.ivSearchButton.setOnClickListener {
             searchViewModel.doSearch(binding.etSearchSearch.text.toString())
             hideKeyboard()
+        }
+
+        binding.etSearchSearch.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEARCH) {
+                searchViewModel.doSearch(binding.etSearchSearch.text.toString())
+                hideKeyboard()
+                true
+            } else {
+                false
+            }
         }
 
 
