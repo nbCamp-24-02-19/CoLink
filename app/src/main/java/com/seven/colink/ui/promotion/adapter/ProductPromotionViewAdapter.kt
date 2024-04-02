@@ -6,6 +6,7 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -181,27 +182,39 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
             with(holder) {
                 web.text = item.webLink
                 web.setOnClickListener {
-                    val url = item.webLink
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                    context.startActivity(intent)
+                    try {
+                        val url = item.webLink
+                        if (url.isNullOrEmpty()) {
+                            Toast.makeText(context,"유효하지 않은 URL입니다.",Toast.LENGTH_SHORT).show()
+                            return@setOnClickListener
+                        }
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                        context.startActivity(intent)
+                    } catch (e: Exception) {
+                     Toast.makeText(context,"URL을 열 수 없습니다.",Toast.LENGTH_SHORT).show()
+                    }
                 }
 
                 if (item.aosLink?.isNotEmpty() == true) {
                     aos.visibility = View.VISIBLE
                     aos.setOnClickListener {
-                        val url = item.aosLink
-                        var editUrl = url
-                        if (!url.startsWith("http://") && !url.startsWith("https://")) {
-                            editUrl = url
-                        }else{
-                            if (url.startsWith("http://")){
-                                editUrl = url.substring(7)
-                            }else if (url.startsWith("https://")) {
-                                editUrl = url.substring(8)
+                        try {
+                            val url = item.aosLink
+                            var editUrl = url
+                            if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                                editUrl = url
+                            }else{
+                                if (url.startsWith("http://")){
+                                    editUrl = url.substring(7)
+                                }else if (url.startsWith("https://")) {
+                                    editUrl = url.substring(8)
+                                }
                             }
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://$editUrl"))
+                            context.startActivity(intent)
+                        } catch (e: Exception) {
+                            Toast.makeText(context,"URL을 열 수 없습니다.",Toast.LENGTH_SHORT).show()
                         }
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://$editUrl"))
-                        context.startActivity(intent)
                     }
                 }else {
                     aos.visibility = View.INVISIBLE
@@ -210,19 +223,23 @@ class ProductPromotionViewAdapter(private val context: Context) : ListAdapter<Pr
                 if (item.iosLink?.isNotEmpty() == true) {
                     ios.visibility = View.VISIBLE
                     ios.setOnClickListener {
-                        val url = item.iosLink
-                        var editUrl = url
-                        if (!url.startsWith("http://") || !url.startsWith("https://")) {
-                            editUrl = url
-                        }else{
-                            if (url.startsWith("http://")){
-                                editUrl = url.substring(7)
-                            }else if (url.startsWith("https://")) {
-                                editUrl = url.substring(8)
+                        try {
+                            val url = item.iosLink
+                            var editUrl = url
+                            if (!url.startsWith("http://") || !url.startsWith("https://")) {
+                                editUrl = url
+                            }else{
+                                if (url.startsWith("http://")){
+                                    editUrl = url.substring(7)
+                                }else if (url.startsWith("https://")) {
+                                    editUrl = url.substring(8)
+                                }
                             }
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://$editUrl"))
+                            context.startActivity(intent)
+                        } catch (e: Exception) {
+                            Toast.makeText(context,"URL을 열 수 없습니다.",Toast.LENGTH_SHORT).show()
                         }
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://$editUrl"))
-                        context.startActivity(intent)
                     }
                 }else {
                     ios.visibility = View.INVISIBLE
