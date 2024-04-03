@@ -41,6 +41,7 @@
         android:textColorHint="@color/edit_hint_color"
         android:textSize="16sp"
         android:inputType="text"
+        android:maxLength="50"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_product_new_title" />
@@ -163,6 +164,7 @@
         android:minHeight="250dp"
         android:padding="8dp"
         android:textSize="14sp"
+        android:maxLength="9999"
         android:inputType="textMultiLine|textNoSuggestions|text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -23,6 +23,11 @@
         android:textColor="@color/black"
         android:textSize="14sp" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="(https://를 제외하고 작성해주세요)"/>
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -46,6 +51,7 @@
             android:background="@drawable/bg_round_corner_4dp_stroke_enable"
             android:maxLines="1"
             android:padding="12dp"
+            android:maxLength="50"
             android:scrollbars="horizontal"
             android:textColorHint="@color/enable_stroke"
             android:textSize="14sp"
@@ -71,6 +77,7 @@
             android:background="@drawable/bg_round_corner_4dp_stroke_enable"
             android:maxLines="1"
             android:padding="12dp"
+            android:maxLength="50"
             android:scrollbars="horizontal"
             android:textColorHint="@color/enable_stroke"
             android:textSize="14sp"
@@ -97,6 +104,7 @@
             android:maxLines="1"
             android:padding="12dp"
             android:scrollbars="horizontal"
+            android:maxLength="50"
             android:textColorHint="@color/enable_stroke"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"

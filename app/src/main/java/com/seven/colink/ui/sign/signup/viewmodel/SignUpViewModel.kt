@@ -18,11 +18,13 @@ import com.seven.colink.ui.sign.signup.valid.SignUpValidExtension.includeSpecial
 import com.seven.colink.ui.sign.signup.valid.SignUpValidExtension.numAndEnglish
 import com.seven.colink.ui.sign.signup.valid.SignUpValidExtension.validEmailServiceProvider
 import com.seven.colink.util.status.DataResultStatus
+import com.seven.colink.util.status.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -54,6 +56,9 @@ class SignUpViewModel @Inject constructor(
 
     private val _profileItem = MutableSharedFlow<List<SignUpProfileItem>>()
     val profileItem = _profileItem.asSharedFlow()
+
+    private val _progressState = MutableStateFlow<UiState<String>>(UiState.Success(""))
+    val progressState = _progressState.asStateFlow()
 
     init {
         _entryType.value = handle.get<SignUpEntryType>(EXTRA_ENTRY_TYPE) ?: SignUpEntryType.CREATE
@@ -95,6 +100,7 @@ class SignUpViewModel @Inject constructor(
     }
 
     fun checkValid(state: SignUpUIState, text: String) {
+        _progressState.value = UiState.Loading
         _errorMessage.value = SignUpErrorMessage.DUMMY
         _errorMessage.value = when (state) {
 
@@ -112,20 +118,25 @@ class SignUpViewModel @Inject constructor(
                 SignUpErrorMessage.PASS
             }
         }
+        _progressState.value = UiState.Success("")
     }
 
     fun checkValid(state: SignUpUIState, text1: String, text2: String) {
+        _progressState.value = UiState.Loading
         viewModelScope.launch {
             _errorMessage.value = SignUpErrorMessage.DUMMY
             _errorMessage.value = when (state) {
                 SignUpUIState.EMAIL -> {
                     if (text1.numAndEnglish()) {
                         if (text2.validEmailServiceProvider()) {
-                            if (userRepository.checkUserEmail("$text1@$text2").not())
+                            if (userRepository.checkUserEmail("$text1@$text2").not()) {
                                 _uiStatus.value = SignUpUIState.PASSWORD
-                            _userModel.value = _userModel.value.copy(email = "$text1@$text2")
-                            SignUpErrorMessage.PASS
-                        } else SignUpErrorMessage.DUPLICATE_EMAIL
+                                _userModel.value = _userModel.value.copy(email = "$text1@$text2")
+                                SignUpErrorMessage.PASS
+                            } else {
+                                SignUpErrorMessage.DUPLICATE_EMAIL
+                            }
+                        } else SignUpErrorMessage.EMAIL
                     } else SignUpErrorMessage.EMAIL
                 }
 
@@ -143,10 +154,12 @@ class SignUpViewModel @Inject constructor(
                     SignUpErrorMessage.PASS
                 }
             }
+            _progressState.value = UiState.Success("")
         }
     }
 
     fun checkValid(map: Map<String, Any?>) {
+        _progressState.value = UiState.Loading
         _errorMessage.value = SignUpErrorMessage.DUMMY
         map.forEach { (key, value) ->
             val isValueValid = when (key) {
@@ -186,6 +199,7 @@ class SignUpViewModel @Inject constructor(
             _errorMessage.value = SignUpErrorMessage.PASS
             userModel.value.password.let { registerUser(it) }
         }
+        _progressState.value = UiState.Success("")
     }
 
     private fun registerUser(password: String?) = viewModelScope.launch {

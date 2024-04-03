@@ -36,7 +36,7 @@ class GetChatRoomUseCase @Inject constructor(
                 if (it != null && it.participantsChatRoomIds?.contains(newChat.key)
                         ?.not() != false
                 ) {
-                    userRepository.registerUser(
+                    userRepository.updateUserInfo(
                         it.copy(
                             participantsChatRoomIds = it.participantsChatRoomIds?.plus(
                                 newChat.key

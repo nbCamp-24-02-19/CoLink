@@ -2,7 +2,6 @@ package com.seven.colink.ui.userdetail
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,22 +9,13 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
-import com.seven.colink.R
 import com.seven.colink.databinding.ActivityUserDetailBinding
-import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.ui.chat.ChatRoomActivity
 import com.seven.colink.ui.post.register.PostActivity
-import com.seven.colink.ui.showmore.MyPageShowMoreActivity
-import com.seven.colink.ui.sign.signup.SignUpActivity
-import com.seven.colink.ui.sign.signup.model.SignUpUserModel
-import com.seven.colink.ui.sign.signup.type.SignUpEntryType
 import com.seven.colink.ui.userdetail.adapter.UserDetailPostAdapter
 import com.seven.colink.ui.userdetail.adapter.UserSkillAdapter
 import com.seven.colink.util.dialog.setDialog
@@ -36,7 +26,6 @@ import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
 import com.seven.colink.util.status.SnackType
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -156,7 +145,7 @@ class UserDetailActivity : AppCompatActivity() {
         } else {
             binding.ivUserdetailLink.visibility = View.VISIBLE
             binding.ivUserdetailLink.setOnClickListener {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(user.userLink))
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://"+user.userLink))
                 startActivity(intent)
             }
         }
@@ -189,7 +178,7 @@ class UserDetailActivity : AppCompatActivity() {
         if(user.userBlog != null){
             binding.ivUserdetailBlog.visibility = View.VISIBLE
             binding.ivUserdetailBlog.setOnClickListener {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(user.userBlog))
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://"+user.userBlog))
                 startActivity(intent)
             }
         } else binding.ivUserdetailBlog.visibility = View.GONE
@@ -198,7 +187,7 @@ class UserDetailActivity : AppCompatActivity() {
         if (user.userGit != null){
             binding.ivUserdetailGit.visibility = View.VISIBLE
             binding.ivUserdetailGit.setOnClickListener {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(user.userGit))
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://"+user.userGit))
                 startActivity(intent)
             }
         } else binding.ivUserdetailGit.visibility = View.GONE
@@ -211,8 +200,6 @@ class UserDetailActivity : AppCompatActivity() {
         }
         user.userLevel?.let { binding.ivUserdetailLevel.setLevelIcon(it) }
         binding.tvUserdetailLevel.text = user.userLevel.toString()
-
-        Log.d("Tag","user = ${user}")
     }
 
 

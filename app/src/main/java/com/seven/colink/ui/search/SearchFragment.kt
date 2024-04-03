@@ -7,14 +7,12 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.OnClickListener
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.view.isEmpty
-import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -34,11 +32,7 @@ import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.UiState
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import okhttp3.internal.wait
 
 @AndroidEntryPoint
 class SearchFragment : Fragment() {
@@ -122,10 +116,21 @@ class SearchFragment : Fragment() {
             }
         }
 
-        binding.ivSearchButton.onThrottleClick({
+        binding.ivSearchButton.setOnClickListener {
             searchViewModel.doSearch(binding.etSearchSearch.text.toString())
             hideKeyboard()
-        }, 1000)
+        }
+
+        binding.etSearchSearch.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEARCH) {
+                searchViewModel.doSearch(binding.etSearchSearch.text.toString())
+                hideKeyboard()
+                true
+            } else {
+                false
+            }
+        }
+
 
 
         // 프로젝트 필터버튼
@@ -182,24 +187,18 @@ class SearchFragment : Fragment() {
                     offColor(binding.tvSearchRecruitEnd)
                     if (!recruitEnd && recruit) {
                         searchViewModel.setRecruitFilter(query)
-                        Log.d("123", "setRecruitFilter")
                     } else {
                         searchViewModel.setRecruitNone(query)
-//                        searchViewModel.setRecruitEndFilter(query)
-                        Log.d("123", "setRecruitNone")
                     }
                 } else {
                     recruitEnd = true
                     onColor(binding.tvSearchRecruitEnd)
                     if (recruitEnd && !recruit) {
                         searchViewModel.setRecruitEndFilter(query)
-                        Log.d("123", "setRecruitEndFilter")
                     } else {
                         searchViewModel.setRecruitBoth(query)
-                        Log.d("123", "setRecruitBoth")
                     }
                 }
-                Log.d("123", "123 recruit, recruitEnd = $recruit, $recruitEnd")
             }
         }
 
@@ -211,23 +210,18 @@ class SearchFragment : Fragment() {
                     offColor(binding.tvSearchRecruit)
                     if (!recruit && recruitEnd) {
                         searchViewModel.setRecruitEndFilter(query)
-                        Log.d("123", "setRecruitEndFilter")
                     } else {
                         searchViewModel.setRecruitNone(query)
-                        Log.d("123", "setRecruitNone")
                     }
                 } else {
                     recruit = true
                     onColor(binding.tvSearchRecruit)
                     if (recruit && !recruitEnd) {
                         searchViewModel.setRecruitFilter(query)
-                        Log.d("123", "setRecruitFilter")
                     } else {
                         searchViewModel.setRecruitBoth(query)
-                        Log.d("123", "setRecruitBoth")
                     }
                 }
-                Log.d("123", "456 recruit, recruitEnd = $recruit, $recruitEnd")
             }
         }
 
@@ -257,16 +251,13 @@ class SearchFragment : Fragment() {
                         showProgressOverlay()
                     }
                 }
-
                 is UiState.Success -> {
                     hideProgressOverlay()
                     binding.clSearchEmpty.isVisible = state.data.isNullOrEmpty()
-                    binding.rvSearchRecyclerView.visibility = View.VISIBLE
                     searchAdapter.mItems.clear()
                     searchAdapter.mItems.addAll(state.data)
                     searchAdapter.notifyDataSetChanged()
                 }
-
                 is UiState.Error -> {
                     hideProgressOverlay()
                     Toast.makeText(requireContext(), "${state.throwable}", Toast.LENGTH_SHORT)

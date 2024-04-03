@@ -120,6 +120,18 @@ class HomeProjectFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        initViews()
+        setObserve()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        initViews()
+        setObserve()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

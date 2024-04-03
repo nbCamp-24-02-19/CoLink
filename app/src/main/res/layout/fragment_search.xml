@@ -127,7 +127,7 @@
                             android:ellipsize="end"
                             android:fontFamily="@font/inter_medium"
                             android:hint="@string/search_edittext"
-                            android:imeOptions="actionDone"
+                            android:imeOptions="actionSearch"
                             android:inputType="text"
                             android:maxLength="50"
                             android:maxLines="1"
