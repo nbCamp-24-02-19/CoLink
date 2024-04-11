@@ -1,6 +1,72 @@
-# CoLink
+<h1 align="center">
+ 코링(CoLink) - 당신의 첫 프로젝트 파트너
+</h1>
+</h1>
+ <p align="center">
+   <a>코링에서 새로운 팀을 만나보세요!🤼‍♂️</a>
+   <br />
+   <br />
+<a>
+   <img alt="kotlin" src = "https://img.shields.io/badge/Kotlin-%230095D5.svg?&style=for-the-badge&logo=kotlin&logoColor=white" />
+  </a>
+<a>
+   <img alt="JavaScript" src="https://img.shields.io/badge/JavaScript-F7DF1E.svg?&style=for-the-badge&logo=javascript&logoColor=black" />
+</a>
+  <a>
+   <img alt="Android Studio" src="https://img.shields.io/badge/Android_Studio-3DDC84.svg?&style=for-the-badge&logo=android-studio&logoColor=white" />
+  </a>
+ <a>
+   <img alt="Gradle" src = "https://img.shields.io/badge/Gradle-02303A.svg?&style=for-the-badge&logo=gradle&logoColor=white" />
+  </a>
+<a>
+   <img alt="Firebase" src="https://img.shields.io/badge/Firebase-FFCA28.svg?&style=for-the-badge&logo=firebase&logoColor=black" />
+</a>
+<a>
+   <img alt="Coil" src="https://img.shields.io/badge/Coil-%231572B6.svg?&style=for-the-badge&logo=kotlin&logoColor=white" />
+</a>
+<a>
+   <img alt="Retrofit" src="https://img.shields.io/badge/Retrofit-%23A7A7A7.svg?&style=for-the-badge&logo=android&logoColor=black" />
+</a>
+<a>
+   <img alt="Hilt" src="https://img.shields.io/badge/Hilt-%234CAF50.svg?&style=for-the-badge&logo=android&logoColor=white" />
+</a>
+<a>
+   <img alt="Jsoup" src="https://img.shields.io/badge/Jsoup-%236DB33F.svg?&style=for-the-badge&logo=java&logoColor=white" />
+</a>
+  <a href ="https://www.notion.so/SA-fa7aba8ca3604a76bef1b90c83093a69">
+   <img alt="Notion" src="https://img.shields.io/badge/Notion-000000.svg?&style=for-the-badge&logo=notion&logoColor=white" />
+  </a>
+  <a href="https://github.com/nbCampGroup-2-24-01-15/">
+   <img alt="GitHub" src="https://img.shields.io/badge/GitHub-181717.svg?&style=for-the-badge&logo=github&logoColor=white" />
+  </a>
+    
+   <br />
+    <a href="https://github.com/nbCamp-24-02-19/CoLink/actions/new">
+      <img alt="Tests Passing" src="https://img.shields.io/github/languages/top/nbCamp-24-02-19/CoLink?style=flat&logo=kotlin&logoColor=white&color=800080" />
+    </a>
+    <a href="https://github.com/nbCamp-24-02-19/CoLink/commits/dev/">
+      <img alt="Tests Coverage" src="https://img.shields.io/github/commit-activity/m/nbCamp-24-02-19/CoLink" />
+    </a>
+    <a href="https://github.com/nbCamp-24-02-19/CoLink/graphs/contributors">
+      <img alt="GitHub Contributors" src="https://img.shields.io/github/contributors/nbCamp-24-02-19/CoLink" />
+    </a>
+    <a href="https://github.com/nbCamp-24-02-19/CoLink/issues">
+      <img alt="Issues" src="https://img.shields.io/github/issues/nbCamp-24-02-19/CoLink?color=yellow" />
+    </a>
+    <a href="https://github.com/nbCamp-24-02-19/CoLink/pulls">
+      <img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr/nbCamp-24-02-19/CoLink?color=red" />
+    </a>
+     <br />
+    <br />
+  </p>
 
-![연습용 이미지](https://github.com/nbCamp-24-02-19/CoLink/blob/readme/colink_main.png)
+   <p align ="center">
+ <img alt="" src ="https://github.com/nbCamp-24-02-19/CoLink/blob/readme/colink_main.png" width="425" heigth="50" />
+ <img alt="" src ="https://github.com/nbCampGroup-2-24-01-15/ColorContacts/assets/116724657/f60050a8-ae8b-45af-af26-1c69f09283b1" width="110" heigth="50" />
+ <img alt="" src ="https://github.com/nbCampGroup-2-24-01-15/ColorContacts/assets/116724657/525824d3-1703-4512-b0d9-287f878a65a9" width="110" heigth="50" />
+ <img alt="" src ="https://github.com/nbCampGroup-2-24-01-15/ColorContacts/assets/116724657/81a95cc5-f428-43eb-a086-2c09d1de2dfc" width="110" heigth="50" />
+ <img alt="" src ="https://github.com/nbCampGroup-2-24-01-15/ColorContacts/assets/116724657/de285754-50ff-40d5-bb75-7fda8311d34f" width="110" heigth="50" />
+</p>
 
 **바로가기 링크**
 
