@@ -17,7 +17,9 @@ import com.seven.colink.ui.userdetail.UserDetailActivity.Companion.EXTRA_USER_KE
 import com.seven.colink.util.convert.convertToDaysAgo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,11 +34,10 @@ class UserDetailViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _userDetails = MutableLiveData<UserDetailModel>()
+    val userDetails: LiveData<UserDetailModel> get() = _userDetails
+
     private val _userDetailPosts = MutableLiveData<List<UserDetailPostModel>>()
-    val userDetails: LiveData<UserDetailModel> = _userDetails
-    val userDetailPost: LiveData<List<UserDetailPostModel>> = _userDetailPosts
-    private var _userId: String? = null
-    private val userId get() = _userId!!
+    val userDetailPost: LiveData<List<UserDetailPostModel>> get() = _userDetailPosts
 
     private val _currentUsersPostList = MutableSharedFlow<List<PostEntity>>()
     val currentUserPostList = _currentUsersPostList.asSharedFlow()
@@ -47,19 +48,36 @@ class UserDetailViewModel @Inject constructor(
     private val _detailEvent = MutableSharedFlow<String>()
     val detailEvent = _detailEvent.asSharedFlow()
 
+    private val _userType = MutableStateFlow(UserType.LOADING)
+    val userType = _userType.asStateFlow()
+
+    private var _userId: String? = null
+    private val userId get() = _userId!!
+
     init {
         _userId = handle.get<String>(EXTRA_USER_KEY) ?: ""
+        checkUserType()
         loadUserDetails()
         loadUserPost()
     }
 
-    fun detailEvent(){
+    private fun checkUserType() {
+        viewModelScope.launch {
+            if (userId == authRepository.getCurrentUser().message) {
+                _userType.value = UserType.ME
+            } else {
+                _userType.value = UserType.OTHER
+            }
+        }
+    }
+
+    fun detailEvent() {
         viewModelScope.launch {
             _detailEvent.emit(userId)
         }
     }
 
-    private fun loadUserDetails(){
+    private fun loadUserDetails() {
         viewModelScope.launch {
             val result = userRepository.getUserDetails(userId)
             result.onSuccess { user ->
@@ -83,7 +101,7 @@ class UserDetailViewModel @Inject constructor(
         }
     }
 
-    suspend fun getPost(key: String) : PostEntity? {
+    suspend fun getPost(key: String): PostEntity? {
         return postRepository.getPost(key).getOrNull()
     }
 
@@ -127,7 +145,7 @@ class UserDetailViewModel @Inject constructor(
 
     private fun ChatRoomEntity.convert() = ChatInfo(
         key = key,
-        userName = userDetails.value?.userName?: ""
+        userName = userDetails.value?.userName ?: ""
     )
 }
 

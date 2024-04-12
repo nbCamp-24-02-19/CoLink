@@ -8,14 +8,17 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.SimpleAdapter.ViewBinder
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewbinding.ViewBinding
 import coil.load
 import com.seven.colink.R
 import com.seven.colink.databinding.ActivityUserDetailBinding
@@ -230,6 +233,26 @@ class UserDetailActivity : AppCompatActivity() {
 
 
     private fun initViewModel() = with(viewModel) {
+        lifecycleScope.launch {
+            userType.collect {
+                with(binding) {
+                    when (it) {
+                        UserType.ME -> {
+                            btnUserdetailChat.isVisible = false
+                            btnUserdetailGroup.isVisible = false
+                        }
+                        UserType.OTHER -> {
+                            btnUserdetailChat.isVisible = true
+                            btnUserdetailGroup.isVisible = true
+                        }
+                        else -> {
+                            binding.root.isVisible = false
+                        }
+                    }
+                }
+            }
+        }
+
         lifecycleScope.launch {
             chatRoom.collect {
                 startActivity(ChatRoomActivity.newIntent(this@UserDetailActivity,it.key))
