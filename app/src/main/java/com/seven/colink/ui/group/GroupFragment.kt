@@ -154,7 +154,7 @@ class GroupFragment : Fragment() {
             is GroupData.GroupWant -> {
                 lifecycleScope.launch {
                     if (item.key != null) {
-                        val intent = GroupActivity.newIntent(
+                        val intent = PostActivity.newIntent(
                             context = requireContext(),
                             key = item.key
                         )

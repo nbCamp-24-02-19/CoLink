@@ -164,6 +164,9 @@
                 android:layout_marginEnd="8dp"
                 android:fontFamily="@font/inter_regular"
                 android:text="@string/search_post_poster"
+                android:maxLength="16"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:textColor="@color/typo_color"
                 android:textSize="11sp" />
 

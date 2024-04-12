@@ -25,6 +25,7 @@ import com.seven.colink.R.color.white
 import com.seven.colink.databinding.FragmentSearchBinding
 import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.ui.sign.signin.SignInActivity
+import com.seven.colink.util.convert.onThrottleClick
 import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
@@ -133,30 +134,30 @@ class SearchFragment : Fragment() {
 
 
         // 프로젝트 필터버튼
-        binding.tvSearchProject.setOnClickListener {
+        binding.tvSearchProject.onThrottleClick {
             binding.etSearchSearch.text.toString().let { query ->
-            if (project) {
-                project = false
-                offColor(binding.tvSearchProject)
-                if (!project && study) {
-                    searchViewModel.setStudyFilter(query)
+                if (project) {
+                    project = false
+                    offColor(binding.tvSearchProject)
+                    if (!project && study) {
+                        searchViewModel.setStudyFilter(query)
+                    } else {
+                        searchViewModel.setGroupNone(query)
+                    }
                 } else {
-                    searchViewModel.setGroupNone(query)
-                }
-            } else {
-                project = true
-                onColor(binding.tvSearchProject)
-                if (project && !study) {
-                    searchViewModel.setProjectFilter(query)
-                } else {
-                    searchViewModel.setGroupBoth(query)
+                    project = true
+                    onColor(binding.tvSearchProject)
+                    if (project && !study) {
+                        searchViewModel.setProjectFilter(query)
+                    } else {
+                        searchViewModel.setGroupBoth(query)
+                    }
                 }
             }
         }
-        }
 
         // 스터디 필터버튼
-        binding.tvSearchStudy.setOnClickListener {
+        binding.tvSearchStudy.onThrottleClick {
             binding.etSearchSearch.text.toString().let { query ->
                 if (study) {
                     study = false
@@ -179,7 +180,7 @@ class SearchFragment : Fragment() {
         }
 
         // 모집완료 필터버튼
-        binding.tvSearchRecruitEnd.setOnClickListener {
+        binding.tvSearchRecruitEnd.onThrottleClick {
             binding.etSearchSearch.text.toString().let { query ->
                 if (recruitEnd) {
                     recruitEnd = false
@@ -202,7 +203,7 @@ class SearchFragment : Fragment() {
         }
 
         // 모집중 필터버튼
-        binding.tvSearchRecruit.setOnClickListener {
+        binding.tvSearchRecruit.onThrottleClick {
             binding.etSearchSearch.text.toString().let { query ->
                 if (recruit) {
                     recruit = false
@@ -239,10 +240,16 @@ class SearchFragment : Fragment() {
     }
 
     private fun setObserve() {
-        searchViewModel.searchModel.observe(viewLifecycleOwner) {state ->
-            when(state) {
+        searchViewModel.searchModel.observe(viewLifecycleOwner) { state ->
+            when (state) {
                 is UiState.Loading -> {
-                    showProgressOverlay()
+                    if (study.not() && project.not()) {
+                        showEmpty()
+                    } else if (recruit.not() && recruitEnd.not()) {
+                        showEmpty()
+                    } else {
+                        showProgressOverlay()
+                    }
                 }
                 is UiState.Success -> {
                     hideProgressOverlay()
@@ -253,7 +260,8 @@ class SearchFragment : Fragment() {
                 }
                 is UiState.Error -> {
                     hideProgressOverlay()
-                    Toast.makeText(requireContext(), "${state.throwable}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "${state.throwable}", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         }
@@ -262,7 +270,9 @@ class SearchFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         setSearchAppbar()
-        searchViewModel.doSearch("")
+        lifecycleScope.launch {
+            searchViewModel.doSearch("")
+        }
     }
 
     override fun onPause() {
@@ -270,14 +280,16 @@ class SearchFragment : Fragment() {
         returnAppbar()
     }
 
-    private fun setSearchAppbar(){
-        activity?.findViewById<ImageView>(R.id.iv_main_toolbar_image)?.setImageResource(R.drawable.logo_co_link_search)
+    private fun setSearchAppbar() {
+        activity?.findViewById<ImageView>(R.id.iv_main_toolbar_image)
+            ?.setImageResource(R.drawable.logo_co_link_search)
         activity?.findViewById<AppBarLayout>(R.id.al_main_appbar)?.elevation = 0f
         activity?.findViewById<AppBarLayout>(R.id.al_main_appbar)?.setBackgroundResource(main_color)
     }
 
-    private fun returnAppbar(){
-        activity?.findViewById<ImageView>(R.id.iv_main_toolbar_image)?.setImageResource(R.drawable.logo_co_link)
+    private fun returnAppbar() {
+        activity?.findViewById<ImageView>(R.id.iv_main_toolbar_image)
+            ?.setImageResource(R.drawable.logo_co_link)
         activity?.findViewById<AppBarLayout>(R.id.al_main_appbar)?.elevation = 5f
         activity?.findViewById<AppBarLayout>(R.id.al_main_appbar)?.setBackgroundResource(white)
     }
@@ -317,6 +329,9 @@ class SearchFragment : Fragment() {
         text.setTextColor(Color.parseColor("#FFFFFF"))
     }
 
-
-
+    private fun showEmpty() {
+        searchAdapter.mItems.clear()
+        binding.rvSearchRecyclerView.visibility = View.INVISIBLE
+        binding.clSearchEmpty.visibility = View.VISIBLE
+    }
 }

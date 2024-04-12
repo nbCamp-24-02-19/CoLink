@@ -79,8 +79,6 @@ class EvaluationStudyFragment : Fragment() {
     }
 
     private fun initView() {
-        setViewPager()
-
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
@@ -136,6 +134,8 @@ class EvaluationStudyFragment : Fragment() {
     }
 
     private fun firstPage() = with(binding) {
+        setViewPager()
+
         tvEvalPrev.visibility = View.INVISIBLE
         tvEvalNext.visibility = View.VISIBLE
         tvEvalNext.setOnClickListener {
@@ -148,6 +148,8 @@ class EvaluationStudyFragment : Fragment() {
     }
 
     private fun middlePage() = with(binding) {
+        setViewPager()
+
         tvEvalPrev.visibility = View.VISIBLE
         tvEvalPrev.setOnClickListener {
             prevPage(viewPager)
@@ -163,6 +165,8 @@ class EvaluationStudyFragment : Fragment() {
     }
 
     private fun lastPage() = with(binding) {
+        setViewPager()
+
         binding.tvEvalNext.visibility = View.INVISIBLE
         binding.tvEvalPrev.setOnClickListener {
             prevPage(viewPager)
