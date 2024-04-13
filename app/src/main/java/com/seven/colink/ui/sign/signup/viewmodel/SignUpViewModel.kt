@@ -195,7 +195,7 @@ class SignUpViewModel @Inject constructor(
         } else {
             _userModel.value = _userModel.value.copy(skill = skills.value)
         }
-        if (_errorMessage.value == SignUpErrorMessage.DUMMY) {
+        if (errorMessage.value == SignUpErrorMessage.DUMMY) {
             _errorMessage.value = SignUpErrorMessage.PASS
             userModel.value.password.let { registerUser(it) }
         }

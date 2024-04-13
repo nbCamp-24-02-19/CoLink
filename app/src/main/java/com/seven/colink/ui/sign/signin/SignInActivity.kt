@@ -116,9 +116,7 @@ class SignInActivity : AppCompatActivity() {
         lifecycleScope.launch {
             updateEvent.collect {
                 val intent = SignUpActivity.newIntent(this@SignInActivity, it)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
-                finish()
             }
         }
 

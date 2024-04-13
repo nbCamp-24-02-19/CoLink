@@ -96,7 +96,7 @@ class SignUpActivity : AppCompatActivity() {
                         finish()
                     } else {
                         pushed = true
-                        backToast = Toast.makeText(this@SignUpActivity, "뒤로가기시 데이터가 저장되지 않습니다. \n 버튼을 한번더 누르면 이전 화면으로 돌아가게 됩니다.", Toast.LENGTH_SHORT)
+                        backToast = Toast.makeText(this@SignUpActivity, "뒤로가기 시 변경된 데이터가 저장되지 않습니다.", Toast.LENGTH_SHORT)
                         backToast?.show()
                         Handler(Looper.getMainLooper()).postDelayed({pushed = false} ,2000)
                     }
