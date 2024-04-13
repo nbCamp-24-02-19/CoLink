@@ -5,6 +5,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -236,6 +237,7 @@ class SignUpProfileAdapter(
             etSignUpGit.setText(item.git)
             etSignUpBlog.setText(item.blog)
             etSignUpLink.setText(item.link)
+            btSignUpEnd.isVisible = item.buttonVisible
 
             btSignUpEnd.setOnClickListener {
                 update("git", etSignUpGit.text.takeIf { it.isNotEmpty() }?.toString())

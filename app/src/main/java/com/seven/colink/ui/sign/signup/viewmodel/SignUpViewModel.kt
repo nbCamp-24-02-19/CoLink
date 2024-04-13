@@ -81,7 +81,7 @@ class SignUpViewModel @Inject constructor(
                     SignUpProfileItem.Skill(it.skill),
                     SignUpProfileItem.Level(it.level),
                     SignUpProfileItem.Info(it.info),
-                    SignUpProfileItem.Blog(git = it.git, blog = it.blog, link = it.link),
+                    SignUpProfileItem.Blog(git = it.git, blog = it.blog, link = it.link, buttonVisible = false),
                 )
             } ?: listOf(
                 SignUpProfileItem.Category(),
