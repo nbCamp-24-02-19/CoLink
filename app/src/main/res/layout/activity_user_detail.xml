@@ -137,15 +137,18 @@
 
             <TextView
                 android:id="@+id/tv_userdetail_name"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:text="이름"
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end"
                 app:layout_constraintBottom_toBottomOf="@+id/iv_userdetail_level"
                 app:layout_constraintStart_toEndOf="@+id/iv_userdetail_level"
+                app:layout_constraintEnd_toStartOf="@+id/imageView"
                 app:layout_constraintTop_toTopOf="@+id/iv_userdetail_level" />
 
             <TextView

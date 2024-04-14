@@ -18,6 +18,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/tv_sign_up_update"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:gravity="end"
+        android:visibility="gone"
+        android:text="@string/sign_up_complete"
+        android:textColor="@color/forth_color"
+        android:textSize="14sp"
+        android:background="@drawable/ripple_effect"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_sign_up_visible"
         android:layout_width="match_parent"

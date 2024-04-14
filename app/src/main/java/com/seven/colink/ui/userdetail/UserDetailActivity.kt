@@ -3,12 +3,13 @@ package com.seven.colink.ui.userdetail
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,10 +19,10 @@ import com.seven.colink.ui.chat.ChatRoomActivity
 import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.ui.userdetail.adapter.UserDetailPostAdapter
 import com.seven.colink.ui.userdetail.adapter.UserSkillAdapter
-import com.seven.colink.util.dialog.setDialog
-import com.seven.colink.util.snackbar.setSnackBar
 import com.seven.colink.ui.userdetailshowmore.UserDetailShowmoreActivity
+import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.setLevelIcon
+import com.seven.colink.util.snackbar.setSnackBar
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.ProjectStatus
 import com.seven.colink.util.status.SnackType
@@ -218,6 +219,26 @@ class UserDetailActivity : AppCompatActivity() {
 
     private fun initViewModel() = with(viewModel) {
         lifecycleScope.launch {
+            userType.collect {
+                with(binding) {
+                    when (it) {
+                        UserType.ME -> {
+                            btnUserdetailChat.isVisible = false
+                            btnUserdetailGroup.isVisible = false
+                        }
+                        UserType.OTHER -> {
+                            btnUserdetailChat.isVisible = true
+                            btnUserdetailGroup.isVisible = true
+                        }
+                        else -> {
+                            binding.root.isVisible = false
+                        }
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
             chatRoom.collect {
                 startActivity(ChatRoomActivity.newIntent(this@UserDetailActivity,it.key))
             }
@@ -231,6 +252,13 @@ class UserDetailActivity : AppCompatActivity() {
                         list.find { it.title == title }.let { post -> viewModel.inviteGroup(post!!) }
                     }
                 }
+            }
+        }
+
+        lifecycleScope.launch {
+            checkLeaver.collect {
+                Toast.makeText(this@UserDetailActivity, "탈퇴한 사용자 입니다.", Toast.LENGTH_SHORT).show()
+                finish()
             }
         }
     }

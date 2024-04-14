@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CoLink</string>
+    <string name="app_name">코링-Colink</string>
     <string name="title_home">홈</string>
     <string name="title_post">게시판</string>
     <string name="title_member">그룹</string>

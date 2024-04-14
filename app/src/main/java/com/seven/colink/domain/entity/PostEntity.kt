@@ -19,13 +19,13 @@ data class PostEntity(
     val precautions: String? = "",
     val recruitInfo: String? = "",
     val recruit: List<String>? = emptyList(),
-    val registeredDate: String? = LocalDateTime.now().convertLocalDateTime(),
     val editDate: String? = null,
     val like: Int? = 0,
     val views: Int? = 0,
     val startDate: String? = "",
     val endDate: String? = "",
     val memberIds: List<String> = emptyList(),
+    val registeredDate: String? = LocalDateTime.now().convertLocalDateTime(),
 )
 
 data class RecruitEntity (

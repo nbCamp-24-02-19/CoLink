@@ -3,7 +3,11 @@ package com.seven.colink.ui.sign.signup
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.InputType
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -77,8 +81,29 @@ class SignUpActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        initView()
         initViewModel()
     }
+
+    private fun initView() {
+        var pushed = false
+        var backToast: Toast? = null
+        onBackPressedDispatcher.addCallback(
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (pushed) {
+                        backToast?.cancel()
+                        finish()
+                    } else {
+                        pushed = true
+                        backToast = Toast.makeText(this@SignUpActivity, "뒤로가기 시, 데이터가 저장되지 않습니다.", Toast.LENGTH_SHORT)
+                        backToast?.show()
+                        Handler(Looper.getMainLooper()).postDelayed({pushed = false} ,2000)
+                    }
+                }
+            })
+    }
+
     private fun initViewModel() = with(viewModel) {
         lifecycleScope.launch {
             combine(userModel, uiStatus){ userModel, uiStatus ->
@@ -99,7 +124,10 @@ class SignUpActivity : AppCompatActivity() {
             entryType.collect {
                 when (it) {
                     SignUpEntryType.CREATE -> updateUiState(SignUpUIState.NAME)
-                    SignUpEntryType.UPDATE_PROFILE -> updateUiState(SignUpUIState.PROFILE)
+                    SignUpEntryType.UPDATE_PROFILE -> {
+                        binding.tvSignUpUpdate.isVisible = true
+                        updateUiState(SignUpUIState.PROFILE)
+                    }
                     SignUpEntryType.UPDATE_PASSWORD -> updateUiState(SignUpUIState.PASSWORD)
                 }
             }
