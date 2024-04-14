@@ -69,9 +69,7 @@ class PostFragment : Fragment() {
                                 ) {}.show(requireActivity().supportFragmentManager, null)
                             }
 
-                            else -> {
-
-                            }
+                            else -> Unit
                         }
                     }
 
