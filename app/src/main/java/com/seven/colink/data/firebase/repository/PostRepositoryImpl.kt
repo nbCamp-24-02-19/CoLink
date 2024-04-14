@@ -204,4 +204,10 @@ class PostRepositoryImpl @Inject constructor(
                 })
             }
     }
+
+    // 추천 로직,, 유저의 직군에 맞춰서 데이터 불러오기, 구성원의 평균 레벨이 유저의 레벨과 유사할수록 우선 순위^,그 다음 모집하는중인 글 일 수록 우선순위 ^
+    // 구성원의 평점이 높을 수록 ^, 게시글의 좋아요수^, 지원한 사용자수^, 조회수. 각각 점수 부여해서 노출
+/*    override suspend fun getRecommandPost(speciality: String, level: Int) {
+
+    }*/
 }

@@ -418,6 +418,7 @@ class PostContentListAdapter(
                                 binding.etPostComment.visibility = View.VISIBLE
                                 binding.btnPostCommentEdit.visibility = View.VISIBLE
                                 binding.tvPostComment.visibility = View.GONE
+                                binding.etPostComment.setText(binding.tvPostComment.text)
                                 binding.btnPostCommentEdit.setOnClickListener {
                                     onClickCommentEditButton(
                                         item.key,
