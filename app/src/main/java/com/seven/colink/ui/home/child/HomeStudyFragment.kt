@@ -64,8 +64,6 @@ class HomeStudyFragment : Fragment() {
                     tvHomeBottomDes.text = bottom.des
                     tvHomeBottomKind.text =
                         bottom.kind?.map { "# " + it }?.joinToString("   ", "", "")
-                    viewHomeBottomDivider.visibility = View.INVISIBLE
-                    tvHomeBottomLv.visibility = View.INVISIBLE
                     ivHomeBottomThumubnail.load(bottom.img)
 
                     if (bottom.blind == ProjectStatus.END) {
