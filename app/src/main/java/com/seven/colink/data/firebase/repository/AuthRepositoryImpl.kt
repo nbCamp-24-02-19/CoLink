@@ -82,6 +82,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun deleteUser() = suspendCoroutine { continuation ->
         firebaseAuth.currentUser?.delete()
             ?.addOnSuccessListener {
+                firebaseAuth.signOut()
                 continuation.resume(DataResultStatus.SUCCESS)
             }
             ?.addOnFailureListener { e ->

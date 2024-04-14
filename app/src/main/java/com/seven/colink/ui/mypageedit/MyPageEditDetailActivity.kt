@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -14,13 +15,16 @@ import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.seven.colink.R
 import com.seven.colink.databinding.ActivityMyPageEditDetailBinding
+import com.seven.colink.ui.main.MainActivity
 import com.seven.colink.ui.mypageedit.model.MyPageEditModel
 import com.seven.colink.ui.mypageedit.viewmodel.MyPageEditDetailViewModel
 import com.seven.colink.ui.sign.signup.SignUpActivity
 import com.seven.colink.ui.sign.signup.type.SignUpEntryType
+import com.seven.colink.util.dialog.setDialog
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.snackbar.setSnackBar
+import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.SnackType
 import com.seven.colink.util.status.UiState
 import dagger.hilt.android.AndroidEntryPoint
@@ -55,7 +59,7 @@ class MyPageEditDetailActivity : AppCompatActivity() {
                 ivMypageDetailBack,
 //                ctMypageEdit2,
                 ctMypageEdit1,
-//                ctMypageEdit3,
+                ctMypageEdit3,
                 btMypageSave,
             )
         }
@@ -102,6 +106,20 @@ class MyPageEditDetailActivity : AppCompatActivity() {
                         }
                     }
                     buttons.forEach { it.isEnabled = true }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            deleteEvent.collect {
+                if (it == DataResultStatus.SUCCESS) {
+                    Toast.makeText(this@MyPageEditDetailActivity, "탈퇴 되었습니다.", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this@MyPageEditDetailActivity, MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                    finish()
+                } else {
+                    binding.root.setSnackBar(SnackType.Error, it.message)
                 }
             }
         }
@@ -153,6 +171,15 @@ class MyPageEditDetailActivity : AppCompatActivity() {
                 context = this@MyPageEditDetailActivity,
                 entryType = SignUpEntryType.UPDATE_PROFILE
             ))
+        }
+
+        ctMypageEdit3.setOnClickListener {
+            setDialog(
+                title = "회원 탈퇴",
+                message = "탈퇴시 계정을 복구 할 수 없습니다. \n 정말 탈퇴 하시겠습니까?",
+                confirmAction = { viewModel.deleteUser() },
+                cancelAction = { it.dismiss() }
+                ).show()
         }
 
         btMypageSave.setOnClickListener {

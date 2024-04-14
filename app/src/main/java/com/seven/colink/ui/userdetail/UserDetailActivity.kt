@@ -269,5 +269,12 @@ class UserDetailActivity : AppCompatActivity() {
                 }
             }
         }
+
+        lifecycleScope.launch {
+            checkLeaver.collect {
+                Toast.makeText(this@UserDetailActivity, "탈퇴한 사용자 입니다.", Toast.LENGTH_SHORT).show()
+                finish()
+            }
+        }
     }
 }

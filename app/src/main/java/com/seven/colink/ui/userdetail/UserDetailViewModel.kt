@@ -15,6 +15,7 @@ import com.seven.colink.domain.usecase.GetChatRoomUseCase
 import com.seven.colink.domain.usecase.SendNotificationInviteUseCase
 import com.seven.colink.ui.userdetail.UserDetailActivity.Companion.EXTRA_USER_KEY
 import com.seven.colink.util.convert.convertToDaysAgo
+import com.seven.colink.util.status.UserStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -51,6 +52,9 @@ class UserDetailViewModel @Inject constructor(
     private val _userType = MutableStateFlow(UserType.LOADING)
     val userType = _userType.asStateFlow()
 
+    private val _checkLeaver = MutableSharedFlow<String>()
+    val checkLeaver = _checkLeaver.asSharedFlow()
+
     private var _userId: String? = null
     private val userId get() = _userId!!
 
@@ -81,6 +85,7 @@ class UserDetailViewModel @Inject constructor(
         viewModelScope.launch {
             val result = userRepository.getUserDetails(userId)
             result.onSuccess { user ->
+                if (user?.status == UserStatus.LEAVER.info) _checkLeaver.emit(user?.status!!)
                 _userDetails.postValue(user?.convertUserEntity())
             }
         }

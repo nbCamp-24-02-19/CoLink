@@ -8,9 +8,11 @@ import com.seven.colink.domain.repository.AuthRepository
 import com.seven.colink.domain.repository.ImageRepository
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.ui.mypageedit.model.MyPageEditModel
+import com.seven.colink.util.status.DataResultStatus
 import com.seven.colink.util.status.SnackType
 import com.seven.colink.util.status.UiState
 import com.seven.colink.util.status.UiState.*
+import com.seven.colink.util.status.UserStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,6 +34,8 @@ class MyPageEditDetailViewModel @Inject constructor(
     private val _uploadState = MutableSharedFlow<SnackType>()
     val uploadState = _uploadState.asSharedFlow()
 
+    private val _deleteEvent = MutableSharedFlow<DataResultStatus>()
+    val deleteEvent = _deleteEvent.asSharedFlow()
     fun loadUserDetails() {
         viewModelScope.launch {
             _userDetail.value = Loading // 로딩 상태 설정
@@ -52,8 +56,9 @@ class MyPageEditDetailViewModel @Inject constructor(
     fun updateProfileImg(uri: Uri) {
         _userDetail.value = Success(
             (userDetail.value as Success<MyPageEditModel>).data.copy(
-            selectUrl = uri
-        ))
+                selectUrl = uri
+            )
+        )
     }
 
     suspend fun update(text: String) {
@@ -75,7 +80,8 @@ class MyPageEditDetailViewModel @Inject constructor(
                     _userDetail.value =
                         Success(data.copy(name = text, profileUrl = data.profileUrl))
                 } else {
-                    _userDetail.value = Success(data.copy(name = text, profileUrl = data.profileUrl))
+                    _userDetail.value =
+                        Success(data.copy(name = text, profileUrl = data.profileUrl))
                     _uploadState.emit(
                         SnackType.Notice
                     )
@@ -88,6 +94,19 @@ class MyPageEditDetailViewModel @Inject constructor(
             }
         } else {
             return
+        }
+    }
+
+    fun deleteUser() {
+        viewModelScope.launch {
+            userRepository.updateUserInfo(
+                userRepository.getUserDetails(
+                    authRepository.getCurrentUser().message
+                ).getOrNull()?.copy(status = UserStatus.LEAVER.info) ?: return@launch
+            )
+            authRepository.deleteUser().let {
+                _deleteEvent.emit(it)
+            }
         }
     }
 
