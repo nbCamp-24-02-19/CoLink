@@ -61,6 +61,8 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
 
       - name: Get last release tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         id: get_last_release
         run: |
           LATEST_RELEASE=$(gh release list --limit 1 --json tagName -q '.[0].tagName')
