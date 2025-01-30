@@ -3,7 +3,7 @@ name: update jira ticket
 on:
   workflow_run:
     workflows:
-      - release
+      - "release"
     types:
       - completed
     conclusion: success

@@ -25,13 +25,14 @@ jobs:
         id: generate_notes
         run: |
           if [[ "${{ env.LATEST_TAG }}" == "0.0.0" ]]; then
-            COMMIT_LOG=$(git log --pretty=format:"- [\`%h\`](https://github.com/$GITHUB_REPOSITORY/commit/%H) %s" --reverse)
+            COMMIT_LOG=$(git log --pretty=format:"- #%h %s" --reverse)
           else
-            COMMIT_LOG=$(git log ${{ env.LATEST_TAG }}..HEAD --pretty=format:"- [\`%h\`](https://github.com/$GITHUB_REPOSITORY/commit/%H) %s" --reverse)
+            COMMIT_LOG=$(git log ${{ env.LATEST_TAG }}..HEAD --pretty=format:"- #%h %s" --reverse)
           fi
           
           NOTES=$(cat << EOF
           $COMMIT_LOG
+          EOF
           )
           echo "$NOTES" > notes.md
           cat notes.md
