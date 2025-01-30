@@ -11,6 +11,9 @@ jobs:
     steps:
       - name: check out
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          fetch-tags: true
 
       - name: get latest version
         id: get_tag
