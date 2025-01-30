@@ -1,0 +1,67 @@
+name: update jira
+
+on:
+  release:
+    types:
+      - created
+
+jobs:
+  update_jira:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: get previous release tag
+        id: get_prev_release
+        run: |
+          PREV_TAG=$(git describe --tags --abbrev=0 $(git rev-list --tags --skip=1 --max-count=1) 2>/dev/null || echo "")
+          echo "PREV_TAG=$PREV_TAG" >> $GITHUB_ENV
+
+      - name: get commit messages since last release
+        id: get_commit_messages
+        run: |
+          if [[ -z "${{ env.PREV_TAG }}" ]]; then
+            COMMITS=$(git log --pretty=format:"%s" --reverse)
+          else
+            COMMITS=$(git log ${{ env.PREV_TAG }}..HEAD --pretty=format:"%s" --reverse)
+          fi
+          echo "$COMMITS" > commit_messages.txt
+
+      - name: get jira and update
+        id: extract_jira_id
+        run: |
+          JIRA_ENTRIES=""
+          while IFS= read -r COMMIT_MSG; do
+            JIRA_ID=$(echo "$COMMIT_MSG" | grep -oE '#[^ ]+' | head -n 1 | tr -d '#')
+            if [[ -n "$JIRA_ID" ]]; then
+              JIRA_RESPONSE=$(
+                curl -s -u "${{ secret.JIRA_GURI }}:${{ secret.JIRA_GURI_TOKEN }}" \
+                -X GET -H "Accept: application/json" \
+                "${{ secrets.JIRA_DOMAIN }}/rest/api/2/issue/${{ env.JIRA_ID }}"
+              )
+          
+              JIRA_TITLE=$(echo "$JIRA_RESPONSE" | jq -r '.fields.summary')
+              JIRA_LINK="${{ secrets.JIRA_DOMAIN }}/browse/$JIRA_ID"
+          
+              JIRA_ENTRIES+="\n$COMMIT_MSG #$JIRA_ID\n- [**$JIRA_TITLE**]($JIRA_LINK)"
+          
+              curl -s -u "${{ secret.JIRA_GURI }}:${{ secret.JIRA_GURI_TOKEN }}" \
+              -X POST -H "Accept: application/json" \
+              --data '{"transition": {"id": "31"}}' \
+              "${{ secrets.JIRA_DOMAIN }}/rest/api/2/issue/${{ env.JIRA_ID }}"
+            fi
+          done < commit_message.txt
+          
+          echo "JIRA_ENTRIES<<EOF" >> $GITHUB_ENV
+          echo -e "$JIRA_ENTRIES" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Update Release Notes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          RELEASE_NOTES=$(gh release view ${{ github.event.release.tag_name }} --json body -q .body)
+          UPDATED_NOTES="## Updated Release Notes\n\n$RELEASE_NOTES\n\n###Jira tasks\n${{ env.JIRA_ENTRIES }}"
+
+          gh release edit ${{ github.event.release.tag_name }} --notes "$UPDATED_NOTES"
