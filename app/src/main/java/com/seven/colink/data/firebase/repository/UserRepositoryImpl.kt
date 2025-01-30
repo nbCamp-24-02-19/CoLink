@@ -9,6 +9,7 @@ import com.seven.colink.data.firebase.type.DataBaseType
 import com.seven.colink.domain.entity.UserEntity
 import com.seven.colink.domain.repository.UserRepository
 import com.seven.colink.util.status.DataResultStatus
+import com.seven.colink.util.status.UserStatus
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -79,6 +80,7 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun getUserBySpecialty(specialty: String) = runCatching {
         firestore.collection(DataBaseType.USER.title).whereEqualTo("specialty",specialty)
+            .whereNotEqualTo("status", UserStatus.LEAVER.info)
             .orderBy("grade",Query.Direction.DESCENDING)
             .get().await()
             .documents.mapNotNull {

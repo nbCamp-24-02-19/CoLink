@@ -3,7 +3,11 @@ package com.seven.colink.ui.sign.signup
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.InputType
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -14,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textfield.TextInputLayout
 import com.seven.colink.R
 import com.seven.colink.databinding.ActivitySignUpBinding
+import com.seven.colink.ui.main.MainActivity
 import com.seven.colink.ui.sign.signup.adater.SignUpProfileAdapter
 import com.seven.colink.ui.sign.signup.adater.SkillAdapter
 import com.seven.colink.ui.sign.signup.type.SignUpEntryType
@@ -24,7 +29,9 @@ import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.snackbar.setSnackBar
 import com.seven.colink.util.status.SnackType
+import com.seven.colink.util.status.UiState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
@@ -74,8 +81,29 @@ class SignUpActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        initView()
         initViewModel()
     }
+
+    private fun initView() {
+        var pushed = false
+        var backToast: Toast? = null
+        onBackPressedDispatcher.addCallback(
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (pushed) {
+                        backToast?.cancel()
+                        finish()
+                    } else {
+                        pushed = true
+                        backToast = Toast.makeText(this@SignUpActivity, "뒤로가기 시, 데이터가 저장되지 않습니다.", Toast.LENGTH_SHORT)
+                        backToast?.show()
+                        Handler(Looper.getMainLooper()).postDelayed({pushed = false} ,2000)
+                    }
+                }
+            })
+    }
+
     private fun initViewModel() = with(viewModel) {
         lifecycleScope.launch {
             combine(userModel, uiStatus){ userModel, uiStatus ->
@@ -96,7 +124,10 @@ class SignUpActivity : AppCompatActivity() {
             entryType.collect {
                 when (it) {
                     SignUpEntryType.CREATE -> updateUiState(SignUpUIState.NAME)
-                    SignUpEntryType.UPDATE_PROFILE -> updateUiState(SignUpUIState.PROFILE)
+                    SignUpEntryType.UPDATE_PROFILE -> {
+                        binding.tvSignUpUpdate.isVisible = true
+                        updateUiState(SignUpUIState.PROFILE)
+                    }
                     SignUpEntryType.UPDATE_PASSWORD -> updateUiState(SignUpUIState.PASSWORD)
                 }
             }
@@ -107,7 +138,6 @@ class SignUpActivity : AppCompatActivity() {
                 Pair(uiStatus, entryType)
             }.collect { (uiStatus, entryType) ->
                 setUi(uiStatus, entryType)
-                this@SignUpActivity.hideProgressOverlay()
             }
         }
 
@@ -158,6 +188,11 @@ class SignUpActivity : AppCompatActivity() {
                 this@SignUpActivity.hideProgressOverlay()
                 if (it == "등록 성공") {
                     binding.root.setSnackBar(SnackType.Success, it).show()
+                    startActivity(
+                        Intent(this@SignUpActivity,MainActivity::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        }
+                    )
                     finish()
                 } else {
                     binding.root.setSnackBar(SnackType.Error, it).show()
@@ -174,6 +209,19 @@ class SignUpActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.skills.collect{
                 skillAdapter.submitList(it)
+            }
+        }
+
+        lifecycleScope.launch {
+            progressState.collect {
+                when(it) {
+                    UiState.Loading -> {
+                        showProgressOverlay()
+                    }
+                    else -> {
+                        hideProgressOverlay()
+                    }
+                }
             }
         }
     }
@@ -217,10 +265,9 @@ class SignUpActivity : AppCompatActivity() {
     }
     private fun setButton(state: SignUpUIState, entryType: SignUpEntryType) = with(binding){
         btSignUpBtn.setOnClickListener {
-            this@SignUpActivity.showProgressOverlay()
             it.isEnabled = false
             when(state) {
-                SignUpUIState.EMAIL -> viewModel.checkValid(state, etSignUpEmailId.text.toString(), etSignUpEmailService.text.toString())
+                SignUpUIState.EMAIL -> viewModel.checkValid(state, etSignUpEmailId.text.toString().lowercase(), etSignUpEmailService.text.toString().lowercase())
                 SignUpUIState.PASSWORD -> viewModel.checkValid(state, etSignUpEdit1.text.toString(), etSignUpPasswordCheck.text.toString())
                 else -> viewModel.checkValid(state, etSignUpEdit1.text.toString())
             }
@@ -277,7 +324,6 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun onClickEnd(map: Map<String, Any?>) {
-        this.showProgressOverlay()
         viewModel.checkValid(map)
     }
 }

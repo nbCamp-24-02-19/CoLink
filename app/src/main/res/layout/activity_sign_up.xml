@@ -18,6 +18,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/tv_sign_up_update"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:gravity="end"
+        android:visibility="gone"
+        android:text="@string/sign_up_complete"
+        android:textColor="@color/forth_color"
+        android:textSize="14sp"
+        android:background="@drawable/ripple_effect"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_sign_up_visible"
         android:layout_width="match_parent"
@@ -75,6 +88,8 @@
                 android:id="@+id/et_sign_up_edit1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:lines="1"
                 android:maxLength="16"/>
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -101,6 +116,8 @@
                     android:id="@+id/et_sign_up_email_id"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:lines="1"
                     android:maxLength="16"/>
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -124,6 +141,8 @@
                     android:id="@+id/et_sign_up_email_service"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:lines="1"
                     android:maxLength="16"/>
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
@@ -137,6 +156,7 @@
             android:fontFamily="@font/inter_bold"
             android:text="@string/sign_up_password_check"
             android:textColor="@color/black"
+            android:lines="1"
             android:textSize="14sp"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
@@ -159,6 +179,8 @@
                 android:id="@+id/et_sign_up_password_check"
                 android:layout_width="match_parent"
                 android:inputType="textPassword"
+                android:singleLine="true"
+                android:lines="1"
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
 

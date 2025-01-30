@@ -92,7 +92,6 @@ class MyPageFragment : Fragment() {
                 skillCategory.setDialog(binding_.root.context, "사용 가능한 언어/툴을 선택해주세요") {
                     binding_.btSignUpSubCategoryBtn.text = it
                     viewModel.updateSkill(it)
-                    Log.d("tag", "skill = $it")
                 }.show()
             }
 
@@ -100,16 +99,20 @@ class MyPageFragment : Fragment() {
         //스킬 삭제
         skiladapter.skilLongClick = object : MyPageSkilAdapter.SkilLongClick {
             override fun onLongClick(language: String, position: Int) {
-                context?.setDialog("삭제",
-                    "정말로 삭제하시겠습니까?",
-                    null,
-                    confirmAction = {
-                        viewModel.removeSkill(language)
-                        it.dismiss()
-                    },
-                    cancelAction = {
-                        it.dismiss()
-                    })?.show()
+
+                if (position != 0) {
+                    context?.setDialog("삭제",
+                        "정말로 삭제하시겠습니까?",
+                        null,
+                        confirmAction = {
+                            viewModel.removeSkill(language)
+                            it.dismiss()
+
+                        },
+                        cancelAction = {
+                            it.dismiss()
+                        })?.show()
+                } else {Toast.makeText(context, "스킬이 하나 밖에 없어서 삭제할 수 없습니다.", Toast.LENGTH_SHORT).show()}
             }
         }
 
@@ -117,9 +120,7 @@ class MyPageFragment : Fragment() {
             override fun onClick(view: View, position: Int, item: MyPostItem.MyPagePostItem) {
                 lifecycleScope.launch {
                     var key = item.projectKey
-                    Log.d("postClick", "key = $key")
                     val post = key.let { viewModel.getPost(it) }
-                    Log.d("postClick", "post = $post")
                     if (post != null) {
                         startActivity(
                             PostActivity.newIntent(
@@ -140,9 +141,7 @@ class MyPageFragment : Fragment() {
             override fun onClick(view: View, position: Int, item: MyPostItem.MyPageStudyItem) {
                 lifecycleScope.launch {
                     var key = item.studyKey
-                    Log.d("postClick", "key = ${key}")
                     val post = key.let { viewModel.getPost(it) }
-                    Log.d("postClick", "post = ${post}")
                     if (post != null) {
                         startActivity(
                             PostActivity.newIntent(
@@ -275,7 +274,7 @@ class MyPageFragment : Fragment() {
         } else {
             binding.ivMypageLink.visibility = View.VISIBLE
             binding.ivMypageLink.setOnClickListener {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(user.link))
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://"+user.link))
                 startActivity(intent)
             }
         }
@@ -291,16 +290,15 @@ class MyPageFragment : Fragment() {
         if(user.blog != null){
             binding.ivMypageBlog.visibility = View.VISIBLE
             binding.ivMypageBlog.setOnClickListener {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(user.blog))
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://"+user.blog))
                 startActivity(intent)
             }
         } else binding.ivMypageBlog.visibility = View.GONE
-
         //깃헙 주소가 없으면
         if (user.git != null){
             binding.ivMypageGit.visibility = View.VISIBLE
             binding.ivMypageGit.setOnClickListener {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(user.git))
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://"+user.git))
                 startActivity(intent)
             }
         } else binding.ivMypageGit.visibility = View.GONE
@@ -326,7 +324,6 @@ class MyPageFragment : Fragment() {
 
         binding.tvMypageScore.text = user.score.toString()
 
-        Log.d("Tag", "user = ${user}")
     }
 
 

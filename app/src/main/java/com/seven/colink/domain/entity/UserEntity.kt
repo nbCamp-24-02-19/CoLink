@@ -10,9 +10,9 @@ data class UserEntity(
     val name: String? = "",
     val photoUrl: String? = "https://firebasestorage.googleapis.com/v0/b/colink-a7c3a.appspot.com/o/img%2Fic_profile.png?alt=media&token=64207054-6439-4275-b7be-cd13c626f081",
     val phoneNumber: String? = null,
-    val level: Int? = 0,
-    val mainSpecialty: String? = "",
-    val specialty: String? = "",
+    val level: Int? = 1,
+    val mainSpecialty: String? = "기획",
+    val specialty: String? = "UI/UX 기획",
     val grade: Double? = 5.0,
     val skill: List<String>? = emptyList(),
     val git: String? = null,
@@ -29,5 +29,6 @@ data class UserEntity(
     val participantsChatRoomIds: List<String>? = emptyList(),
     val token: String? = null,
     @get:Exclude @set:Exclude var chatRoomKeyList: List<String>? = null,
-    val likeList: List<String>? = emptyList()
+    val likeList: List<String>? = emptyList(),
+    val status: String? = null
 )

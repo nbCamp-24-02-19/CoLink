@@ -55,27 +55,29 @@ class SearchAdapter(val mItems: MutableList<SearchModel>) :
         val item = mItems[position]
 
         holder.itemBox.setOnClickListener {
-            if (mItems.isNullOrEmpty()) {
-                Log.e("Error", "Search mItems is NullOrEmpty")
-                return@setOnClickListener
-            } else {
-                itemClick?.onClick(mItems[position], position)
+            itemClick?.onClick(item, position)
+        }
+
+        when (item.groupType) {
+            GroupType.PROJECT -> {
+                holder.project.visibility = View.VISIBLE
+                holder.study.visibility = View.GONE
+            }
+            else -> {
+                holder.study.visibility = View.VISIBLE
+                holder.project.visibility = View.GONE
             }
         }
 
-        if (item.groupType == GroupType.PROJECT) {
-            holder.project.visibility = View.VISIBLE
-            holder.study.visibility = View.GONE
-        } else {
-            holder.study.visibility = View.VISIBLE
-            holder.project.visibility = View.GONE
-        }
-        if (item.status == ProjectStatus.RECRUIT) {
-            holder.recruit.visibility = View.VISIBLE
-            holder.recruitEnd.visibility = View.GONE
-        } else {
-            holder.recruitEnd.visibility = View.VISIBLE
-            holder.recruit.visibility = View.GONE
+        when (item.status) {
+            ProjectStatus.RECRUIT -> {
+                holder.recruit.visibility = View.VISIBLE
+                holder.recruitEnd.visibility = View.GONE
+            }
+            else -> {
+                holder.recruitEnd.visibility = View.VISIBLE
+                holder.recruit.visibility = View.GONE
+            }
         }
         holder.thumbnail.load(item.thumbnail)
         holder.title.text = item.title

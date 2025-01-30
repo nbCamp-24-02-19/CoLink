@@ -61,6 +61,7 @@
         android:hint="@string/input_title"
         android:textColorHint="@color/edit_hint_color"
         android:textSize="16sp"
+        android:maxLength="30"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_title" />
@@ -122,6 +123,7 @@
         android:minHeight="250dp"
         android:padding="8dp"
         android:textSize="14sp"
+        android:maxLength="8000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_project_description_info" />

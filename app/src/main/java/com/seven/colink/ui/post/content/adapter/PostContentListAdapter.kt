@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.PopupMenu
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
@@ -34,6 +35,7 @@ import com.seven.colink.util.setLevelIcon
 import com.seven.colink.util.status.ApplicationStatus
 import com.seven.colink.util.status.GroupType
 import com.seven.colink.util.status.PostContentViewTypeItem
+import com.seven.colink.util.status.ProjectStatus
 
 class PostContentListAdapter(
     private val onClickItem: (PostContentItem) -> Unit,
@@ -243,11 +245,9 @@ class PostContentListAdapter(
                     tvNowPersonnel.text = "${item.recruit.nowPersonnel}"
                     tvMaxPersonnel.text = "${item.recruit.maxPersonnel}"
 
-                    if (item.buttonUiState == ContentButtonUiState.User) {
-                        btRecruit.isEnabled =
-                            item.recruit.nowPersonnel < (item.recruit.maxPersonnel ?: -1)
-                        btRecruit.alpha = if (btRecruit.isEnabled) 1.0f else 0.5f
-                    }
+                    val isRecruitmentAllowed = (item.recruit.nowPersonnel < (item.recruit.maxPersonnel ?: -1)) && item.status == ProjectStatus.RECRUIT
+                    btRecruit.isEnabled = item.buttonUiState == ContentButtonUiState.User && isRecruitmentAllowed
+                    btRecruit.alpha = if (isRecruitmentAllowed) 1.0f else 0.5f
 
                     btRecruit.visibility =
                         if (item.buttonUiState == ContentButtonUiState.Manager) View.GONE else View.VISIBLE
@@ -418,6 +418,7 @@ class PostContentListAdapter(
                                 binding.etPostComment.visibility = View.VISIBLE
                                 binding.btnPostCommentEdit.visibility = View.VISIBLE
                                 binding.tvPostComment.visibility = View.GONE
+                                binding.etPostComment.setText(binding.tvPostComment.text)
                                 binding.btnPostCommentEdit.setOnClickListener {
                                     onClickCommentEditButton(
                                         item.key,

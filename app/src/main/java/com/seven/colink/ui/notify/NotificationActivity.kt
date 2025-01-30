@@ -11,19 +11,21 @@ import com.seven.colink.databinding.ActivityNotificationBinding
 import com.seven.colink.ui.chat.ChatRoomActivity
 import com.seven.colink.ui.group.GroupActivity
 import com.seven.colink.ui.notify.adapter.NotificationAdapter
-import com.seven.colink.ui.notify.viewmodel.FilterType
-import com.seven.colink.ui.notify.viewmodel.FilterType.*
+import com.seven.colink.ui.notify.viewmodel.FilterType.ALL
+import com.seven.colink.ui.notify.viewmodel.FilterType.CHAT
+import com.seven.colink.ui.notify.viewmodel.FilterType.RECRUIT
 import com.seven.colink.ui.notify.viewmodel.NotificationViewModel
 import com.seven.colink.ui.post.register.PostActivity
 import com.seven.colink.util.progress.hideProgressOverlay
 import com.seven.colink.util.progress.showProgressOverlay
 import com.seven.colink.util.snackbar.setSnackBar
 import com.seven.colink.util.status.SnackType
-import com.seven.colink.util.status.UiState.*
+import com.seven.colink.util.status.UiState.Error
+import com.seven.colink.util.status.UiState.Loading
+import com.seven.colink.util.status.UiState.Success
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import okhttp3.internal.notifyAll
 
 @AndroidEntryPoint
 class NotificationActivity : AppCompatActivity() {

@@ -22,5 +22,6 @@ sealed interface SignUpProfileItem {
         val git: String? = null,
         val blog: String? = null,
         val link: String? = null,
+        val buttonVisible: Boolean = true
     ): SignUpProfileItem
 }

@@ -1,18 +1,86 @@
-# CoLink
+<h1 align="center">
+ 코링(CoLink) - 당신의 첫 프로젝트 파트너
+</h1>
+</h1>
+ <p align="center">
+   <a>코링에서 새로운 팀을 만나보세요!🤼‍♂️</a>
+   <br />
+   <br />
+<a>
+   <img alt="kotlin" src = "https://img.shields.io/badge/Kotlin-%230095D5.svg?&style=for-the-badge&logo=kotlin&logoColor=white" />
+  </a>
+<a>
+   <img alt="JavaScript" src="https://img.shields.io/badge/JavaScript-F7DF1E.svg?&style=for-the-badge&logo=javascript&logoColor=black" />
+</a>
+  <a>
+   <img alt="Android Studio" src="https://img.shields.io/badge/Android_Studio-3DDC84.svg?&style=for-the-badge&logo=android-studio&logoColor=white" />
+  </a>
+ <a>
+   <img alt="Gradle" src = "https://img.shields.io/badge/Gradle-02303A.svg?&style=for-the-badge&logo=gradle&logoColor=white" />
+  </a>
+<a>
+   <img alt="Firebase" src="https://img.shields.io/badge/Firebase-FFCA28.svg?&style=for-the-badge&logo=firebase&logoColor=black" />
+</a>
+<a>
+   <img alt="Coil" src="https://img.shields.io/badge/Coil-%231572B6.svg?&style=for-the-badge&logo=kotlin&logoColor=white" />
+</a>
+<a>
+   <img alt="Retrofit" src="https://img.shields.io/badge/Retrofit-%23A7A7A7.svg?&style=for-the-badge&logo=android&logoColor=black" />
+</a>
+<a>
+   <img alt="Hilt" src="https://img.shields.io/badge/Hilt-%234CAF50.svg?&style=for-the-badge&logo=android&logoColor=white" />
+</a>
+<a>
+   <img alt="Jsoup" src="https://img.shields.io/badge/Jsoup-%236DB33F.svg?&style=for-the-badge&logo=java&logoColor=white" />
+</a>
+  <a href ="https://www.notion.so/SA-fa7aba8ca3604a76bef1b90c83093a69">
+   <img alt="Notion" src="https://img.shields.io/badge/Notion-000000.svg?&style=for-the-badge&logo=notion&logoColor=white" />
+  </a>
+  <a href="https://github.com/nbCampGroup-2-24-01-15/">
+   <img alt="GitHub" src="https://img.shields.io/badge/GitHub-181717.svg?&style=for-the-badge&logo=github&logoColor=white" />
+  </a>
+    
+   <br />
+    <a href="https://github.com/nbCamp-24-02-19/CoLink/actions/new">
+      <img alt="Tests Passing" src="https://img.shields.io/github/languages/top/nbCamp-24-02-19/CoLink?style=flat&logo=kotlin&logoColor=white&color=800080" />
+    </a>
+    <a href="https://github.com/nbCamp-24-02-19/CoLink/commits/dev/">
+      <img alt="Tests Coverage" src="https://img.shields.io/github/commit-activity/m/nbCamp-24-02-19/CoLink" />
+    </a>
+    <a href="https://github.com/nbCamp-24-02-19/CoLink/graphs/contributors">
+      <img alt="GitHub Contributors" src="https://img.shields.io/github/contributors/nbCamp-24-02-19/CoLink" />
+    </a>
+    <a href="https://github.com/nbCamp-24-02-19/CoLink/issues">
+      <img alt="Issues" src="https://img.shields.io/github/issues/nbCamp-24-02-19/CoLink?color=yellow" />
+    </a>
+    <a href="https://github.com/nbCamp-24-02-19/CoLink/pulls">
+      <img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr/nbCamp-24-02-19/CoLink?color=red" />
+    </a>
+     <br />
+    <br />
+  </p>
 
-![연습용 이미지](https://github.com/nbCamp-24-02-19/CoLink/blob/readme/colink_main.png)
+   <p align ="center">
+ <img alt="" src ="https://github.com/nbCamp-24-02-19/CoLink/blob/readme/colink_main.png" width="425" heigth="50" />
+ <img alt="" src ="https://github.com/nbCampGroup-2-24-01-15/ColorContacts/assets/116724657/f60050a8-ae8b-45af-af26-1c69f09283b1" width="110" heigth="50" />
+ <img alt="" src ="https://github.com/nbCampGroup-2-24-01-15/ColorContacts/assets/116724657/525824d3-1703-4512-b0d9-287f878a65a9" width="110" heigth="50" />
+ <img alt="" src ="https://github.com/nbCampGroup-2-24-01-15/ColorContacts/assets/116724657/81a95cc5-f428-43eb-a086-2c09d1de2dfc" width="110" heigth="50" />
+</p>
 
-**바로가기 링크**
+**관련 링크**
 
-[구글 플레이스토어 링크](https://play.google.com/store/apps/details?id=com.seven.colink)
+<p>
+ <img alt="" src ="https://github.com/nbCampGroup-2-24-01-15/ColorContacts/assets/116724657/128707e6-7ec3-4d70-b79a-0262eb84bf45" width="20" heigth="20" />
+ <a href= "https://play.google.com/store/apps/details?id=com.seven.colink">플레이 스토어</a>
+&nbsp&nbsp
+  <img alt="" src ="https://github.com/nbCamp-24-02-19/CoLink/assets/116724657/23fb6b8a-ea91-4d52-a9c7-f9de87dd5592" width="20" heigth="20" />
+ <a href= "https://teamsparta.notion.site/Android-2-e09e360633e44d4794349b8ecabcd73d?p=a70387ad31dc43be891f7d05e96f86d3&pm=c">앱소개 브로셔</a>
+</p>
 
-[코링 브로셔 페이지](https://teamsparta.notion.site/Android-2-e09e360633e44d4794349b8ecabcd73d?p=a70387ad31dc43be891f7d05e96f86d3&pm=c)
 
+## 저희 앱은요
 
-
-# 앱소개
-
-**프로젝트 팀 매칭을 해주는 어플은 없을까?**
+팀프로젝트를 하고 싶은데 초심자들이 부담없이 이용할수 있는 앱은 없을까?라는 생각에서 탄생했습니다.
 
 '코링'은 '코더스 링크'의 줄임말로 경험이 필요한 **대학생, 취업준비생**들이 손쉽게 프로젝트와 스터디를
 
@@ -20,7 +88,7 @@
 
 
 
-# 이런 분들께 '코링'을 추천 드립니다
+## 이런 분들께 '코링'을 추천 드립니다
 
 **1. 개발 능력 향상을 위한 첫 발걸음이 막막하신 분들**
 
@@ -39,9 +107,9 @@
 프로젝트를 진행하며 서로 다른 아이디어와 기술을 공유하며 공동의 목표를 향해 나아가는 과정에서, 협업의 중요성과 그 효과를 직접 경험할 수 있습니다.
 
 
-# CoLink '코링'의 핵심 기능
+## CoLink '코링'의 핵심 기능
 
-## 추천 알고리즘을 통한 매칭 시스템
+### 추천 알고리즘을 통한 매칭 시스템
 
 **1. 프로젝트 완료시 사용자 평가**
 
@@ -63,9 +131,9 @@
 
 
 
-# 주요 기능
+## 주요 기능
 
-## 1. 메인 페이지
+### 1. 메인 페이지
 
 1. 최신 홍보물 7개를 상단에서 자동으로 돌아가면서 보여주고, 드래그와 좌우 이동 버튼으로 다른 홍보물을 볼 수 있습니다.
 2. 그룹 추천에는 각각 5개의 프로젝트와 스터디를 보여주며, 만약 모집 완료된 프로젝트나 스터디는 각 그룹 이미지에 모집 완료라는 글이 뜨게 됩니다.
@@ -73,7 +141,7 @@
 4. 각 게시글들은 클릭 시 해당 게시물의 상세 화면으로 이동합니다.
 
 
-## 2. 검색 페이지
+### 2. 검색 페이지
 
 1. 작성된 포스트들을 보여주며, 검색 기능을 제공합니다.
    ㄱ. 검색 결과가 없을 경우, 검색 결과 없음에 대한 UI를 제공합니다.
@@ -85,7 +153,7 @@
    ㄱ. 로그인 상태를 구분하여 로그아웃 상태일 경우, 로그인 페이지로 이동합니다.
 
 
-## 3. 그룹 페이지
+### 3. 그룹 페이지
 
 1. 참여중인 그룹과 지원한 그룹을 확인할 수 있습니다
    ㄱ. 참여중인 그룹이나 지원한 그룹이 없을 경우, 기분UI를 제공합니다.
@@ -94,7 +162,7 @@
    ㄱ. 로그인 상태를 구분하여 로그아웃 상태일 경우, 로그인 페이지로 이동합니다.
 
 
-## 4. 채팅 페이지
+### 4. 채팅 페이지
 
 1. 사용자 간의 즉각적인 소통을 가능하게 하며, 다양한 기능을 통해 효율적인 대화를 지원합니다.
 2. 개인 또는 그룹 채팅을 제공하며, 사진 전송, 임베드 기능, 메시지 읽음 표시 등을 포함합니다. 또한,
@@ -107,7 +175,7 @@
    ㅁ. 알림 확인 : 채팅 알림을 통해 새로운 메시지를 실시간으로 확인할 수 있으며, 이를 통해 빠르게 대응할 수 있습니다.
 
 
-## 5. 포스트 작성 페이지
+### 5. 포스트 작성 페이지
 
 1. 프로젝트나 스터디를 위한 새로운 팀원을 모집하고자 할 때, 포스트 작성 화면을 통해 모집 포스트를 쉽게 작성할 수 있습니다.
 2. 프로젝트와 스터디의 구분을 명확히 하여 타입에 맞는 팀원 모집 포스트를 생성할 수 있습니다.
@@ -123,7 +191,7 @@
    ㄷ. 모집 분야 및 인원 선택 : 모집하고자 하는 분야와 인원을 선택하여, 필요한 조건에 맞는 팀원을 모집할 수 있습니다.
 
 
-## 6. 그룹 대시보드 페이지
+### 6. 그룹 대시보드 페이지
 
 1. 프로젝트나 스터디에 대한 정보를 효과적으로 관리하고 팀원들과 공유할 수 있는 공간이며,
    이 화면은 팀원들에게만 공개되어 프라이빗하게 정보를 관리할 수 있습니다.
@@ -138,7 +206,7 @@
    ㄷ. 캘린더 기능 : 캘린더를 통해 팀원들과 프로젝트 일정을 공유하고 관리할 수 있으며, 모든 일정을 한눈에 확인할 수 있습니다.
 
 
-## 7. 마이 페이지
+### 7. 마이 페이지
 
 1. 나의 정보를 관리하고 확인 하고, 관리 할 수 있는 공간입니다.
 2. **마이페이지 주요 기능**
@@ -158,7 +226,7 @@
    ㅁ. 로그아웃이 가능합니다.
 
 
-## 8. 홍보 작성 페이지
+### 8. 홍보 작성 페이지
 
 1. 프로젝트 완료 후 홍보물 작성 페이지로 가는 걸 선택할 경우 홍보물 메인으로 띄울 이미지, 소개글, 웹과 플레이스토어,
    앱스토어의 링크를 입력할 수 있으며, 홍보 게시물에는 웹은 링크로 나타나고, 플레이스토어와 앱스토어는 각각 링크가 있을 시 버튼 형식으로 나타납니다.
@@ -167,7 +235,7 @@
 4. 메인페이지의 상단 홍보물들을 클릭시 해당 홍보 게시글에서 상세화면을 볼 수 있습니다.
 
 
-## 9. 팀원 평가 페이지
+### 9. 팀원 평가 페이지
 
 1. 프로젝트나 스터디를 마친 후 팀원들을 평가하는 과정은 팀워크와 개인 기여도를 파악하는데 중요한 역할을 합니다. 이를 통해 설문조사를 제공하고,
    사용자의 평점을 저장하여 추천 알고리즘에 활용하는 시스템을 구축합니다.
@@ -187,7 +255,7 @@
    역량을 평가하는 데 중요한 기준이 됩니다.
 
 
-## 10. 로그인/회원 가입 페이지
+### 10. 로그인/회원 가입 페이지
 
 1. 회원가입 기능은 사용자의 정보를 안전하게 관리하고, 효율적인 서비스 이용을 위한 첫걸음을 제공합니다. 이 과정에서 비밀번호 표시 기능, 유효성 검사,
    사용자 정보 저장이 핵심 요소로 작용합니다

@@ -64,7 +64,7 @@
             android:background="@drawable/bg_round_corner_4dp_stroke_enable"
             android:paddingStart="8dp"
             android:clipToOutline="true"
-            android:text="코틀린"
+            android:text="선택"
             android:textColor="@color/black"
             android:textSize="14sp"
             android:textAlignment="textStart"

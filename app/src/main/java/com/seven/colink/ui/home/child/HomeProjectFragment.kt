@@ -65,8 +65,6 @@ class HomeProjectFragment : Fragment() {
                     tvHomeBottomDes.text = bottom.des
                     tvHomeBottomKind.text =
                         bottom.kind?.map { "# " + it }?.joinToString("   ", "", "")
-                    viewHomeBottomDivider.visibility = View.INVISIBLE
-                    tvHomeBottomLv.visibility = View.INVISIBLE
                     ivHomeBottomThumubnail.load(bottom.img)
                     if (bottom.blind == ProjectStatus.END) {
                         viewHomeBottomBlind.visibility = View.VISIBLE
@@ -118,6 +116,18 @@ class HomeProjectFragment : Fragment() {
             }
             loading = !isLoading
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        initViews()
+        setObserve()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        initViews()
+        setObserve()
     }
 
     override fun onDestroyView() {
