@@ -1,10 +1,12 @@
 name: update jira ticket
 
 on:
-  release:
+  workflow_run:
+    workflows:
+      - release
     types:
-      - created
-      - published
+      - completed
+    conclusion: success
 
 jobs:
   update_jira:
@@ -58,11 +60,17 @@ jobs:
           echo -e "$JIRA_ENTRIES" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
+      - name: Get last release tag
+        id: get_last_release
+        run: |
+          LATEST_RELEASE=$(gh release list --limit 1 --json tagName -q '.[0].tagName')
+          echo "LATEST_RELEASE=$LATEST_RELEASE" >> $GITHUB_ENV
+
       - name: Update Release Notes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          RELEASE_NOTES=$(gh release view ${{ github.event.release.tag_name }} --json body -q .body)
+          RELEASE_NOTES=$(gh release view ${{ env.LATEST_RELEASE }} --json body -q .body)
           UPDATED_NOTES="## Updated Release Notes\n\n$RELEASE_NOTES\n\n###Jira tasks\n${{ env.JIRA_ENTRIES }}"
 
           gh release edit ${{ github.event.release.tag_name }} --notes "$UPDATED_NOTES"
