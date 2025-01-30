@@ -41,7 +41,14 @@ jobs:
         run: |
           JIRA_ENTRIES=""
           while IFS= read -r COMMIT_MSG; do
-            JIRA_IDS=$(echo "$COMMIT_MSG" | grep -oE '#[A-Z]{2,}-\d+' | tr -d '#' | sort | uniq)
+            JIRA_IDS=$(echo "$COMMIT_MSG" | grep -oE '#[A-Za-z0-9-]+' | tr -d '#' | sort -u)
+          
+            if [[ -z "$JIRA_IDS" ]]; then
+              echo "❌ No Jira ID found in: $COMMIT_MSG"
+            else
+              echo "✅ Extracted Jira IDs: $JIRA_IDS"
+            fi
+          
             for JIRA_ID in $JIRA_IDS; do
               if [[ -n "$JIRA_ID" ]]; then
                 JIRA_RESPONSE=$(
@@ -70,6 +77,12 @@ jobs:
           echo "JIRA_ENTRIES<<EOF" >> $GITHUB_ENV
           echo -e "$JIRA_ENTRIES" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
+
+      - name: Debug Commit Messages
+        run: |
+          echo "==== Commit Messages ===="
+          cat commit_messages.txt
+          echo "========================="
 
       - name: Get last release tag
         env:
