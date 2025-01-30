@@ -24,10 +24,11 @@ jobs:
       - name: Generate commit history
         id: generate_notes
         run: |
+          REPO_URL="https://github.com/$GITHUB_REPOSITORY/commit"
           if [[ "${{ env.LATEST_TAG }}" == "0.0.0" ]]; then
-            COMMIT_LOG=$(git log --pretty=format:"- #%h %s" --reverse)
+            COMMIT_LOG=$(git log --pretty=format:"- %s [#%h]($REPO_URL/%H)" --reverse)
           else
-            COMMIT_LOG=$(git log ${{ env.LATEST_TAG }}..HEAD --pretty=format:"- #%h %s" --reverse)
+            COMMIT_LOG=$(git log ${{ env.LATEST_TAG }}..HEAD --pretty=format:"-%s [#%h]($REPO_URL/%H)" --reverse)
           fi
           
           NOTES=$(cat << EOF
