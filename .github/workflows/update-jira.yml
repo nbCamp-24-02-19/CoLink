@@ -52,9 +52,9 @@ jobs:
             for JIRA_ID in $JIRA_IDS; do
               if [[ -n "$JIRA_ID" ]]; then
                 JIRA_RESPONSE=$(
-                  curl -s -u "${{ secrets.JIRA_GURI }}:${{ secrets.JIRA_GURI_TOKEN }}" \
-                  -X GET -H "Accept: application/json" \
-                  "${{ secrets.JIRA_DOMAIN }}/rest/api/2/issue/$JIRA_ID"
+                  curl -X GET "${{ secrets.JIRA_DOMAIN }}/rest/api/2/issue/$JIRA_ID" \
+                  -u "${{ secrets.JIRA_GURI }}:${{ secrets.JIRA_GURI_TOKEN }}" \
+                  -H "Accept: application/json"
                 )
             
                 echo "$JIRA_RESPONSE" > jira_response.json
@@ -64,12 +64,13 @@ jobs:
                 JIRA_LINK="${{ secrets.JIRA_DOMAIN }}/browse/$JIRA_ID"
             
                 echo "Updating Jira ticket status for: $JIRA_LINK"
-                JIRA_ENTRIES+="\n$COMMIT_MSG #$JIRA_ID\n- [**$JIRA_TITLE**]($JIRA_LINK)"
+                JIRA_ENTRIES+="\n- $COMMIT_MSG\n [**$JIRA_TITLE**]($JIRA_LINK)"
             
-                curl -s -u "${{ secrets.JIRA_GURI }}:${{ secrets.JIRA_GURI_TOKEN }}" \
-                -X POST -H "Accept: application/json" \
+                curl -X POST "${{ secrets.JIRA_DOMAIN }}/rest/api/2/issue/$JIRA_ID/transitions" \
+                -u "${{ secrets.JIRA_GURI }}:${{ secrets.JIRA_GURI_TOKEN }}" \
+                -H "Accept: application/json" \
+                -H "Content-Type: application/json" \
                 --data '{"transition": {"id": "31"}}' \
-                "${{ secrets.JIRA_DOMAIN }}/rest/api/2/issue/$JIRA_ID/transitions"
               fi
             done
           done < commit_messages.txt
@@ -97,5 +98,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           RELEASE_NOTES=$(gh release view ${{ env.LATEST_RELEASE }} --json body -q .body)
-          UPDATED_NOTES="## Updated Release Notes\n\n$RELEASE_NOTES\n\n###Jira tasks\n${{ env.JIRA_ENTRIES }}"
+          UPDATED_NOTES=$(cat <<EOF
+          ## Updated Release Notes
+              
+          $RELEASE_NOTES
+              
+          ### Jira tasks
+          $JIRA_ENTRIES
+          EOF
+          )
           gh release edit "${{ env.LATEST_RELEASE }}" --notes "$UPDATED_NOTES"
