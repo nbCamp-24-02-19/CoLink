@@ -26,9 +26,9 @@ jobs:
           
           MAJOR=$(echo $LATEST | cut -d'.' -f1)
           MINOR=$(echo $LATEST | cut -d'.' -f2)
-          PATCH=$(echo $LATEST | cut -d'.' -f1)
+          PATCH=$(echo $LATEST | cut -d'.' -f3)
           
-          if git log -1 --pretty=%B | grep -iq "BREAKING CHANGE"; then
+          if git log -1 --pretty=%B | grep -iq "VERSION CHANGE"; then
             MAJOR=$((MAJOR + 1))
             MINOR=0
             PATCH=0

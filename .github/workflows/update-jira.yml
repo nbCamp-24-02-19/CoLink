@@ -1,9 +1,14 @@
-name: update jira
+name: update jira ticket
 
 on:
   release:
     types:
       - created
+  workflow_run:
+    workflows:
+      - release
+    types:
+      - completed
 
 jobs:
   update_jira:
@@ -49,7 +54,7 @@ jobs:
               curl -s -u "${{ secret.JIRA_GURI }}:${{ secret.JIRA_GURI_TOKEN }}" \
               -X POST -H "Accept: application/json" \
               --data '{"transition": {"id": "31"}}' \
-              "${{ secrets.JIRA_DOMAIN }}/rest/api/2/issue/${{ env.JIRA_ID }}"
+              "${{ secrets.JIRA_DOMAIN }}/rest/api/2/issue/$JIRA_ID"
             fi
           done < commit_messages.txt
           
