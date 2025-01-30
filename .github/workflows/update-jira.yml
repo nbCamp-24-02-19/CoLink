@@ -63,7 +63,6 @@ jobs:
                 JIRA_TITLE=$(echo "$JIRA_RESPONSE" | jq -r '.fields.summary')
                 JIRA_LINK="${{ secrets.JIRA_DOMAIN }}/browse/$JIRA_ID"
             
-                echo "Updating Jira ticket status for: $JIRA_LINK"
                 JIRA_ENTRIES+="\n- $COMMIT_MSG\n [**$JIRA_TITLE**]($JIRA_LINK)"
             
                 curl -X POST "${{ secrets.JIRA_DOMAIN }}/rest/api/2/issue/$JIRA_ID/transitions" \
