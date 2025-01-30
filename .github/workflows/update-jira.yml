@@ -41,28 +41,30 @@ jobs:
         run: |
           JIRA_ENTRIES=""
           while IFS= read -r COMMIT_MSG; do
-            JIRA_ID=$(echo "$COMMIT_MSG" | grep -oE '#[A-Za-z0-9-]+' | head -n 1 | tr -d '#')
-            if [[ -n "$JIRA_ID" ]]; then
-              JIRA_RESPONSE=$(
+            JIRA_IDS=$(echo "$COMMIT_MSG" | grep -oE '#[A-Z]{2,}-\d+' | tr -d '#' | sort | uniq)
+            for JIRA_ID in $JIRA_IDS; do
+              if [[ -n "$JIRA_ID" ]]; then
+                JIRA_RESPONSE=$(
+                  curl -s -u "${{ secrets.JIRA_GURI }}:${{ secrets.JIRA_GURI_TOKEN }}" \
+                  -X GET -H "Accept: application/json" \
+                  "${{ secrets.JIRA_DOMAIN }}/rest/api/2/issue/$JIRA_ID"
+                )
+            
+                echo "$JIRA_RESPONSE" > jira_response.json
+                cat jira_response.json
+            
+                JIRA_TITLE=$(echo "$JIRA_RESPONSE" | jq -r '.fields.summary')
+                JIRA_LINK="${{ secrets.JIRA_DOMAIN }}/browse/$JIRA_ID"
+            
+                echo "Updating Jira ticket status for: $JIRA_LINK"
+                JIRA_ENTRIES+="\n$COMMIT_MSG #$JIRA_ID\n- [**$JIRA_TITLE**]($JIRA_LINK)"
+            
                 curl -s -u "${{ secrets.JIRA_GURI }}:${{ secrets.JIRA_GURI_TOKEN }}" \
-                -X GET -H "Accept: application/json" \
-                "${{ secrets.JIRA_DOMAIN }}/rest/api/2/issue/$JIRA_ID"
-              )
-          
-              echo "$JIRA_RESPONSE" > jira_response.json
-              cat jira_response.json
-          
-              JIRA_TITLE=$(echo "$JIRA_RESPONSE" | jq -r '.fields.summary')
-              JIRA_LINK="${{ secrets.JIRA_DOMAIN }}/browse/$JIRA_ID"
-          
-              echo "Updating Jira ticket status for: $JIRA_LINK"
-              JIRA_ENTRIES+="\n$COMMIT_MSG #$JIRA_ID\n- [**$JIRA_TITLE**]($JIRA_LINK)"
-          
-              curl -s -u "${{ secrets.JIRA_GURI }}:${{ secrets.JIRA_GURI_TOKEN }}" \
-              -X POST -H "Accept: application/json" \
-              --data '{"transition": {"id": "31"}}' \
-              "${{ secrets.JIRA_DOMAIN }}/rest/api/2/issue/$JIRA_ID/transitions"
-            fi
+                -X POST -H "Accept: application/json" \
+                --data '{"transition": {"id": "31"}}' \
+                "${{ secrets.JIRA_DOMAIN }}/rest/api/2/issue/$JIRA_ID/transitions"
+              fi
+            done
           done < commit_messages.txt
           
           echo "JIRA_ENTRIES<<EOF" >> $GITHUB_ENV
@@ -83,5 +85,4 @@ jobs:
         run: |
           RELEASE_NOTES=$(gh release view ${{ env.LATEST_RELEASE }} --json body -q .body)
           UPDATED_NOTES="## Updated Release Notes\n\n$RELEASE_NOTES\n\n###Jira tasks\n${{ env.JIRA_ENTRIES }}"
-
-          gh release edit ${{ github.event.release.tag_name }} --notes "$UPDATED_NOTES"
+          gh release edit "${{ env.LATEST_RELEASE }}" --notes "$UPDATED_NOTES"
