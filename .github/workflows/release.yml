@@ -1,0 +1,52 @@
+name: release
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: check out
+        uses: actions/checkout@v3
+
+      - name: get latest version
+        id: get_tag
+        run: |
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0")
+          echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
+
+      - name: bump version
+        id: bump_version
+        run: |
+          LATEST="${{ env.LATEST_TAG }}"
+          echo "Latest tag: $LATEST"
+          
+          MAJOR=$(echo $LATEST | cut -d'.' -f1)
+          MINOR=$(echo $LATEST | cut -d'.' -f2)
+          PATCH=$(echo $LATEST | cut -d'.' -f1)
+          
+          if git log -1 --pretty=%B | grep -iq "BREAKING CHANGE"; then
+            MAJOR=$((MAJOR + 1))
+            MINOR=0
+            PATCH=0
+          elif git log -1 --pretty=%B | grep -iq "feat:"; then
+            MINOR=$((MINOR + 1))
+            PATCH=0
+          else
+            PATCH=$((PATCH + 1))
+          fi
+          
+          NEW_TAG="$MAJOR.$MINOR.$PATCH"
+          echo "New tag: $NEW_TAG"
+          echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
+
+      - name: create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create ${{ env.NEW_TAG }} \
+            --title "Release ${{ env.NEW_TAG }}" \
+            --notes "Automated release for version ${{ env.NEW_TAG }}"
