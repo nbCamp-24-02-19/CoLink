@@ -21,6 +21,21 @@ jobs:
           LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0")
           echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
 
+      - name: Generate commit history
+        id: generate_notes
+        run: |
+          if [[ "${{ env.LATEST_TAG }}" == "0.0.0" ]]; then
+            COMMIT_LOG=$(git log --pretty=format:"- [\`%h\`](https://github.com/$GITHUB_REPOSITORY/commit/%H) %s" --reverse)
+          else
+            COMMIT_LOG=$(git log ${{ env.LATEST_TAG }}..HEAD --pretty=format:"- [\`%h\`](https://github.com/$GITHUB_REPOSITORY/commit/%H) %s" --reverse)
+          fi
+          
+          NOTES=$(cat << EOF
+          $COMMIT_LOG
+          )
+          echo "$NOTES" > notes.md
+          cat notes.md
+
       - name: bump version
         id: bump_version
         run: |
@@ -52,4 +67,4 @@ jobs:
         run: |
           gh release create ${{ env.NEW_TAG }} \
             --title "${{ env.NEW_TAG }}" \
-            --notes "Automated release for version ${{ env.NEW_TAG }}"
+            --notes-file notes.md
