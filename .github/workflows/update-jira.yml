@@ -44,7 +44,7 @@ jobs:
               JIRA_RESPONSE=$(
                 curl -s -u "${{ secrets.JIRA_GURI }}:${{ secrets.JIRA_GURI_TOKEN }}" \
                 -X GET -H "Accept: application/json" \
-                "${{ secretss.JIRA_DOMAIN }}/rest/api/2/issue/${{ env.JIRA_ID }}"
+                "${{ secrets.JIRA_DOMAIN }}/rest/api/2/issue/${{ env.JIRA_ID }}"
               )
           
               JIRA_TITLE=$(echo "$JIRA_RESPONSE" | jq -r '.fields.summary')
