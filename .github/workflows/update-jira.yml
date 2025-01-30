@@ -79,12 +79,6 @@ jobs:
           echo -e "$JIRA_ENTRIES" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
-      - name: Debug Commit Messages
-        run: |
-          echo "==== Commit Messages ===="
-          cat commit_messages.txt
-          echo "========================="
-
       - name: Get last release tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
