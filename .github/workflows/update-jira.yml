@@ -51,7 +51,7 @@ jobs:
               --data '{"transition": {"id": "31"}}' \
               "${{ secrets.JIRA_DOMAIN }}/rest/api/2/issue/${{ env.JIRA_ID }}"
             fi
-          done < commit_message.txt
+          done < commit_messages.txt
           
           echo "JIRA_ENTRIES<<EOF" >> $GITHUB_ENV
           echo -e "$JIRA_ENTRIES" >> $GITHUB_ENV
