@@ -9,6 +9,7 @@ on:
       - release
     types:
       - completed
+    conclusion: success
 
 jobs:
   update_jira:
@@ -41,9 +42,9 @@ jobs:
             JIRA_ID=$(echo "$COMMIT_MSG" | grep -oE '#[^ ]+' | head -n 1 | tr -d '#')
             if [[ -n "$JIRA_ID" ]]; then
               JIRA_RESPONSE=$(
-                curl -s -u "${{ secret.JIRA_GURI }}:${{ secret.JIRA_GURI_TOKEN }}" \
+                curl -s -u "${{ secrets.JIRA_GURI }}:${{ secrets.JIRA_GURI_TOKEN }}" \
                 -X GET -H "Accept: application/json" \
-                "${{ secrets.JIRA_DOMAIN }}/rest/api/2/issue/${{ env.JIRA_ID }}"
+                "${{ secretss.JIRA_DOMAIN }}/rest/api/2/issue/${{ env.JIRA_ID }}"
               )
           
               JIRA_TITLE=$(echo "$JIRA_RESPONSE" | jq -r '.fields.summary')
@@ -51,7 +52,7 @@ jobs:
           
               JIRA_ENTRIES+="\n$COMMIT_MSG #$JIRA_ID\n- [**$JIRA_TITLE**]($JIRA_LINK)"
           
-              curl -s -u "${{ secret.JIRA_GURI }}:${{ secret.JIRA_GURI_TOKEN }}" \
+              curl -s -u "${{ secrets.JIRA_GURI }}:${{ secrets.JIRA_GURI_TOKEN }}" \
               -X POST -H "Accept: application/json" \
               --data '{"transition": {"id": "31"}}' \
               "${{ secrets.JIRA_DOMAIN }}/rest/api/2/issue/$JIRA_ID"
