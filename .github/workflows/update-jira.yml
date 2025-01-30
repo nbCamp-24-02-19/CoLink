@@ -43,7 +43,6 @@ jobs:
           while IFS= read -r COMMIT_MSG; do
             JIRA_ID=$(echo "$COMMIT_MSG" | grep -oE '#[A-Za-z0-9-]+' | head -n 1 | tr -d '#')
             if [[ -n "$JIRA_ID" ]]; then
-              echo "Extracted Jira ID: $JIRA_ID"
               JIRA_RESPONSE=$(
                 curl -s -u "${{ secrets.JIRA_GURI }}:${{ secrets.JIRA_GURI_TOKEN }}" \
                 -X GET -H "Accept: application/json" \
@@ -56,13 +55,13 @@ jobs:
               JIRA_TITLE=$(echo "$JIRA_RESPONSE" | jq -r '.fields.summary')
               JIRA_LINK="${{ secrets.JIRA_DOMAIN }}/browse/$JIRA_ID"
           
-              echo "Updating Jira ticket status for: JIRA_LINK"
+              echo "Updating Jira ticket status for: $JIRA_LINK"
               JIRA_ENTRIES+="\n$COMMIT_MSG #$JIRA_ID\n- [**$JIRA_TITLE**]($JIRA_LINK)"
           
               curl -s -u "${{ secrets.JIRA_GURI }}:${{ secrets.JIRA_GURI_TOKEN }}" \
               -X POST -H "Accept: application/json" \
               --data '{"transition": {"id": "31"}}' \
-              "${{ secrets.JIRA_DOMAIN }}/rest/api/2/issue/$JIRA_ID"
+              "${{ secrets.JIRA_DOMAIN }}/rest/api/2/issue/$JIRA_ID/transitions"
             fi
           done < commit_messages.txt
           
