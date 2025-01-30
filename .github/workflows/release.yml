@@ -48,5 +48,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release create ${{ env.NEW_TAG }} \
-            --title "Release ${{ env.NEW_TAG }}" \
+            --title "${{ env.NEW_TAG }}" \
             --notes "Automated release for version ${{ env.NEW_TAG }}"
