@@ -33,6 +33,8 @@ jobs:
             COMMITS=$(git log ${{ env.PREV_TAG }}..HEAD --pretty=format:"%s" --reverse)
           fi
           echo "$COMMITS" > commit_messages.txt
+    
+          cat commit_messages.txt
 
       - name: get jira and update
         id: extract_jira_id
