@@ -70,7 +70,7 @@ jobs:
                 -u "${{ secrets.JIRA_GURI }}:${{ secrets.JIRA_GURI_TOKEN }}" \
                 -H "Accept: application/json" \
                 -H "Content-Type: application/json" \
-                --data '{"transition": {"id": "31"}}' \
+                --data '{"transition": {"id": "31"}}'
               fi
             done
           done < commit_messages.txt
