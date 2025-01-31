@@ -82,9 +82,7 @@ jobs:
             done
           done < commit_messages.txt
           
-          echo "JIRA_ENTRIES<<EOF" >> "$GITHUB_OUTPUT"
-          echo -e "$JIRA_ENTRIES" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
+          echo "JIRA_ENTRIES=$JIRA_ENTRIES" >> "$GITHUB_OUTPUT"
 
       - name: Get last release tag
         env:
@@ -105,7 +103,7 @@ jobs:
           $RELEASE_NOTES
               
           ### Jira tasks
-          ${{ needs.update_jira.outputs.JIRA_ENTRIES }}
+          $JIRA_ENTRIES
           EOF
           )
           gh release edit "${{ env.LATEST_RELEASE }}" --notes "$UPDATED_NOTES"
@@ -157,8 +155,8 @@ jobs:
           JIRA_TASKS: ${{ needs.update_jira.outputs.JIRA_ENTRIES }}
           RELEASE_VERSION: ${{ needs.get_app_version.outputs.APP_VERSION }}
         run: |
-          SLACK_MESSAGE="🚀 *AOS $RELEASE_VERSION release* \n\n"
-          SLACK_MESSAGE+="```\n"  # 블록 코드 시작
+          SLACK_MESSAGE="🚀 *AOS $RELEASE_VERSION release* \n"
+          SLACK_MESSAGE+="```\n"
 
           if [[ -n "$JIRA_TASKS" ]]; then
             SLACK_MESSAGE+="$JIRA_TASKS\n"
@@ -167,6 +165,7 @@ jobs:
           fi
           SLACK_MESSAGE+="```"
           
+          JSON_PAYLOAD=$(echo "$SLACK_MESSAGE" | jq -R --slurp '{text: .}')
           curl -X POST ${{ secrets.SLACK_WEBHOOK_URL }}
           -H 'Content-type: application/json'
-          --data "{ \"text\": \"$SLACK_MESSAGE\" }"
+          --data "$JSON_PAYLOAD"
