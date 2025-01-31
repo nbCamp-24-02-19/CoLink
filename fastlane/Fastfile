@@ -39,17 +39,12 @@ platform :android do
       username: "Fastlane Bot",
       icon_emoji: ":rocket:",
       channel: "#deployments",
-      message: "AOS *#{version_name}* release🔗 [Firebase App Distribution](https://console.firebase.google.com/project/#{ENV['FIREBASE_APP_ID']}/appdistribution/releases)\n\n#{ENV['RELEASE_NOTES']}\n"
+      message: "AOS *#{version_name}* release\n🔗 [Firebase App Distribution](https://console.firebase.google.com/project/#{ENV['FIREBASE_APP_ID']}/appdistribution/releases)\n\n#{ENV['RELEASE_NOTES']}\n"
     )
   end
 
   private_lane :get_version_info do
-    version_code = sh("grep versionCode app/build.gradle | awk '{print $2}' | tr -d '\n'").strip
-    version_name = sh("grep versionName app/build.gradle | awk '{print $2}' | tr -d '\"'").strip
-
-    puts "Extracted Version Code: #{version_code}, Version Name: #{version_name}"  # 디버깅 출력
-
-    lane_context[:version_code] = version_code
+    version_name = sh("./gradlew -q printVersionName").strip
     lane_context[:version_name] = version_name
   end
 end

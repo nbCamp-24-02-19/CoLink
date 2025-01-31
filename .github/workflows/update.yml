@@ -97,7 +97,7 @@ jobs:
           $RELEASE_NOTES
               
           ### Jira tasks
-          $JIRA_ENTRIES
+          ${{ needs.update_jira.outputs.JIRA_ENTRIES }}
           EOF
           )
           gh release edit "${{ env.LATEST_RELEASE }}" --notes "$UPDATED_NOTES"
