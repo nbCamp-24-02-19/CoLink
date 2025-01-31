@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       APP_VERSION: ${{ steps.extract_version.outputs.APP_VERSION }}
+      JIRA_ENTRIES: ${{ steps.extract_jira_id.outputs.JIRA_ENTRIES }}
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -154,8 +155,8 @@ jobs:
     steps:
       - name: Send Slack Notification
         env:
-          JIRA_TASKS: ${{ needs.extract_jira_id.outputs.JIRA_ENTRIES }}
-          RELEASE_VERSION: ${{ needs.extract_version.outputs.APP_VERSION }}
+          JIRA_TASKS: ${{ needs.update_jira.outputs.JIRA_ENTRIES }}
+          RELEASE_VERSION: ${{ needs.update_jira.outputs.APP_VERSION }}
         run: |
           echo "Release Version: $RELEASE_VERSION"
           echo "Jira Tasks: $JIRA_TASKS"
