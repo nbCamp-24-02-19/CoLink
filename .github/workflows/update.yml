@@ -83,9 +83,8 @@ jobs:
             done
           done < commit_messages.txt
           
-          echo "JIRA_ENTRIES<<EOF" >> "$GITHUB_OUTPUT"
-          echo -e "$JIRA_ENTRIES" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
+          ENCODED=$(echo "$JIRA_ENTRIES" | base64)
+          echo "JIRA_ENTRIES=$ENCODED" >> "$GITHUB_OUTPUT"
 
       - name: Get last release tag
         env:
@@ -99,15 +98,16 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          DECODED=$(echo "$JIRA_TASKS" | base64 -d)
           RELEASE_NOTES=$(gh release view ${{ env.LATEST_RELEASE }} --json body -q .body)
-          UPDATED_NOTES=$(cat <<EOF
+          UPDATED_NOTES=$(
           ## Updated Release Notes
               
           $RELEASE_NOTES
               
           ### Jira tasks
-          $JIRA_ENTRIES
-          EOF
+          $DECODED
+          
           )
           gh release edit "${{ env.LATEST_RELEASE }}" --notes "$UPDATED_NOTES"
 
@@ -143,21 +143,24 @@ jobs:
         run: echo "${{ secrets.FIREBASE_ADMIN_BASE64 }}" | base64 --decode > app/firebase_admin.json
 
       - name: deploy to app distribution
-        run: bundle exec fastlane deploy --verbose
-        env:
-          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
-          FIREBASE_ADMIN_BASE64: ${{ secrets.FIREBASE_ADMIN_BASE64 }}
-          RELEASE_NOTES: ${{ needs.update_jira.outputs.JIRA_ENTRIES }}
+        run: |
+          export RELEASE_NOTES_DECODED="$(echo "${{ needs.update_jira.outputs.JIRA_ENTRIES }}" | base64 -d)"
+          
+          echo "Decoded release notes: $RELEASE_NOTES_DECODED"
+          
+          FIREBASE_APP_ID="${{ secrets.FIREBASE_APP_ID }}" \
+          FIREBASE_ADMIN_BASE64="${{ secrets.FIREBASE_ADMIN_BASE64 }}" \
+          RELEASE_NOTES="$RELEASE_NOTES_DECODED" \
+          bundle exec fastlane deploy --verbose
 
   slack_notification:
-    needs: fastlane
+    needs: [fastlane, update_jira]
     runs-on: ubuntu-latest
     steps:
       - name: Send Slack Notification
-        env:
-          JIRA_TASKS: ${{ needs.update_jira.outputs.JIRA_ENTRIES }}
-          RELEASE_VERSION: ${{ needs.update_jira.outputs.APP_VERSION }}
         run: |
+          RELEASE_VERSION="${{ needs.update_jira.outputs.APP_VERSION }}"
+          DECODED=$(echo"${{ needs.update_jira.outputs.JIRA_ENTRIES }}" | base64 -d)
           echo "Release Version: $RELEASE_VERSION"
           echo "Jira Tasks: $JIRA_TASKS"
           
