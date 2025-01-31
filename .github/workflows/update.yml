@@ -109,7 +109,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           RELEASE_NOTES=$(gh release view ${{ env.LATEST_RELEASE }} --json body -q .body)
-          UPDATED_NOTES=$( <<EOF
+          UPDATED_NOTES=$(cat <<EOF
           ## Updated $RELEASE_NOTES Release Notes
                             
           ### Jira tasks
@@ -184,12 +184,8 @@ jobs:
           
           SLACK_MESSAGE="🚀 *AOS $RELEASE_VERSION release* \n"
           SLACK_MESSAGE+="```\n"
-          
-          RAW_CONTENT="$(cat jira_entries.txt)"
-          CLEANED_CONTENT="$(echo "$RAW_CONTENT" | sed 's/\\n/\n/g')"
-          SLACK_MESSAGE+="$CLEANED_CONTENT"
-          
-          SLACK_MESSAGE+="```"
+          SLACK_MESSAGE+="$(cat jira_entries.txt)"
+          SLACK_MESSAGE+="\n```"
           
           JSON_PAYLOAD=$(echo "$SLACK_MESSAGE" | jq -R --slurp '{text: .}')
           curl -X POST ${{ secrets.SLACK_WEBHOOK_URL }}
