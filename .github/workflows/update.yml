@@ -82,7 +82,9 @@ jobs:
             done
           done < commit_messages.txt
           
-          echo "JIRA_ENTRIES=$JIRA_ENTRIES" >> "$GITHUB_OUTPUT"
+          echo "JIRA_ENTRIES<<EOF" >> "$GITHUB_OUTPUT"
+          echo -e "$JIRA_ENTRIES" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
 
       - name: Get last release tag
         env:
@@ -152,9 +154,12 @@ jobs:
     steps:
       - name: Send Slack Notification
         env:
-          JIRA_TASKS: ${{ needs.update_jira.outputs.JIRA_ENTRIES }}
-          RELEASE_VERSION: ${{ needs.get_app_version.outputs.APP_VERSION }}
+          JIRA_TASKS: ${{ needs.extract_jira_id.outputs.JIRA_ENTRIES }}
+          RELEASE_VERSION: ${{ needs.extract_version.outputs.APP_VERSION }}
         run: |
+          echo "Release Version: $RELEASE_VERSION"
+          echo "Jira Tasks: $JIRA_TASKS"
+          
           SLACK_MESSAGE="🚀 *AOS $RELEASE_VERSION release* \n"
           SLACK_MESSAGE+="```\n"
 
