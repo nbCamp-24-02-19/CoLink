@@ -11,12 +11,20 @@ on:
 jobs:
   update_jira:
     runs-on: ubuntu-latest
+    outputs:
+      APP_VERSION: ${{ steps.extract_version.outputs.APP_VERSION }}
     steps:
       - name: checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           fetch-tags: true
+
+      - name: Extract app version from gradle.properties
+        id: extract_version
+        run: |
+          APP_VERSION=$(grep VERSION_NAME gradle.properties | cut -d'=' -f2 | tr -d ' ')
+          echo "APP_VERSION=$APP_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: get previous release tag
         id: get_prev_release
@@ -139,4 +147,23 @@ jobs:
           FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
           FIREBASE_ADMIN_BASE64: ${{ secrets.FIREBASE_ADMIN_BASE64 }}
           RELEASE_NOTES: ${{ needs.update_jira.outputs.JIRA_ENTRIES }}
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  slack_notification:
+    needs: fastlane
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Slack Notification
+        env:
+          JIRA_TASKS: ${{ needs.update_jira.outputs.JIRA_ENTRIES }}
+          RELEASE_VERSION: ${{ needs.get_app_version.outputs.APP_VERSION }}
+        run: |
+          SLACK_MESSAGE="🚀 *AOS $RELEASE_VERSION release* \n\n"
+          SLACK_MESSAGE="```\n"
+          if [[ -n "$JIRA_TASKS" ]]; then
+            SLACK_MESSAGE+="$JIRA_TASKS\n"
+          fi
+          SLACK_MESSAGE="```"
+          
+          curl -X POST ${{ secrets.SLACK_WEBHOOK_URL }}
+          -H 'Content-type: application/json'
+          --data "{ \"text\": \"$SLACK_MESSAGE\" }"
