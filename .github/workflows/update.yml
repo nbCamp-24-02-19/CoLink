@@ -158,11 +158,14 @@ jobs:
           RELEASE_VERSION: ${{ needs.get_app_version.outputs.APP_VERSION }}
         run: |
           SLACK_MESSAGE="🚀 *AOS $RELEASE_VERSION release* \n\n"
-          SLACK_MESSAGE="```\n"
+          SLACK_MESSAGE+="```\n"  # 블록 코드 시작
+
           if [[ -n "$JIRA_TASKS" ]]; then
             SLACK_MESSAGE+="$JIRA_TASKS\n"
+          else
+            SLACK_MESSAGE+="📝 No Jira tasks linked.\n"
           fi
-          SLACK_MESSAGE="```"
+          SLACK_MESSAGE+="```"
           
           curl -X POST ${{ secrets.SLACK_WEBHOOK_URL }}
           -H 'Content-type: application/json'
