@@ -109,12 +109,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           RELEASE_NOTES=$(gh release view ${{ env.LATEST_RELEASE }} --json body -q .body)
-          UPDATED_NOTES=$(
-          ## Updated Release Notes
+          UPDATED_NOTES=$( <<EOF
+          ## Updated $RELEASE_NOTES Release Notes
                             
           ### Jira tasks
           $(cat jira_entries.txt)
-          
+          EOF
           )
           gh release edit "${{ env.LATEST_RELEASE }}" --notes "$UPDATED_NOTES"
 
@@ -179,13 +179,16 @@ jobs:
           cat jira_entries.txt
           
           RELEASE_VERSION="${{ needs.update_jira.outputs.APP_VERSION }}"
-          DECODED=$(echo"${{ needs.update_jira.outputs.JIRA_ENTRIES }}" | base64 -d)
           echo "Release Version: $RELEASE_VERSION"
           echo "Jira Tasks: $JIRA_TASKS"
           
           SLACK_MESSAGE="🚀 *AOS $RELEASE_VERSION release* \n"
           SLACK_MESSAGE+="```\n"
-          SLACK_MESSAGE+=$(cat jira_entries.txt)
+          
+          RAW_CONTENT="$(cat jira_entries.txt)"
+          CLEANED_CONTENT="$(echo "$RAW_CONTENT" | sed 's/\\n/\n/g')"
+          SLACK_MESSAGE+="$CLEANED_CONTENT"
+          
           SLACK_MESSAGE+="```"
           
           JSON_PAYLOAD=$(echo "$SLACK_MESSAGE" | jq -R --slurp '{text: .}')
