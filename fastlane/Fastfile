@@ -23,8 +23,8 @@ platform :android do
           build_type: "Release"
     )
 
-    version_info = get_version_info
-    version_name = version_info[:version_name]
+    get_version_info
+    version_name = lane_context[:version_name]
 
     firebase_app_distribution(
         app: ENV["FIREBASE_APP_ID"],
@@ -44,8 +44,12 @@ platform :android do
   end
 
   private_lane :get_version_info do
-    version_code = sh("grep versionCode app/build.gradle | awk '{print $2}' | tr -d '\n'")
-    version_name = sh("grep versionName app/build.gradle | awk '{print $2}' | tr -d '\"'")
-    return { version_code: version_code.strip, version_name: version_name.strip }
+    version_code = sh("grep versionCode app/build.gradle | awk '{print $2}' | tr -d '\n'").strip
+    version_name = sh("grep versionName app/build.gradle | awk '{print $2}' | tr -d '\"'").strip
+
+    puts "Extracted Version Code: #{version_code}, Version Name: #{version_name}"  # 디버깅 출력
+
+    lane_context[:version_code] = version_code
+    lane_context[:version_name] = version_name
   end
 end
