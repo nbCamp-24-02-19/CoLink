@@ -115,6 +115,8 @@ jobs:
 
       - name: setup gradle
         uses: gradle/gradle-build-action@v3
+
+      - name: grant gradlew
         run: chmod +x gradlew
 
       - name: Build AAB
