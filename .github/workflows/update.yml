@@ -108,15 +108,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          DECODED=$(echo "$JIRA_TASKS" | base64 -d)
           RELEASE_NOTES=$(gh release view ${{ env.LATEST_RELEASE }} --json body -q .body)
           UPDATED_NOTES=$(
           ## Updated Release Notes
-              
-          $(cat jira_entries.txt)
-              
+                            
           ### Jira tasks
-          $DECODED
+          $(cat jira_entries.txt)
           
           )
           gh release edit "${{ env.LATEST_RELEASE }}" --notes "$UPDATED_NOTES"
