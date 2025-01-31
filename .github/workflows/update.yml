@@ -181,12 +181,15 @@ jobs:
           
           RELEASE_VERSION="${{ needs.update_jira.outputs.APP_VERSION }}"
           echo "Release Version: $RELEASE_VERSION"
+    
+          RAW_CONTENT="$(cat jira_entries.txt)"
+          CLEANED_CONTENT="$(echo "$RAW_CONTENT" | sed -E 's/\[([^]]+)\]\(([^)]+)\)/<\2|\1>/g')"
                     
           SLACK_MESSAGE="$(cat << EOF
           🚀 *AOS $RELEASE_VERSION release*
-          \`\`\`
-          $(cat jira_entries.txt)
-          \`\`\`
+          
+          $CLEANED_CONTENT
+          
           EOF
           )"
           
