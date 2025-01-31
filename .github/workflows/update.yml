@@ -85,7 +85,7 @@ jobs:
           echo "$JIRA_ENTRIES" >> jira_entries.txt
 
       - name: upload release note
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: JIRA_entries_file
           path: jira_entries.txt
@@ -147,7 +147,7 @@ jobs:
         run: echo "${{ secrets.FIREBASE_ADMIN_BASE64 }}" | base64 --decode > app/firebase_admin.json
 
       - name: Download JIRA entries artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: JIRA_entries_file
           path: .
@@ -164,7 +164,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download JIRA entries artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: JIRA_entries_file
           path: .
