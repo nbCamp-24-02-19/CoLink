@@ -23,6 +23,9 @@ platform :android do
           build_type: "Release"
     )
 
+    version_info = get_version_info
+    version_name = version_info[:version_name]
+
     firebase_app_distribution(
         app: ENV["FIREBASE_APP_ID"],
         android_artifact_path: "app/build/outputs/bundle/release/app-release.aab",
@@ -30,5 +33,19 @@ platform :android do
         groups: "me",
         release_notes: ENV["RELEASE_NOTES"],
     )
+
+    slack(
+      webhook_url: ENV["SLACK_WEBHOOK_URL"],
+      username: "Fastlane Bot",
+      icon_emoji: ":rocket:",
+      channel: "#deployments",
+      message: "AOS *#{version_name}* release🔗 [Firebase App Distribution](https://console.firebase.google.com/project/#{ENV['FIREBASE_APP_ID']}/appdistribution/releases)\n```\n#{ENV['RELEASE_NOTES']}\n```"
+    )
+  end
+
+  private_lane :get_version_info do
+    version_code = sh("grep versionCode app/build.gradle | awk '{print $2}' | tr -d '\n'")
+    version_name = sh("grep versionName app/build.gradle | awk '{print $2}' | tr -d '\"'")
+    return { version_code: version_code.strip, version_name: version_name.strip }
   end
 end
