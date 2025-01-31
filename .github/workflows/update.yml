@@ -127,6 +127,9 @@ jobs:
         with:
           ruby-version: 3.3.7
 
+      - name: bundle
+        run: bundle Install
+
       - name: decode firebase json
         run: echo "${{ secrets.FIREBASE_ADMIN_BASE64 }}" | base64 --decode > app/firebase_admin.json
 
