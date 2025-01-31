@@ -191,6 +191,6 @@ jobs:
           )"
           
           JSON_PAYLOAD=$(echo "$SLACK_MESSAGE" | jq -R --slurp '{text: .}')
-          curl -X POST ${{ secrets.SLACK_WEBHOOK_URL }}
-          -H 'Content-type: application/json'
+          curl -X POST ${{ secrets.SLACK_WEBHOOK_URL }} \
+          -H 'Content-type: application/json' \
           --data "$JSON_PAYLOAD"
