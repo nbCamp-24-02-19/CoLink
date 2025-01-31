@@ -32,6 +32,7 @@ jobs:
           fi
           
           NOTES=$(cat << EOF
+          
           $COMMIT_LOG
           EOF
           )
