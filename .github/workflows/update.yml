@@ -13,7 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       APP_VERSION: ${{ steps.extract_version.outputs.APP_VERSION }}
-      JIRA_ENTRIES: ${{ steps.extract_jira_id.outputs.JIRA_ENTRIES }}
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -83,8 +82,13 @@ jobs:
             done
           done < commit_messages.txt
           
-          ENCODED=$(echo "$JIRA_ENTRIES" | base64)
-          echo "JIRA_ENTRIES=$ENCODED" >> "$GITHUB_OUTPUT"
+          echo "$JIRA_ENTRIES" >> jira_entries.txt
+
+      - name: upload release note
+        uses: actions/upload-artifact@v3
+        with:
+          name: JIRA_entries_file
+          path: jira_entries.txt
 
       - name: Get last release tag
         env:
@@ -103,7 +107,7 @@ jobs:
           UPDATED_NOTES=$(
           ## Updated Release Notes
               
-          $RELEASE_NOTES
+          $(cat jira_entries.txt)
               
           ### Jira tasks
           $DECODED
@@ -142,23 +146,35 @@ jobs:
       - name: decode firebase json
         run: echo "${{ secrets.FIREBASE_ADMIN_BASE64 }}" | base64 --decode > app/firebase_admin.json
 
+      - name: Download JIRA entries artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: JIRA_entries_file
+          path: .
+
       - name: deploy to app distribution
         run: |
-          export RELEASE_NOTES_DECODED="$(echo "${{ needs.update_jira.outputs.JIRA_ENTRIES }}" | base64 -d)"
-          
-          echo "Decoded release notes: $RELEASE_NOTES_DECODED"
-          
           FIREBASE_APP_ID="${{ secrets.FIREBASE_APP_ID }}" \
           FIREBASE_ADMIN_BASE64="${{ secrets.FIREBASE_ADMIN_BASE64 }}" \
-          RELEASE_NOTES="$RELEASE_NOTES_DECODED" \
+          RELEASE_NOTES=$(cat jira_entries.txt) \
           bundle exec fastlane deploy --verbose
 
   slack_notification:
     needs: [fastlane, update_jira]
     runs-on: ubuntu-latest
     steps:
+      - name: Download JIRA entries artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: JIRA_entries_file
+          path: .
+
       - name: Send Slack Notification
         run: |
+          RELEASE_VERSION="${{ needs.update_jira.outputs.APP_VERSION }}"
+          echo "[Debug] Found below lines in jira_entries.txt:"
+          cat jira_entries.txt
+          
           RELEASE_VERSION="${{ needs.update_jira.outputs.APP_VERSION }}"
           DECODED=$(echo"${{ needs.update_jira.outputs.JIRA_ENTRIES }}" | base64 -d)
           echo "Release Version: $RELEASE_VERSION"
@@ -166,12 +182,7 @@ jobs:
           
           SLACK_MESSAGE="🚀 *AOS $RELEASE_VERSION release* \n"
           SLACK_MESSAGE+="```\n"
-
-          if [[ -n "$JIRA_TASKS" ]]; then
-            SLACK_MESSAGE+="$JIRA_TASKS\n"
-          else
-            SLACK_MESSAGE+="📝 No Jira tasks linked.\n"
-          fi
+          SLACK_MESSAGE+=$(cat jira_entries.txt)
           SLACK_MESSAGE+="```"
           
           JSON_PAYLOAD=$(echo "$SLACK_MESSAGE" | jq -R --slurp '{text: .}')
