@@ -138,5 +138,5 @@ jobs:
         env:
           FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
           FIREBASE_ADMIN_BASE64: ${{ secrets.FIREBASE_ADMIN_BASE64 }}
-          RELEASE_NOTES: ${{ env.JIRA_ENTRIES }}
+          RELEASE_NOTES: ${{ needs.update_jira.outputs.JIRA_ENTRIES }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

@@ -39,7 +39,7 @@ platform :android do
       username: "Fastlane Bot",
       icon_emoji: ":rocket:",
       channel: "#deployments",
-      message: "AOS *#{version_name}* release🔗 [Firebase App Distribution](https://console.firebase.google.com/project/#{ENV['FIREBASE_APP_ID']}/appdistribution/releases)\n```\n#{ENV['RELEASE_NOTES']}\n```"
+      message: "AOS *#{version_name}* release🔗 [Firebase App Distribution](https://console.firebase.google.com/project/#{ENV['FIREBASE_APP_ID']}/appdistribution/releases)\n\n#{ENV['RELEASE_NOTES']}\n"
     )
   end
 
